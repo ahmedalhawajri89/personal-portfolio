@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>أحمد الحواجري — مطوّر ويب Full-Stack</title>
+<meta name="description" content="مطوّر ويب Full-Stack من غزة. أبني تطبيقات ويب كاملة بـ Laravel و PHP و Vue 3 — من تصميم قاعدة البيانات إلى الواجهة، بعربية RTL أولاً.">
+<meta name="author" content="Ahmed Al-Hawajiri">
+<meta name="theme-color" content="#f3f1ec">
+
+<link rel="canonical" href="https://ahmedalhawajri.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_PS">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:site_name" content="Ahmed Al-Hawajiri">
+<meta property="og:title" content="أحمد الحواجري — مطوّر ويب Full-Stack">
+<meta property="og:description" content="مطوّر ويب Full-Stack من غزة. تطبيقات ويب كاملة بـ Laravel و PHP و Vue 3.">
+<meta property="og:url" content="https://ahmedalhawajri.vercel.app/">
+<meta property="og:image" content="https://ahmedalhawajri.vercel.app/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+
+<!-- Stylesheets load in dependency order: tokens first, page styles last. -->
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/sections.css">
+
+<!-- Set the theme before first paint so a dark-mode visitor never sees a
+     white flash. Deliberately inline and tiny; everything else is deferred. -->
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem('theme');
+      var dark = saved ? saved === 'dark'
+                       : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    } catch (e) {}
+  })();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Ahmed Al-Hawajiri",
+  "alternateName": "أحمد الحواجري",
+  "jobTitle": "Full-Stack Web Developer",
+  "email": "mailto:ahmedalhawajri89@gmail.com",
+  "address": { "@type": "PostalAddress", "addressLocality": "Gaza", "addressCountry": "PS" },
+  "alumniOf": { "@type": "CollegeOrUniversity", "name": "Al-Aqsa University" },
+  "knowsLanguage": ["ar", "en"],
+  "knowsAbout": ["Laravel", "PHP", "Vue.js", "MySQL", "REST APIs", "Tailwind CSS"],
+  "sameAs": [
+    "https://github.com/ahmedalhawajri89",
+    "https://www.linkedin.com/in/ahmedalhawajri"
+  ]
+}
+</script>
+</head>
+
+<body>
+
+<a class="skip" href="#main" data-i18n="skip">تخطَّ إلى المحتوى</a>
+
+<!-- ======================= NAVIGATION ======================= -->
+<header class="site-nav">
+  <div class="container site-nav__inner">
+    <a class="brand" href="#top" aria-label="Ahmed Al-Hawajiri">
+      <span class="brand__dot" aria-hidden="true"></span>
+      AHMED
+    </a>
+
+    <nav class="nav-links" id="navLinks" aria-label="Primary">
+      <a href="#work" data-i18n="nav_work">الأعمال</a>
+      <a href="#services" data-i18n="nav_services">الخدمات</a>
+      <a href="#process" data-i18n="nav_process">طريقة العمل</a>
+      <a href="#about" data-i18n="nav_about">عني</a>
+      <a href="#contact" data-i18n="nav_contact">تواصل</a>
+    </nav>
+
+    <div class="nav-tools">
+      <button class="icon-btn nav-toggle" id="navToggle" type="button"
+              aria-expanded="false" aria-controls="navLinks"
+              data-i18n-label="nav_menu_label" aria-label="القائمة">
+        <span class="bar" aria-hidden="true"></span>
+        <span class="bar" aria-hidden="true"></span>
+        <span class="bar" aria-hidden="true"></span>
+      </button>
+
+      <button class="lang-btn" id="langToggle" type="button"
+              data-i18n="nav_lang" data-i18n-label="nav_lang_label"
+              aria-label="التبديل إلى الإنجليزية">EN</button>
+
+      <button class="icon-btn" id="themeToggle" type="button"
+              data-i18n-label="nav_theme_label" aria-label="تبديل الوضع الداكن">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/>
+        </svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="progress" aria-hidden="true"></div>
+</header>
+
+<main id="main">
+<span id="top"></span>
+
+<!-- ======================= HERO ======================= -->
+<section class="hero">
+  <div class="container">
+    <p class="hero__eyebrow" data-reveal data-i18n="hero_eyebrow">غزة، فلسطين · متاح للعمل عن بُعد</p>
+
+    <h1 class="hero__title" data-reveal data-i18n="hero_title_html">
+      أبني تطبيقات ويب <em>الصعوبة فيها في المنطق</em>، لا في الشكل.
+    </h1>
+
+    <p class="hero__lede" data-reveal data-i18n="hero_lede">
+      مطوّر Full-Stack. أبدأ من نمذجة البيانات وأنتهي عند الواجهة — وبينهما القرارات التي تقرّر إن كان المنتج سيصمد.
+    </p>
+
+    <div class="hero__actions" data-reveal>
+      <a class="btn btn--primary" href="#work">
+        <span data-i18n="hero_cta_work">شاهد الأعمال</span>
+        <svg class="btn__icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+      <a class="btn btn--ghost" href="#contact" data-i18n="hero_cta_contact">ابدأ مشروعاً</a>
+    </div>
+
+    <div class="hero__stats" data-reveal>
+      <div class="stat"><span class="stat__value" data-i18n="stat_1_v">5</span><span class="stat__label" data-i18n="stat_1_l">مشاريع كاملة منشورة</span></div>
+      <div class="stat"><span class="stat__value" data-i18n="stat_2_v">2</span><span class="stat__label" data-i18n="stat_2_l">تجارب حيّة تُجرَّب الآن</span></div>
+      <div class="stat"><span class="stat__value" data-i18n="stat_3_v">3</span><span class="stat__label" data-i18n="stat_3_l">مجموعات تقنية مختلفة</span></div>
+      <div class="stat"><span class="stat__value" data-i18n="stat_4_v">2022</span><span class="stat__label" data-i18n="stat_4_l">أبني منذ</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= WORK ======================= -->
+<section class="section" id="work">
+  <div class="container">
+    <div class="section__head" data-reveal>
+      <span class="section__num">01</span>
+      <h2 class="section__title" data-i18n="w_title">أعمال مختارة</h2>
+      <span class="section__meta" data-i18n="w_meta">5 مشاريع</span>
+      <p class="section__lede" data-i18n="w_lede">كل مشروع أدناه كودُه مفتوح ويمكنك قراءته. اثنان منها منشوران ويمكنك تجربتهما الآن.</p>
+    </div>
+
+    <div class="work-list">
+
+      <!-- Project 01 -->
+      <article class="project" data-reveal>
+        <div class="project__index">01</div>
+        <div class="project__body">
+          <div class="project__head">
+            <h3 class="project__title" data-i18n="p1_t">نظام إدارة الحجوزات</h3>
+            <span class="project__kind" data-i18n="p1_k">تطبيق ويب · 2026</span>
+          </div>
+          <p class="project__summary" data-i18n="p1_s">نظام حجز مواعيد عربي بالكامل: الزبون يحجز بلا حساب ويستلم رقماً مرجعياً، وصاحب النشاط يدير يومه من ست شاشات خلف تسجيل دخول.</p>
+          <div class="project__note">
+            <h4 data-i18n="w_why">الجزء المهم</h4>
+            <p data-i18n="p1_w">أغلب أنظمة الحجز التجريبية تخزّن الوقت كنص وتسمح بحجز المورد مرتين. هنا المواعيد المتاحة تُحسب لحظياً، والتعارض يُكتشف بتداخل الفترات نصف المفتوحة، والقاعدة مطبَّقة داخل المعاملة التي تكتب الحجز، بقفل على صف المورد قبل فحص التداخل.</p>
+          </div>
+          <div class="project__links">
+            <a class="btn btn--primary" href="https://booking-management-system-xi.vercel.app" target="_blank" rel="noopener noreferrer">
+              <span data-i18n="w_live">تجربة حيّة</span>
+              <svg class="btn__icon btn__icon--static" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3h7v7M13 3L4 12"/></svg>
+            </a>
+            <a class="btn btn--ghost" href="https://github.com/ahmedalhawajri89/booking-management-system" target="_blank" rel="noopener noreferrer" data-i18n="w_code">الكود</a>
+          </div>
+        </div>
+        <aside class="project__side">
+          <div class="frame">
+            <div class="frame__bar" aria-hidden="true">
+              <span class="frame__dots"><i></i><i></i><i></i></span>
+              <span class="frame__url">booking-management-system-xi.vercel.app</span>
+            </div>
+            <div class="frame__body"><span class="frame__stack">Vue 3 · Laravel 12 · MySQL</span></div>
+          </div>
+          <div class="chip-row">
+            <span class="chip chip--live" data-i18n="w_live">تجربة حيّة</span>
+            <span class="chip">Vue 3</span><span class="chip">Laravel 12</span>
+            <span class="chip">PHP 8.2</span><span class="chip">MySQL</span>
+            <span class="chip">Pinia</span><span class="chip">Tailwind 4</span>
+            <span class="chip">Sanctum</span><span class="chip">JSDoc types</span>
+            <span class="chip">105 tests</span>
+          </div>
+        </aside>
+      </article>
+
+      <!-- Project 02 -->
+      <article class="project" data-reveal>
+        <div class="project__index">02</div>
+        <div class="project__body">
+          <div class="project__head">
+            <h3 class="project__title" data-i18n="p2_t">Furnish — متجر أثاث إلكتروني</h3>
+            <span class="project__kind" data-i18n="p2_k">تجارة إلكترونية · 2025</span>
+          </div>
+          <p class="project__summary" data-i18n="p2_s">متجر كامل بواجهة زبون ولوحة إدارة: تصفّح ومتغيّرات منتجات وتقييمات وسلة وكوبونات وشحن، وإدارة طلبات ومخزون خلفها.</p>
+          <div class="project__note">
+            <h4 data-i18n="w_why">الجزء المهم</h4>
+            <p data-i18n="p2_w">الجوهر في المخطط: 24 نموذجاً عبر أربعة نطاقات. وبنود الطلب تحفظ السعر وقت الشراء، فتغيير سعر لاحقاً لا يعيد كتابة تاريخ طلب سابق.</p>
+          </div>
+          <div class="project__links">
+            <a class="btn btn--ghost" href="https://github.com/ahmedalhawajri89/furnish-ecommerce" target="_blank" rel="noopener noreferrer" data-i18n="w_code">الكود</a>
+          </div>
+        </div>
+        <aside class="project__side">
+          <div class="frame">
+            <div class="frame__bar" aria-hidden="true">
+              <span class="frame__dots"><i></i><i></i><i></i></span>
+              <span class="frame__url">github.com/ahmedalhawajri89/furnish-ecommerce</span>
+            </div>
+            <div class="frame__body"><span class="frame__stack">Laravel 12 · MySQL · Blade</span></div>
+          </div>
+          <div class="chip-row">
+            <span class="chip">Laravel 12</span><span class="chip">PHP 8.2</span>
+            <span class="chip">MySQL</span><span class="chip">Blade</span>
+            <span class="chip">SCSS</span><span class="chip">24 models</span>
+          </div>
+        </aside>
+      </article>
+
+      <!-- Project 03 -->
+      <article class="project" data-reveal>
+        <div class="project__index">03</div>
+        <div class="project__body">
+          <div class="project__head">
+            <h3 class="project__title" data-i18n="p3_t">نظام متابعة مشاريع التخرّج</h3>
+            <span class="project__kind" data-i18n="p3_k">نظام جامعي · 2025</span>
+          </div>
+          <p class="project__summary" data-i18n="p3_s">إدارة مشاريع التخرّج من الفكرة إلى الدرجة النهائية، بثلاثة أدوار: مدير ومشرف وطالب، لكل منهم لوحته وصلاحياته.</p>
+          <div class="project__note">
+            <h4 data-i18n="w_why">الجزء المهم</h4>
+            <p data-i18n="p3_w">استيراد جماعي من Excel — وهذا يهم فعلاً حين تكون الدفعة 300 صف. والقوائم الكبيرة تعمل بجداول تُعالَج في الخادم لا في المتصفح، واللوحات الثلاث تتقاسم طبقة توكنات واحدة موثّقة في DESIGN_SYSTEM.md.</p>
+          </div>
+          <div class="project__links">
+            <a class="btn btn--ghost" href="https://github.com/ahmedalhawajri89/graduation-project-tracker" target="_blank" rel="noopener noreferrer" data-i18n="w_code">الكود</a>
+          </div>
+        </div>
+        <aside class="project__side">
+          <div class="frame">
+            <div class="frame__bar" aria-hidden="true">
+              <span class="frame__dots"><i></i><i></i><i></i></span>
+              <span class="frame__url">github.com/ahmedalhawajri89/graduation-project-tracker</span>
+            </div>
+            <div class="frame__body"><span class="frame__stack">Laravel 12 · Sanctum · Next.js 14</span></div>
+          </div>
+          <div class="chip-row">
+            <span class="chip">Laravel 12</span><span class="chip">Sanctum</span>
+            <span class="chip">MySQL</span><span class="chip">Next.js 14</span>
+            <span class="chip">React 18</span><span class="chip">Excel I/O</span>
+          </div>
+        </aside>
+      </article>
+
+      <!-- Project 04 -->
+      <article class="project" data-reveal>
+        <div class="project__index">04</div>
+        <div class="project__body">
+          <div class="project__head">
+            <h3 class="project__title" data-i18n="p4_t">مواهب — منصة اكتشاف المواهب</h3>
+            <span class="project__kind" data-i18n="p4_k">منصة · 2024</span>
+          </div>
+          <p class="project__summary" data-i18n="p4_s">منصة عربية ينشر فيها المبدعون أعمالهم ويتقدّمون للفرص: ملف متعدد الخطوات، اكتشاف وفلترة، متابعة، وتتبّع للطلبات.</p>
+          <div class="project__note">
+            <h4 data-i18n="w_why">الجزء المهم</h4>
+            <p data-i18n="p4_w">العربية هي الاتجاه الأساسي، منفَّذة بخصائص CSS المنطقية لا بملف أنماط مقلوب. والمستودع يحمل التفكير مع الكود: متطلبات ومعمارية ونظام تصميم.</p>
+          </div>
+          <div class="project__links">
+            <a class="btn btn--ghost" href="https://github.com/ahmedalhawajri89/mawaheb-talent-platform" target="_blank" rel="noopener noreferrer" data-i18n="w_code">الكود</a>
+          </div>
+        </div>
+        <aside class="project__side">
+          <div class="frame">
+            <div class="frame__bar" aria-hidden="true">
+              <span class="frame__dots"><i></i><i></i><i></i></span>
+              <span class="frame__url">github.com/ahmedalhawajri89/mawaheb-talent-platform</span>
+            </div>
+            <div class="frame__body"><span class="frame__stack">Laravel 12 · PHP 8.2 · Blade</span></div>
+          </div>
+          <div class="chip-row">
+            <span class="chip">Laravel 12</span><span class="chip">PHP 8.2</span>
+            <span class="chip">MySQL</span><span class="chip">Blade</span>
+            <span class="chip">RTL / LTR</span>
+          </div>
+        </aside>
+      </article>
+
+      <!-- Project 05 -->
+      <article class="project" data-reveal>
+        <div class="project__index">05</div>
+        <div class="project__body">
+          <div class="project__head">
+            <h3 class="project__title" data-i18n="p5_t">كفالة — منصة كفالة أيتام</h3>
+            <span class="project__kind" data-i18n="p5_k">تطبيق ويب كامل · 2026</span>
+          </div>
+          <p class="project__summary" data-i18n="p5_s">سبع عشرة صفحة عربية RTL، وخادم Laravel 12 على MySQL، ولوحة إدارة Vue 3 في ستّ عشرة شاشة، وبوابة يتابع فيها الكافل الطفل الذي يكفله — كلها من أصل واحد، فلا CORS ولا كوكيز عابرة للأصول. والتجربة أدناه لقطة ساكنة من الموقع العام وحده؛ الـ API واللوحة والبوابة تحتاج PHP و MySQL وتُشغَّل محلياً.</p>
+          <div class="project__note">
+            <h4 data-i18n="w_why">الجزء المهم</h4>
+            <p data-i18n="p5_w">كل رقم يعلنه الموقع مُشتقٌّ من قاعدة البيانات لا مكتوبٌ في الواجهة: نسبة «٩٣٪ تصل للطفل» ناتج قسمة، وعدد الزيارات الميدانية COUNT(*). وأربعة وأربعون جدولاً وراء ذلك، فيها قيد جزئي حقيقي على MySQL بعمود مُولَّد — يمنع كفالة الطفل نفسه مرتين في وقت واحد، ويسمح بالعودة بعد الإلغاء.</p>
+          </div>
+          <div class="project__links">
+            <a class="btn btn--primary" href="https://kafala-orphan-sponsorship.vercel.app" target="_blank" rel="noopener noreferrer">
+              <span data-i18n="p5_demo">جرّب الموقع العام</span>
+              <svg class="btn__icon btn__icon--static" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3h7v7M13 3L4 12"/></svg>
+            </a>
+            <a class="btn btn--ghost" href="https://github.com/ahmedalhawajri89/kafala-orphan-sponsorship" target="_blank" rel="noopener noreferrer" data-i18n="w_code">الكود</a>
+          </div>
+        </div>
+        <aside class="project__side">
+          <div class="frame">
+            <div class="frame__bar" aria-hidden="true">
+              <span class="frame__dots"><i></i><i></i><i></i></span>
+              <span class="frame__url">kafala-orphan-sponsorship.vercel.app</span>
+            </div>
+            <div class="frame__body"><span class="frame__stack">Laravel 12 · Vue 3 · MySQL</span></div>
+          </div>
+          <div class="chip-row">
+            <span class="chip chip--live" data-i18n="p5_live">الموقع العام حيّ</span>
+            <span class="chip">Laravel 12</span><span class="chip">Vue 3</span>
+            <span class="chip">MySQL</span><span class="chip">Sanctum</span>
+            <span class="chip">44 tables</span>
+          </div>
+        </aside>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======================= SERVICES ======================= -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section__head" data-reveal>
+      <span class="section__num">02</span>
+      <h2 class="section__title" data-i18n="sv_title">ما الذي أقدّمه</h2>
+      <span class="section__meta" data-i18n="sv_meta">الخدمات</span>
+      <p class="section__lede" data-i18n="sv_lede">لا أبيع «صفحات». أبني أنظمة تعمل بعد التسليم، ويستطيع مطوّر غيري أن يكمل عليها.</p>
+    </div>
+
+    <div class="grid grid--2">
+      <div class="service" data-reveal>
+        <span class="service__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18v14H3z"/><path d="M3 9h18M7 13h6"/></svg>
+        </span>
+        <h3 class="service__title" data-i18n="sv1_t">تطبيقات ويب متكاملة</h3>
+        <p class="service__text" data-i18n="sv1_d">من تحليل المتطلبات وتصميم قاعدة البيانات إلى الواجهة والنشر.</p>
+      </div>
+
+      <div class="service" data-reveal>
+        <span class="service__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        </span>
+        <h3 class="service__title" data-i18n="sv2_t">لوحات تحكم وأنظمة إدارة</h3>
+        <p class="service__text" data-i18n="sv2_d">صلاحيات وأدوار، جداول كبيرة تعمل بسرعة، استيراد وتصدير Excel، تقارير ورسوم بيانية.</p>
+      </div>
+
+      <div class="service" data-reveal>
+        <span class="service__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+        </span>
+        <h3 class="service__title" data-i18n="sv3_t">واجهات عربية RTL</h3>
+        <p class="service__text" data-i18n="sv3_d">عربية من السطر الأول لا مقلوبة لاحقاً — بخصائص CSS المنطقية.</p>
+      </div>
+
+      <div class="service" data-reveal>
+        <span class="service__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>
+        </span>
+        <h3 class="service__title" data-i18n="sv4_t">نظام تصميم وتوثيق</h3>
+        <p class="service__text" data-i18n="sv4_d">كل لون ومسافة ونصف قطر يُعرَّف مرة واحدة.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PROCESS ======================= -->
+<section class="section" id="process">
+  <div class="container">
+    <div class="section__head" data-reveal>
+      <span class="section__num">03</span>
+      <h2 class="section__title" data-i18n="pr_title">كيف أعمل</h2>
+      <span class="section__meta" data-i18n="pr_meta">الطريقة</span>
+      <p class="section__lede" data-i18n="pr_lede">أربع مراحل واضحة. تعرف في كل لحظة أين وصل العمل وما الذي ينتظرك.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step" data-reveal>
+        <h3 data-i18n="pr1_t">نفهم المشكلة</h3>
+        <p data-i18n="pr1_d">جلسة نحدّد فيها من المستخدم، وما القرار الذي يتخذه في كل شاشة، وما الذي لن نبنيه في النسخة الأولى.</p>
+      </div>
+      <div class="step" data-reveal>
+        <h3 data-i18n="pr2_t">نمذجة البيانات</h3>
+        <p data-i18n="pr2_d">المخطط قبل الشاشات. الجداول والعلاقات والقيود.</p>
+      </div>
+      <div class="step" data-reveal>
+        <h3 data-i18n="pr3_t">البناء على دفعات</h3>
+        <p data-i18n="pr3_d">تسليم قابل للتجربة كل أسبوع، لا صندوق مغلق يُفتح في النهاية.</p>
+      </div>
+      <div class="step" data-reveal>
+        <h3 data-i18n="pr4_t">تسليم موثّق</h3>
+        <p data-i18n="pr4_d">الكود ووثيقة تشرح البنية والقرارات، ونشر يعمل.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ABOUT ======================= -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="section__head" data-reveal>
+      <span class="section__num">04</span>
+      <h2 class="section__title" data-i18n="ab_title">عني</h2>
+      <span class="section__meta" data-i18n="ab_meta">نبذة</span>
+    </div>
+
+    <div class="about">
+      <div class="about__body" data-reveal>
+        <p data-i18n="ab_p1">أنا أحمد الحواجري، مطوّر ويب Full-Stack من غزة، خرّيج تكنولوجيا المعلومات التطبيقية من جامعة الأقصى عام 2022.</p>
+        <p data-i18n="ab_p2">أهتم بالجزء الذي لا يظهر في اللقطات: أين تُفرض القاعدة، وهل تصمد حين يتجاوز أحدهم الواجهة.</p>
+        <p data-i18n="ab_p3">أعمل بالعربية والإنجليزية، ومتاح للعمل عن بُعد بتداخل كامل مع ساعات العمل في أوروبا والخليج.</p>
+        <p style="margin-block-start: var(--space-5);">
+          <a class="btn btn--primary" href="assets/Ahmed-Al-Hawajiri-Full-Stack-Developer.pdf" download>
+            <span data-i18n="ab_cv">حمّل السيرة الذاتية</span>
+            <svg class="btn__icon btn__icon--static" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8M4.5 7L8 10.5 11.5 7M3 13h10"/></svg>
+          </a>
+        </p>
+      </div>
+
+      <div class="spec" data-reveal>
+        <div class="spec__group">
+          <h4 data-i18n="ab_g1">الخلفية</h4>
+          <div class="chip-row">
+            <span class="chip">PHP 8.2</span><span class="chip">Laravel 12</span>
+            <span class="chip">Eloquent ORM</span><span class="chip">Sanctum</span>
+            <span class="chip">Auth</span><span class="chip">REST APIs</span>
+          </div>
+        </div>
+        <div class="spec__group">
+          <h4 data-i18n="ab_g2">الواجهة</h4>
+          <div class="chip-row">
+            <span class="chip">Vue 3</span><span class="chip">Vue Router</span>
+            <span class="chip">Pinia</span><span class="chip">React 18</span>
+            <span class="chip">Next.js 14</span><span class="chip">Tailwind CSS</span>
+            <span class="chip">SCSS</span><span class="chip">Blade</span>
+          </div>
+        </div>
+        <div class="spec__group">
+          <h4 data-i18n="ab_g3">قواعد البيانات</h4>
+          <div class="chip-row">
+            <span class="chip">MySQL</span><span class="chip">SQLite</span>
+            <span class="chip">Schema design</span><span class="chip">Constraints</span>
+          </div>
+        </div>
+        <div class="spec__group">
+          <h4 data-i18n="ab_g4">الأدوات والممارسات</h4>
+          <div class="chip-row">
+            <span class="chip">Git</span><span class="chip">Vite</span>
+            <span class="chip">Vitest</span><span class="chip">Playwright</span>
+            <span class="chip">Design systems</span><span class="chip">Accessibility</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= CONTACT ======================= -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="contact" data-reveal>
+      <h2 class="contact__title" data-i18n="ct_title">عندك مشروع، أو وظيفة مناسبة؟</h2>
+      <p class="contact__text" data-i18n="ct_text">اكتب لي سطرين عمّا تحتاجه وسأرد خلال يوم عمل.</p>
+      <p class="contact__mail">ahmedalhawajri89@gmail.com</p>
+
+      <div class="contact__actions">
+        <a class="btn btn--primary" href="mailto:ahmedalhawajri89@gmail.com" data-i18n="ct_mail">راسلني</a>
+        <button class="btn btn--ghost" type="button" id="copyEmail"
+                data-email="ahmedalhawajri89@gmail.com" data-i18n="ct_copy">نسخ البريد</button>
+        <a class="btn btn--ghost" href="https://wa.me/972599520085" target="_blank" rel="noopener noreferrer" data-i18n="ct_wa">واتساب</a>
+      </div>
+
+      <p class="section__meta" data-i18n="ct_meta">متاح للعمل عن بُعد ومن غزة</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ======================= FOOTER ======================= -->
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <p>© <span id="year">2026</span> <span data-i18n="ft_rights">أحمد الحواجري — كل الحقوق محفوظة</span></p>
+    <p data-i18n="ft_built">مبني بـ HTML و CSS و JavaScript خالصة. بلا إطار عمل وبلا خطوة بناء.</p>
+    <nav aria-label="Social">
+      <ul style="display:flex; gap:1rem;">
+        <li><a href="https://github.com/ahmedalhawajri89" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/ahmedalhawajri" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+<a class="to-top" href="#top" data-i18n-label="to_top" aria-label="العودة إلى الأعلى">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</a>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/js/i18n.js" defer></script>
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>

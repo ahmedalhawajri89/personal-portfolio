@@ -1,0 +1,298 @@
+/* ==========================================================================
+   components.css — reusable pieces: nav, buttons, cards, chips, footer.
+   ========================================================================== */
+
+/* --- Navigation ---------------------------------------------------------- */
+.site-nav {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-nav);
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  backdrop-filter: saturate(140%) blur(14px);
+  border-block-end: 1px solid transparent;
+  transition: border-color var(--dur-base) var(--ease-out),
+              background-color var(--dur-base) var(--ease-out);
+}
+.site-nav.is-stuck { border-block-end-color: var(--line); }
+
+.site-nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 64px;
+}
+
+.brand {
+  font-family: var(--font-latin);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-size: var(--text-lg);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.brand__dot {
+  width: 8px; height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  flex: none;
+}
+
+/* Desktop: an inline row. Mobile: a panel that drops out of the nav bar.
+   Same markup, same links — no duplicated menu to keep in sync. */
+.nav-links { display: flex; gap: var(--space-5); align-items: center; }
+
+@media (max-width: 859px) {
+  .nav-links {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: var(--space-2) var(--gutter) var(--space-4);
+    background: var(--paper);
+    border-block-end: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    /* Hidden by default, and hidden from assistive tech too. */
+    display: none;
+  }
+  .nav-links.is-open { display: flex; }
+  .nav-links a { padding-block: var(--space-3); font-size: var(--text-base); }
+  .nav-links a::after { display: none; }
+  .nav-links a[aria-current="true"] { color: var(--accent-text); }
+}
+
+/* Specificity note: `.icon-btn` is declared later in this file and also sets
+   `display`, so the hamburger needs both classes to win the cascade. */
+.icon-btn.nav-toggle { display: none; }
+@media (max-width: 859px) { .icon-btn.nav-toggle { display: grid; } }
+.nav-toggle .bar {
+  display: block;
+  inline-size: 18px;
+  block-size: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+}
+.nav-toggle .bar + .bar { margin-block-start: 4px; }
+.nav-toggle[aria-expanded="true"] .bar:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .bar:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] .bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.nav-links a {
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+  padding-block: var(--space-2);
+  position: relative;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  inline-size: 0;
+  block-size: 2px;
+  background: var(--accent);
+  transition: inline-size var(--dur-base) var(--ease-out);
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a:hover::after,
+.nav-links a[aria-current="true"]::after { inline-size: 100%; }
+.nav-links a[aria-current="true"] { color: var(--ink); }
+
+.nav-tools { display: flex; align-items: center; gap: var(--space-2); }
+
+.icon-btn {
+  inline-size: 40px;
+  block-size: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
+}
+.icon-btn:hover { background: var(--surface-2); border-color: var(--line-strong); }
+.icon-btn:active { transform: scale(.94); }
+.icon-btn svg { inline-size: 18px; block-size: 18px; }
+
+.lang-btn {
+  min-inline-size: 44px;
+  block-size: 40px;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: .08em;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+.lang-btn:hover { background: var(--surface-2); border-color: var(--line-strong); }
+
+/* Scroll progress bar sits on the bottom edge of the nav. */
+.progress {
+  position: absolute;
+  inset-block-end: -1px;
+  inset-inline-start: 0;
+  block-size: 2px;
+  inline-size: 100%;
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left;   /* `inline-start` is not valid here — mirror it explicitly below */
+  background: var(--accent);
+}
+[dir="rtl"] .progress { transform-origin: right; }
+
+/* --- Buttons ------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-block-size: 48px;               /* comfortable touch target */
+  padding-inline: var(--space-5);
+  padding-block: var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: transform var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+}
+.btn:active { transform: translateY(1px); }
+.btn__icon { inline-size: 16px; block-size: 16px; flex: none; }
+/* Directional glyphs must follow the reading direction, so an arrow that
+   means "forward" points left in Arabic. Icons marked --static (external
+   link, download) keep their orientation. */
+[dir="rtl"] .btn__icon:not(.btn__icon--static) { transform: scaleX(-1); }
+
+/* --- Theme icon: moon in light mode, sun in dark mode -------------------- */
+.icon-btn .icon-moon { display: block; }
+.icon-btn .icon-sun  { display: none; }
+:root[data-theme="dark"] .icon-btn .icon-moon { display: none; }
+:root[data-theme="dark"] .icon-btn .icon-sun  { display: block; }
+
+.btn--primary { background: var(--ink); color: var(--paper); }
+.btn--primary:hover { background: var(--accent); color: #fff; box-shadow: var(--shadow); }
+
+.btn--ghost { border-color: var(--line-strong); color: var(--ink); }
+.btn--ghost:hover { background: var(--surface-2); }
+
+.btn--link {
+  padding: 0;
+  min-block-size: 0;
+  border-radius: 0;
+  color: var(--accent-text);
+  border-block-end: 1px solid currentColor;
+}
+.btn--link:hover { color: var(--ink); }
+
+/* --- Chips --------------------------------------------------------------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-soft);
+  background: var(--surface);
+  white-space: nowrap;
+}
+.chip--live {
+  color: var(--accent-text);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+.chip--live::before {
+  content: "";
+  inline-size: 7px; block-size: 7px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  animation: pulse 2.4s var(--ease-in-out) infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* --- Card ---------------------------------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
+}
+.card--hover:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow);
+  transform: translateY(-3px);
+}
+.card__title { font-size: var(--text-lg); margin-block-end: var(--space-2); }
+.card__text { color: var(--ink-soft); font-size: var(--text-sm); }
+
+/* --- Footer -------------------------------------------------------------- */
+.site-footer {
+  border-block-start: 1px solid var(--line);
+  padding-block: var(--space-7) var(--space-6);
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+.site-footer__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  align-items: center;
+  justify-content: space-between;
+}
+.site-footer a:hover { color: var(--ink); }
+
+/* --- Back to top --------------------------------------------------------- */
+.to-top {
+  position: fixed;
+  inset-block-end: var(--space-5);
+  inset-inline-end: var(--space-5);
+  inline-size: 46px; block-size: 46px;
+  display: grid; place-items: center;
+  border-radius: var(--radius-full);
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
+  z-index: var(--z-nav);
+}
+.to-top.is-shown { opacity: 1; pointer-events: auto; transform: none; }
+.to-top svg { inline-size: 18px; block-size: 18px; }
+
+/* --- Toast (used by the copy-email button) -------------------------------- */
+.toast {
+  position: fixed;
+  inset-block-end: var(--space-5);
+  inset-inline-start: 50%;
+  transform: translate(-50%, 14px);
+  background: var(--ink);
+  color: var(--paper);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+  z-index: var(--z-overlay);
+}
+.toast.is-shown { opacity: 1; transform: translate(-50%, 0); }
