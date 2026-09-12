@@ -3,24 +3,51 @@
 @tailwind utilities;
 
 /* ---------------------------------------------------------------- fonts */
-@font-face{font-family:'TajawalX';src:url('/fonts/tajawal-arabic-400-normal.woff2') format('woff2');font-weight:400;font-display:swap;}
-@font-face{font-family:'TajawalX';src:url('/fonts/tajawal-arabic-700-normal.woff2') format('woff2');font-weight:700;font-display:swap;}
-@font-face{font-family:'TajawalX';src:url('/fonts/tajawal-arabic-800-normal.woff2') format('woff2');font-weight:800;font-display:swap;}
-@font-face{font-family:'InterX';src:url('/fonts/inter-latin-400-normal.woff2') format('woff2');font-weight:400;font-display:swap;}
-@font-face{font-family:'InterX';src:url('/fonts/inter-latin-700-normal.woff2') format('woff2');font-weight:700;font-display:swap;}
-@font-face{font-family:'InterX';src:url('/fonts/inter-latin-800-normal.woff2') format('woff2');font-weight:800;font-display:swap;}
+/* IBM Plex Sans Arabic with its Latin twin, so the two scripts are one family
+   rather than two fonts sharing a line. Plex tops out at Bold (700) where the
+   old pair went to 800, so the scale is remapped instead of faked: the CSS
+   asks for 700 and gets SemiBold, asks for 800 and gets Bold. Two real cuts,
+   no synthesised smear, and the design keeps its two-step hierarchy.
+   Subset to Arabic, Latin-1 and the punctuation actually on the page. */
+@font-face{font-family:'PlexAr';src:url('/fonts/plex-arabic-400.woff2') format('woff2');font-weight:400;font-display:swap;}
+@font-face{font-family:'PlexAr';src:url('/fonts/plex-arabic-600.woff2') format('woff2');font-weight:700;font-display:swap;}
+@font-face{font-family:'PlexAr';src:url('/fonts/plex-arabic-700.woff2') format('woff2');font-weight:800;font-display:swap;}
+@font-face{font-family:'PlexLat';src:url('/fonts/plex-latin-400.woff2') format('woff2');font-weight:400;font-display:swap;}
+@font-face{font-family:'PlexLat';src:url('/fonts/plex-latin-600.woff2') format('woff2');font-weight:700;font-display:swap;}
+@font-face{font-family:'PlexLat';src:url('/fonts/plex-latin-700.woff2') format('woff2');font-weight:800;font-display:swap;}
 
 /* ---------------------------------------------------------------- tokens */
 :root{
   --bg:#F6F7FB; --bg-2:#EEF0F6; --card:#FFFFFF; --card-2:#F3F4F9;
-  --ink:#0F1222; --ink-2:#3F4458; --ink-3:#7A8096;
+  --ink:#0F1222; --ink-2:#3F4458;
+  /* The muted tone carries fifteen pieces of real text — metadata, hints,
+     captions — so it has to clear AA for body copy, not the 3:1 large-text
+     floor. #7A8096 measured 3.66:1 on the page ground. Checked against all
+     three light surfaces, not just two: --card-2 is darker than the ground,
+     and an earlier pass that tested only bg and card left this at 4.42 there. */
+  --ink-3:#686F85;
   --line:rgba(15,18,34,.08); --line-2:rgba(15,18,34,.15);
   /* Brand palette — change these three to re-theme the whole site.
      accent = teal, accent-2 = sky blue, accent-3 = amber. */
   --accent:#0D9488; --accent-2:#2563EB; --accent-3:#F59E0B;
-  --accent-soft:rgba(13,148,136,.12); --accent-ink:#0F766E;
+  /* Accent text sits on the accent tint as often as on a plain surface — the
+     eyebrow and the accent chips do exactly that — and over --card-2 that
+     tint composites to #DAEBED, where #0F766E measured 4.45. Darkened until
+     it clears 4.5 on the tint as well as on the three plain surfaces. */
+  --accent-soft:rgba(13,148,136,.12); --accent-ink:#0F746C;
+  /* The one filled accent surface, and the ink that is legible on it. The
+     hue is darkened from --accent so white clears 4.5:1 (5.5:1) instead of
+     the 3.6:1 the lighter teal gave. Dark flips both: the palette raises the
+     accent to a bright teal there, so the text on it goes dark. */
+  --accent-solid:#0F766E; --on-accent:#FFFFFF;
+  /* String literals in the code samples. The decorative amber is 1.96:1 on
+     the code panel — fine as a wash behind the page, unreadable as 12.5px
+     type — so the syntax colour is its own token and the wash keeps its. */
+  --code-string:#9A6306;
   --glass:rgba(255,255,255,.66); --glass-line:rgba(15,18,34,.08);
-  --ok:#16A34A;
+  /* Success green as *text* — it labels the passing test count, so it needs
+     body contrast, not the 3.29:1 the brighter green gave on white. */
+  --ok:#117F3A;
   --shadow:0 1px 2px rgba(15,18,34,.05), 0 20px 50px -24px rgba(15,18,34,.25);
   --glow:0 0 0 1px rgba(13,148,136,.2), 0 20px 60px -20px rgba(13,148,136,.45);
   --radius:22px;
@@ -28,10 +55,15 @@
 }
 :root[data-theme="dark"]{
   --bg:#0A0B10; --bg-2:#0F1117; --card:#13151C; --card-2:#191C25;
-  --ink:#F4F5FA; --ink-2:#B7BBCB; --ink-3:#7D8296;
+  /* Same check as the light palette, against the darkest surface here:
+     #7D8296 measured 4.46 on --card-2, where the runner's command line
+     and the unlit half of the language switch sit. */
+  --ink:#F4F5FA; --ink-2:#B7BBCB; --ink-3:#7F8498;
   --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.15);
   --accent:#2DD4BF; --accent-2:#60A5FA; --accent-3:#FBBF24;
   --accent-soft:rgba(45,212,191,.14); --accent-ink:#5EEAD4;
+  --accent-solid:#2DD4BF; --on-accent:#06202B;
+  --code-string:#FBBF24;
   --glass:rgba(19,21,28,.62); --glass-line:rgba(255,255,255,.09);
   --ok:#4ADE80;
   --shadow:0 1px 2px rgba(0,0,0,.5), 0 24px 60px -24px rgba(0,0,0,.8);
@@ -46,11 +78,11 @@ html{scroll-behavior:smooth}
 
 body{
   margin:0;background:var(--bg);color:var(--ink);
-  font-family:'TajawalX','InterX',system-ui,sans-serif;
+  font-family:'PlexAr','PlexLat',system-ui,sans-serif;
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
   overflow-x:hidden;
 }
-html[lang="en"] body{font-family:'InterX',system-ui,sans-serif}
+html[lang="en"] body{font-family:'PlexLat',system-ui,sans-serif}
 
 /* Ambient background: two soft colour fields and a faint grid. Fixed so it
    never repaints while scrolling. */
@@ -70,8 +102,8 @@ html[lang="en"] body{font-family:'InterX',system-ui,sans-serif}
 ::selection{background:var(--accent);color:#fff}
 
 /* Latin runs inside Arabic text keep their own font and direction */
-.lat{font-family:'InterX',ui-monospace,monospace;direction:ltr;unicode-bidi:isolate}
-.mono{font-family:ui-monospace,'InterX',Menlo,monospace;direction:ltr;unicode-bidi:isolate;
+.lat{font-family:'PlexLat',system-ui,sans-serif;direction:ltr;unicode-bidi:isolate}
+.mono{font-family:ui-monospace,'PlexLat',Menlo,monospace;direction:ltr;unicode-bidi:isolate;
   font-variant-numeric:tabular-nums}
 
 /* -------------------------------------------------------------- helpers */
@@ -83,8 +115,12 @@ html[lang="en"] body{font-family:'InterX',system-ui,sans-serif}
   color:var(--accent-ink);background:var(--accent-soft);border:1px solid color-mix(in srgb, var(--accent) 30%, transparent)}
 .eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent)}
 
-.grad-text{background:linear-gradient(92deg,var(--accent) 0%,var(--accent-2) 55%,var(--accent-3) 110%);
-  -webkit-background-clip:text;background-clip:text;color:transparent}
+/* Was three colour stops clipped to the glyphs. One colour says the same
+   thing without asking the reader to look at the paint instead of the word. */
+.grad-text{color:var(--accent-ink)}
+/* Anything that has to read as *the* accent — buttons, active tabs, numbered
+   marks, the monogram — is this one surface, so they stay in step. */
+.on-accent{background:var(--accent-solid);color:var(--on-accent)}
 
 .link-underline{position:relative}
 .link-underline::after{content:'';position:absolute;inset-inline-start:0;bottom:-2px;height:1.5px;
@@ -97,18 +133,23 @@ html[lang="en"] body{font-family:'InterX',system-ui,sans-serif}
 .glass{background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--radius);
   -webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);
   box-shadow:var(--shadow)}
+/* The arrow steps toward where the link goes, whichever way that is. */
+.arrow-slide{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.group:hover .arrow-slide{transform:translateX(-3px)}
+[dir="rtl"] .group:hover .arrow-slide{transform:translateX(3px)}
+
 .hover-lift{transition:transform .45s cubic-bezier(.22,1,.36,1),box-shadow .45s cubic-bezier(.22,1,.36,1),border-color .3s}
 .hover-lift:hover{transform:translateY(-4px);box-shadow:var(--glow);border-color:color-mix(in srgb, var(--accent) 40%, var(--line))}
 
 /* Animated conic border: the card sits on a spinning gradient. */
 .gradient-border{position:relative;border-radius:var(--radius);background:var(--card)}
 .gradient-border::before{content:'';position:absolute;inset:-1px;z-index:-1;border-radius:inherit;padding:1px;
-  background:conic-gradient(from var(--angle,0turn),transparent 0 25%,var(--accent) 45%,var(--accent-2) 60%,transparent 75% 100%);
+  background:conic-gradient(from var(--angle,0turn),transparent 0 28%,var(--accent-solid) 50%,transparent 72% 100%);
   animation:spin-border 6s linear infinite}
 @property --angle{syntax:'<angle>';initial-value:0turn;inherits:false}
 @keyframes spin-border{to{--angle:1turn}}
 @supports not (background:conic-gradient(from var(--angle),red,blue)){
-  .gradient-border::before{background:linear-gradient(120deg,var(--accent),var(--accent-2));animation:none;opacity:.6}}
+  .gradient-border::before{background:var(--accent-solid);animation:none;opacity:.45}}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;
@@ -116,7 +157,7 @@ html[lang="en"] body{font-family:'InterX',system-ui,sans-serif}
   transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s,background .3s,border-color .3s}
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:translateY(0) scale(.98)}
-.btn-primary{color:#fff;background:linear-gradient(135deg,var(--accent),color-mix(in srgb, var(--accent) 60%, var(--accent-2)));
+.btn-primary{color:var(--on-accent);background:var(--accent-solid);
   box-shadow:0 10px 30px -10px color-mix(in srgb, var(--accent) 70%, transparent)}
 .btn-primary:hover{box-shadow:0 16px 40px -12px color-mix(in srgb, var(--accent) 85%, transparent)}
 .btn-ghost{color:var(--ink);background:var(--glass);border:1px solid var(--line-2);
@@ -153,7 +194,7 @@ html[lang="en"] body{font-family:'InterX',system-ui,sans-serif}
 .frame .bar i:nth-child(1){background:#FF5F57}.frame .bar i:nth-child(2){background:#FEBC2E}.frame .bar i:nth-child(3){background:#28C840}
 .frame img{display:block;width:100%;height:auto}
 
-.tint{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,color-mix(in srgb, var(--accent) 35%, transparent));
+.tint{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,color-mix(in srgb, var(--ink) 45%, transparent));
   opacity:0;transition:opacity .35s}
 a:hover .tint,button:hover .tint{opacity:1}
 .zoom img{transition:transform .8s cubic-bezier(.22,1,.36,1)}
@@ -180,7 +221,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 .tl{position:relative;--tl-p:0}
 .tl::before,.tl::after{content:'';position:absolute;top:0;bottom:0;inset-inline-start:19px;width:2px;border-radius:2px}
 .tl::before{background:var(--line-2)}
-.tl::after{background:linear-gradient(180deg,var(--accent),var(--accent-2));
+.tl::after{background:var(--accent-solid);
   transform:scaleY(var(--tl-p));transform-origin:top center;
   box-shadow:0 0 12px color-mix(in srgb, var(--accent) 60%, transparent);
   transition:transform .15s linear}
@@ -215,7 +256,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 
 /* ---------------------------------------------------------- scroll bar */
 .progress{position:fixed;top:0;left:0;height:2px;z-index:60;width:100%;transform-origin:0 50%;
-  background:linear-gradient(90deg,var(--accent),var(--accent-2));transform:scaleX(var(--p,0))}
+  background:var(--accent-solid);transform:scaleX(var(--p,0))}
 
 /* ---------------------------------------------------------- theme reveal */
 /* The theme toggle uses the View Transitions API: the new theme spreads as a
@@ -236,7 +277,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 .runner{border-radius:20px;overflow:hidden;background:var(--card);border:1px solid var(--line-2);box-shadow:var(--shadow)}
 .runner-bar{display:flex;align-items:center;gap:12px;height:40px;padding-inline:14px;background:var(--card-2);border-bottom:1px solid var(--line)}
 .runner-bar .dots{display:flex;gap:6px}.runner-bar .dots i{width:9px;height:9px;border-radius:50%;display:block;background:var(--line-2)}
-.runner-cmd{flex:1;min-width:0;font-family:ui-monospace,'InterX',Menlo,monospace;font-size:12px;color:var(--ink-3);direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.runner-cmd{flex:1;min-width:0;font-family:ui-monospace,'PlexLat',Menlo,monospace;font-size:12px;color:var(--ink-3);direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .runner-rerun{display:grid;place-items:center;width:24px;height:24px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-3);cursor:pointer}
 .runner-rerun svg{transform:rotate(45deg)}
 .runner-body{margin:0;padding:10px 6px;list-style:none}
@@ -251,8 +292,8 @@ a:hover .tint,button:hover .tint{opacity:1}
 .runner-text{display:grid;gap:3px;min-width:0}
 .runner-text > span:first-child{font-size:14px;font-weight:700;line-height:1.55;color:var(--ink)}
 .is-pass .runner-text > span:first-child{color:var(--ink-2)}
-.runner-file{font-family:ui-monospace,'InterX',Menlo,monospace;font-size:11px;color:var(--ink-3);direction:ltr;text-align:start;unicode-bidi:isolate}
-.runner-sum{display:flex;gap:16px;align-items:center;padding:10px 16px;border-top:1px solid var(--line);font-family:ui-monospace,'InterX',Menlo,monospace;font-size:12px;color:var(--ink-3);
+.runner-file{font-family:ui-monospace,'PlexLat',Menlo,monospace;font-size:11px;color:var(--ink-3);direction:ltr;text-align:start;unicode-bidi:isolate}
+.runner-sum{display:flex;gap:16px;align-items:center;padding:10px 16px;border-top:1px solid var(--line);font-family:ui-monospace,'PlexLat',Menlo,monospace;font-size:12px;color:var(--ink-3);
   direction:ltr;opacity:0;transition:opacity .4s}
 .runner-sum.is-on{opacity:1}
 .runner-sum .ok{color:var(--ok);font-weight:700}
@@ -284,7 +325,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 .chip-in input{border:0;outline:0;background:transparent;font:inherit;font-size:12.5px;font-weight:700;color:var(--ink);width:15ch;min-width:0}
 .chip-in input::placeholder{color:var(--ink-3);font-weight:400}
 .chip-in button{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;border:0;cursor:pointer;color:#fff;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+  background:var(--accent-solid)}
 .chip-in button:disabled{opacity:.35;cursor:default}
 .chip-x{display:grid;place-items:center;width:18px;height:18px;margin-inline-start:2px;margin-inline-end:-4px;border-radius:50%;
   background:rgba(255,255,255,.22);transition:background .2s}
@@ -339,18 +380,124 @@ a:hover .tint,button:hover .tint{opacity:1}
   transition:background .35s,color .35s,padding .45s cubic-bezier(.22,1,.36,1)}
 .dock-item .dock-label{font-size:12.5px;font-weight:800;max-width:0;opacity:0;overflow:hidden;
   transition:max-width .45s cubic-bezier(.22,1,.36,1),opacity .3s}
-.dock-item[aria-current="true"]{color:#fff;padding:0 14px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+.dock-item[aria-current="true"]{color:var(--on-accent);padding:0 14px;background:var(--accent-solid);
   box-shadow:0 8px 18px -8px color-mix(in srgb, var(--accent) 80%, transparent)}
 .dock-item[aria-current="true"] .dock-label{max-width:120px;opacity:1}
 .dock-item:active{transform:scale(.94)}
 /* The same item language inside the desktop header: a row of icons whose
    names unfold on hover, with the active one held open. */
+/* ------------------------------------------------------------ header pill */
+/* Width rides a variable so the shrink-on-scroll stays inline in the component
+   while a media query can still take the whole rule away. With the rail
+   carrying the sections, the pill has only identity and utilities left to
+   hold, so it stops spanning the page and shrinks to its contents. */
+.hdr-wrap{transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .3s ease}
+.hdr-wrap.is-away{transform:translateY(-140%);opacity:0}
+.hdr-wrap.is-away .hdr{pointer-events:none!important}
+/* Sized by its contents at every width and on every page. The variable is
+   kept for the scroll shrink, as an upper bound rather than a target. */
+.hdr{width:auto;max-width:min(var(--hdr-max),100%)}
+
+/* The pill's contents. Identity on one side, a hairline, then the utilities —
+   so five controls read as two groups instead of a row of look-alike circles.
+   The utilities lose their borders: inside a bordered pill, a border each just
+   draws boxes within a box. */
+.brand{display:flex;align-items:center;gap:9px;padding-inline-end:2px;border-radius:999px}
+.brand-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:999px;
+  color:var(--on-accent);font-size:13px;font-weight:800;background:var(--accent-solid);
+  box-shadow:0 2px 10px -3px color-mix(in srgb,var(--accent) 55%,transparent);
+  transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.brand:hover .brand-mark{transform:rotate(-8deg) scale(1.06)}
+.brand-name{font-size:14.5px;font-weight:800;letter-spacing:.055em;color:var(--ink)}
+/* The one action worth reaching from any scroll position. Filled, so it is
+   the only pressable thing in the bar that looks pressable from a distance. */
+/* Hidden only on the narrowest phones, where it pushed the bar past the
+   viewport and gave the whole page a horizontal scroll — measured at 320px.
+   Everywhere from 360 up it stays, because a phone is exactly where a client
+   wants the one button that starts a conversation. */
+.hdr-cta{display:none;align-items:center;height:34px;padding:0 14px;border-radius:999px;
+  background:var(--accent-solid);color:var(--on-accent);font-size:13px;font-weight:800;
+  white-space:nowrap;transition:transform .2s cubic-bezier(.2,.8,.2,1),filter .2s ease}
+.hdr-cta:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.hdr-cta:active{transform:translateY(0) scale(.97)}
+@media (min-width:360px){.hdr-cta{display:inline-flex}}
+
+.hdr-sep{width:1px;height:20px;background:var(--line-2);margin-inline:5px 3px;flex:none}
+
+.icon-btn{display:grid;place-items:center;width:36px;height:36px;border-radius:999px;flex:none;
+  color:var(--ink-2);background:transparent;border:0;cursor:pointer;
+  transition:background .2s ease,color .2s ease,transform .2s cubic-bezier(.2,.8,.2,1)}
+.icon-btn:hover{background:var(--card-2);color:var(--ink)}
+.icon-btn:active{transform:scale(.93)}
+
+/* A segmented switch, not a second badge. The brand mark is the one gradient
+   in the pill and should stay that way — the lit half here reads as *selected*
+   through the accent tint, which also survives the theme flip, where a
+   card-coloured thumb would go darker than its own track. Arabic sits at a
+   larger size than the Latin cap: 11.5px caps and 11.5px `ع` are not the same
+   optical weight, and the switch has to look like one control. */
+.lang-seg{display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;
+  background:var(--card-2);border:1px solid var(--line);flex:none}
+.lang-on,.lang-off{display:grid;place-items:center;min-width:32px;height:26px;padding:0 7px;
+  border-radius:999px;font-size:13.5px;font-weight:800;line-height:1;
+  transition:background .2s ease,color .2s ease}
+.lang-on.lat,.lang-off.lat{font-size:11.5px;letter-spacing:.04em}
+.lang-on{color:var(--ink);background:var(--accent-soft);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 32%,transparent)}
+.lang-off{color:var(--ink-3)}
+.lang-off:hover{color:var(--ink);background:var(--card)}
+
+/* ------------------------------------------------------------ section rail */
+/* Sits in the gutter `.wrap` already leaves. That gutter is the centring space
+   plus the wrap's own padding, so it only opens up once the viewport passes
+   the 1200px content width: at 1280 it is 84px and the rail ends at 50px, at
+   1024 it was 41px against a 32px rail — a 1px miss, measured, not guessed.
+   Hence 1280. Below it the rail is gone and the top bar shows its section nav
+   again. The dot grows into a bar for the section in view — the one mark that
+   maps scroll position to a place. */
+/* Pinned to the page edge, not the content column: the rail belongs to the
+   window the reader is looking through, and holds still while the column
+   under it changes width. The inset grows a little with the viewport so it
+   never looks stuck to the glass on a large screen. */
+.rail{position:fixed;inset-inline-start:clamp(10px,1.6vw,26px);top:50%;transform:translateY(-50%);z-index:45;
+  display:none;flex-direction:column;align-items:center;gap:15px;padding:14px 4px}
+@media (min-width:1280px){.rail{display:flex}}
+/* A measuring scale, not a row of slider dots. A gradient on a 7×24px chip
+   never reads as a gradient — it reads as a blue smudge — so the state is
+   carried by length and weight instead, and the whole rail goes monochrome.
+   That also puts the accent back where it earns its keep: on things you can
+   press. Ticks grow inward off the line, so the marks form a rhythm the eye
+   can measure rather than five identical circles. */
+.rail-track{position:absolute;inset-block:0;inset-inline-start:0;width:1px;background:var(--line-2)}
+/* The travelled part of the page, on the same line the sections sit on. */
+.rail-fill{position:absolute;inset-block:0;inset-inline-start:0;width:1px;background:var(--ink-2);
+  transform:scaleY(var(--p,0));transform-origin:top;opacity:.75}
+.rail-item{position:relative;display:flex;align-items:center;height:22px;padding-inline-end:26px;
+  border-radius:3px}
+.rail-tick{width:9px;height:1.5px;border-radius:2px;background:var(--ink-3);opacity:.55;
+  transition:width .34s cubic-bezier(.2,.8,.2,1),height .2s ease,opacity .2s ease,background .2s ease}
+.rail-item:hover .rail-tick,.rail-item:focus-visible .rail-tick{width:16px;opacity:1;background:var(--ink-2)}
+.rail-item[aria-current="true"] .rail-tick{width:26px;height:2px;opacity:1;background:var(--ink)}
+.rail-item:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+/* The name is in the markup at all times for screen readers and unfolds
+   towards the content, clear of the longest tick so it never shifts. */
+.rail-label{position:absolute;inset-inline-start:34px;white-space:nowrap;
+  padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card);
+  color:var(--ink);font-size:12.5px;font-weight:800;box-shadow:var(--shadow);
+  opacity:0;transform:scale(.92);pointer-events:none;
+  transition:opacity .18s ease,transform .18s cubic-bezier(.2,.8,.2,1)}
+.rail-item:hover .rail-label,.rail-item:focus-visible .rail-label,
+.rail.is-speaking .rail-item[aria-current="true"] .rail-label{opacity:1;transform:scale(1)}
+/* Two progress readouts on one screen is one too many: where the rail is
+   drawn, the hairline at the top of the window stands down. */
+@media (min-width:1280px){body:has(.rail) .progress{opacity:0}}
+
 .nav-dock{align-items:center;gap:2px;padding:3px;border-radius:999px;background:var(--card-2);border:1px solid var(--line)}
 .nav-dock .dock-item{height:36px;padding:0 10px;color:var(--ink-2)}
 .nav-dock .dock-item:hover{background:var(--card);color:var(--ink)}
 .nav-dock .dock-item:hover .dock-label,.nav-dock .dock-item:focus-visible .dock-label{max-width:120px;opacity:1}
 .nav-dock .dock-item:hover,.nav-dock .dock-item:focus-visible{padding:0 12px}
-.nav-dock .dock-item[aria-current="true"]{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+.nav-dock .dock-item[aria-current="true"]{color:var(--on-accent);background:var(--accent-solid)}
 .nav-dock .dock-item[aria-current="true"]:hover{color:#fff}
 
 /* Keep the back-to-top button clear of the dock on phones. */
@@ -393,16 +540,16 @@ a:hover .tint,button:hover .tint{opacity:1}
 .pipe .node span{font-size:11px;font-weight:700;color:var(--ink-2);white-space:nowrap}
 .pipe .wire{position:relative;height:2px;min-width:40px;margin-bottom:22px;background:var(--line-2);border-radius:2px;overflow:hidden}
 .pipe .wire::after{content:'';position:absolute;top:0;bottom:0;width:38%;border-radius:2px;
-  background:linear-gradient(90deg,transparent,var(--accent),var(--accent-2),transparent);animation:wire 2.2s linear infinite}
+  background:linear-gradient(90deg,transparent,var(--accent-solid),transparent);animation:wire 2.2s linear infinite}
 .pipe .wire:nth-of-type(4)::after{animation-delay:1.1s}
 @keyframes wire{from{inset-inline-start:-40%}to{inset-inline-start:100%}}
-[dir="rtl"] .pipe .wire::after{background:linear-gradient(270deg,transparent,var(--accent),var(--accent-2),transparent)}
+[dir="rtl"] .pipe .wire::after{background:linear-gradient(270deg,transparent,var(--accent-solid),transparent)}
 @media (prefers-reduced-motion:reduce){.pipe .wire::after{animation:none;inset-inline-start:31%}}
 
 /* Code tile */
 .code{margin:12px 0 0;padding:14px 16px;border-radius:14px;direction:ltr;text-align:left;overflow:auto;
-  font:12.5px/1.65 ui-monospace,'InterX',Menlo,monospace;color:var(--ink-2);background:var(--card-2);border:1px solid var(--line)}
-.code .k{color:var(--accent-2);font-weight:700}.code .f{color:var(--accent-ink)}.code .c{color:var(--ink-3);font-style:italic}.code .s{color:var(--accent-3)}
+  font:12.5px/1.65 ui-monospace,'PlexLat',Menlo,monospace;color:var(--ink-2);background:var(--card-2);border:1px solid var(--line)}
+.code .k{color:var(--accent-2);font-weight:700}.code .f{color:var(--accent-ink)}.code .c{color:var(--ink-3);font-style:italic}.code .s{color:var(--code-string)}
 
 /* Clock digits flip softly on change */
 .clock{font-variant-numeric:tabular-nums;letter-spacing:.02em}
@@ -410,12 +557,12 @@ a:hover .tint,button:hover .tint{opacity:1}
 /* Direction demo lines */
 .dir-demo{display:grid;gap:6px;margin-top:12px}
 .dir-demo i{display:block;height:8px;border-radius:999px;background:var(--line-2)}
-.dir-demo i.a{background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+.dir-demo i.a{background:var(--accent-solid)}
 
 /* ---------------------------------------------------------- skill bars */
 .bar{height:8px;border-radius:999px;background:var(--card-2);border:1px solid var(--line);overflow:hidden}
 .bar i{display:block;height:100%;border-radius:999px;width:var(--w,0%);
-  background:linear-gradient(90deg,var(--accent),var(--accent-2));transform:scaleX(0);transform-origin:inline-start;
+  background:var(--accent-solid);transform:scaleX(0);transform-origin:inline-start;
   transition:transform 1.1s cubic-bezier(.22,1,.36,1)}
 .seen .bar i,.no-anim .bar i{transform:none}
 @media (prefers-reduced-motion:reduce){.bar i{transform:none}}
@@ -424,20 +571,23 @@ a:hover .tint,button:hover .tint{opacity:1}
 .seg{display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:var(--card-2);border:1px solid var(--line)}
 .seg button{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;font:inherit;font-size:13px;
   font-weight:700;color:var(--ink-2);background:transparent;border:0;cursor:pointer;white-space:nowrap;transition:background .25s,color .25s,box-shadow .25s}
-.seg button[aria-pressed="true"]{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+.seg button[aria-pressed="true"]{color:var(--on-accent);background:var(--accent-solid);
   box-shadow:0 6px 16px -8px color-mix(in srgb, var(--accent) 80%, transparent)}
-.seg .n{font-size:11px;font-weight:700;opacity:.75;font-family:'InterX',monospace}
+.seg .n{font-size:11px;font-weight:700;opacity:.75;font-family:'PlexLat',monospace}
 
 /* Desktop shot: browser chrome with the page path in the address pill. */
 .shot{display:block;width:100%;text-align:start;border-radius:18px;overflow:hidden;border:1px solid var(--line-2);
   background:var(--card);box-shadow:var(--shadow);cursor:zoom-in;
   transition:transform .5s cubic-bezier(.22,1,.36,1),box-shadow .5s,border-color .3s}
 .shot:hover{transform:translateY(-4px);box-shadow:var(--glow);border-color:color-mix(in srgb, var(--accent) 45%, var(--line-2))}
+/* The tour frames are read, not opened, so they do not offer to lift. */
+.shot.is-static{cursor:default}
+.shot.is-static:hover{transform:none;box-shadow:var(--shadow);border-color:var(--line-2)}
 .shot .chrome{display:flex;align-items:center;gap:8px;height:34px;padding-inline:12px;background:var(--card-2);border-bottom:1px solid var(--line)}
 .shot .chrome i{width:9px;height:9px;border-radius:50%;display:block}
 .shot .chrome i:nth-child(1){background:#FF5F57}.shot .chrome i:nth-child(2){background:#FEBC2E}.shot .chrome i:nth-child(3){background:#28C840}
 .shot .url{margin-inline-start:8px;flex:1;min-width:0;height:20px;line-height:20px;padding-inline:10px;border-radius:6px;
-  font-family:'InterX',monospace;font-size:11px;direction:ltr;text-align:left;color:var(--ink-3);background:var(--bg);
+  font-family:'PlexLat',monospace;font-size:11px;direction:ltr;text-align:left;color:var(--ink-3);background:var(--bg);
   border:1px solid var(--line);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .shot .pic{position:relative;overflow:hidden;background:var(--bg-2)}
 .shot .pic img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center;
@@ -515,6 +665,12 @@ a:hover .tint,button:hover .tint{opacity:1}
 .field:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
 .field[aria-invalid="true"]{border-color:#E11D48;background:color-mix(in srgb, #E11D48 4%, var(--card-2))}
 .field[aria-invalid="true"]:focus{box-shadow:0 0 0 4px color-mix(in srgb, #E11D48 18%, transparent)}
+/* A field's name belongs above it, not inside it. A placeholder disappears at
+   the moment the writer needs it most, and it is not a name a screen reader can
+   rely on — so the label is a real one and the placeholder is gone rather than
+   saying the same words twice. */
+.flabel{display:block;margin-bottom:6px;font-size:12.5px;font-weight:700;color:var(--ink-2)}
+
 .fwrap{position:relative}
 .fwrap .fmark{position:absolute;top:13px;inset-inline-end:12px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;
   pointer-events:none;animation:lb-fade .3s cubic-bezier(.22,1,.36,1) both}

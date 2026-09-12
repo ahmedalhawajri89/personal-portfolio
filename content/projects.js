@@ -4,6 +4,9 @@
 export const PROJECTS = [
   {
     slug: 'diwan',
+    // The eight screens the case study actually argues about; the rest of
+    // the capture set stays available behind the full gallery.
+    tour: ['home', 'catalogue', 'product', 'rooms', 'cart', 'checkout', 'adm-dash', 'adm-orders'],
     shots: 'diwan',
     cover: 'catalogue',
     year: '2026',
@@ -63,6 +66,9 @@ export const PROJECTS = [
 
   {
     slug: 'booking',
+    // The eight screens the case study actually argues about; the rest of
+    // the capture set stays available behind the full gallery.
+    tour: ['home', 'book', 'lookup', 'board', 'calendar', 'bookings', 'analytics', 'customers'],
     shots: 'booking',
     cover: 'board',
     year: '2026',
@@ -123,6 +129,9 @@ export const PROJECTS = [
 
   {
     slug: 'takharruj',
+    // The eight screens the case study actually argues about; the rest of
+    // the capture set stays available behind the full gallery.
+    tour: ['home', 'dash', 'students', 'groups', 'sup-dash', 'sup-project', 'stu-dash', 'stu-explore'],
     shots: 'grad',
     cover: 'students',
     year: '2026',
@@ -182,6 +191,9 @@ export const PROJECTS = [
 
   {
     slug: 'kafala',
+    // The eight screens the case study actually argues about; the rest of
+    // the capture set stays available behind the full gallery.
+    tour: ['home', 'orphans', 'orphan', 'transparency', 'checkout', 'portal', 'adm-dash', 'adm-disburse'],
     shots: 'kafala',
     cover: 'home',
     year: '2026',
@@ -242,6 +254,9 @@ export const PROJECTS = [
 
   {
     slug: 'mawaheb',
+    // The eight screens the case study actually argues about; the rest of
+    // the capture set stays available behind the full gallery.
+    tour: ['home', 'discover', 'search', 'profile', 'opp', 'dash', 'portfolio', 'scout-opps'],
     shots: 'mawaheb',
     cover: 'discover',
     year: '2026',

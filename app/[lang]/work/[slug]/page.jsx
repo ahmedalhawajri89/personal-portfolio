@@ -1,7 +1,7 @@
 import { LANGS, T } from '../../../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../../../content/projects';
 import { STORIES } from '../../../../content/stories';
-import { shotsOf, coverOf, pagesOf } from '../../../../lib/shots';
+import { shotsOf, coverOf, pagesOf, tourOf } from '../../../../lib/shots';
 import { Nav, Dock, Footer, Reveal, ScrollProgress, CursorGlow, BackToTop } from '../../../../components/Chrome';
 import Gallery from '../../../../components/Gallery';
 import Icon from '../../../../components/Icons';
@@ -39,6 +39,7 @@ export default async function Project({ params }) {
   const cover = coverOf(p, lang);
   const pages = pagesOf(p.shots);
   const story = STORIES[p.slug]?.[lang];
+  const tour = tourOf(p, lang);
 
   return (
     <>
@@ -126,14 +127,63 @@ export default async function Project({ params }) {
               </div>
             </div>
 
+            {/* Eight screens between the problem and the answer. A reader who
+                has just been told what was wrong should see the thing before
+                being told how it was fixed — and forty screenshots at equal
+                weight is an archive, not an argument. The archive is still
+                there, one button down. */}
+            {tour.length > 0 && (
+              <div className="mt-6">
+                <p className="eyebrow w-fit">{d.product.eyebrow}</p>
+                <h2 className="mt-4 text-[clamp(24px,3.4vw,34px)] font-extrabold tracking-tight">{d.product.h}</h2>
+                <p className="mt-3 max-w-[62ch] text-[16px] leading-[1.85]" style={{ color: 'var(--ink-2)' }}>{d.product.lede}</p>
+                <ul className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                  {tour.map((sh, i) => {
+                    const band = i === 0 || i === tour.length - 1;
+                    return (
+                    <li key={sh.file} className={band ? 'lg:col-span-2' : undefined}>
+                      <figure>
+                        <div className="shot is-static">
+                          <span className="chrome"><i /><i /><i /><span className="url">{sh.path}</span></span>
+                          <span className="pic block" style={{ aspectRatio: band ? '21 / 9' : '16 / 10' }}>
+                            {/* The 1600px capture is offered from `lg` up only.
+                                A plain srcset hands a 3x phone the full file for
+                                all eight screens — 549KB where the 960px
+                                thumbnail is already 2.5x on a 390px slot. */}
+                            <picture>
+                              <source media="(min-width:1024px)"
+                                      srcSet={`/shots/${p.shots}/${sh.thumb} ${sh.tw}w, /shots/${p.shots}/${sh.file} ${sh.w}w`}
+                                      sizes={band ? '1150px' : '570px'} />
+                              <img
+                                src={`/shots/${p.shots}/${sh.thumb}`}
+                                alt={`${c.name} — ${ar ? sh.labelAr : sh.labelEn}`}
+                                width={sh.tw} height={sh.th}
+                                loading={i < 2 ? 'eager' : 'lazy'} decoding="async" />
+                            </picture>
+                          </span>
+                        </div>
+                        <figcaption className="mt-3 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+                          <span className="lat text-[12px] font-bold" style={{ color: 'var(--ink-3)' }}>
+                            {String(i + 1).padStart(2, '0')}
+                          </span>
+                          <span className="text-[15px] font-extrabold">{ar ? sh.labelAr : sh.labelEn}</span>
+                          <span className="mono text-[12px]" style={{ color: 'var(--ink-3)' }}>{sh.path}</span>
+                        </figcaption>
+                      </figure>
+                    </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+
             {/* The solution, in numbered steps. */}
             <div>
               <h2 className="mt-6 text-[clamp(24px,3.4vw,34px)] font-extrabold tracking-tight">{d.story.solution}</h2>
               <ol className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
                 {story.solution.map((x, i) => (
                   <li key={x.h} className="card hover-lift rise flex flex-col p-6" style={{ '--i': i }}>
-                    <span className="lat grid h-9 w-9 place-items-center rounded-full text-[13px] font-extrabold text-white"
-                          style={{ background: 'linear-gradient(135deg,var(--accent),var(--accent-2))' }}>{String(i + 1).padStart(2, '0')}</span>
+                    <span className="on-accent lat grid h-9 w-9 place-items-center rounded-full text-[13px] font-extrabold">{String(i + 1).padStart(2, '0')}</span>
                     <h3 className="mt-4 text-[18px] font-extrabold leading-snug">{x.h}</h3>
                     <p className="mt-2.5 text-[15px] leading-[1.85]" style={{ color: 'var(--ink-2)' }}>{x.b}</p>
                   </li>
@@ -160,7 +210,9 @@ export default async function Project({ params }) {
         )}
 
         {/* ------------------------------------------------------ gallery */}
-        <Gallery lang={lang} project={p.shots} data={data} />
+        {/* The complete capture set, kept as evidence rather than as the
+            argument — folded away so the tour above is what the page says. */}
+        <Gallery lang={lang} project={p.shots} data={data} collapsible />
 
         {/* --------------------------------------------------- next project */}
         <nav className="mt-24">
@@ -171,8 +223,7 @@ export default async function Project({ params }) {
                 {next[lang].name} <span style={{ color: 'var(--ink-3)' }}>— {next[lang].kind}</span>
               </span>
             </span>
-            <span className="grid h-12 w-12 place-items-center rounded-full text-white transition-transform group-hover:scale-110"
-                  style={{ background: 'linear-gradient(135deg,var(--accent),var(--accent-2))' }} aria-hidden="true">
+            <span className="on-accent grid h-12 w-12 place-items-center rounded-full transition-transform group-hover:scale-110" aria-hidden="true">
               <Icon name={ar ? 'arrowLeft' : 'arrowRight'} size={20} />
             </span>
           </a>

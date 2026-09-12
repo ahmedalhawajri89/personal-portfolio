@@ -64,6 +64,12 @@ export default async function RootLayout({ children, params }) {
     <html lang={lang} dir={t.dir} suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#F6F7FB" />
+        {/* The two cuts every page paints with, for the language it is in.
+            Plex Arabic is four times Tajawal's weight, so the text would sit
+            in the fallback face noticeably longer without this. */}
+        {(lang === 'ar' ? ['plex-arabic-400', 'plex-arabic-700'] : ['plex-latin-400', 'plex-latin-700']).map((f) => (
+          <link key={f} rel="preload" as="font" type="font/woff2" href={`/fonts/${f}.woff2`} crossOrigin="anonymous" />
+        ))}
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />
         <script
           type="application/ld+json"

@@ -17,10 +17,8 @@ export function CvButton({ lang, variant = 'ghost', compact = false }) {
   return (
     <>
       {compact ? (
-        <button onClick={() => setOpen(true)} aria-label={t.btn} title={t.btn}
-                className="grid h-9 w-9 place-items-center rounded-full border transition-all hover:scale-105 active:scale-95"
-                style={{ borderColor: 'var(--line)', color: 'var(--ink-2)', background: 'var(--card-2)' }}>
-          <Icon name="fileText" size={15} />
+        <button onClick={() => setOpen(true)} aria-label={t.btn} title={t.btn} className="icon-btn">
+          <Icon name="fileText" size={16} />
         </button>
       ) : (
         <button onClick={() => setOpen(true)} className={`btn btn-${variant}`}>

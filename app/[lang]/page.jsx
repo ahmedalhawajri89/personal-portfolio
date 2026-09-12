@@ -1,8 +1,8 @@
 import { LANGS, T } from '../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../content/projects';
-import { SERVICES, SKILLS, CORE, PROCESS, TIMELINE, SKILL_ROWS, TRAITS, TESTIMONIALS, HERO_TESTS } from '../../content/site';
+import { SERVICES, SKILLS, CORE, CAPABILITIES, PROCESS, TIMELINE, SKILL_ROWS, TESTIMONIALS, HERO_TESTS } from '../../content/site';
 import { shotsOf, coverOf, pagesOf } from '../../lib/shots';
-import { Nav, Dock, Footer, Reveal, ScrollProgress, CursorGlow, Tilt, ContactForm, BackToTop, TimelineScroll, LiveClock, TestRunner } from '../../components/Chrome';
+import { Nav, Dock, Footer, Reveal, ScrollProgress, CursorGlow, ContactForm, BackToTop, TimelineScroll, LiveClock, TestRunner } from '../../components/Chrome';
 import Marquee from '../../components/Marquee';
 import Icon from '../../components/Icons';
 import { CvButton } from '../../components/CvPanel';
@@ -66,12 +66,19 @@ export default async function Home({ params }) {
             </span>
           </p>
 
-          <p className="mt-8 text-[16px] font-bold" style={{ color: 'var(--ink-3)' }}>{t.hero.hi}</p>
-          {/* Solid ink. The name is the loudest thing on the page and needs no gradient to be so. */}
-          <h1 className="mt-1 text-[clamp(40px,6.4vw,74px)] font-extrabold leading-[1.08] tracking-tight" style={{ color: 'var(--ink)', textWrap: 'balance' }}>
+          {/* The name is a label; the headline is the offer. Someone who has
+              never heard of me needs to know what gets built before they need
+              to know who builds it — and the name is on the bar, in the footer
+              and in the page title anyway. Two lines with the second lighter,
+              so the promise and its reach read as one sentence with a hinge. */}
+          <p className="mt-8 text-[14px] font-bold tracking-[.14em]" style={{ color: 'var(--ink-3)' }}>
             {PROFILE.name[lang]}
+          </p>
+          <h1 className="mt-3 text-[clamp(29px,3.9vw,44px)] font-extrabold leading-[1.2] tracking-tight" style={{ color: 'var(--ink)' }}>
+            <span className="block" style={{ textWrap: 'balance' }}>{t.hero.h1a}</span>
+            <span className="block font-bold" style={{ color: 'var(--ink-2)', textWrap: 'balance' }}>{t.hero.h1b}</span>
           </h1>
-          <p className="lat mt-4 text-[13px] font-bold tracking-[.12em]" style={{ color: 'var(--accent-ink)' }}>{t.hero.roleLine}</p>
+          <p className="lat mt-5 text-[13px] font-bold tracking-[.12em]" style={{ color: 'var(--accent-ink)' }}>{t.hero.roleLine}</p>
 
           <p className="mt-6 max-w-[56ch] text-[17px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>
             {PROFILE.lede[lang]}
@@ -118,71 +125,244 @@ export default async function Home({ params }) {
       </div>
 
       {/* ---------------------------------------------------------- work */}
+      {/* Five projects at one size is a contact sheet, not an exhibition: it
+          tells a visitor that nothing here is worth more than anything else.
+          Three layouts instead — a lead with the image full width above it,
+          two features with the image beside the text (mirrored, so the page
+          does not march), and a pair of halves between them. Diwan leads
+          because it is the one whose product idea a non-technical client
+          understands in a sentence. The lead is also the tallest card: a
+          21:9 band across the full column outranks a 4:3 beside text. */}
       <section id="work" className="wrap scroll-mt-24 pt-24 sm:pt-28">
         <SectionHead eyebrow={t.work.eyebrow} h={t.work.h} lede={t.work.lede} />
-        <ul className="grid grid-cols-1 gap-7 md:grid-cols-2">
+        <ol className="grid gap-7 lg:grid-cols-2">
           {live.map((p, i) => {
-            const shots = shotsOf(p.shots).shots;
-            const cv = cover(p);
             const c = p[lang];
+            const cv = cover(p);
+            const shots = shotsOf(p.shots).shots.length;
             const pages = pagesOf(p.shots);
+            const layout = i === 0 ? 'lead' : (i === 1 || i === 4) ? 'side' : 'half';
+            const wide = layout !== 'half';
+            const flip = i === 4;                                   // the closer mirrors the opener
+            const num = String(i + 1).padStart(2, '0');
+            const ratio = layout === 'lead' ? '21 / 9' : layout === 'side' ? '4 / 3' : '16 / 10';
+
+            // The 960px thumbnail and the 1600px capture are the same top crop,
+            // so either can fill the frame. The larger one is offered only from
+            // `lg` up: a phone slot is 390px, where 960 is already 2.5x, and a
+            // plain srcset would hand a 3x phone the 1600px file five times
+            // over — measured at 360KB against 120KB for the same picture.
+            const img = (
+              <picture>
+                <source media="(min-width:1024px)"
+                        srcSet={`/shots/${p.shots}/${cv.thumb} ${cv.tw}w, /shots/${p.shots}/${cv.file} ${cv.w}w`}
+                        sizes={layout === 'lead' ? '1100px' : '560px'} />
+                <img
+                  src={`/shots/${p.shots}/${cv.thumb}`}
+                  alt={`${c.name} — ${c.kind}`}
+                  width={cv.tw} height={cv.th}
+                  loading={i === 0 ? 'eager' : 'lazy'} fetchPriority={i === 0 ? 'high' : undefined} decoding="async"
+                  className="block w-full"
+                  style={{ aspectRatio: ratio, objectFit: 'cover', objectPosition: 'top center' }}
+                />
+              </picture>
+            );
+
+            const frame = (extra = '') => (
+              <div className={`zoom relative m-3 overflow-hidden rounded-[16px] border ${extra}`} style={{ borderColor: 'var(--line)' }}>
+                {img}
+                <span className="tint" />
+                <span className="glass lat absolute top-3 px-2.5 py-1 text-[11.5px] font-bold"
+                      style={{ insetInlineStart: 12, borderRadius: 999 }}>{num}</span>
+              </div>
+            );
+
+            const body = (
+              <div className={`flex flex-1 flex-col gap-5 px-6 pb-6 ${layout === 'side' ? 'pt-6 lg:justify-center' : 'pt-2'}${layout === 'lead' ? ' lg:flex-row lg:items-end lg:gap-10' : ''}`}>
+                <div className={layout === 'lead' ? 'lg:flex-1' : undefined}>
+                  <p className="text-[13px] font-bold" style={{ color: 'var(--accent-ink)' }}>{c.kind}</p>
+                  <h3 className={`mt-1 font-extrabold tracking-tight ${layout === 'lead' ? 'text-[clamp(26px,3.4vw,38px)]' : layout === 'side' ? 'text-[26px]' : 'text-[23px]'}`}>{c.name}</h3>
+                  <p className={`mt-2 leading-[1.8] ${layout === 'half' ? 'text-[15.5px]' : 'max-w-[52ch] text-[16.5px]'}`} style={{ color: 'var(--ink-2)' }}>
+                    {c.tagline}
+                  </p>
+                </div>
+                <div className={`flex flex-col gap-3.5${layout === 'lead' ? ' lg:items-end lg:text-end' : ''}`}>
+                  <p className="mono flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[12px]" style={{ color: 'var(--ink-3)' }}>
+                    <span className="lat">{p.year}</span>
+                    <span aria-hidden="true">·</span>
+                    <span><span className="lat">{pages}</span> {t.work.pages}</span>
+                    <span aria-hidden="true">·</span>
+                    <span><span className="lat">{shots}</span> {t.work.shots}</span>
+                  </p>
+                  <ul className="mono flex flex-wrap gap-1.5">
+                    {p.stack.slice(0, layout === 'half' ? 4 : 6).map((x) => (
+                      <li key={x} className="chip px-2.5 py-1 text-[11.5px]">{x}</li>
+                    ))}
+                  </ul>
+                  <p className="arrow-slide inline-flex items-center gap-1.5 text-[14.5px] font-bold"
+                     style={{ color: 'var(--accent-ink)' }}>
+                    {t.work.open} <Icon name={arrow} size={15} />
+                  </p>
+                </div>
+              </div>
+            );
+
             return (
-              <li key={p.slug} className={i > 0 ? 'rise' : undefined} style={{ '--i': i % 2 }}>
-                <Tilt className="card hover-lift h-full overflow-hidden">
-                  <a href={`/${lang}/work/${p.slug}/`} className="group flex h-full flex-col">
-                    <div className="zoom relative m-3 overflow-hidden rounded-[16px] border" style={{ borderColor: 'var(--line)' }}>
-                      <img src={`/shots/${p.shots}/${cv.thumb}`} alt={c.name} width={cv.tw} height={cv.th}
-                           loading={i === 0 ? 'eager' : 'lazy'} fetchPriority={i === 0 ? 'high' : undefined} decoding="async"
-                           className="block w-full"
-                           style={{ aspectRatio: '16 / 10', objectFit: 'cover', objectPosition: 'top center' }} />
-                      <span className="tint" />
-                      <span className="absolute bottom-3 grid h-11 w-11 place-items-center rounded-full text-white opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:-translate-y-1"
-                            style={{ insetInlineEnd: 12, background: 'rgba(15,18,34,.55)', border: '1px solid rgba(255,255,255,.3)', backdropFilter: 'blur(10px)' }}>
-                        <Icon name={arrow} size={18} />
-                      </span>
-                      <span className="absolute top-3 flex items-center gap-2" style={{ insetInlineStart: 12 }}>
-                        <span className="glass lat px-2.5 py-1 text-[11.5px] font-bold" style={{ borderRadius: 999 }}>{p.year}</span>
-                        <span className="glass px-2.5 py-1 text-[11.5px] font-bold" style={{ borderRadius: 999 }}>
-                          {shots.length} {t.work.shots} · {pages} {t.work.pages}
-                        </span>
-                      </span>
+              <li key={p.slug} className={`${wide ? 'lg:col-span-2 ' : ''}${i > 0 ? 'rise ' : ''}min-w-0`} style={{ '--i': i % 2 }}>
+                <a href={`/${lang}/work/${p.slug}/`} className="card hover-lift group block h-full overflow-hidden">
+                  {layout === 'side' ? (
+                    <div className="grid h-full lg:grid-cols-[1.02fr_.98fr]">
+                      {frame(flip ? 'lg:order-2' : '')}
+                      <div className={`flex ${flip ? 'lg:order-1' : ''}`}>{body}</div>
                     </div>
-                    <div className="flex flex-1 flex-col px-6 pb-6 pt-2">
-                      <p className="text-[13px] font-bold" style={{ color: 'var(--accent-ink)' }}>{c.kind}</p>
-                      <h3 className="mt-1 text-[24px] font-extrabold tracking-tight">{c.name}</h3>
-                      <p className="mt-2 text-[15.5px] leading-[1.8]" style={{ color: 'var(--ink-2)' }}>{c.tagline}</p>
-                      <ul className="mono mt-4 flex flex-wrap gap-1.5">
-                        {p.stack.slice(0, 5).map((s) => (
-                          <li key={s} className="chip px-2.5 py-1 text-[11.5px]">{s}</li>
-                        ))}
-                      </ul>
-                      <p className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[14.5px] font-bold transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1"
-                         style={{ color: 'var(--accent-ink)' }}>
-                        {t.work.open} <Icon name={arrow} size={15} />
+                  ) : (
+                    <div className="flex h-full flex-col">{frame()}{body}</div>
+                  )}
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+
+      {/* ------------------------------------------------------- process */}
+      <section id="process" className="wrap scroll-mt-24 pt-24 sm:pt-28">
+        <SectionHead eyebrow={t.process.eyebrow} h={t.process.h} center />
+        <div className="tl">
+          <span className="tl-head" aria-hidden="true" />
+          <ol className="grid gap-8 lg:gap-10">
+            {PROCESS[lang].map((p, i) => {
+              const side = i % 2 === 0;
+              return (
+                <li key={p.h} className="relative rise" style={{ '--i': i % 2 }}>
+                  <span className="tl-dot" />
+                  <div className={`ps-14 lg:w-1/2 lg:ps-0 ${side ? 'lg:pe-14' : 'lg:ms-auto lg:ps-14'}`}>
+                    <div className="card hover-lift p-6">
+                      <p className="lat text-[12px] font-bold tracking-widest" style={{ color: 'var(--accent-ink)' }}>
+                        {String(i + 1).padStart(2, '0')}
                       </p>
+                      <h3 className="mt-1.5 text-[19px] font-extrabold">{p.h}</h3>
+                      <p className="mt-2 text-[15px] leading-[1.8]" style={{ color: 'var(--ink-2)' }}>{p.b}</p>
                     </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </section>
+
+      {/* --------------------------------------------------- engineering proof */}
+      {/* The runner in the hero shows the rules passing; this is the index of
+          what they are. Same six tests, read rather than watched: the rule in
+          plain language, the file that holds it, and the project it guards. */}
+      <section id="proof" className="wrap scroll-mt-24 pt-24 sm:pt-28">
+        <SectionHead eyebrow={t.proof.eyebrow} h={t.proof.h} lede={t.proof.lede} />
+        <div className="card overflow-hidden">
+          <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b px-6 py-5" style={{ borderColor: 'var(--line)' }}>
+            <span className="lat text-[30px] font-extrabold leading-none tracking-tight">{HERO_TESTS.length}/{HERO_TESTS.length}</span>
+            <span className="text-[14px] font-bold" style={{ color: 'var(--ink-2)' }}>{t.proof.count}</span>
+          </p>
+          <ul>
+            {HERO_TESTS.map((x) => {
+              const owner = PROJECTS.find((pr) => pr.slug === x.project || pr.shots === x.project);
+              return (
+                <li key={x.file} className="border-b last:border-0" style={{ borderColor: 'var(--line)' }}>
+                  <a href={owner ? `/${lang}/work/${owner.slug}/` : undefined}
+                     className="group flex flex-col gap-2 px-6 py-4 transition-colors hover:bg-[var(--card-2)] sm:flex-row sm:items-center sm:gap-6">
+                    <span className="flex min-w-0 flex-1 items-start gap-3.5">
+                      <span className="mt-1 shrink-0" style={{ color: 'var(--accent-ink)' }} aria-hidden="true">
+                        <Icon name="check" size={16} />
+                      </span>
+                      <span className="text-[15.5px] font-bold leading-[1.7]">{x[lang]}</span>
+                    </span>
+                    <span className="flex shrink-0 items-center gap-2.5 ps-8 sm:ps-0">
+                      <span className="mono text-[12px]" style={{ color: 'var(--ink-3)' }}>{x.file}</span>
+                      {owner && (
+                        <span className="chip px-2.5 py-1 text-[11.5px] font-bold">{owner[lang].name}</span>
+                      )}
+                      {owner && (
+                        <span className="opacity-0 transition-opacity group-hover:opacity-100"
+                              style={{ color: 'var(--ink-3)' }} aria-hidden="true">
+                          <Icon name={arrow} size={15} />
+                        </span>
+                      )}
+                    </span>
                   </a>
-                </Tilt>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------ services */}
+      {/* Named the way a client names the thing they need, not the way a stack
+          names itself — and each one cites the project that already does it.
+          A service with a case study behind it is a claim somebody can check. */}
+      <section id="services" className="wrap scroll-mt-24 pt-24 sm:pt-28">
+        <SectionHead eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} center />
+        <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {SERVICES.map((sv, i) => {
+            const proof = sv.proof ? PROJECTS.find((x) => x.slug === sv.proof) : null;
+            return (
+              <li key={sv.icon + i} className="rise" style={{ '--i': i % 3 }}>
+                <div className="card hover-lift flex h-full flex-col p-6">
+                  <span className="icon-tile"><Icon name={sv.icon} size={20} /></span>
+                  <h3 className="mt-5 text-[18px] font-extrabold leading-snug">{sv[lang].h}</h3>
+                  <p className="mt-2.5 text-[15px] leading-[1.8]" style={{ color: 'var(--ink-2)' }}>{sv[lang].b}</p>
+                  {proof && (
+                    <a href={`/${lang}/work/${proof.slug}/`}
+                       className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[13.5px] font-bold hover:underline"
+                       style={{ color: 'var(--accent-ink)' }}>
+                      {t.services.proof} {proof[lang].name} <Icon name={arrow} size={14} />
+                    </a>
+                  )}
+                </div>
               </li>
             );
           })}
         </ul>
       </section>
 
-      {/* ------------------------------------------------------ services */}
-      <section id="services" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-        <SectionHead eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} center />
+      {/* ------------------------------------------------------ capabilities */}
+      {/* Not a rating out of five. The old bars were honest underneath — each
+          one counted the projects using that tool — but a filled bar next to a
+          tool name reads as a self-assessment whatever the number means. The
+          same fact is a sentence now, and the tools are grouped the way the
+          work itself divides. */}
+      <section id="skills" className="wrap scroll-mt-24 pt-24 sm:pt-28">
+        <SectionHead eyebrow={t.skills.eyebrow} h={t.skills.h} lede={t.skills.lede} center />
         <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {SERVICES.map((s, i) => (
-            <li key={s.icon} className="rise" style={{ '--i': i }}>
-              <div className="card hover-lift h-full p-6">
-                <span className="icon-tile"><Icon name={s.icon} size={20} /></span>
-                <h3 className="mt-5 text-[18px] font-extrabold leading-snug">{s[lang].h}</h3>
-                <p className="mt-2.5 text-[15px] leading-[1.8]" style={{ color: 'var(--ink-2)' }}>{s[lang].b}</p>
+          {CAPABILITIES.map((cap, i) => (
+            <li key={cap.icon} className="rise" style={{ '--i': i % 4 }}>
+              <div className="card flex h-full flex-col p-6">
+                <span className="icon-tile"><Icon name={cap.icon} size={19} /></span>
+                <h3 className="mt-4 text-[17px] font-extrabold">{cap[lang].h}</h3>
+                <p className="mt-2 text-[14px] leading-[1.75]" style={{ color: 'var(--ink-2)' }}>{cap[lang].b}</p>
+                <ul className="mono mt-5 flex flex-wrap gap-1.5">
+                  {(lang === 'en' && cap.itemsEn ? cap.itemsEn : cap.items).map((x) => (
+                    <li key={x} className="chip px-2.5 py-1 text-[11.5px]">{x}</li>
+                  ))}
+                </ul>
               </div>
             </li>
           ))}
         </ul>
+
+        {/* The one number worth keeping from the bars, said plainly. */}
+        <div className="card mt-5 flex flex-wrap items-center gap-x-7 gap-y-3 px-6 py-5">
+          <p className="text-[13px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.skills.usage}</p>
+          <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            {skillRows.map((r) => (
+              <li key={r.en} className="flex items-baseline gap-1.5 text-[14px]">
+                <span className="lat font-extrabold" style={{ color: 'var(--ink)' }}>{r.n}</span>
+                <span className="text-[12.5px]" style={{ color: 'var(--ink-3)' }}>{t.skills.inProjects}</span>
+                <span className="font-bold">{r[lang]}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
 
       {/* --------------------------------------------------------- about */}
@@ -261,79 +441,6 @@ export default async function Home({ params }) {
         </div>
       </section>
 
-      {/* -------------------------------------------------------- skills */}
-      <section id="skills" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-        <SectionHead eyebrow={t.skills.eyebrow} h={t.skills.h} center />
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <div className="card rise p-6 sm:p-7">
-            <div className="flex items-center justify-between gap-4">
-              <h3 className="flex items-center gap-2 text-[17px] font-extrabold"><Icon name="layers" size={17} />{t.skills.arsenal}</h3>
-              <span className="chip text-[11px]">{t.skills.basis}</span>
-            </div>
-            <ul className="mt-6 grid gap-5">
-              {skillRows.map((r, i) => (
-                <li key={r.en}>
-                  <div className="flex items-center justify-between gap-3 text-[14px] font-bold">
-                    <span className="flex items-center gap-2"><span className="icon-tile" style={{ width: 30, height: 30, borderRadius: 9 }}><Icon name={r.icon} size={14} /></span>{lang === 'ar' ? r.ar : r.en}</span>
-                    <span className="lat chip px-2 py-0.5 text-[11px]">{r.n} / {PROJECTS.length} {t.skills.projects}</span>
-                  </div>
-                  <div className="bar mt-2.5" style={{ '--w': `${Math.round((r.n / PROJECTS.length) * 100)}%` }}><i style={{ transitionDelay: `${i * 90}ms` }} /></div>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="card rise p-6 sm:p-7" style={{ '--i': 1 }}>
-            <div className="flex items-center justify-between gap-4">
-              <h3 className="flex items-center gap-2 text-[17px] font-extrabold"><Icon name="sparkles" size={17} />{t.skills.traits}</h3>
-              <span className="chip text-[11px]">{t.skills.core}</span>
-            </div>
-            <ul className="mt-6 flex flex-wrap gap-2">
-              {TRAITS[lang].map((x, i) => (
-                <li key={x} className="chip px-3.5 py-2 text-[13px]"
-                    style={{ borderColor: `color-mix(in srgb, var(--accent${['', '-2', '-3'][i % 3]}) 35%, transparent)`, background: `color-mix(in srgb, var(--accent${['', '-2', '-3'][i % 3]}) 10%, transparent)` }}>
-                  <Icon name="check" size={13} />{x}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-7 flex gap-4 rounded-2xl border p-4" style={{ borderColor: 'var(--line)', background: 'var(--card-2)' }}>
-              <span className="icon-tile shrink-0" style={{ width: 40, height: 40, borderRadius: 12 }}><Icon name="sparkles" size={17} /></span>
-              <span>
-                <span className="block text-[15px] font-extrabold">{t.skills.learnerH}</span>
-                <span className="mt-1 block text-[13.5px] leading-[1.7]" style={{ color: 'var(--ink-2)' }}>{t.skills.learnerB}</span>
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------- process */}
-      <section id="process" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-        <SectionHead eyebrow={t.process.eyebrow} h={t.process.h} center />
-        <div className="tl">
-          <span className="tl-head" aria-hidden="true" />
-          <ol className="grid gap-8 lg:gap-10">
-            {PROCESS[lang].map((p, i) => {
-              const side = i % 2 === 0;
-              return (
-                <li key={p.h} className="relative rise" style={{ '--i': i % 2 }}>
-                  <span className="tl-dot" />
-                  <div className={`ps-14 lg:w-1/2 lg:ps-0 ${side ? 'lg:pe-14' : 'lg:ms-auto lg:ps-14'}`}>
-                    <div className="card hover-lift p-6">
-                      <p className="lat text-[12px] font-bold tracking-widest" style={{ color: 'var(--accent-ink)' }}>
-                        {String(i + 1).padStart(2, '0')}
-                      </p>
-                      <h3 className="mt-1.5 text-[19px] font-extrabold">{p.h}</h3>
-                      <p className="mt-2 text-[15px] leading-[1.8]" style={{ color: 'var(--ink-2)' }}>{p.b}</p>
-                    </div>
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
-      </section>
-
       {/* ------------------------------------------------------ timeline */}
       {TIMELINE.length > 0 && (
         <section id="timeline" className="wrap scroll-mt-24 pt-24 sm:pt-28">
@@ -401,16 +508,16 @@ export default async function Home({ params }) {
                     <>
                       <span className="icon-tile shrink-0" style={{ width: 42, height: 42, borderRadius: 999 }}><Icon name={icon} size={17} /></span>
                       <span className="min-w-0">
-                        <span className="block text-[14.5px] font-extrabold">{label}</span>
+                        <span className="block truncate text-[14.5px] font-extrabold">{label}</span>
                         <span className="lat block truncate text-[12.5px]" style={{ color: 'var(--ink-3)' }}>{sub}</span>
                       </span>
                       {href && <Icon name="external" size={14} className="ms-auto shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />}
                     </>
                   );
-                  const cls = 'group flex items-center gap-3 rounded-2xl border p-3 transition-colors';
+                  const cls = 'group flex min-w-0 items-center gap-3 rounded-2xl border p-3 transition-colors';
                   const style = { borderColor: 'var(--line)', background: 'var(--card-2)' };
                   return (
-                    <li key={icon}>
+                    <li key={icon} className="min-w-0">
                       {href
                         ? <a href={href} className={cls} style={style} target={ext ? '_blank' : undefined} rel={ext ? 'noopener noreferrer' : undefined}>{inner}</a>
                         : <span className={cls} style={style}>{inner}</span>}

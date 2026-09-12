@@ -1,50 +1,73 @@
 // Site-level content that is not a project: services, skills, timeline.
 // Same rule as projects.js — nothing here that is not true of the real work.
 
+// What a client can hire me for. Each one is named the way a client would
+// name it, not the way a stack would, and each cites the project that already
+// does it — a service with a case study behind it is a claim you can check.
+// `proof` is a project slug, or null where nothing here demonstrates it yet.
 export const SERVICES = [
   {
+    icon: 'store', proof: 'diwan',
+    ar: { h: 'متاجر إلكترونية', b: 'كتالوج ومخزون وسلّة وطلبات — والمخزون يُحسم في قاعدة البيانات، فلا تُباع آخر قطعة مرّتين.' },
+    en: { h: 'E-commerce', b: 'Catalogue, stock, cart and orders — with stock settled in the database, so the last piece cannot sell twice.' },
+  },
+  {
+    icon: 'calendar', proof: 'booking',
+    ar: { h: 'أنظمة حجوزات ومواعيد', b: 'التوفّر يُحسب من ساعات العمل ومدّة الخدمة، وكشف التعارض يمنع فوز اثنين بالموعد نفسه.' },
+    en: { h: 'Booking systems', b: 'Availability computed from business hours and service duration, with conflict detection that stops two people winning the same slot.' },
+  },
+  {
+    icon: 'layout', proof: 'takharruj',
+    ar: { h: 'أنظمة أعمال ولوحات تحكم', b: 'أدوار وصلاحيات وسير عمل وجداول من جهة الخادم تبقى سريعة عند آلاف السجلات.' },
+    en: { h: 'Business systems and dashboards', b: 'Roles, permissions, workflows, and server-side tables that stay fast at thousands of rows.' },
+  },
+  {
+    icon: 'database', proof: 'kafala',
+    ar: { h: 'قواعد بيانات وواجهات برمجية', b: 'مخطّط يمنع الخطأ بدل أن يكتشفه، وREST API موثّق تحرسه اختبارات.' },
+    en: { h: 'Database design and APIs', b: 'A schema that prevents the mistake rather than detecting it, and a documented REST API held up by tests.' },
+  },
+  {
+    icon: 'languages', proof: 'mawaheb',
+    ar: { h: 'عربي RTL من أول سطر', b: 'الاتجاه مبني في التخطيط لا معكوس في النهاية. الأرقام والأيقونات والفلاتر في مكانها الصحيح.' },
+    en: { h: 'Arabic-first, RTL by design', b: 'Direction is built into the layout, not mirrored at the end. Numbers, icons and filters stay where they belong.' },
+  },
+  {
+    icon: 'code', proof: null,
+    ar: { h: 'تطوير مشروع قائم', b: 'إكمال أو إصلاح أو توسيع تطبيق لارافيل موجود — قراءة الكود أولاً، ثم أصغر تغيير يحلّ المشكلة.' },
+    en: { h: 'Work on an existing project', b: 'Finishing, fixing or extending a Laravel application that already exists — reading the code first, then the smallest change that solves it.' },
+  },
+];
+
+// Capabilities grouped the way work divides, not rated out of five. The chips
+// are only tools that appear in the stacks above; the counts underneath say in
+// how many of the five projects each one is actually used, which is a fact
+// about the work rather than an opinion about me.
+export const CAPABILITIES = [
+  {
     icon: 'layers',
-    ar: {
-      h: 'تطبيقات ويب كاملة',
-      b: 'من مخطط قاعدة البيانات إلى الواجهة، بلارافيل وPHP. منتج يعمل، لا شاشات عرض.',
-    },
-    en: {
-      h: 'Complete web applications',
-      b: 'From the database schema to the interface, in Laravel and PHP. A product that works, not screen mockups.',
-    },
+    ar: { h: 'الواجهة الخلفية', b: 'منطق العمل والصلاحيات والمعاملات.' },
+    en: { h: 'Backend', b: 'Business logic, permissions and transactions.' },
+    items: ['Laravel 12', 'PHP 8.2', 'REST APIs', 'Sanctum', 'Breeze', 'Socialite'],
   },
   {
     icon: 'layout',
-    ar: {
-      h: 'واجهات تفاعلية بـ Vue',
-      b: 'لوحات تحكم وكونسولات تشغيل بـ Vue 3 وPinia وTailwind، مربوطة بـ API حقيقي.',
-    },
-    en: {
-      h: 'Interactive front ends in Vue',
-      b: 'Dashboards and operator consoles in Vue 3, Pinia and Tailwind, wired to a real API.',
-    },
+    ar: { h: 'الواجهة الأمامية', b: 'لوحات وكونسولات وواجهات عربية.' },
+    en: { h: 'Frontend', b: 'Dashboards, operator consoles and Arabic interfaces.' },
+    items: ['Vue 3', 'Pinia', 'Vite', 'Blade', 'Tailwind CSS', 'Next.js'],
   },
   {
     icon: 'database',
-    ar: {
-      h: 'قواعد بيانات وواجهات برمجية',
-      b: 'المخزون والتزامن والصلاحيات تُحسم في MySQL داخل المعاملة نفسها، وREST API موثّق ومختبَر.',
-    },
-    en: {
-      h: 'Database design and APIs',
-      b: 'Stock, concurrency and permissions are settled in MySQL inside the transaction itself, with a documented, tested REST API.',
-    },
+    ar: { h: 'البيانات', b: 'مخطّط يمنع الخطأ، وأقفال تحسم التزامن.' },
+    en: { h: 'Data', b: 'A schema that prevents the mistake, and locks that settle concurrency.' },
+    items: ['MySQL', 'تصميم المخطّط', 'المعاملات والأقفال', 'Yajra DataTables'],
+    itemsEn: ['MySQL', 'Schema design', 'Transactions & locks', 'Yajra DataTables'],
   },
   {
-    icon: 'languages',
-    ar: {
-      h: 'عربي RTL من أول سطر',
-      b: 'الاتجاه مبني في التخطيط لا معكوس في النهاية. الأرقام والأيقونات والفلاتر في مكانها الصحيح.',
-    },
-    en: {
-      h: 'Arabic-first, RTL by design',
-      b: 'Direction is built into the layout, not mirrored at the end. Numbers, icons and filters stay where they belong.',
-    },
+    icon: 'shield',
+    ar: { h: 'الجودة', b: 'اختبار لكل قاعدة تهمّ، لا لكل دالّة.' },
+    en: { h: 'Quality', b: 'A test for every rule that matters, not for every function.' },
+    items: ['Pest', 'PHPUnit', 'Playwright', 'التحقّق والصلاحيات', 'قواعد العمل'],
+    itemsEn: ['Pest', 'PHPUnit', 'Playwright', 'Validation & policies', 'Business rules'],
   },
 ];
 

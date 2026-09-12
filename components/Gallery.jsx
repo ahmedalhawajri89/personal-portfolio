@@ -12,7 +12,7 @@ import Icon from './Icons';
  * The lightbox shows the full-page capture inside a scrollable frame, so a
  * visitor scrolls through the real page rather than squinting at a crop.
  */
-export default function Gallery({ lang, project, data }) {
+export default function Gallery({ lang, project, data, collapsible = false }) {
   const t = T[lang].detail;
   const rtl = lang === 'ar';
   const { groups = {}, shots = [] } = data;
@@ -31,6 +31,10 @@ export default function Gallery({ lang, project, data }) {
   const [dir, setDir] = useState(0);          // -1 / 1: which way the last step went
   const [closing, setClosing] = useState(false);
   const [loaded, setLoaded] = useState('');   // file name of the full image that has loaded
+  // Folded away where a curated tour has already made the argument: the full
+  // set is evidence somebody can ask for, not the first thing they are handed.
+  // Closed, none of its thumbnails load — every one of them is lazy.
+  const [openAll, setOpenAll] = useState(!collapsible);
 
   const base = useMemo(
     () => shots.filter((s) => s.device === device && (!hasBoth || s.locale === loc)),
@@ -91,7 +95,17 @@ export default function Gallery({ lang, project, data }) {
 
   return (
     <section id="gallery" className="mt-20 scroll-mt-24">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+      {collapsible && (
+        <button type="button" onClick={() => setOpenAll((v) => !v)}
+                aria-expanded={openAll} aria-controls="gallery-all"
+                className="btn btn-ghost w-full justify-center sm:w-auto">
+          <Icon name={openAll ? 'x' : 'layout'} size={16} />
+          {openAll ? t.hideAll : t.exploreAll}
+          <span className="lat" style={{ color: 'var(--ink-3)' }}>({shots.length})</span>
+        </button>
+      )}
+      <div id="gallery-all" hidden={!openAll}>
+      <div className={`mb-6 flex flex-wrap items-end justify-between gap-4${collapsible ? ' mt-10' : ''}`}>
         <div>
           <p className="eyebrow">{t.gallery}</p>
           <p className="mt-3 text-[15px]" style={{ color: 'var(--ink-3)' }}>
@@ -151,6 +165,8 @@ export default function Gallery({ lang, project, data }) {
           ))}
         </ul>
       )}
+
+      </div>
 
       {cur && (
         <div ref={overlayRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label={label(cur)}

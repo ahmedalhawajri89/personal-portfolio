@@ -25,19 +25,19 @@ export function Reveal() {
 }
 
 /* Thin gradient bar at the very top showing how far down the page you are. */
+/* How far down the page we are, published on the root as --p. It used to live
+   on this one bar; the rail reads it too now, and a number that two things
+   depend on belongs above both of them. */
 export function ScrollProgress() {
-  const ref = useRef(null);
   useEffect(() => {
-    const on = () => {
-      const h = document.documentElement;
-      const p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
-      ref.current?.style.setProperty('--p', String(p));
-    };
+    const h = document.documentElement;
+    const on = () => h.style.setProperty('--p', String(h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)));
     on();
     window.addEventListener('scroll', on, { passive: true });
-    return () => window.removeEventListener('scroll', on);
+    window.addEventListener('resize', on);
+    return () => { window.removeEventListener('scroll', on); window.removeEventListener('resize', on); };
   }, []);
-  return <div ref={ref} className="progress" aria-hidden="true" />;
+  return <div className="progress" aria-hidden="true" />;
 }
 
 /* Drives every `.tl` timeline: --tl-p is how far the viewport's focus line
@@ -179,36 +179,109 @@ export function ThemeToggle({ lang }) {
       onClick={flip}
       aria-label={dark ? t.themeLight : t.themeDark}
       title={dark ? t.themeLight : t.themeDark}
-      className="grid h-9 w-9 place-items-center rounded-full border transition-all hover:scale-105 active:scale-95"
-      style={{ borderColor: 'var(--line)', color: 'var(--ink-2)', background: 'var(--card-2)' }}
+      className="icon-btn"
     >
-      <Icon name={dark ? 'sun' : 'moon'} size={15} />
+      <Icon name={dark ? 'sun' : 'moon'} size={16} />
     </button>
   );
 }
 
 /* Floating glass dock. Tracks the active section on the home page. */
+/* The section rail. Vertical scrolling deserves a vertical map: the marker's
+   place in the rail is the visitor's place in the page, which a horizontal bar
+   can only ever spell out in words. It lives in the page gutter and costs the
+   content no width — but the gutter is only wide enough from `xl` up, so below
+   that the top bar keeps its own section nav and the rail stays away. It is
+   drawn only on the home page, the one page that has sections to point at. */
+function SectionRail({ items, active, label }) {
+  // With the top bar gone on the way down, the rail is the only thing left
+  // that can say where the reader is — so it says it. The name of the section
+  // surfaces wherever the scroll comes to rest and then steps back out of the
+  // page, because a label parked over the text would be a worse trade than
+  // the bar that just left. Hover and focus can always call it up again.
+  const [speak, setSpeak] = useState(false);
+  const hide = useRef();
+  useEffect(() => {
+    let settle;
+    const speakNow = () => {
+      setSpeak(true);
+      clearTimeout(hide.current);
+      hide.current = setTimeout(() => setSpeak(false), 2200);
+    };
+    const onScroll = () => { clearTimeout(settle); settle = setTimeout(speakNow, 150); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      clearTimeout(settle);
+      clearTimeout(hide.current);
+    };
+  }, []);
+
+  return (
+    <nav className={`rail${speak ? ' is-speaking' : ''}`} aria-label={label}>
+      <span className="rail-track" aria-hidden="true" />
+      <span className="rail-fill" aria-hidden="true" />
+      {items.map(([id, text]) => (
+        <a key={id} href={`#${id}`} className="rail-item" aria-current={active === id ? 'true' : undefined}>
+          <span className="rail-tick" aria-hidden="true" />
+          <span className="rail-label">{text}</span>
+        </a>
+      ))}
+    </nav>
+  );
+}
+
 export function Nav({ lang, path = '', home = false }) {
   const t = T[lang];
   const o = other(lang);
   const [active, setActive] = useState('');
   const [scrolled, setScrolled] = useState(false);
+  const [away, setAway] = useState(false);
 
   // Icon + name. The name stays visible for the active section and unfolds
   // on hover for the rest, so the bar reads as icons but never has to be guessed.
+  // Four destinations, not seven. The page has more sections than this, but a
+  // reader scrolling past `how I build` and `engineering proof` meets them in
+  // the story; a menu is for the places somebody jumps to on purpose.
   const items = [
     ['work', t.nav.work, 'layout'],
     ['services', t.nav.services, 'layers'],
     ['about', t.nav.about, 'user'],
-    ['skills', t.nav.skills, 'sparkles'],
     ['contact', t.nav.contact, 'send'],
   ];
 
+  // Reading down, the bar is in the way and the rail can name the sections on
+  // its own, so the bar leaves. Any upward move is a reader looking for it
+  // again, and so is a pointer at the very top edge — that one costs no
+  // scrolling at all.
+  //
+  // Travel is accumulated per direction rather than judged frame by frame: a
+  // page of lazy images re-anchors the scroll by a few pixels now and then,
+  // and against a single-frame test that reads as "went up" and flaps the bar
+  // back into view mid-read. 24px of deliberate movement is the price of a
+  // flip, and the run resets whenever the direction genuinely changes.
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 40);
+    let last = window.scrollY, run = 0;
+    const on = () => {
+      const y = window.scrollY;
+      setScrolled(y > 40);
+      const d = y - last;
+      if (d) {
+        run = (d > 0) === (run > 0) ? run + d : d;
+        if (y < 140) setAway(false);
+        else if (run > 24) setAway(true);
+        else if (run < -24) setAway(false);
+        last = y;
+      }
+    };
     on();
+    const peek = (e) => { if (e.clientY < 10) setAway(false); };
     window.addEventListener('scroll', on, { passive: true });
-    return () => window.removeEventListener('scroll', on);
+    window.addEventListener('mousemove', peek, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', on);
+      window.removeEventListener('mousemove', peek);
+    };
   }, []);
 
   useEffect(() => {
@@ -229,26 +302,26 @@ export function Nav({ lang, path = '', home = false }) {
   const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
 
   return (
-    <div className="fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:pt-4" style={{ pointerEvents: 'none' }}>
+    <>
+    {home && <SectionRail items={items} active={active} label={t.nav.menu} />}
+    <div className={`hdr-wrap fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:pt-4${away ? ' is-away' : ''}`} style={{ pointerEvents: 'none' }}>
       <header
-        className="glass w-full max-w-[1200px] transition-all duration-500"
+        className="glass hdr transition-all duration-500"
         style={{
           pointerEvents: 'auto',
-          maxWidth: scrolled ? 860 : 1200,
+          '--hdr-max': scrolled ? '860px' : '1200px',
           borderRadius: 999,
           boxShadow: scrolled ? 'var(--glow)' : 'var(--shadow)',
         }}
       >
-        <div className="flex h-14 items-center justify-between gap-3 ps-4 pe-2 sm:ps-5 sm:pe-3">
-          <a href={`/${lang}/`} className="flex items-center gap-2.5 text-[15px] font-extrabold tracking-tight">
-            <span className="grid h-8 w-8 place-items-center rounded-full text-[13px] text-white"
-                  style={{ background: 'linear-gradient(135deg,var(--accent),var(--accent-2))' }}>
-              <span className="lat">A</span>
-            </span>
-            <span className="lat hidden sm:inline">AHMED</span>
+        <div className="flex h-14 items-center justify-between gap-3 ps-2.5 pe-2 sm:ps-3">
+          <a href={`/${lang}/`} className="brand">
+            <span className="brand-mark"><span className="lat">A</span></span>
+            <span className="lat brand-name hidden sm:inline">AHMED</span>
           </a>
 
-          <nav className="nav-dock hidden md:flex" aria-label={t.nav.menu}>
+          {home && (
+          <nav className="nav-dock hidden md:flex xl:hidden" aria-label={t.nav.menu}>
             {items.map(([id, label, icon]) => (
               <a key={id} href={link(id)} className="dock-item" aria-current={active === id ? 'true' : undefined} aria-label={label}>
                 <Icon name={icon} size={17} />
@@ -256,23 +329,36 @@ export function Nav({ lang, path = '', home = false }) {
               </a>
             ))}
           </nav>
+          )}
 
-          <div className="flex items-center gap-1.5">
-            <a
-              href={`/${o}${path}`}
-              className="lat grid h-9 min-w-9 place-items-center rounded-full border px-3 text-[12px] font-bold transition-all hover:scale-105"
-              style={{ borderColor: 'var(--line)', color: 'var(--ink-2)', background: 'var(--card-2)' }}
-              aria-label={o === 'en' ? 'English' : 'العربية'}
-              hrefLang={o}
-            >
-              {o === 'en' ? 'EN' : 'ع'}
-            </a>
+          <div className="flex items-center gap-1">
+            <a href={home ? '#contact' : `/${lang}/#contact`} className="hdr-cta">{t.nav.cta}</a>
+            <span className="hdr-sep" aria-hidden="true" />
+            {/* Both languages are shown, the current one lit. A single button
+                labelled with the *other* language asks the reader to work out
+                which way it goes; a pair states where they are and where they
+                can be. The lit half is decoration — the reader is already
+                there — so only the link carries a name. */}
+            <div className="lang-seg">
+              <span className={`lang-on${lang === 'en' ? ' lat' : ''}`} aria-hidden="true">
+                {lang === 'en' ? 'EN' : 'ع'}
+              </span>
+              <a
+                href={`/${o}${path}`}
+                className={`lang-off${o === 'en' ? ' lat' : ''}`}
+                aria-label={o === 'en' ? 'English' : 'العربية'}
+                hrefLang={o}
+              >
+                {o === 'en' ? 'EN' : 'ع'}
+              </a>
+            </div>
             <CvButton lang={lang} compact />
             <ThemeToggle lang={lang} />
           </div>
         </div>
       </header>
     </div>
+    </>
   );
 }
 
@@ -288,7 +374,6 @@ export function Dock({ lang, home = false }) {
     ['work', t.nav.work, 'layout'],
     ['services', t.nav.services, 'layers'],
     ['about', t.nav.about, 'user'],
-    ['skills', t.nav.skills, 'sparkles'],
     ['contact', t.nav.contact, 'send'],
   ];
   const link = (id) => (home ? (id === 'home' ? '#home' : `#${id}`) : `/${lang}/#${id}`);
@@ -474,8 +559,7 @@ export function ContactForm({ lang, to }) {
     return (
       <div className="flex h-full min-h-[320px] flex-col items-center justify-center rounded-2xl border p-8 text-center"
            style={{ borderColor: 'var(--line)', background: 'var(--card-2)' }} role="status" aria-live="polite">
-        <span className="grid h-16 w-16 place-items-center rounded-full text-white"
-              style={{ background: 'linear-gradient(135deg,var(--accent),var(--accent-2))' }}>
+        <span className="on-accent grid h-16 w-16 place-items-center rounded-full">
           <Icon name="check" size={28} />
         </span>
         <p className="mt-5 text-[22px] font-extrabold">{f.sentH}</p>
@@ -489,13 +573,14 @@ export function ContactForm({ lang, to }) {
   return (
     <form onSubmit={submit} noValidate className={`flex h-full flex-col gap-3${shake ? ' shake' : ''}`} aria-busy={busy}>
       <div className="grid gap-3 sm:grid-cols-2">
-        {[['name', 'text', f.name, 'name', undefined], ['email', 'email', f.email, 'email', 'ltr']].map(([k, type, ph, ac, dir]) => {
+        {[['name', 'text', f.name, 'name', undefined], ['email', 'email', f.email, 'email', 'ltr']].map(([k, type, label, ac, dir]) => {
           const bad = !!show(k);
           const ok = touched[k] && !errors[k] && v[k];
           return (
             <div key={k}>
+              <label className="flabel" htmlFor={`f-${k}`}>{label}</label>
               <div className="fwrap" dir={dir}>
-                <input name={k} className="field" type={type} placeholder={ph} value={v[k]} onChange={set(k)} onBlur={blur(k)}
+                <input id={`f-${k}`} name={k} className="field" type={type} value={v[k]} onChange={set(k)} onBlur={blur(k)}
                        autoComplete={ac} dir={dir} disabled={busy}
                        aria-invalid={bad || undefined} aria-describedby={bad ? `err-${k}` : undefined} />
                 {(bad || ok) && <span className={`fmark ${bad ? 'bad' : 'ok'}`} aria-hidden="true"><Icon name={bad ? 'x' : 'check'} size={12} /></span>}
@@ -516,15 +601,14 @@ export function ContactForm({ lang, to }) {
             const on = topics.includes(tp);
             return (
               <button key={tp} type="button" onClick={() => toggle(tp)} aria-pressed={on} disabled={busy}
-                      className="chip transition-all"
-                      style={on ? { background: 'linear-gradient(135deg,var(--accent),var(--accent-2))', color: '#fff', borderColor: 'transparent' } : undefined}>
+                      className={`chip transition-all${on ? ' on-accent' : ''}`}
+                      style={on ? { borderColor: 'transparent' } : undefined}>
                 {on && <Icon name="check" size={12} />}{tp}
               </button>
             );
           })}
           {custom.map((tp) => (
-            <span key={tp} className="chip" aria-pressed="true"
-                  style={{ background: 'linear-gradient(135deg,var(--accent),var(--accent-2))', color: '#fff', borderColor: 'transparent' }}>
+            <span key={tp} className="chip on-accent" aria-pressed="true" style={{ borderColor: 'transparent' }}>
               <Icon name="check" size={12} />{tp}
               <button type="button" className="chip-x" onClick={() => removeCustom(tp)} aria-label={`${f.remove}: ${tp}`} disabled={busy}>
                 <Icon name="x" size={10} />
@@ -533,7 +617,7 @@ export function ContactForm({ lang, to }) {
           ))}
           {adding ? (
             <span className="chip-in">
-              <input ref={otherRef} value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={f.otherPh} maxLength={40}
+              <input ref={otherRef} value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={f.otherPh} aria-label={f.otherPh} maxLength={40}
                      aria-label={f.other}
                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCustom(); } if (e.key === 'Escape') { setDraft(''); setAdding(false); } }}
                      onBlur={() => (draft.trim() ? addCustom() : setAdding(false))} />
@@ -550,7 +634,8 @@ export function ContactForm({ lang, to }) {
       </div>
 
       <div className="flex flex-1 flex-col">
-        <textarea name="msg" className="field min-h-[140px] flex-1 resize-none" placeholder={f.msg} value={v.msg} onChange={set('msg')} onBlur={blur('msg')}
+        <label className="flabel" htmlFor="f-msg">{f.msg}</label>
+        <textarea id="f-msg" name="msg" className="field min-h-[140px] flex-1 resize-none" value={v.msg} onChange={set('msg')} onBlur={blur('msg')}
                   disabled={busy} aria-invalid={!!show('msg') || undefined} aria-describedby="msg-hint" />
         {show('msg')
           ? <p id="msg-hint" className="ferr" role="alert"><Icon name="alert" size={13} className="mt-0.5 shrink-0" />{errors.msg} <span className="lat">({f.moreChars.replace('{n}', left)})</span></p>
@@ -632,8 +717,7 @@ export function Footer({ lang, links, home = false }) {
         <div className="wrap">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-6" style={{ borderColor: 'var(--line)' }}>
           <a href={`/${lang}/`} className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl text-[14px] font-extrabold text-white lat"
-                  style={{ background: 'linear-gradient(135deg,var(--accent),var(--accent-2))' }}>A</span>
+            <span className="on-accent lat grid h-10 w-10 place-items-center rounded-2xl text-[14px] font-extrabold">A</span>
             <span>
               <span className="block text-[15px] font-extrabold leading-tight">{lang === 'ar' ? 'أحمد الحواجري' : 'Ahmed Al-Hawajiri'}</span>
               <span className="block text-[10.5px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.badge.title}</span>
