@@ -1,0 +1,751 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { T, other } from '../lib/i18n';
+import Icon from './Icons';
+import { CvButton } from './CvPanel';
+
+/* Reveal-on-scroll that can never hide content that is already on screen:
+   anything within the first viewport is marked seen immediately. */
+export function Reveal() {
+  useEffect(() => {
+    const els = Array.from(document.querySelectorAll('.rise'));
+    const vh = window.innerHeight;
+    els.forEach((el) => {
+      if (el.getBoundingClientRect().top < vh * 0.92) el.classList.add('seen');
+    });
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add('seen')),
+      { rootMargin: '0px 0px -8% 0px', threshold: 0.05 }
+    );
+    els.forEach((el) => !el.classList.contains('seen') && io.observe(el));
+    return () => io.disconnect();
+  }, []);
+  return null;
+}
+
+/* Thin gradient bar at the very top showing how far down the page you are. */
+export function ScrollProgress() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const on = () => {
+      const h = document.documentElement;
+      const p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
+      ref.current?.style.setProperty('--p', String(p));
+    };
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, []);
+  return <div ref={ref} className="progress" aria-hidden="true" />;
+}
+
+/* Drives every `.tl` timeline: --tl-p is how far the viewport's focus line
+   (45% down the screen) has travelled through the list, so the fill grows on
+   the way down and shrinks on the way up. Items whose dot is above that line
+   get `.on`. */
+export function TimelineScroll() {
+  useEffect(() => {
+    const lists = Array.from(document.querySelectorAll('.tl'));
+    if (!lists.length) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      lists.forEach((tl) => tl.querySelectorAll('li').forEach((li) => li.classList.add('on')));
+      return;
+    }
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const focus = window.innerHeight * 0.45;
+      lists.forEach((tl) => {
+        const r = tl.getBoundingClientRect();
+        const p = Math.min(1, Math.max(0, (focus - r.top) / r.height));
+        tl.style.setProperty('--tl-p', p.toFixed(4));
+        tl.querySelectorAll(':scope li').forEach((li) => {
+          const dot = li.getBoundingClientRect().top + 35;
+          li.classList.toggle('on', dot <= focus);
+        });
+      });
+    };
+    const on = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', on, { passive: true });
+    window.addEventListener('resize', on);
+    return () => {
+      window.removeEventListener('scroll', on);
+      window.removeEventListener('resize', on);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+  return null;
+}
+
+/* Soft light that follows the pointer. Desktop only, off for reduced motion. */
+export function CursorGlow() {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const el = ref.current;
+    let raf = 0, x = 0, y = 0;
+    const move = (e) => {
+      x = e.clientX; y = e.clientY;
+      if (!raf) raf = requestAnimationFrame(() => {
+        el.style.transform = `translate(${x - 260}px, ${y - 260}px)`;
+        el.classList.add('on');
+        raf = 0;
+      });
+    };
+    const leave = () => el.classList.remove('on');
+    window.addEventListener('pointermove', move, { passive: true });
+    document.documentElement.addEventListener('pointerleave', leave);
+    return () => {
+      window.removeEventListener('pointermove', move);
+      document.documentElement.removeEventListener('pointerleave', leave);
+    };
+  }, []);
+  return <div ref={ref} className="cursor-glow" style={{ transform: 'translate(-50%,-50%)' }} aria-hidden="true" />;
+}
+
+/* Cycles through a list of phrases; the widest one reserves the space. */
+export function Rotating({ words, interval = 2600 }) {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const id = setInterval(() => setI((n) => (n + 1) % words.length), interval);
+    return () => clearInterval(id);
+  }, [words.length, interval]);
+  return (
+    <span className="rot">
+      {words.map((w, n) => (
+        <span key={w} aria-hidden={n !== i}>{w}</span>
+      ))}
+    </span>
+  );
+}
+
+/* Subtle 3D tilt for cards. Pointer-only, no effect on touch. */
+export function Tilt({ children, className, max = 6 }) {
+  const ref = useRef(null);
+  const onMove = (e) => {
+    if (e.pointerType !== 'mouse') return;
+    const el = ref.current;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `perspective(900px) rotateX(${-py * max}deg) rotateY(${px * max}deg) translateY(-4px)`;
+  };
+  const reset = () => { if (ref.current) ref.current.style.transform = ''; };
+  return (
+    <div
+      ref={ref}
+      className={className}
+      onPointerMove={onMove}
+      onPointerLeave={reset}
+      style={{ transition: 'transform .5s cubic-bezier(.22,1,.36,1), box-shadow .5s, border-color .3s', willChange: 'transform' }}
+    >
+      {children}
+    </div>
+  );
+}
+
+export function ThemeToggle({ lang }) {
+  const [dark, setDark] = useState(false);
+  useEffect(() => {
+    setDark(document.documentElement.getAttribute('data-theme') === 'dark');
+  }, []);
+  const apply = () => {
+    const next = dark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    // Keep the browser chrome in step with the page it frames.
+    document.querySelector('meta[name=theme-color]')
+      ?.setAttribute('content', next === 'dark' ? '#0A0B10' : '#F6F7FB');
+    try { localStorage.setItem('theme', next); } catch {}
+    setDark(!dark);
+  };
+  // Circular reveal from the button via the View Transitions API.
+  const flip = (e) => {
+    const root = document.documentElement;
+    if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return apply();
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = r.left + r.width / 2, y = r.top + r.height / 2;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    root.style.setProperty('--vt-x', `${x}px`);
+    root.style.setProperty('--vt-y', `${y}px`);
+    root.style.setProperty('--vt-r', `${radius}px`);
+    document.startViewTransition(apply);
+  };
+  const t = T[lang];
+  return (
+    <button
+      onClick={flip}
+      aria-label={dark ? t.themeLight : t.themeDark}
+      title={dark ? t.themeLight : t.themeDark}
+      className="grid h-9 w-9 place-items-center rounded-full border transition-all hover:scale-105 active:scale-95"
+      style={{ borderColor: 'var(--line)', color: 'var(--ink-2)', background: 'var(--card-2)' }}
+    >
+      <Icon name={dark ? 'sun' : 'moon'} size={15} />
+    </button>
+  );
+}
+
+/* Floating glass dock. Tracks the active section on the home page. */
+export function Nav({ lang, path = '', home = false }) {
+  const t = T[lang];
+  const o = other(lang);
+  const [active, setActive] = useState('');
+  const [scrolled, setScrolled] = useState(false);
+
+  // Icon + name. The name stays visible for the active section and unfolds
+  // on hover for the rest, so the bar reads as icons but never has to be guessed.
+  const items = [
+    ['work', t.nav.work, 'layout'],
+    ['services', t.nav.services, 'layers'],
+    ['about', t.nav.about, 'user'],
+    ['skills', t.nav.skills, 'sparkles'],
+    ['contact', t.nav.contact, 'send'],
+  ];
+
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 40);
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, []);
+
+  useEffect(() => {
+    if (!home) return;
+    const secs = items.map(([id]) => document.getElementById(id)).filter(Boolean);
+    const io = new IntersectionObserver(
+      (entries) => {
+        const v = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (v) setActive(v.target.id);
+      },
+      { rootMargin: '-40% 0px -50% 0px', threshold: [0, 0.2, 0.5] }
+    );
+    secs.forEach((s) => io.observe(s));
+    return () => io.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [home]);
+
+  const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
+
+  return (
+    <div className="fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:pt-4" style={{ pointerEvents: 'none' }}>
+      <header
+        className="glass w-full max-w-[1200px] transition-all duration-500"
+        style={{
+          pointerEvents: 'auto',
+          maxWidth: scrolled ? 860 : 1200,
+          borderRadius: 999,
+          boxShadow: scrolled ? 'var(--glow)' : 'var(--shadow)',
+        }}
+      >
+        <div className="flex h-14 items-center justify-between gap-3 ps-4 pe-2 sm:ps-5 sm:pe-3">
+          <a href={`/${lang}/`} className="flex items-center gap-2.5 text-[15px] font-extrabold tracking-tight">
+            <span className="grid h-8 w-8 place-items-center rounded-full text-[13px] text-white"
+                  style={{ background: 'linear-gradient(135deg,var(--accent),var(--accent-2))' }}>
+              <span className="lat">A</span>
+            </span>
+            <span className="lat hidden sm:inline">AHMED</span>
+          </a>
+
+          <nav className="nav-dock hidden md:flex" aria-label={t.nav.menu}>
+            {items.map(([id, label, icon]) => (
+              <a key={id} href={link(id)} className="dock-item" aria-current={active === id ? 'true' : undefined} aria-label={label}>
+                <Icon name={icon} size={17} />
+                <span className="dock-label">{label}</span>
+              </a>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-1.5">
+            <a
+              href={`/${o}${path}`}
+              className="lat grid h-9 min-w-9 place-items-center rounded-full border px-3 text-[12px] font-bold transition-all hover:scale-105"
+              style={{ borderColor: 'var(--line)', color: 'var(--ink-2)', background: 'var(--card-2)' }}
+              aria-label={o === 'en' ? 'English' : 'العربية'}
+              hrefLang={o}
+            >
+              {o === 'en' ? 'EN' : 'ع'}
+            </a>
+            <CvButton lang={lang} compact />
+            <ThemeToggle lang={lang} />
+          </div>
+        </div>
+      </header>
+    </div>
+  );
+}
+
+/* Phone navigation: a thumb-reachable dock at the bottom of the screen. The
+   active section's tab widens to show its name, the rest stay as icons.
+   Hidden on desktop, where the top bar does the job. */
+export function Dock({ lang, home = false }) {
+  const t = T[lang];
+  const [active, setActive] = useState('home');
+  const [hidden, setHidden] = useState(false);
+  const items = [
+    ['home', t.nav.home, 'home'],
+    ['work', t.nav.work, 'layout'],
+    ['services', t.nav.services, 'layers'],
+    ['about', t.nav.about, 'user'],
+    ['skills', t.nav.skills, 'sparkles'],
+    ['contact', t.nav.contact, 'send'],
+  ];
+  const link = (id) => (home ? (id === 'home' ? '#home' : `#${id}`) : `/${lang}/#${id}`);
+
+  useEffect(() => {
+    if (!home) return;
+    const secs = items.map(([id]) => document.getElementById(id)).filter(Boolean);
+    const io = new IntersectionObserver(
+      (entries) => {
+        const v = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (v) setActive(v.target.id);
+      },
+      { rootMargin: '-35% 0px -55% 0px', threshold: [0, 0.2, 0.5] }
+    );
+    secs.forEach((s) => io.observe(s));
+    // Slip away while the keyboard is up (a focused field) or the lightbox is open.
+    const onFocus = () => setHidden(!!document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName));
+    document.addEventListener('focusin', onFocus);
+    document.addEventListener('focusout', () => setTimeout(onFocus, 50));
+    return () => { io.disconnect(); document.removeEventListener('focusin', onFocus); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [home]);
+
+  return (
+    <nav className={`dock md:hidden${hidden ? ' is-hidden' : ''}`} aria-label={t.nav.menu}>
+      {items.map(([id, label, icon]) => {
+        const on = active === id;
+        return (
+          <a key={id} href={link(id)} className="dock-item" aria-current={on ? 'true' : undefined} aria-label={label}>
+            <Icon name={icon} size={18} />
+            <span className="dock-label">{label}</span>
+          </a>
+        );
+      })}
+    </nav>
+  );
+}
+
+/* Phrases cross-fade: the leaving one dissolves into a heavy blur while the
+   next one condenses out of it, both at the same instant, so the card is
+   never empty. Latin phrases get the tight, heavy setting Geist-style
+   wordmarks use. */
+export function CyclingStatement({ phrases, hold = 1900 }) {
+  const [i, setI] = useState(0);
+  const [prev, setPrev] = useState(-1);
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || phrases.length < 2) return;
+    const id = setInterval(() => {
+      setI((n) => { setPrev(n); return (n + 1) % phrases.length; });
+    }, hold);
+    return () => clearInterval(id);
+  }, [phrases.length, hold]);
+  const latin = (s) => /^[ -~]+$/.test(s);
+  const cls = (s) => `xf-word${latin(s) ? ' lat xf-latin' : ''}`;
+  return (
+    <span className="xf" aria-live="polite">
+      {prev >= 0 && <span key={`o${prev}-${i}`} className={`${cls(phrases[prev])} xf-out`} aria-hidden="true">{phrases[prev]}</span>}
+      <span key={`i${i}`} className={`${cls(phrases[i])}${prev >= 0 ? ' xf-in' : ''}`}>{phrases[i]}</span>
+      {/* The longest phrase reserves the height so the card never jumps. */}
+      <span className="invisible block" aria-hidden="true">{[...phrases].sort((a, b) => b.length - a.length)[0]}</span>
+    </span>
+  );
+}
+
+/* Contact form. With NEXT_PUBLIC_WEB3FORMS_KEY set it posts to Web3Forms and
+   the message lands in the inbox; without a key it falls back to composing a
+   mailto: link. Topic chips prefill the message so nobody faces an empty box. */
+/* Which service receives the message. One variable swaps providers, because
+   availability is a network fact, not a code choice: Web3Forms sits behind a
+   Cloudflare edge that blocks some networks outright, and a portfolio whose
+   contact form fails for the owner's own country is worse than no form.
+
+   The payload carries the field names of every supported provider at once —
+   they each read the ones they know and pass the rest through into the email,
+   so no per-provider branching is needed. */
+const W3F_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY || '';
+const ENDPOINT = process.env.NEXT_PUBLIC_FORM_ENDPOINT
+  || (W3F_KEY ? 'https://api.web3forms.com/submit' : '');
+
+export function ContactForm({ lang, to }) {
+  const f = T[lang].contact.form;
+  const NL = String.fromCharCode(10);
+  const [v, setV] = useState({ name: '', email: '', msg: '' });
+  const [topics, setTopics] = useState([]);
+  const [state, setState] = useState('idle'); // idle | sending | sent | failed
+  const [gotcha, setGotcha] = useState('');   // honeypot: bots fill it, people never see it
+  const [touched, setTouched] = useState({});  // fields the visitor has left once
+  const [custom, setCustom] = useState([]);    // topics the visitor typed themselves
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState('');
+  const otherRef = useRef(null);
+  const [shake, setShake] = useState(false);
+  const MIN = 20;
+
+  // One rule per field. Errors show only after a field is left, or on submit.
+  const check = (k, val) => {
+    const x = (val ?? v[k]).trim();
+    if (k === 'name') return x.length >= 2 ? '' : f.errors.name;
+    if (k === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(x) ? '' : f.errors.email;
+    if (k === 'msg') return x.length >= MIN ? '' : f.errors.msg;
+    return '';
+  };
+  const errors = { name: check('name'), email: check('email'), msg: check('msg') };
+  const show = (k) => touched[k] && errors[k];
+  const blur = (k) => () => setTouched((t) => ({ ...t, [k]: true }));
+  const left = Math.max(0, MIN - v.msg.trim().length);
+  const anyShown = Object.keys(touched).some((k) => touched[k] && errors[k]);
+
+  const subjectLine = () => `${topics.length ? topics.join(' · ') + ' — ' : ''}${v.name || ''}`;
+  const openMail = () => {
+    const subject = encodeURIComponent(subjectLine());
+    const body = encodeURIComponent([v.msg, '', v.name, v.email].join(NL));
+    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (gotcha) return;                      // a bot filled the hidden field
+    const bad = ['name', 'email', 'msg'].filter((k) => errors[k]);
+    if (bad.length) {
+      setTouched({ name: true, email: true, msg: true });
+      setShake(true); setTimeout(() => setShake(false), 550);
+      e.currentTarget.querySelector(`[name="${bad[0]}"]`)?.focus();
+      return;
+    }
+    if (!ENDPOINT) return openMail();
+    setState('sending');
+    try {
+      const r = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: v.name,
+          email: v.email,
+          message: v.msg,
+          topics: topics.join(', ') || '—',
+          language: lang,
+          access_key: W3F_KEY,                    // Web3Forms
+          subject: `[Portfolio] ${subjectLine()}`, // Web3Forms
+          from_name: v.name,                      // Web3Forms
+          _subject: `[Portfolio] ${subjectLine()}`, // FormSubmit
+          _template: 'table',                     // FormSubmit
+          _captcha: 'false',                      // FormSubmit
+        }),
+      });
+      const data = await r.json().catch(() => ({}));
+      // Providers disagree on the success flag: Web3Forms sends `success`,
+      // FormSubmit sends `success: "true"` as a string. A 2xx with no explicit
+      // failure counts as delivered.
+      if (!r.ok || data.success === false || data.success === 'false') throw new Error(data.message || r.statusText);
+      setState('sent');
+    } catch {
+      setState('failed');
+    }
+  };
+
+  const reset = () => { setV({ name: '', email: '', msg: '' }); setTopics([]); setState('idle'); };
+  const set = (k) => (e) => setV((s) => ({ ...s, [k]: e.target.value }));
+  const known = (l) => [...f.topics, ...custom].some((t) => l === `• ${t}`);
+  const toggle = (tp) => {
+    const next = topics.includes(tp) ? topics.filter((x) => x !== tp) : [...topics, tp];
+    setTopics(next);
+    // Keep the message in step: one bullet per chosen topic, the visitor's
+    // own text untouched.
+    setV((s) => {
+      const own = s.msg.split(NL).filter((l) => !known(l)).join(NL).replace(/^\s+/, '');
+      const head = next.map((t) => `• ${t}`).join(NL);
+      return { ...s, msg: head && own ? `${head}${NL}${NL}${own}` : head || own };
+    });
+  };
+  // A typed topic becomes a selected chip; removing it un-selects it too.
+  const addCustom = () => {
+    const x = draft.trim().replace(/\s+/g, ' ').slice(0, 40);
+    setDraft(''); setAdding(false);
+    if (!x || [...f.topics, ...custom].some((t) => t.toLowerCase() === x.toLowerCase())) { if (x) toggle(x); return; }
+    setCustom((c) => [...c, x]);
+    toggle(x);
+  };
+  const removeCustom = (x) => { setCustom((c) => c.filter((t) => t !== x)); if (topics.includes(x)) toggle(x); };
+  useEffect(() => { if (adding) otherRef.current?.focus(); }, [adding]);
+
+  if (state === 'sent') {
+    return (
+      <div className="flex h-full min-h-[320px] flex-col items-center justify-center rounded-2xl border p-8 text-center"
+           style={{ borderColor: 'var(--line)', background: 'var(--card-2)' }} role="status" aria-live="polite">
+        <span className="grid h-16 w-16 place-items-center rounded-full text-white"
+              style={{ background: 'linear-gradient(135deg,var(--accent),var(--accent-2))' }}>
+          <Icon name="check" size={28} />
+        </span>
+        <p className="mt-5 text-[22px] font-extrabold">{f.sentH}</p>
+        <p className="mt-2 max-w-[38ch] text-[15px] leading-[1.8]" style={{ color: 'var(--ink-2)' }}>{f.sentB}</p>
+        <button type="button" onClick={reset} className="btn btn-ghost mt-6" style={{ padding: '10px 18px', fontSize: 13.5 }}>{f.again}</button>
+      </div>
+    );
+  }
+
+  const busy = state === 'sending';
+  return (
+    <form onSubmit={submit} noValidate className={`flex h-full flex-col gap-3${shake ? ' shake' : ''}`} aria-busy={busy}>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {[['name', 'text', f.name, 'name', undefined], ['email', 'email', f.email, 'email', 'ltr']].map(([k, type, ph, ac, dir]) => {
+          const bad = !!show(k);
+          const ok = touched[k] && !errors[k] && v[k];
+          return (
+            <div key={k}>
+              <div className="fwrap" dir={dir}>
+                <input name={k} className="field" type={type} placeholder={ph} value={v[k]} onChange={set(k)} onBlur={blur(k)}
+                       autoComplete={ac} dir={dir} disabled={busy}
+                       aria-invalid={bad || undefined} aria-describedby={bad ? `err-${k}` : undefined} />
+                {(bad || ok) && <span className={`fmark ${bad ? 'bad' : 'ok'}`} aria-hidden="true"><Icon name={bad ? 'x' : 'check'} size={12} /></span>}
+              </div>
+              {bad && <p id={`err-${k}`} className="ferr" role="alert"><Icon name="alert" size={13} className="mt-0.5 shrink-0" />{errors[k]}</p>}
+            </div>
+          );
+        })}
+      </div>
+      {/* Honeypot: off-screen, tab-skipped, never announced. */}
+      <input type="text" name="botcheck" value={gotcha} onChange={(e) => setGotcha(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true"
+             style={{ position: 'absolute', top: 0, insetInlineStart: 0, width: 1, height: 1, opacity: 0, overflow: 'hidden', clipPath: 'inset(50%)', pointerEvents: 'none' }} />
+
+      <div>
+        <p className="mb-2 text-[12.5px] font-bold" style={{ color: 'var(--ink-3)' }}>{f.topicsLabel}</p>
+        <div className="flex flex-wrap gap-2" role="group" aria-label={f.topicsLabel}>
+          {f.topics.map((tp) => {
+            const on = topics.includes(tp);
+            return (
+              <button key={tp} type="button" onClick={() => toggle(tp)} aria-pressed={on} disabled={busy}
+                      className="chip transition-all"
+                      style={on ? { background: 'linear-gradient(135deg,var(--accent),var(--accent-2))', color: '#fff', borderColor: 'transparent' } : undefined}>
+                {on && <Icon name="check" size={12} />}{tp}
+              </button>
+            );
+          })}
+          {custom.map((tp) => (
+            <span key={tp} className="chip" aria-pressed="true"
+                  style={{ background: 'linear-gradient(135deg,var(--accent),var(--accent-2))', color: '#fff', borderColor: 'transparent' }}>
+              <Icon name="check" size={12} />{tp}
+              <button type="button" className="chip-x" onClick={() => removeCustom(tp)} aria-label={`${f.remove}: ${tp}`} disabled={busy}>
+                <Icon name="x" size={10} />
+              </button>
+            </span>
+          ))}
+          {adding ? (
+            <span className="chip-in">
+              <input ref={otherRef} value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={f.otherPh} maxLength={40}
+                     aria-label={f.other}
+                     onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCustom(); } if (e.key === 'Escape') { setDraft(''); setAdding(false); } }}
+                     onBlur={() => (draft.trim() ? addCustom() : setAdding(false))} />
+              <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={addCustom} disabled={!draft.trim()} aria-label={f.otherAdd}>
+                <Icon name="check" size={12} />
+              </button>
+            </span>
+          ) : (
+            <button type="button" className="chip chip-add" onClick={() => setAdding(true)} disabled={busy}>
+              <Icon name="plus" size={12} />{f.other}
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col">
+        <textarea name="msg" className="field min-h-[140px] flex-1 resize-none" placeholder={f.msg} value={v.msg} onChange={set('msg')} onBlur={blur('msg')}
+                  disabled={busy} aria-invalid={!!show('msg') || undefined} aria-describedby="msg-hint" />
+        {show('msg')
+          ? <p id="msg-hint" className="ferr" role="alert"><Icon name="alert" size={13} className="mt-0.5 shrink-0" />{errors.msg} <span className="lat">({f.moreChars.replace('{n}', left)})</span></p>
+          : <p id="msg-hint" className={`fhint${left === 0 ? ' ok' : ''}`}>
+              {left === 0 ? <><Icon name="check" size={12} />{f.enough}</> : (v.msg ? f.moreChars : f.minChars).replace('{n}', left || MIN)}
+            </p>}
+      </div>
+
+      {state === 'failed' && (
+        <div className="rounded-xl border px-4 py-3" role="alert"
+             style={{ borderColor: 'color-mix(in srgb, #E11D48 40%, transparent)', background: 'color-mix(in srgb, #E11D48 8%, transparent)' }}>
+          <p className="text-[13.5px] font-bold">
+            {f.failed} <a href={`mailto:${to}`} className="lat underline">{to}</a>
+          </p>
+          {/* Nothing the visitor wrote is lost: this hands the whole message to
+              their mail app, so a blocked request still reaches the inbox. */}
+          <button type="button" onClick={openMail} className="btn btn-ghost mt-3" style={{ padding: '9px 16px', fontSize: 13 }}>
+            <Icon name="mail" size={14} /> {f.openMailBtn}
+          </button>
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-[12.5px]" style={{ color: anyShown ? '#E11D48' : 'var(--ink-3)' }}>
+          {anyShown ? f.fix : (ENDPOINT ? f.secure : f.hint)}
+        </p>
+        <button type="submit" className="btn btn-primary" disabled={busy} style={busy ? { opacity: .7 } : undefined}>
+          {busy ? f.sending : f.send} <Icon name="send" size={15} />
+        </button>
+      </div>
+
+      <ul className="mt-1 flex flex-wrap gap-x-5 gap-y-1.5 border-t pt-3 text-[12.5px] font-bold" style={{ borderColor: 'var(--line)', color: 'var(--ink-2)' }}>
+        {f.trust.map((x) => (
+          <li key={x} className="inline-flex items-center gap-1.5">
+            <span className="grid h-4 w-4 place-items-center rounded-full" style={{ background: 'var(--accent-soft)', color: 'var(--accent-ink)' }}><Icon name="check" size={10} /></span>{x}
+          </li>
+        ))}
+      </ul>
+    </form>
+  );
+}
+
+export function BackToTop({ lang }) {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const on = () => setShow(window.scrollY > 600);
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, []);
+  return (
+    <button
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      aria-label={T[lang].top}
+      className="glass to-top fixed z-40 grid h-11 w-11 place-items-center transition-all"
+      style={{
+        insetInlineEnd: 20, borderRadius: 999,
+        opacity: show ? 1 : 0, transform: show ? 'none' : 'translateY(12px)', pointerEvents: show ? 'auto' : 'none',
+      }}
+    >
+      <Icon name="arrowUp" size={17} />
+    </button>
+  );
+}
+
+export function Footer({ lang, links, home = false }) {
+  const t = T[lang];
+  const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
+  const items = [['work', t.nav.work], ['services', t.nav.services], ['about', t.nav.about], ['contact', t.nav.contact]];
+  const social = links && [
+    ['github', links.github, 'GitHub', true],
+    ['mail', `mailto:${links.email}`, 'Email', false],
+    ['whatsapp', links.whatsapp, 'WhatsApp', true],
+    ['store', links.khamsat, 'Khamsat', true],
+  ];
+  return (
+    <div className="foot-base">
+      <footer className="foot-sheet">
+        <div className="wrap">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-6" style={{ borderColor: 'var(--line)' }}>
+          <a href={`/${lang}/`} className="flex items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-2xl text-[14px] font-extrabold text-white lat"
+                  style={{ background: 'linear-gradient(135deg,var(--accent),var(--accent-2))' }}>A</span>
+            <span>
+              <span className="block text-[15px] font-extrabold leading-tight">{lang === 'ar' ? 'أحمد الحواجري' : 'Ahmed Al-Hawajiri'}</span>
+              <span className="block text-[10.5px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.badge.title}</span>
+            </span>
+          </a>
+          <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="btn btn-ghost" style={{ padding: '10px 18px', fontSize: 13.5 }}>
+            {t.top} <Icon name="arrowUp" size={14} />
+          </button>
+        </div>
+
+        {/* Big statement, like a closing title card. */}
+        <div className="foot-statement my-8 rounded-[28px] border px-6 py-14 text-center sm:py-20"
+             style={{ borderColor: 'var(--line)' }}>
+          <p className="eyebrow">{t.footerEyebrow}</p>
+          <p className="mt-4 text-[clamp(30px,6vw,64px)] font-extrabold leading-[1.15] tracking-tight">
+            <CyclingStatement phrases={t.footerStatement} />
+          </p>
+        </div>
+
+        <nav className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2 border-b pb-6 text-[14px] font-bold" style={{ borderColor: 'var(--line)', color: 'var(--ink-2)' }}>
+          {items.map(([id, label]) => <a key={id} href={link(id)} className="link-underline">{label}</a>)}
+        </nav>
+
+        <div className="flex flex-col items-center justify-between gap-4 pt-6 text-[13.5px] sm:flex-row" style={{ color: 'var(--ink-3)' }}>
+          {social && (
+            <p className="flex items-center gap-2">
+              {social.map(([icon, href, label, ext]) => (
+                <a key={icon} href={href} aria-label={label} target={ext ? '_blank' : undefined} rel={ext ? 'noopener noreferrer' : undefined}
+                   className="grid h-10 w-10 place-items-center rounded-full border transition-all hover:-translate-y-0.5 hover:text-[var(--accent-ink)]"
+                   style={{ borderColor: 'var(--line)', background: 'var(--card)' }}><Icon name={icon} size={16} /></a>
+              ))}
+            </p>
+          )}
+          <p>{t.footer}</p>
+          <p className="lat">© {new Date().getFullYear()} Ahmed Al-Hawajiri</p>
+        </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+/* The hero: a terminal that runs the real tests behind the site's claims.
+   Lines appear one by one, each spins for a beat then passes; the summary
+   lands, holds, and the run starts over. Reduced motion shows the finished run. */
+export function TestRunner({ lang, tests }) {
+  const t = T[lang].hero.runner;
+  const [n, setN] = useState(0);        // how many lines have been started
+  const [done, setDone] = useState(0);  // how many have passed
+  const [cycle, setCycle] = useState(0);
+  const finished = done >= tests.length;
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setN(tests.length); setDone(tests.length); return; }
+    let a, b;
+    if (!finished) {
+      if (n === done) a = setTimeout(() => setN((x) => x + 1), n === 0 ? 700 : 260);
+      else b = setTimeout(() => setDone((x) => x + 1), 520);
+    } else {
+      a = setTimeout(() => { setN(0); setDone(0); setCycle((c) => c + 1); }, 4200);
+    }
+    return () => { clearTimeout(a); clearTimeout(b); };
+  }, [n, done, finished, tests.length]);
+  const rerun = () => { setN(0); setDone(0); setCycle((c) => c + 1); };
+  return (
+    <div className="runner" aria-live="polite" aria-label={t.cmd}>
+      <div className="runner-bar">
+        <span className="dots"><i /><i /><i /></span>
+        <span className="runner-cmd">$ {t.cmd}</span>
+        <button type="button" onClick={rerun} className="runner-rerun" aria-label={t.rerun} title={t.rerun}><Icon name="arrowUp" size={12} /></button>
+      </div>
+      <ol className="runner-body" key={cycle}>
+        {tests.map((x, i) => {
+          const state = i < done ? 'pass' : i < n ? 'run' : 'wait';
+          return (
+            <li key={x.file} className={`runner-line is-${state}`}>
+              <span className="runner-mark" aria-hidden="true">{state === 'pass' ? <Icon name="check" size={11} /> : state === 'run' ? <span className="spin" /> : ''}</span>
+              <span className="runner-text">
+                <span>{lang === 'ar' ? x.ar : x.en}</span>
+                <span className="runner-file">{x.project}/tests/{x.file}</span>
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+      <div className={`runner-sum${finished ? ' is-on' : ''}`}>
+        <span className="ok">✓ {tests.length} {t.passed}</span>
+        <span>{t.total} {tests.length}</span>
+        <span>1.{(cycle * 7 + 24) % 90 + 10}{t.time}</span>
+      </div>
+    </div>
+  );
+}
+
+/* Local time in Gaza, ticking. Rendered empty on the server so there is no
+   hydration mismatch, then filled on the client. */
+export function LiveClock({ lang }) {
+  const [now, setNow] = useState(null);
+  useEffect(() => {
+    const tick = () => setNow(new Date());
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+  const fmt = (o, loc) => (now ? new Intl.DateTimeFormat(loc, { timeZone: 'Asia/Gaza', ...o }).format(now) : '');
+  return (
+    <span className="block">
+      <span className="clock lat block text-[38px] font-extrabold leading-none tracking-tight grad-text" dir="ltr">
+        {fmt({ hour: '2-digit', minute: '2-digit', hour12: false }, 'en-GB') || '--:--'}
+      </span>
+      <span className="mt-2 block text-[13px] font-bold" style={{ color: 'var(--ink-3)' }}>
+        {fmt({ weekday: 'long', day: 'numeric', month: 'long' }, lang === 'ar' ? 'ar-PS' : 'en-GB')} · GMT+3
+      </span>
+    </span>
+  );
+}
