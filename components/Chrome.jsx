@@ -187,46 +187,39 @@ export function ThemeToggle({ lang }) {
 }
 
 /* Floating glass dock. Tracks the active section on the home page. */
-/* The section rail. Vertical scrolling deserves a vertical map: the marker's
-   place in the rail is the visitor's place in the page, which a horizontal bar
-   can only ever spell out in words. It lives in the page gutter and costs the
-   content no width — but the gutter is only wide enough from `xl` up, so below
-   that the top bar keeps its own section nav and the rail stays away. It is
-   drawn only on the home page, the one page that has sections to point at. */
-function SectionRail({ items, active, label }) {
-  // With the top bar gone on the way down, the rail is the only thing left
-  // that can say where the reader is — so it says it. The name of the section
-  // surfaces wherever the scroll comes to rest and then steps back out of the
-  // page, because a label parked over the text would be a worse trade than
-  // the bar that just left. Hover and focus can always call it up again.
-  const [speak, setSpeak] = useState(false);
-  const hide = useRef();
-  useEffect(() => {
-    let settle;
-    const speakNow = () => {
-      setSpeak(true);
-      clearTimeout(hide.current);
-      hide.current = setTimeout(() => setSpeak(false), 2200);
-    };
-    const onScroll = () => { clearTimeout(settle); settle = setTimeout(speakNow, 150); };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      clearTimeout(settle);
-      clearTimeout(hide.current);
-    };
-  }, []);
-
+/* The in-page section navigation.
+ *
+ * It used to carry the header's four links, which is why it read as an
+ * ornament rather than a map: a rail that lists half the page cannot tell
+ * anyone where they are in it. It now carries every section the page
+ * actually renders, and the header keeps its four — two lists because they
+ * answer two questions. The header asks "where do you want to go on this
+ * site"; the rail answers "where are you in this page, and what is left".
+ *
+ * The marks are the same short rules used elsewhere rather than the dots a
+ * carousel would use: length and weight carry the state, and the accent —
+ * spent nowhere else in this component — marks the section in view.
+ */
+function SectionRail({ items, active, label, lang }) {
   return (
-    <nav className={`rail${speak ? ' is-speaking' : ''}`} aria-label={label}>
+    <nav className="rail" aria-label={label}>
       <span className="rail-track" aria-hidden="true" />
       <span className="rail-fill" aria-hidden="true" />
-      {items.map(([id, text]) => (
-        <a key={id} href={`#${id}`} className="rail-item" aria-current={active === id ? 'true' : undefined}>
-          <span className="rail-tick" aria-hidden="true" />
-          <span className="rail-label">{text}</span>
-        </a>
-      ))}
+      <ol className="rail-list">
+        {items.map(([id, text]) => {
+          const on = active === id;
+          return (
+            <li key={id}>
+              {/* `location` rather than `true`: this is a position within the
+                  page, which is the one thing that value is for. */}
+              <a href={`#${id}`} className="rail-item" aria-current={on ? 'location' : undefined}>
+                <span className="rail-tick" aria-hidden="true" />
+                <span className="rail-label">{text}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ol>
     </nav>
   );
 }
@@ -240,14 +233,26 @@ export function Nav({ lang, path = '', home = false }) {
 
   // Icon + name. The name stays visible for the active section and unfolds
   // on hover for the rest, so the bar reads as icons but never has to be guessed.
-  // Four destinations, not seven. The page has more sections than this, but a
-  // reader scrolling past `how I build` and `engineering proof` meets them in
-  // the story; a menu is for the places somebody jumps to on purpose.
+  // Four destinations in the bar: the places somebody jumps to on purpose.
   const items = [
     ['work', t.nav.work, 'layout'],
     ['services', t.nav.services, 'layers'],
     ['about', t.nav.about, 'user'],
     ['contact', t.nav.contact, 'send'],
+  ];
+
+  // …and every section the page renders, for the rail. `timeline` and
+  // `testimonials` are deliberately absent: their content lists are empty, so
+  // those sections are not in the document and must not be in the map of it.
+  const sections = [
+    ['home', t.nav.home2],
+    ['work', t.nav.work],
+    ['process', t.nav.process],
+    ['proof', t.nav.proof],
+    ['services', t.nav.services],
+    ['skills', t.nav.skills],
+    ['about', t.nav.about],
+    ['contact', t.nav.contact],
   ];
 
   // Reading down, the bar is in the way and the rail can name the sections on
@@ -286,7 +291,7 @@ export function Nav({ lang, path = '', home = false }) {
 
   useEffect(() => {
     if (!home) return;
-    const secs = items.map(([id]) => document.getElementById(id)).filter(Boolean);
+    const secs = sections.map(([id]) => document.getElementById(id)).filter(Boolean);
     const io = new IntersectionObserver(
       (entries) => {
         const v = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
@@ -303,7 +308,7 @@ export function Nav({ lang, path = '', home = false }) {
 
   return (
     <>
-    {home && <SectionRail items={items} active={active} label={t.nav.menu} />}
+    {home && <SectionRail items={sections} active={active} label={t.nav.inPage} lang={lang} />}
     <div className={`hdr-wrap fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:pt-4${away ? ' is-away' : ''}`} style={{ pointerEvents: 'none' }}>
       <header
         className="glass hdr transition-all duration-500"

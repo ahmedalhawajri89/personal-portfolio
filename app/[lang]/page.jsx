@@ -51,7 +51,7 @@ export default async function Home({ params }) {
       <Nav lang={lang} path="/" home />
 
       {/* ---------------------------------------------------------- hero */}
-      <section id="home" className="wrap relative grid grid-cols-1 items-center gap-12 pb-16 pt-28 sm:pt-36 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,.9fr)] lg:gap-16 lg:pb-20">
+      <section id="home" className="wrap relative grid scroll-mt-24 grid-cols-1 items-center gap-12 pb-16 pt-28 sm:pt-36 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,.9fr)] lg:gap-16 lg:pb-20">
         <div className="relative z-10">
           <p className="inline-flex items-center gap-2.5 rounded-full border px-3.5 py-1.5 text-[13px] font-bold"
              style={{ borderColor: 'var(--line)', background: 'var(--glass)', color: 'var(--ink-2)' }}>
