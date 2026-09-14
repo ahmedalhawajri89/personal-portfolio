@@ -1,6 +1,6 @@
 import { LANGS, T } from '../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../content/projects';
-import { SERVICES, SKILLS, CORE, CAPABILITIES, PROCESS, TIMELINE, SKILL_ROWS, TESTIMONIALS, HERO_TESTS } from '../../content/site';
+import { SERVICES, SKILLS, CAPABILITIES, PROCESS, TIMELINE, SKILL_ROWS, TESTIMONIALS, HERO_TESTS } from '../../content/site';
 import { shotsOf, coverOf, pagesOf } from '../../lib/shots';
 import { Nav, Dock, Footer, Reveal, ScrollProgress, CursorGlow, ContactForm, BackToTop, TimelineScroll, LiveClock, TestRunner } from '../../components/Chrome';
 import Marquee from '../../components/Marquee';
@@ -368,18 +368,40 @@ export default async function Home({ params }) {
       {/* --------------------------------------------------------- about */}
       <section id="about" className="wrap scroll-mt-24 pt-24 sm:pt-28">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
+          {/* Who, then what, then why — in that order, because that is the
+              order a client asks them in. The tool badges that used to sit
+              here said the same thing the capabilities section says, in the
+              same words; what belongs here is the work those tools produce. */}
           <div>
             <p className="eyebrow">{t.about.eyebrow}</p>
-            <h2 className="mt-4 text-[clamp(27px,4.4vw,44px)] font-extrabold leading-[1.2] tracking-tight">{t.about.h}</h2>
-            <p className="mt-5 text-[17px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>{PROFILE.lede[lang]}</p>
-            <p className="mt-4 text-[16px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>{PROFILE.role[lang]} · {PROFILE.location[lang]}</p>
+            <h2 className="mt-4 text-[clamp(27px,4.4vw,44px)] font-extrabold leading-[1.15] tracking-tight">{t.about.h}</h2>
+            <p className="mt-2.5 text-[15px] font-bold" style={{ color: 'var(--accent-ink)' }}>
+              {t.about.role} <span style={{ color: 'var(--ink-3)' }}>· {PROFILE.location[lang]}</span>
+            </p>
+            <p className="mt-5 max-w-[56ch] text-[17px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>{PROFILE.lede[lang]}</p>
 
-            <h3 className="mt-8 text-[13px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.about.core}</h3>
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {CORE[lang].map((x) => (
-                <li key={x} className="chip chip-accent"><Icon name="check" size={13} />{x}</li>
+            <h3 className="mt-9 text-[13px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.about.builds}</h3>
+            {/* Hairline rows rather than another wrap of badges: the same
+                restraint the engineering index uses, and it lets six client
+                phrases read as a list instead of a pile. */}
+            <ul className="mt-3 grid gap-0 sm:grid-cols-2 sm:gap-x-8">
+              {t.about.buildsList.map((x) => (
+                <li key={x} className="border-b py-2.5 text-[15.5px] font-bold" style={{ borderColor: 'var(--line)' }}>{x}</li>
               ))}
             </ul>
+
+            <h3 className="mt-9 text-[19px] font-extrabold tracking-tight">{t.about.whyH}</h3>
+            <p className="mt-2.5 max-w-[58ch] text-[16px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>{t.about.whyB}</p>
+
+            {/* The method and the tests already have sections of their own,
+                a screen or two up. This points at them instead of saying it
+                all a second time. */}
+            <p className="mt-6 text-[15px] leading-[1.9]" style={{ color: 'var(--ink-3)' }}>
+              {t.about.seeMore}{' '}
+              <a href="#process" className="font-bold hover:underline" style={{ color: 'var(--accent-ink)' }}>{t.about.seeProcess}</a>
+              {' · '}
+              <a href="#proof" className="font-bold hover:underline" style={{ color: 'var(--accent-ink)' }}>{t.about.seeProof}</a>
+            </p>
           </div>
 
           {/* Bento: four small facts that are true right now, not a résumé card. */}
@@ -423,20 +445,6 @@ export default async function Home({ params }) {
               <p className="mt-4 text-[13.5px] leading-[1.7]" style={{ color: 'var(--ink-2)' }}>{t.about.pipelineB}</p>
             </div>
 
-            <div className="tile rise sm:col-span-2" style={{ '--i': 3 }}>
-              <p className="tile-k">{t.about.code} · <span className="lat">BookingWriter.php</span></p>
-              <pre className="code"><code>
-<span className="c">// Takes the per-resource mutex. Everything after is serialised.</span>{'\n'}
-<span className="k">private function</span> <span className="f">lockResource</span>(<span className="k">string</span> $resourceId): <span className="k">void</span>{'\n'}
-{'{'}{'\n'}
-{'    '}Resource::query()-&gt;whereKey($resourceId)-&gt;<span className="f">lockForUpdate</span>()-&gt;first();{'\n'}
-{'}'}{'\n'}
-{'\n'}
-<span className="c">// Half-open overlap: touching edges do not collide.</span>{'\n'}
--&gt;where(<span className="s">'start_at'</span>, <span className="s">'&lt;'</span>, $end)-&gt;where(<span className="s">'end_at'</span>, <span className="s">'&gt;'</span>, $start)
-              </code></pre>
-              <p className="mt-3 text-[13.5px] leading-[1.7]" style={{ color: 'var(--ink-2)' }}>{t.about.codeB}</p>
-            </div>
           </div>
         </div>
       </section>
