@@ -507,8 +507,16 @@ a:hover .tint,button:hover .tint{opacity:1}
 .rail:hover .rail-tick{opacity:.85}
 .rail:hover .rail-item[aria-current="location"] .rail-tick{opacity:1}
 
+/* Stepping back rather than blinking out: a short fade with a hair of travel
+   towards the edge it lives on, so the eye reads it as leaving. */
+.rail{opacity:1;transition:opacity .22s ease,transform .22s cubic-bezier(.2,.8,.2,1)}
+.rail.is-done{opacity:0;pointer-events:none;
+  transform:translateY(-50%) translateX(var(--rail-exit,-8px))}
+[dir="rtl"] .rail.is-done{--rail-exit:8px}
+
 @media (prefers-reduced-motion:reduce){
-  .rail-tick,.rail-label{transition:none}
+  .rail,.rail-tick,.rail-label{transition:none}
+  .rail.is-done{transform:translateY(-50%)}
 }
 /* Two progress readouts on one screen is one too many: where the rail is
    drawn, the hairline at the top of the window stands down. */

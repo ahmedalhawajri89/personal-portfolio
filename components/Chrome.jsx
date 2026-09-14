@@ -201,8 +201,42 @@ export function ThemeToggle({ lang }) {
  * spent nowhere else in this component — marks the section in view.
  */
 function SectionRail({ items, active, label, lang }) {
+  // The rail maps the sections; the footer is not one of them. Once the page
+  // has run out of sections the rail has nothing left to point at, and a map
+  // of a finished thing floating over the closing panel reads as a leftover.
+  // So it retires — at the moment the footer reaches the rail's own height,
+  // which is the viewport's middle, because that is where the rail sits.
+  // Observed rather than computed from a scroll offset: the footer moves when
+  // content above it changes, and a number would not.
+  const [done, setDone] = useState(false);
+  const railRef = useRef(null);
+  useEffect(() => {
+    const foot = document.querySelector('footer.foot-sheet');
+    if (!foot) return;
+    let io;
+    // The line to cross is the rail's *lowest* mark, because that is where an
+    // overlap starts. The rail is centred, so its bottom edge sits at half the
+    // viewport plus half its own height from the top — which is the same
+    // distance up from the bottom, and that is what rootMargin takes.
+    const watch = () => {
+      io?.disconnect();
+      const h = railRef.current?.offsetHeight || 240;
+      const up = Math.max(0, Math.round(window.innerHeight / 2 - h / 2));
+      io = new IntersectionObserver(([e]) => setDone(e.isIntersecting), {
+        rootMargin: `0px 0px -${up}px 0px`,
+        threshold: 0,
+      });
+      io.observe(foot);
+    };
+    watch();
+    // Recomputed on resize because both terms are viewport-dependent — no
+    // scroll listener, and no number baked into the stylesheet.
+    window.addEventListener('resize', watch);
+    return () => { io?.disconnect(); window.removeEventListener('resize', watch); };
+  }, []);
+
   return (
-    <nav className="rail" aria-label={label}>
+    <nav ref={railRef} className={`rail${done ? ' is-done' : ''}`} aria-label={label} aria-hidden={done || undefined}>
       <span className="rail-track" aria-hidden="true" />
       <span className="rail-fill" aria-hidden="true" />
       <ol className="rail-list">
