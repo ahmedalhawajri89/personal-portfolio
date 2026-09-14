@@ -498,17 +498,29 @@ export function Dock({ lang, home = false }) {
 export function CyclingStatement({ phrases, hold = 1900 }) {
   const [i, setI] = useState(0);
   const [prev, setPrev] = useState(-1);
+  const box = useRef(null);
+  // The dissolve blurs to 64px across a line as wide as the footer, which is
+  // expensive enough to hold the main thread. Only spend it while someone is
+  // actually looking: the footer sits off-screen for most of the visit.
+  const [live, setLive] = useState(false);
   useEffect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches || phrases.length < 2) return;
+    const el = box.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setLive(e.isIntersecting), { threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!live || matchMedia('(prefers-reduced-motion: reduce)').matches || phrases.length < 2) return;
     const id = setInterval(() => {
       setI((n) => { setPrev(n); return (n + 1) % phrases.length; });
     }, hold);
     return () => clearInterval(id);
-  }, [phrases.length, hold]);
+  }, [live, phrases.length, hold]);
   const latin = (s) => /^[ -~]+$/.test(s);
   const cls = (s) => `xf-word${latin(s) ? ' lat xf-latin' : ''}`;
   return (
-    <span className="xf" aria-live="polite">
+    <span ref={box} className="xf" aria-live="polite">
       {prev >= 0 && <span key={`o${prev}-${i}`} className={`${cls(phrases[prev])} xf-out`} aria-hidden="true">{phrases[prev]}</span>}
       <span key={`i${i}`} className={`${cls(phrases[i])}${prev >= 0 ? ' xf-in' : ''}`}>{phrases[i]}</span>
       {/* The longest phrase reserves the height so the card never jumps. */}
@@ -817,7 +829,7 @@ export function Footer({ lang, links, home = false }) {
         </div>
 
         <nav className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2 border-b pb-6 text-[14px] font-bold" style={{ borderColor: 'var(--line)', color: 'var(--ink-2)' }}>
-          {items.map(([id, label]) => <a key={id} href={link(id)} className="link-underline">{label}</a>)}
+          {items.map(([id, label]) => <a key={id} href={link(id)} className="link-underline block py-1">{label}</a>)}
         </nav>
 
         <div className="flex flex-col items-center justify-between gap-4 pt-6 text-[13.5px] sm:flex-row" style={{ color: 'var(--ink-3)' }}>

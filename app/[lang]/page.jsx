@@ -404,7 +404,13 @@ export default async function Home({ params }) {
                           : r.projects.map((pr, k) => (
                               <span key={pr.slug}>
                                 {k > 0 && <span aria-hidden="true"> · </span>}
-                                <a href={`/${lang}/work/${pr.slug}/`} className="hover:underline"
+                                {/* Padding with a matching negative margin: the
+                                    hit box goes from 19px to 27px tall without
+                                    moving the line. Four of these sit side by
+                                    side separated by a dot, and at 19px on a
+                                    phone the wrong one gets tapped. */}
+                                <a href={`/${lang}/work/${pr.slug}/`}
+                                   className="inline-block -my-1 py-1 hover:underline"
                                    style={{ color: 'var(--accent-ink)' }}>{pr[lang].name}</a>
                               </span>
                             ))}
@@ -475,9 +481,11 @@ export default async function Home({ params }) {
                 all a second time. */}
             <p className="mt-6 text-[15px] leading-[1.9]" style={{ color: 'var(--ink-3)' }}>
               {t.about.seeMore}{' '}
-              <a href="#process" className="font-bold hover:underline" style={{ color: 'var(--accent-ink)' }}>{t.about.seeProcess}</a>
+              {/* Same hit-box padding as the capability links: two of these sit
+                  a dot apart, which is where a thumb lands on the wrong one. */}
+              <a href="#process" className="inline-block -my-1 py-1 font-bold hover:underline" style={{ color: 'var(--accent-ink)' }}>{t.about.seeProcess}</a>
               {' · '}
-              <a href="#proof" className="font-bold hover:underline" style={{ color: 'var(--accent-ink)' }}>{t.about.seeProof}</a>
+              <a href="#proof" className="inline-block -my-1 py-1 font-bold hover:underline" style={{ color: 'var(--accent-ink)' }}>{t.about.seeProof}</a>
             </p>
           </div>
 
