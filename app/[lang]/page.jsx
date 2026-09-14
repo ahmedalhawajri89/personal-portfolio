@@ -425,8 +425,16 @@ export default async function Home({ params }) {
             </p>
           </div>
 
-          {/* Bento: four small facts that are true right now, not a résumé card. */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {/* Bento: small facts that are true right now, not a résumé card.
+              `content-start` matters here. The outer two-column grid stretches
+              this column to match the text beside it, and a grid's default
+              align-content then spreads that height across its auto rows —
+              which inflated three 170-220px cards into 392-440px boxes with a
+              quarter of a screen of nothing under each. The rows keep their
+              own height now, and the leftover falls to the bottom of a
+              container that has no background of its own, so it reads as the
+              column ending rather than as hollow cards. */}
+          <div className="grid grid-cols-1 content-start gap-4 sm:grid-cols-2">
             <div className="tile rise" style={{ '--i': 0 }}>
               <p className="tile-k">{t.about.now}</p>
               <div className="mt-3"><LiveClock lang={lang} /></div>
