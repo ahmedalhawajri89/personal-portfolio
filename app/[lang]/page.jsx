@@ -432,9 +432,16 @@ export default async function Home({ params }) {
               which inflated three 170-220px cards into 392-440px boxes with a
               quarter of a screen of nothing under each. The rows keep their
               own height now, and the leftover falls to the bottom of a
-              container that has no background of its own, so it reads as the
-              column ending rather than as hollow cards. */}
-          <div className="grid grid-cols-1 content-start gap-4 sm:grid-cols-2">
+              container that has no background of its own.
+
+              From `lg` the column also sticks. Two things are needed for that
+              and neither works alone: `self-start` so the item stops being
+              stretched to the row's height — a sticky box cannot travel inside
+              a containing block it already fills — and then `sticky`, which
+              moves it within the grid area the row still occupies. The result
+              is that the facts stay beside the prose that they support for the
+              whole read, and the space under them is never looked at. */}
+          <div className="grid grid-cols-1 content-start gap-4 sm:grid-cols-2 lg:sticky lg:top-24 lg:self-start">
             <div className="tile rise" style={{ '--i': 0 }}>
               <p className="tile-k">{t.about.now}</p>
               <div className="mt-3"><LiveClock lang={lang} /></div>
