@@ -540,10 +540,10 @@ a:hover .tint,button:hover .tint{opacity:1}
   opacity:0;transform:translateY(1px);pointer-events:none;
   transition:opacity .18s ease,color .18s ease,transform .18s ease}
 .rail-item:hover .rail-label,.rail-item:focus-visible .rail-label{opacity:1;color:var(--ink);transform:none}
-/* Where the gutter allows it, the section in view says its own name. */
-@media (min-width:1440px){
-  .rail-item[aria-current="location"] .rail-label{opacity:1;color:var(--ink);transform:none}
-}
+/* Only the item under the pointer or the keyboard says its name. A label
+   parked on the active item turned the rail into a caption that follows the
+   reader down the page; the accent glyph and the marker already say which
+   section is in view, and the names are one hover or one Tab away. */
 
 /* Stepping back rather than blinking out: a short fade with a hair of travel
    towards the edge it lives on, so the eye reads it as leaving. */

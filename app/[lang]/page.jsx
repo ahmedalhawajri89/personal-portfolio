@@ -393,6 +393,27 @@ export default async function Home({ params }) {
             <h3 className="mt-9 text-[19px] font-extrabold tracking-tight">{t.about.whyH}</h3>
             <p className="mt-2.5 max-w-[58ch] text-[16px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>{t.about.whyB}</p>
 
+            {/* What working together looks like, which is the one thing the
+                section never said. Not a card and not the method again — the
+                six working rules above are how the engineering is done; these
+                five words are how the weeks are shaped from the other side of
+                the table. Plain type on a hairline, so it stays a sentence. */}
+            <h3 className="mt-9 text-[13px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.about.startH}</h3>
+            <p className="mt-2.5 max-w-[54ch] text-[16px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>{t.about.startB}</p>
+            <ol className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-2 border-t pt-4"
+                style={{ borderColor: 'var(--line)' }}>
+              {t.about.startSteps.map((x, i) => (
+                <li key={x} className="flex items-center gap-2.5">
+                  {i > 0 && (
+                    <span style={{ color: 'var(--ink-3)', opacity: .55 }} aria-hidden="true">
+                      <Icon name={arrow} size={13} />
+                    </span>
+                  )}
+                  <span className="text-[14.5px] font-bold">{x}</span>
+                </li>
+              ))}
+            </ol>
+
             {/* The method and the tests already have sections of their own,
                 a screen or two up. This points at them instead of saying it
                 all a second time. */}
