@@ -1,6 +1,7 @@
+import { Fragment } from 'react';
 import { LANGS, T } from '../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../content/projects';
-import { SERVICES, SKILLS, CAPABILITIES, PROCESS, TIMELINE, SKILL_ROWS, TESTIMONIALS, HERO_TESTS } from '../../content/site';
+import { SERVICES, SKILLS, CAPABILITIES, PROCESS, TIMELINE, TESTIMONIALS, HERO_TESTS } from '../../content/site';
 import { shotsOf, coverOf, pagesOf } from '../../lib/shots';
 import { Nav, Dock, Footer, Reveal, ScrollProgress, CursorGlow, ContactForm, BackToTop, TimelineScroll, LiveClock, TestRunner } from '../../components/Chrome';
 import Marquee from '../../components/Marquee';
@@ -25,6 +26,7 @@ export default async function Home({ params }) {
   const { lang } = await params;
   const t = T[lang];
   const ar = lang === 'ar';
+  const L = ar ? 'Ar' : 'En';   // suffix for the per-language fields on HERO_TESTS
   const arrow = ar ? 'arrowLeft' : 'arrowRight';
   const live = PROJECTS.filter((p) => shotsOf(p.shots).shots.length > 0);
   const totalPages = live.reduce((n, p) => n + pagesOf(p.shots), 0);
@@ -36,10 +38,14 @@ export default async function Home({ params }) {
   ];
   const cover = (p) => coverOf(p, lang);
   // Skill bars: how many projects use each tool. Nothing self-assessed.
-  const skillRows = SKILL_ROWS.map((r) => ({
-    ...r,
-    n: PROJECTS.filter((p) => p.stack.some((s) => r.match.test(s))).length,
-  })).sort((a, b) => b.n - a.n);
+  // Where each capability has actually been used. A count out of five reads
+  // as a score however it is labelled — `5/5 Laravel` is indistinguishable
+  // from a self-rating — so the evidence is the project names instead.
+  const head = (x) => x.toLowerCase().split(/[\s.]/)[0];
+  const usedIn = (cap) => {
+    const keys = cap.items.map(head);
+    return PROJECTS.filter((pr) => pr.stack.some((st) => keys.includes(head(st))));
+  };
 
   return (
     <>
@@ -141,9 +147,14 @@ export default async function Home({ params }) {
             const cv = cover(p);
             const shots = shotsOf(p.shots).shots.length;
             const pages = pagesOf(p.shots);
-            const layout = i === 0 ? 'lead' : (i === 1 || i === 4) ? 'side' : 'half';
+            // The first three carry the argument: a shop whose product idea a
+            // client grasps in a sentence, a booking system whose hardest part
+            // is concurrency, and a platform whose hardest part is roles. The
+            // last two are evidence that the range is not three projects wide,
+            // and they are sized as evidence rather than as headline.
+            const layout = i === 0 ? 'lead' : i < 3 ? 'side' : 'half';
             const wide = layout !== 'half';
-            const flip = i === 4;                                   // the closer mirrors the opener
+            const flip = i === 2;                                   // the third mirrors the second
             const num = String(i + 1).padStart(2, '0');
             const ratio = layout === 'lead' ? '21 / 9' : layout === 'side' ? '4 / 3' : '16 / 10';
 
@@ -208,7 +219,14 @@ export default async function Home({ params }) {
             );
 
             return (
-              <li key={p.slug} className={`${wide ? 'lg:col-span-2 ' : ''}${i > 0 ? 'rise ' : ''}min-w-0`} style={{ '--i': i % 2 }}>
+              <Fragment key={p.slug}>
+              {i === 3 && (
+                <li className="lg:col-span-2 mt-6 flex items-center gap-4" aria-hidden="true">
+                  <span className="text-[13px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.work.more}</span>
+                  <span className="h-px flex-1" style={{ background: 'var(--line)' }} />
+                </li>
+              )}
+              <li className={`${wide ? 'lg:col-span-2 ' : ''}${i > 0 ? 'rise ' : ''}min-w-0`} style={{ '--i': i % 2 }}>
                 <a href={`/${lang}/work/${p.slug}/`} className="card hover-lift group block h-full overflow-hidden">
                   {layout === 'side' ? (
                     <div className="grid h-full lg:grid-cols-[1.02fr_.98fr]">
@@ -220,6 +238,7 @@ export default async function Home({ params }) {
                   )}
                 </a>
               </li>
+              </Fragment>
             );
           })}
         </ol>
@@ -258,6 +277,14 @@ export default async function Home({ params }) {
           plain language, the file that holds it, and the project it guards. */}
       <section id="proof" className="wrap scroll-mt-24 pt-24 sm:pt-28">
         <SectionHead eyebrow={t.proof.eyebrow} h={t.proof.h} lede={t.proof.lede} />
+        {/* The order the rows are read in, stated once instead of labelling
+            all eighteen cells. */}
+        <p className="-mt-4 mb-8 flex flex-wrap items-center gap-2 text-[12.5px] font-bold uppercase tracking-widest"
+           style={{ color: 'var(--ink-3)' }}>
+          <span>{t.proof.lProblem}</span><Icon name={arrow} size={13} />
+          <span>{t.proof.lDecision}</span><Icon name={arrow} size={13} />
+          <span>{t.proof.lProof}</span>
+        </p>
         <div className="card overflow-hidden">
           <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b px-6 py-5" style={{ borderColor: 'var(--line)' }}>
             <span className="lat text-[30px] font-extrabold leading-none tracking-tight">{HERO_TESTS.length}/{HERO_TESTS.length}</span>
@@ -269,18 +296,24 @@ export default async function Home({ params }) {
               return (
                 <li key={x.file} className="border-b last:border-0" style={{ borderColor: 'var(--line)' }}>
                   <a href={owner ? `/${lang}/work/${owner.slug}/` : undefined}
-                     className="group flex flex-col gap-2 px-6 py-4 transition-colors hover:bg-[var(--card-2)] sm:flex-row sm:items-center sm:gap-6">
-                    <span className="flex min-w-0 flex-1 items-start gap-3.5">
+                     className="group grid gap-2 px-6 py-5 transition-colors hover:bg-[var(--card-2)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)_auto] lg:items-baseline lg:gap-8">
+                    {/* What goes wrong, in the words of whoever it goes wrong
+                        for. This is the layer a non-technical reader needs
+                        first, so it is the one set in the page's body weight. */}
+                    <span className="flex items-start gap-3">
                       <span className="mt-1 shrink-0" style={{ color: 'var(--accent-ink)' }} aria-hidden="true">
                         <Icon name="check" size={16} />
                       </span>
-                      <span className="text-[15.5px] font-bold leading-[1.7]">{x[lang]}</span>
+                      <span className="text-[15.5px] font-bold leading-[1.7]">{x[`prob${L}`]}</span>
                     </span>
-                    <span className="flex shrink-0 items-center gap-2.5 ps-8 sm:ps-0">
+                    {/* What was decided about it. */}
+                    <span className="ps-8 text-[14.5px] leading-[1.75] lg:ps-0" style={{ color: 'var(--ink-2)' }}>
+                      {x[`dec${L}`]}
+                    </span>
+                    {/* And the file that keeps it true. */}
+                    <span className="flex shrink-0 items-center gap-2.5 ps-8 lg:ps-0">
                       <span className="mono text-[12px]" style={{ color: 'var(--ink-3)' }}>{x.file}</span>
-                      {owner && (
-                        <span className="chip px-2.5 py-1 text-[11.5px] font-bold">{owner[lang].name}</span>
-                      )}
+                      {owner && <span className="chip px-2.5 py-1 text-[11.5px] font-bold">{owner[lang].name}</span>}
                       {owner && (
                         <span className="opacity-0 transition-opacity group-hover:opacity-100"
                               style={{ color: 'var(--ink-3)' }} aria-hidden="true">
@@ -334,7 +367,9 @@ export default async function Home({ params }) {
       <section id="skills" className="wrap scroll-mt-24 pt-24 sm:pt-28">
         <SectionHead eyebrow={t.skills.eyebrow} h={t.skills.h} lede={t.skills.lede} center />
         <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {CAPABILITIES.map((cap, i) => (
+          {CAPABILITIES.map((cap, i) => {
+            const where = usedIn(cap);
+            return (
             <li key={cap.icon} className="rise" style={{ '--i': i % 4 }}>
               <div className="card flex h-full flex-col p-6">
                 <span className="icon-tile"><Icon name={cap.icon} size={19} /></span>
@@ -345,24 +380,29 @@ export default async function Home({ params }) {
                     <li key={x} className="chip px-2.5 py-1 text-[11.5px]">{x}</li>
                   ))}
                 </ul>
+                {/* Named projects, not a score. `Laravel in all five` is a
+                    stronger and less ambiguous fact than `5/5 Laravel`. */}
+                {where.length > 0 && (
+                  <p className="mt-auto pt-5 text-[13px] leading-[1.7]" style={{ color: 'var(--ink-3)' }}>
+                    <span className="font-bold">{t.skills.usedIn}</span>{' '}
+                    {where.length === PROJECTS.length
+                      ? <span style={{ color: 'var(--ink-2)' }}>{t.skills.allFive}</span>
+                      : where.map((pr, k) => (
+                          <span key={pr.slug}>
+                            {k > 0 && <span aria-hidden="true"> · </span>}
+                            <a href={`/${lang}/work/${pr.slug}/`} className="font-bold hover:underline"
+                               style={{ color: 'var(--accent-ink)' }}>{pr[lang].name}</a>
+                          </span>
+                        ))}
+                  </p>
+                )}
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
 
-        {/* The one number worth keeping from the bars, said plainly. */}
-        <div className="card mt-5 flex flex-wrap items-center gap-x-7 gap-y-3 px-6 py-5">
-          <p className="text-[13px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.skills.usage}</p>
-          <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            {skillRows.map((r) => (
-              <li key={r.en} className="flex items-baseline gap-1.5 text-[14px]">
-                <span className="lat font-extrabold" style={{ color: 'var(--ink)' }}>{r.n}</span>
-                <span className="text-[12.5px]" style={{ color: 'var(--ink-3)' }}>{t.skills.inProjects}</span>
-                <span className="font-bold">{r[lang]}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+
       </section>
 
       {/* --------------------------------------------------------- about */}
@@ -540,6 +580,10 @@ export default async function Home({ params }) {
                 {t.contact.h}
               </h2>
               <p className="mt-4 max-w-[48ch] text-[16.5px] leading-[1.85]" style={{ color: 'var(--ink-2)' }}>{t.contact.b}</p>
+              {/* Names both ways in, so neither reader has to wonder whether
+                  the form is meant for them. */}
+              <p className="mt-3 max-w-[48ch] border-s-2 ps-4 text-[15px] leading-[1.8]"
+                 style={{ color: 'var(--ink-3)', borderColor: 'var(--accent-soft)' }}>{t.contact.paths}</p>
               <ul className="mt-7 grid gap-3">
                 {[
                   ['mail', `mailto:${PROFILE.links.email}`, t.contact.email, PROFILE.links.email, false],

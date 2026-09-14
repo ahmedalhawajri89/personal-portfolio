@@ -1,6 +1,8 @@
 import { LANGS, T } from '../../../../lib/i18n';
+import { SITE } from '../../../../lib/site.mjs';
 import { PROJECTS, PROFILE } from '../../../../content/projects';
 import { STORIES } from '../../../../content/stories';
+import { HERO_TESTS } from '../../../../content/site';
 import { shotsOf, coverOf, pagesOf, tourOf } from '../../../../lib/shots';
 import { Nav, Dock, Footer, Reveal, ScrollProgress, CursorGlow, BackToTop } from '../../../../components/Chrome';
 import Gallery from '../../../../components/Gallery';
@@ -18,10 +20,18 @@ export async function generateMetadata({ params }) {
   if (!p) return {};
   const c = p[lang];
   const title = `${c.name} — ${c.kind} · ${lang === 'ar' ? 'أحمد الحواجري' : 'Ahmed Al-Hawajiri'}`;
+  const here = `${SITE}/${lang}/work/${slug}/`;
   return {
     title,
     description: c.tagline,
-    openGraph: { title, description: c.tagline, images: [{ url: '/og.png' }] },
+    // Without this the page inherits the layout's canonical, which points at
+    // the home page — telling a crawler that every case study is a duplicate
+    // of it. The language pair has to be per-page for the same reason.
+    alternates: {
+      canonical: here,
+      languages: Object.fromEntries(LANGS.map((l) => [l, `${SITE}/${l}/work/${slug}/`])),
+    },
+    openGraph: { type: 'article', url: here, title, description: c.tagline, images: [{ url: '/og.png' }] },
   };
 }
 
@@ -40,6 +50,10 @@ export default async function Project({ params }) {
   const pages = pagesOf(p.shots);
   const story = STORIES[p.slug]?.[lang];
   const tour = tourOf(p, lang);
+  // The tests that belong to this project. Derived from the same list the
+  // home page indexes, filtered to here — so a case study cannot claim a test
+  // the index does not also carry.
+  const held = HERO_TESTS.filter((x) => x.project === p.slug || x.project === p.shots);
 
   return (
     <>
@@ -206,6 +220,32 @@ export default async function Project({ params }) {
                 ))}
               </ul>
             </div>
+          </section>
+        )}
+
+        {/* --------------------------------------------------- evidence */}
+        {/* The case study has said what was wrong and what was decided. This
+            is the part that says it still holds — the actual test files, not
+            a claim that tests exist. Projects without one simply do not show
+            the block. */}
+        {held.length > 0 && (
+          <section className="mt-20">
+            <p className="eyebrow w-fit">{d.evidence}</p>
+            <h2 className="mt-4 text-[clamp(24px,3.4vw,34px)] font-extrabold tracking-tight">{d.evidenceH}</h2>
+            <ul className="card mt-7 overflow-hidden">
+              {held.map((x) => (
+                <li key={x.file} className="flex flex-col gap-1.5 border-b px-6 py-4 last:border-0 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
+                    style={{ borderColor: 'var(--line)' }}>
+                  <span className="flex items-start gap-3">
+                    <span className="mt-0.5 shrink-0" style={{ color: 'var(--accent-ink)' }} aria-hidden="true">
+                      <Icon name="check" size={15} />
+                    </span>
+                    <span className="text-[15.5px] font-bold leading-[1.7]">{x[lang]}</span>
+                  </span>
+                  <span className="mono shrink-0 ps-8 text-[12px] sm:ps-0" style={{ color: 'var(--ink-3)' }}>{x.file}</span>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
 

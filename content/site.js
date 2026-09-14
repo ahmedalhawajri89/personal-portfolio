@@ -104,13 +104,66 @@ export const TESTIMONIALS = [];
 
 // The hero "test run". Every entry is a real test file in one of the projects
 // above, and the sentence is the rule that test protects.
+// Each entry is a real test file in one of the projects above. `ar`/`en` is
+// the rule the test protects — the hero runner prints those. `prob` and `dec`
+// split that rule into the two halves a reader needs in that order: what goes
+// wrong for the business, and what was decided about it. Both are lifted from
+// the technical points in projects.js, not written fresh.
 export const HERO_TESTS = [
-  { file: 'ConcurrentBookingTest.php', project: 'booking', ar: 'مشغّلان يؤكّدان الموعد نفسه في الثانية نفسها: الثاني يخسر', en: 'Two operators confirm the same slot in the same second: the second one loses' },
-  { file: 'StockTest.php', project: 'diwan', ar: 'آخر قطعة في المخزون لا تُباع مرّتين', en: 'The last piece in stock cannot be sold twice' },
-  { file: 'OrderHistoryTest.php', project: 'diwan', ar: 'سطر الطلب يبقى بعد سحب المنتج من الكتالوج', en: 'An order line survives the product being retired' },
-  { file: 'DisbursementRecordTest.php', project: 'kafala', ar: 'من سجّل الصرف لا يستطيع اعتماده', en: 'Whoever recorded a disbursement cannot approve it' },
-  { file: 'PortfolioManagementTest.php', project: 'mawaheb', ar: 'الخطة المجانية تحدّ عدد الأعمال المنشورة', en: 'The free plan caps published portfolio items' },
-  { file: 'DesignSystemTest.php', project: 'diwan', ar: 'لا لون في القوالب خارج ملف الرموز', en: 'No colour in a template outside the token file' },
+  {
+    file: 'ConcurrentBookingTest.php', project: 'booking',
+    ar: 'مشغّلان يؤكّدان الموعد نفسه في الثانية نفسها: الثاني يخسر',
+    en: 'Two operators confirm the same slot in the same second: the second one loses',
+    probAr: 'زبونان يطلبان الموعد نفسه في اللحظة نفسها.',
+    probEn: 'Two customers ask for the same slot at the same moment.',
+    decAr: 'الـAPI يقفل صف المورد قبل فحص التداخل، داخل المعاملة التي تكتب الحجز.',
+    decEn: 'The API locks the resource row before testing for an overlap, inside the transaction that writes the booking.',
+  },
+  {
+    file: 'StockTest.php', project: 'diwan',
+    ar: 'آخر قطعة في المخزون لا تُباع مرّتين',
+    en: 'The last piece in stock cannot be sold twice',
+    probAr: 'آخر قطعة في المخزون يشتريها زبونان معاً.',
+    probEn: 'Two customers buy the last piece in stock at once.',
+    decAr: 'الشراء يقفل صف المنتج بـ lockForUpdate داخل المعاملة نفسها التي تكتب الطلب.',
+    decEn: 'Checkout locks the product row with lockForUpdate inside the transaction that writes the order.',
+  },
+  {
+    file: 'OrderHistoryTest.php', project: 'diwan',
+    ar: 'سطر الطلب يبقى بعد سحب المنتج من الكتالوج',
+    en: 'An order line survives the product being retired',
+    probAr: 'سحب قطعة من الكتالوج كان يمحوها من كل طلب سابق.',
+    probEn: 'Retiring a piece used to erase it from every past order.',
+    decAr: 'الأعمدة تُفرَّغ بدل أن تُحذف، ولقطة الاسم والصورة محفوظة مع السطر نفسه.',
+    decEn: 'The columns release instead of cascading, and a name and image snapshot travel with the line.',
+  },
+  {
+    file: 'DisbursementRecordTest.php', project: 'kafala',
+    ar: 'من سجّل الصرف لا يستطيع اعتماده',
+    en: 'Whoever recorded a disbursement cannot approve it',
+    probAr: 'شخص واحد يسجّل عملية صرف ويعتمدها بنفسه.',
+    probEn: 'One person records a disbursement and signs it off themselves.',
+    decAr: 'السياسة تفحص ذلك في الكود لا في الواجهة، والمعتمَد يُعكَس بقيد مضاد لا يُعدَّل.',
+    decEn: 'The policy checks that in code rather than in the interface, and an approved record is reversed with a counter-entry rather than edited.',
+  },
+  {
+    file: 'PortfolioManagementTest.php', project: 'mawaheb',
+    ar: 'الخطة المجانية تحدّ عدد الأعمال المنشورة',
+    en: 'The free plan caps published portfolio items',
+    probAr: 'حدّ الخطة المجانية يُتجاوز بالنشر المتكرّر.',
+    probEn: 'The free plan cap is walked past by publishing again.',
+    decAr: 'الحدّ مفروض في طبقة البيانات، لا بإخفاء الزرّ في الواجهة.',
+    decEn: 'The cap is enforced in the data layer, not by hiding the button.',
+  },
+  {
+    file: 'DesignSystemTest.php', project: 'diwan',
+    ar: 'لا لون في القوالب خارج ملف الرموز',
+    en: 'No colour in a template outside the token file',
+    probAr: 'قاعدة تصميم لا يفحصها أحد ترجع بعد أول تعديل.',
+    probEn: 'A design rule nobody checks comes back after the first edit.',
+    decAr: 'القواعد مكتوبة كاختبارات على قوالب Blade، لا كاتفاق شفهي.',
+    decEn: 'The rules are written as unit tests over the Blade templates rather than agreed verbally.',
+  },
 ];
 
 // Working rules shown on the home page timeline. Every one of them is
