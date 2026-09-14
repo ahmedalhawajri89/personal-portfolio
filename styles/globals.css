@@ -396,13 +396,46 @@ a:hover .tint,button:hover .tint{opacity:1}
 .hdr-wrap.is-away .hdr{pointer-events:none!important}
 /* Sized by its contents at every width and on every page. The variable is
    kept for the scroll shrink, as an upper bound rather than a target. */
-.hdr{width:auto;max-width:min(var(--hdr-max),100%)}
+.hdr{width:auto;max-width:min(var(--hdr-max),100%);
+  transition:border-radius .35s cubic-bezier(.2,.8,.2,1)}
+/* Once reading has started the second line of the identity folds away: the
+   bar earns its height at the top of the page and gives it back after. */
+.brand-role{max-height:14px;opacity:1;overflow:hidden;
+  transition:max-height .3s cubic-bezier(.2,.8,.2,1),opacity .22s ease}
+.hdr-tight .brand-role{max-height:0;opacity:0}
 
-/* The pill's contents. Identity on one side, a hairline, then the utilities —
-   so five controls read as two groups instead of a row of look-alike circles.
-   The utilities lose their borders: inside a bordered pill, a border each just
-   draws boxes within a box. */
-.brand{display:flex;align-items:center;gap:9px;padding-inline-end:2px;border-radius:999px}
+/* The bar's contents. Identity, a hairline, the location, then the utilities —
+   four groups rather than a row of look-alike circles. The utilities lose
+   their borders: inside a bordered bar, a border each draws boxes in a box.
+
+   The corner is a continuous 20px curve, not the 999px capsule every floating
+   header on the web now wears. It also puts the bar in the same drawn family
+   as the cards and the screenshot frames instead of leaving it a foreign
+   lozenge hovering above them. */
+.brand{display:flex;align-items:center;gap:10px;padding-inline-end:2px;border-radius:14px}
+.brand-id{gap:1px;line-height:1.15;text-align:start}
+.brand-role{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);white-space:nowrap}
+
+/* Where you are, in the field the gallery frames use for a page URL: inset,
+   monospaced, quiet. The name crossfades when the section changes — the one
+   moving thing in the bar, and it moves because the fact under it changed. */
+.hdr-loc{display:none;align-items:center;gap:5px;height:26px;padding-inline:10px;
+  border-radius:8px;background:var(--bg);border:1px solid var(--line);
+  max-width:12rem;overflow:hidden;flex:none}
+.hdr-loc-slash{font-family:var(--mono-stack,ui-monospace,'PlexLat',monospace);
+  font-size:12px;font-weight:700;color:var(--accent-ink);opacity:.75}
+.hdr-loc-text{font-size:12px;font-weight:700;color:var(--ink-2);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;animation:loc-in .26s cubic-bezier(.2,.8,.2,1)}
+@keyframes loc-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+/* The bar carries exactly one section-related element, and which one depends
+   on the width: below 768 none of them fit, from 768 the four section icons
+   do the job, and from 1280 the rail takes that job over and the bar shows
+   the location instead. Two of them at once is how it got to 741px on a
+   768px screen. */
+.hdr-sep-loc{display:none}
+@media (min-width:1280px){.hdr-loc,.hdr-sep-loc{display:flex}}
+@media (prefers-reduced-motion:reduce){.hdr-loc-text{animation:none}}
 .brand-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:999px;
   color:var(--on-accent);font-size:13px;font-weight:800;background:var(--accent-solid);
   box-shadow:0 2px 10px -3px color-mix(in srgb,var(--accent) 55%,transparent);

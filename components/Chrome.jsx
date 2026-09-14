@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { T, other } from '../lib/i18n';
+import { PROFILE } from '../content/projects';
 import Icon from './Icons';
 import { CvButton } from './CvPanel';
 
@@ -258,7 +259,7 @@ function SectionRail({ items, active, label, lang }) {
   );
 }
 
-export function Nav({ lang, path = '', home = false }) {
+export function Nav({ lang, path = '', home = false, title = '' }) {
   const t = T[lang];
   const o = other(lang);
   const [active, setActive] = useState('');
@@ -340,24 +341,55 @@ export function Nav({ lang, path = '', home = false }) {
 
   const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
 
+  // What the location field says. On the home page it is the section in view;
+  // on a case study the page is the location, so it names the project.
+  const here = home
+    ? (sections.find(([id]) => id === active)?.[1] ?? sections[0][1])
+    : (title || t.nav.back);
+
   return (
     <>
     {home && <SectionRail items={sections} active={active} label={t.nav.inPage} lang={lang} />}
     <div className={`hdr-wrap fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:pt-4${away ? ' is-away' : ''}`} style={{ pointerEvents: 'none' }}>
       <header
-        className="glass hdr transition-all duration-500"
+        className={`glass hdr transition-all duration-500${scrolled ? ' hdr-tight' : ''}`}
         style={{
           pointerEvents: 'auto',
           '--hdr-max': scrolled ? '860px' : '1200px',
-          borderRadius: 999,
+          borderRadius: scrolled ? 999 : 20,
           boxShadow: scrolled ? 'var(--glow)' : 'var(--shadow)',
         }}
       >
         <div className="flex h-14 items-center justify-between gap-3 ps-2.5 pe-2 sm:ps-3">
+          {/* Two lines at the top of the page, one after that. A visitor who
+              has not scrolled yet has no idea who this is; a visitor who has
+              read three sections does, and wants the bar out of the way. */}
           <a href={`/${lang}/`} className="brand">
             <span className="brand-mark"><span className="lat">A</span></span>
-            <span className="lat brand-name hidden sm:inline">AHMED</span>
+            <span className="brand-id hidden sm:grid">
+              <span className="brand-name">{PROFILE.name[lang]}</span>
+              {/* Latin only, and deliberately: this line is letter-spaced, and
+                  letter-spacing on Arabic pulls the joined letterforms apart.
+                  It also states the role rather than two of the tools — the
+                  whole point of the positioning is that it is not a tech list. */}
+              <span className="lat brand-role">FULL-STACK</span>
+            </span>
           </a>
+
+          {/* Where you are, in the field treatment the gallery uses for a page
+              URL. The screenshots in this site all sit in a browser frame with
+              their real path in an inset mono field; the bar borrows that one
+              element — not the frame, not the traffic lights, which inside a
+              real browser would be fancy dress. */}
+          <span className="hdr-sep hdr-sep-loc" aria-hidden="true" />
+          {/* Hidden from assistive tech on purpose. The rail already carries
+              the position as aria-current, and a live region repeating it on
+              every scroll would announce the same fact twice, continuously.
+              One source of truth; this one is the visual half of it. */}
+          <span className="hdr-loc" aria-hidden="true">
+            <span className="hdr-loc-slash lat" aria-hidden="true">/</span>
+            <span className="hdr-loc-text">{here}</span>
+          </span>
 
           {home && (
           <nav className="nav-dock hidden md:flex xl:hidden" aria-label={t.nav.menu}>

@@ -47,7 +47,7 @@ export default async function Project({ params }) {
       <ScrollProgress />
       <CursorGlow />
       <Reveal />
-      <Nav lang={lang} path={`/work/${slug}/`} />
+      <Nav lang={lang} path={`/work/${slug}/`} title={c.name} />
 
       <article className="wrap pb-8 pt-28 sm:pt-32">
         <a href={`/${lang}/#work`} className="chip transition-colors hover:text-[var(--accent-ink)]">
