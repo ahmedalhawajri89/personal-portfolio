@@ -211,6 +211,7 @@ function SectionRail({ items, active, label, lang }) {
   // content above it changes, and a number would not.
   const [done, setDone] = useState(false);
   const railRef = useRef(null);
+  const idx = items.findIndex(([id]) => id === active);
   useEffect(() => {
     const foot = document.querySelector('footer.foot-sheet');
     if (!foot) return;
@@ -240,15 +241,19 @@ function SectionRail({ items, active, label, lang }) {
     <nav ref={railRef} className={`rail${done ? ' is-done' : ''}`} aria-label={label} aria-hidden={done || undefined}>
       <span className="rail-track" aria-hidden="true" />
       <span className="rail-fill" aria-hidden="true" />
+      {/* One marker that travels between the items rather than eight that
+          each blink on and off. The move is the only animation here, and it
+          is the thing that reads as scrolling. */}
+      {idx >= 0 && <span className="rail-thumb" style={{ '--i': idx }} aria-hidden="true" />}
       <ol className="rail-list">
-        {items.map(([id, text]) => {
+        {items.map(([id, text, icon]) => {
           const on = active === id;
           return (
             <li key={id}>
               {/* `location` rather than `true`: this is a position within the
                   page, which is the one thing that value is for. */}
               <a href={`#${id}`} className="rail-item" aria-current={on ? 'location' : undefined}>
-                <span className="rail-tick" aria-hidden="true" />
+                <span className="rail-ico" aria-hidden="true"><Icon name={icon} size={15} /></span>
                 <span className="rail-label">{text}</span>
               </a>
             </li>
@@ -280,14 +285,17 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
   // `testimonials` are deliberately absent: their content lists are empty, so
   // those sections are not in the document and must not be in the map of it.
   const sections = [
-    ['home', t.nav.home2],
-    ['work', t.nav.work],
-    ['process', t.nav.process],
-    ['proof', t.nav.proof],
-    ['services', t.nav.services],
-    ['skills', t.nav.skills],
-    ['about', t.nav.about],
-    ['contact', t.nav.contact],
+    ['home', t.nav.home2, 'home'],
+    ['work', t.nav.work, 'layout'],
+    // A list, because the section is a numbered list of working rules.
+    ['process', t.nav.process, 'list'],
+    // The same shield the capabilities grid uses for `الجودة` — tests are
+    // what that section is about, so the glyph is borrowed, not invented.
+    ['proof', t.nav.proof, 'shield'],
+    ['services', t.nav.services, 'layers'],
+    ['skills', t.nav.skills, 'code'],
+    ['about', t.nav.about, 'user'],
+    ['contact', t.nav.contact, 'send'],
   ];
 
   // Reading down, the bar is in the way and the rail can name the sections on
