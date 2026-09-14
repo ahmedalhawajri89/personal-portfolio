@@ -892,23 +892,3 @@ export function TestRunner({ lang, tests }) {
 
 /* Local time in Gaza, ticking. Rendered empty on the server so there is no
    hydration mismatch, then filled on the client. */
-export function LiveClock({ lang }) {
-  const [now, setNow] = useState(null);
-  useEffect(() => {
-    const tick = () => setNow(new Date());
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
-  const fmt = (o, loc) => (now ? new Intl.DateTimeFormat(loc, { timeZone: 'Asia/Gaza', ...o }).format(now) : '');
-  return (
-    <span className="block">
-      <span className="clock lat block text-[38px] font-extrabold leading-none tracking-tight grad-text" dir="ltr">
-        {fmt({ hour: '2-digit', minute: '2-digit', hour12: false }, 'en-GB') || '--:--'}
-      </span>
-      <span className="mt-2 block text-[13px] font-bold" style={{ color: 'var(--ink-3)' }}>
-        {fmt({ weekday: 'long', day: 'numeric', month: 'long' }, lang === 'ar' ? 'ar-PS' : 'en-GB')} · GMT+3
-      </span>
-    </span>
-  );
-}

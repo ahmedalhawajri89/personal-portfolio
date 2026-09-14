@@ -3,7 +3,7 @@ import { LANGS, T } from '../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../content/projects';
 import { SERVICES, SKILLS, CAPABILITIES, PROCESS, TIMELINE, TESTIMONIALS, HERO_TESTS } from '../../content/site';
 import { shotsOf, coverOf, pagesOf } from '../../lib/shots';
-import { Nav, Dock, Footer, Reveal, ScrollProgress, CursorGlow, ContactForm, BackToTop, TimelineScroll, LiveClock, TestRunner } from '../../components/Chrome';
+import { Nav, Dock, Footer, Reveal, ScrollProgress, CursorGlow, ContactForm, BackToTop, TimelineScroll, TestRunner } from '../../components/Chrome';
 import Marquee from '../../components/Marquee';
 import Icon from '../../components/Icons';
 import { CvButton } from '../../components/CvPanel';
@@ -41,10 +41,26 @@ export default async function Home({ params }) {
   // Where each capability has actually been used. A count out of five reads
   // as a score however it is labelled — `5/5 Laravel` is indistinguishable
   // from a self-rating — so the evidence is the project names instead.
+  // For each capability, which projects each of its tools was actually used
+  // in — matched on the leading word so `Vue 3` finds `Vue 3.5` and `Tailwind
+  // CSS` finds `Tailwind 4`. Tools that share the same set of projects are
+  // shown on one line, because `Pinia · Vite → Booking` reads better than the
+  // same project named twice. Items that match no stack are capabilities
+  // rather than packages and carry no evidence line.
   const head = (x) => x.toLowerCase().split(/[\s.]/)[0];
-  const usedIn = (cap) => {
-    const keys = cap.items.map(head);
-    return PROJECTS.filter((pr) => pr.stack.some((st) => keys.includes(head(st))));
+  const evidence = (cap) => {
+    const items = lang === 'en' && cap.itemsEn ? cap.itemsEn : cap.items;
+    const rows = [];
+    items.forEach((label, i) => {
+      const key = head(cap.items[i]);
+      const hits = PROJECTS.filter((pr) => pr.stack.some((st) => head(st) === key));
+      if (!hits.length) return;
+      const sig = hits.map((x) => x.slug).join(',');
+      const prev = rows.find((r) => r.sig === sig);
+      if (prev) prev.tools.push(label);
+      else rows.push({ sig, tools: [label], projects: hits });
+    });
+    return rows;
   };
 
   return (
@@ -368,34 +384,34 @@ export default async function Home({ params }) {
         <SectionHead eyebrow={t.skills.eyebrow} h={t.skills.h} lede={t.skills.lede} center />
         <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {CAPABILITIES.map((cap, i) => {
-            const where = usedIn(cap);
+            const rows = evidence(cap);
             return (
             <li key={cap.icon} className="rise" style={{ '--i': i % 4 }}>
               <div className="card flex h-full flex-col p-6">
                 <span className="icon-tile"><Icon name={cap.icon} size={19} /></span>
                 <h3 className="mt-4 text-[17px] font-extrabold">{cap[lang].h}</h3>
                 <p className="mt-2 text-[14px] leading-[1.75]" style={{ color: 'var(--ink-2)' }}>{cap[lang].b}</p>
-                <ul className="mono mt-5 flex flex-wrap gap-1.5">
-                  {(lang === 'en' && cap.itemsEn ? cap.itemsEn : cap.items).map((x) => (
-                    <li key={x} className="chip px-2.5 py-1 text-[11.5px]">{x}</li>
+                {/* The tool, then where it was used. No number anywhere near
+                    a tool name — a figure out of five cannot be read as
+                    anything but a score, whatever the label above it says. */}
+                <ul className="mt-5 grid gap-0">
+                  {rows.map((r) => (
+                    <li key={r.sig + r.tools[0]} className="border-b py-2.5 last:border-0" style={{ borderColor: 'var(--line)' }}>
+                      <span className="mono block text-[12.5px] font-bold">{r.tools.join(' · ')}</span>
+                      <span className="mt-1 block text-[12.5px] leading-[1.6]" style={{ color: 'var(--ink-3)' }}>
+                        {r.projects.length === PROJECTS.length
+                          ? t.skills.allFive
+                          : r.projects.map((pr, k) => (
+                              <span key={pr.slug}>
+                                {k > 0 && <span aria-hidden="true"> · </span>}
+                                <a href={`/${lang}/work/${pr.slug}/`} className="hover:underline"
+                                   style={{ color: 'var(--accent-ink)' }}>{pr[lang].name}</a>
+                              </span>
+                            ))}
+                      </span>
+                    </li>
                   ))}
                 </ul>
-                {/* Named projects, not a score. `Laravel in all five` is a
-                    stronger and less ambiguous fact than `5/5 Laravel`. */}
-                {where.length > 0 && (
-                  <p className="mt-auto pt-5 text-[13px] leading-[1.7]" style={{ color: 'var(--ink-3)' }}>
-                    <span className="font-bold">{t.skills.usedIn}</span>{' '}
-                    {where.length === PROJECTS.length
-                      ? <span style={{ color: 'var(--ink-2)' }}>{t.skills.allFive}</span>
-                      : where.map((pr, k) => (
-                          <span key={pr.slug}>
-                            {k > 0 && <span aria-hidden="true"> · </span>}
-                            <a href={`/${lang}/work/${pr.slug}/`} className="font-bold hover:underline"
-                               style={{ color: 'var(--accent-ink)' }}>{pr[lang].name}</a>
-                          </span>
-                        ))}
-                  </p>
-                )}
               </div>
             </li>
             );
@@ -483,8 +499,14 @@ export default async function Home({ params }) {
               whole read, and the space under them is never looked at. */}
           <div className="grid grid-cols-1 content-start gap-4 sm:grid-cols-2 lg:sticky lg:top-24 lg:self-start">
             <div className="tile rise" style={{ '--i': 0 }}>
-              <p className="tile-k">{t.about.now}</p>
-              <div className="mt-3"><LiveClock lang={lang} /></div>
+              {/* A static export cannot know the time at build, so a live
+                  clock renders `--:--` on the server and on the first client
+                  frame every single load. The fact a remote client actually
+                  needs is the offset, not the seconds — and that one is true
+                  without JavaScript. */}
+              <p className="tile-k">{t.about.tz}</p>
+              <p className="lat mt-3 text-[38px] font-extrabold leading-none tracking-tight" style={{ color: 'var(--accent-ink)' }}>GMT+3</p>
+              <p className="mt-2 text-[13px] font-bold" style={{ color: 'var(--ink-3)' }}>{PROFILE.location[lang]}</p>
               <p className="mt-4 inline-flex items-center gap-2 text-[13px] font-bold" style={{ color: 'var(--ink-2)' }}>
                 <span className="relative flex h-2 w-2">
                   <span className="pulse-ring absolute inline-flex h-full w-full rounded-full" style={{ background: 'var(--ok)' }} />

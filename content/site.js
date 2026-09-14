@@ -45,8 +45,8 @@ export const SERVICES = [
 export const CAPABILITIES = [
   {
     icon: 'layers',
-    ar: { h: 'الواجهة الخلفية', b: 'منطق العمل والصلاحيات والمعاملات.' },
-    en: { h: 'Backend', b: 'Business logic, permissions and transactions.' },
+    ar: { h: 'الواجهة الخلفية', b: 'منطق العمل والصلاحيات والمعاملات، وواجهات REST.' },
+    en: { h: 'Backend', b: 'Business logic, permissions, transactions and REST APIs.' },
     items: ['Laravel 12', 'PHP 8.2', 'REST APIs', 'Sanctum', 'Breeze', 'Socialite'],
   },
   {
