@@ -28,18 +28,21 @@
   --ink-3:#686F85;
   --line:rgba(15,18,34,.08); --line-2:rgba(15,18,34,.15);
   /* Brand palette — change these three to re-theme the whole site.
-     accent = teal, accent-2 = sky blue, accent-3 = amber. */
-  --accent:#0D9488; --accent-2:#2563EB; --accent-3:#F59E0B;
+     accent = navy, accent-2 = sky blue, accent-3 = amber. */
+  --accent:#1E3A6E; --accent-2:#2563EB; --accent-3:#F59E0B;
   /* Accent text sits on the accent tint as often as on a plain surface — the
-     eyebrow and the accent chips do exactly that — and over --card-2 that
-     tint composites to #DAEBED, where #0F766E measured 4.45. Darkened until
-     it clears 4.5 on the tint as well as on the three plain surfaces. */
-  --accent-soft:rgba(13,148,136,.12); --accent-ink:#0F746C;
-  /* The one filled accent surface, and the ink that is legible on it. The
-     hue is darkened from --accent so white clears 4.5:1 (5.5:1) instead of
-     the 3.6:1 the lighter teal gave. Dark flips both: the palette raises the
-     accent to a bright teal there, so the text on it goes dark. */
-  --accent-solid:#0F766E; --on-accent:#FFFFFF;
+     eyebrow and the accent chips do exactly that — so it is measured against
+     the composite, not just the plain ground: 5.82 on the tint over --card-2.
+     It is deliberately lighter than --accent-solid. A navy dark enough to
+     carry white sits only 1.67x off the body ink, so as *text* it would read
+     as ordinary copy that happened to be dark; this one is 2.37x off and
+     still clears 4.5 everywhere, so it reads as a colour that was chosen. */
+  --accent-soft:rgba(30,58,110,.12); --accent-ink:#264F9B;
+  /* The one filled accent surface, and the ink that is legible on it.
+     White on this navy is 11.14:1. Unlike the teal it replaces, a navy can
+     carry white in *both* themes, so --on-accent no longer flips to a dark
+     ink in the dark palette — one rule for every filled accent surface. */
+  --accent-solid:#1E3A6E; --on-accent:#FFFFFF;
   /* String literals in the code samples. The decorative amber is 1.96:1 on
      the code panel — fine as a wash behind the page, unreadable as 12.5px
      type — so the syntax colour is its own token and the wash keeps its. */
@@ -49,7 +52,7 @@
      body contrast, not the 3.29:1 the brighter green gave on white. */
   --ok:#117F3A;
   --shadow:0 1px 2px rgba(15,18,34,.05), 0 20px 50px -24px rgba(15,18,34,.25);
-  --glow:0 0 0 1px rgba(13,148,136,.2), 0 20px 60px -20px rgba(13,148,136,.45);
+  --glow:0 0 0 1px rgba(30,58,110,.2), 0 20px 60px -20px rgba(30,58,110,.45);
   --radius:22px;
   color-scheme:light;
 }
@@ -60,14 +63,22 @@
      and the unlit half of the language switch sit. */
   --ink:#F4F5FA; --ink-2:#B7BBCB; --ink-3:#7F8498;
   --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.15);
-  --accent:#2DD4BF; --accent-2:#60A5FA; --accent-3:#FBBF24;
-  --accent-soft:rgba(45,212,191,.14); --accent-ink:#5EEAD4;
-  --accent-solid:#2DD4BF; --on-accent:#06202B;
+  /* The navy lightens here for one reason: nothing that carries the accent
+     has a border, so the fill alone has to separate the monogram and the
+     active dock pill from a near-black chrome. The light theme's #1E3A6E
+     manages only 1.77:1 against this ground and would sink into it. Measured
+     against all three dark surfaces, not just the page: #35619F cleared the
+     ground at 3.15 but fell to 2.92 on --card, where the language switch and
+     the dock sit. #3C6AA8 clears 3:1 on every one of them (3.58 / 3.32 /
+     3.09) and still carries white at 5.50:1. */
+  --accent:#3C6AA8; --accent-2:#60A5FA; --accent-3:#FBBF24;
+  --accent-soft:rgba(60,106,168,.18); --accent-ink:#9CBCEF;
+  --accent-solid:#3C6AA8; --on-accent:#FFFFFF;
   --code-string:#FBBF24;
   --glass:rgba(19,21,28,.62); --glass-line:rgba(255,255,255,.09);
   --ok:#4ADE80;
   --shadow:0 1px 2px rgba(0,0,0,.5), 0 24px 60px -24px rgba(0,0,0,.8);
-  --glow:0 0 0 1px rgba(45,212,191,.22), 0 24px 70px -20px rgba(45,212,191,.4);
+  --glow:0 0 0 1px rgba(60,106,168,.26), 0 24px 70px -20px rgba(60,106,168,.45);
   color-scheme:dark;
 }
 
@@ -316,8 +327,10 @@ a:hover .tint,button:hover .tint{opacity:1}
 @media (min-width:768px){.cvp-sheet{grid-template-columns:340px minmax(0,1fr)}}
 .cvp-side{padding:26px 24px;overflow:auto;background:var(--card-2);border-inline-end:1px solid var(--line)}
 .cvp-doc{flex-direction:column;min-height:0;background:var(--bg-2)}
+/* --ink-3 is tuned against bg/card/card-2; this bar sits on --bg-2, which is
+   lighter than any of them, and the 12px label measured 4.39 there. */
 .cvp-doc-bar{display:flex;align-items:center;gap:12px;height:48px;padding-inline:14px;border-bottom:1px solid var(--line);
-  font-size:12px;color:var(--ink-3)}
+  font-size:12px;color:var(--ink-2)}
 .cvp-doc-bar .dots{display:flex;gap:6px}.cvp-doc-bar .dots i{width:9px;height:9px;border-radius:50%;display:block;background:var(--line-2)}
 .cvp-doc-bar > span:nth-child(2){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cvp-frame{flex:1;width:100%;min-height:520px;border:0;background:#fff}
