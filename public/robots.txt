@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ahmedalhawajri.vercel.app/sitemap.xml

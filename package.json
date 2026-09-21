@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev -p 3005",
     "build": "next build && node scripts/postbuild.mjs",
-    "start": "npx serve out"
+    "start": "npx serve out",
+    "prebuild": "node scripts/prebuild.mjs"
   },
   "dependencies": {
     "next": "^16.3.4",
