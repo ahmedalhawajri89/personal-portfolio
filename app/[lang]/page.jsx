@@ -263,6 +263,35 @@ export default async function Home({ params }) {
           </ol>
         </section>
 
+        {/* ------------------------------------------------------ services */}
+        {/* Named the way a client names the thing they need, not the way a stack
+            names itself — and each one cites the project that already does it.
+            A service with a case study behind it is a claim somebody can check. */}
+        <section id="services" className="wrap scroll-mt-24 pt-24 sm:pt-28">
+          <SectionHead eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} center />
+          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {SERVICES.map((sv, i) => {
+              const proof = sv.proof ? PROJECTS.find((x) => x.slug === sv.proof) : null;
+              return (
+                <li key={sv.icon + i} className="rise" style={{ '--i': i % 3 }}>
+                  <div className="card hover-lift flex h-full flex-col p-6">
+                    <span className="icon-tile"><Icon name={sv.icon} size={20} /></span>
+                    <h3 className="mt-5 text-[18px] font-extrabold leading-snug">{sv[lang].h}</h3>
+                    <p className="mt-2.5 text-[15px] leading-[1.8]" style={{ color: 'var(--ink-2)' }}>{sv[lang].b}</p>
+                    {proof && (
+                      <a href={`/${lang}/work/${proof.slug}/`}
+                         className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[13.5px] font-bold hover:underline"
+                         style={{ color: 'var(--accent-ink)' }}>
+                        {t.services.proof} {proof[lang].name} <Icon name={arrow} size={14} />
+                      </a>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
         {/* ------------------------------------------------------- process */}
         <section id="process" className="wrap scroll-mt-24 pt-24 sm:pt-28">
           <SectionHead eyebrow={t.process.eyebrow} h={t.process.h} center />
@@ -348,35 +377,6 @@ export default async function Home({ params }) {
           </div>
         </section>
 
-        {/* ------------------------------------------------------ services */}
-        {/* Named the way a client names the thing they need, not the way a stack
-            names itself — and each one cites the project that already does it.
-            A service with a case study behind it is a claim somebody can check. */}
-        <section id="services" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <SectionHead eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} center />
-          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {SERVICES.map((sv, i) => {
-              const proof = sv.proof ? PROJECTS.find((x) => x.slug === sv.proof) : null;
-              return (
-                <li key={sv.icon + i} className="rise" style={{ '--i': i % 3 }}>
-                  <div className="card hover-lift flex h-full flex-col p-6">
-                    <span className="icon-tile"><Icon name={sv.icon} size={20} /></span>
-                    <h3 className="mt-5 text-[18px] font-extrabold leading-snug">{sv[lang].h}</h3>
-                    <p className="mt-2.5 text-[15px] leading-[1.8]" style={{ color: 'var(--ink-2)' }}>{sv[lang].b}</p>
-                    {proof && (
-                      <a href={`/${lang}/work/${proof.slug}/`}
-                         className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[13.5px] font-bold hover:underline"
-                         style={{ color: 'var(--accent-ink)' }}>
-                        {t.services.proof} {proof[lang].name} <Icon name={arrow} size={14} />
-                      </a>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-
         {/* ------------------------------------------------------ capabilities */}
         {/* Not a rating out of five. The old bars were honest underneath — each
             one counted the projects using that tool — but a filled bar next to a
@@ -443,7 +443,10 @@ export default async function Home({ params }) {
               <p className="mt-2.5 text-[15px] font-bold" style={{ color: 'var(--accent-ink)' }}>
                 {t.about.role} <span style={{ color: 'var(--ink-3)' }}>· {PROFILE.location[lang]}</span>
               </p>
-              <p className="mt-5 max-w-[56ch] text-[17px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>{PROFILE.lede[lang]}</p>
+              {/* Not PROFILE.lede: the hero already prints that paragraph, and
+                  a visitor who reached here has read it. This one answers the
+                  question the hero does not — where the rules above came from. */}
+              <p className="mt-5 max-w-[56ch] text-[17px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>{t.about.lede}</p>
 
               <h3 className="mt-9 text-[13px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.about.builds}</h3>
               {/* Hairline rows rather than another wrap of badges: the same

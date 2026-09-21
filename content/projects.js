@@ -327,18 +327,6 @@ export const PROFILE = {
     ar: 'أبني التطبيق كاملاً وحدي — من تصميم قاعدة البيانات، إلى الواجهة الخلفية بلارافيل، إلى الواجهة الأمامية — فتتعامل مع شخص واحد من أول المشروع إلى آخره.',
     en: 'I build the whole application myself — from the database schema, to the Laravel back end, to the front end — so you deal with one person from the first day to the last.',
   },
-  principles: {
-    ar: [
-      { h: 'العربية من أول سطر', b: 'الاتجاه مبني في التخطيط، لا معكوس في النهاية. الأرقام والأيقونات والفلاتر لا تخرج عن مكانها.' },
-      { h: 'القواعد في طبقة البيانات', b: 'الصلاحيات والمخزون والتزامن تُحسم في قاعدة البيانات، لا بإخفاء زرّ في الواجهة.' },
-      { h: 'اختبار لكل قاعدة تهمّ', b: 'ما لا يفحصه اختبار سينكسر بعد أول تعديل يكتبه أحد بعدي.' },
-    ],
-    en: [
-      { h: 'Arabic from the first line', b: 'Direction is built into the layout, not mirrored at the end. Numbers, icons and filters stay where they belong.' },
-      { h: 'Rules live in the data layer', b: 'Permissions, stock and concurrency are settled in the database, not by hiding a button in the interface.' },
-      { h: 'A test for every rule that matters', b: 'Anything no test checks will break after the first edit somebody writes after me.' },
-    ],
-  },
   links: {
     github: 'https://github.com/ahmedalhawajri89',
     khamsat: 'https://khamsat.com/user/ahmed12089',

@@ -3,18 +3,48 @@
 @tailwind utilities;
 
 /* ---------------------------------------------------------------- fonts */
-/* IBM Plex Sans Arabic with its Latin twin, so the two scripts are one family
-   rather than two fonts sharing a line. Plex tops out at Bold (700) where the
-   old pair went to 800, so the scale is remapped instead of faked: the CSS
-   asks for 700 and gets SemiBold, asks for 800 and gets Bold. Two real cuts,
-   no synthesised smear, and the design keeps its two-step hierarchy.
-   Subset to Arabic, Latin-1 and the punctuation actually on the page. */
+/* Three faces, one per job.
+
+   Manrope carries the Latin. It ships real 400/700/800 cuts, so the weight
+   remap the old Latin face needed is gone: the CSS asks for 800 and gets a
+   drawn ExtraBold, not a SemiBold standing in for one.
+
+   DM Mono carries anything that is a command, a file path or a test name.
+   That role used to fall through to whatever `ui-monospace` resolved to on
+   the visitor's machine, so it looked different on every OS. DM Mono has no
+   cut above Medium, so mono text tops out at 500 rather than being smeared
+   into a synthetic bold.
+
+   IBM Plex Sans Arabic stays, because neither Manrope nor DM Mono draws a
+   single Arabic glyph -- their subsets are latin, latin-ext, greek, cyrillic
+   and vietnamese. Arabic still has three cuts, so it keeps its remap: the
+   CSS asks for 700 and gets SemiBold, asks for 800 and gets Bold. That is
+   also what keeps a mixed line even, since Plex Bold and Manrope ExtraBold
+   sit at about the same colour.
+
+   All three are subset and self-hosted; nothing is fetched from a font CDN. */
 @font-face{font-family:'PlexAr';src:url('/fonts/plex-arabic-400.woff2') format('woff2');font-weight:400;font-display:swap;}
 @font-face{font-family:'PlexAr';src:url('/fonts/plex-arabic-600.woff2') format('woff2');font-weight:700;font-display:swap;}
 @font-face{font-family:'PlexAr';src:url('/fonts/plex-arabic-700.woff2') format('woff2');font-weight:800;font-display:swap;}
-@font-face{font-family:'PlexLat';src:url('/fonts/plex-latin-400.woff2') format('woff2');font-weight:400;font-display:swap;}
-@font-face{font-family:'PlexLat';src:url('/fonts/plex-latin-600.woff2') format('woff2');font-weight:700;font-display:swap;}
-@font-face{font-family:'PlexLat';src:url('/fonts/plex-latin-700.woff2') format('woff2');font-weight:800;font-display:swap;}
+@font-face{font-family:'Manrope';src:url('/fonts/manrope-400.woff2') format('woff2');font-weight:400;font-display:swap;}
+@font-face{font-family:'Manrope';src:url('/fonts/manrope-700.woff2') format('woff2');font-weight:700;font-display:swap;}
+@font-face{font-family:'Manrope';src:url('/fonts/manrope-800.woff2') format('woff2');font-weight:800;font-display:swap;}
+@font-face{font-family:'DMMono';src:url('/fonts/dmmono-400.woff2') format('woff2');font-weight:400;font-display:swap;}
+@font-face{font-family:'DMMono';src:url('/fonts/dmmono-500.woff2') format('woff2');font-weight:500;font-display:swap;}
+
+/* ------------------------------------------------- off-screen sections */
+/* `content-visibility:auto` on the seven below-fold sections was measured and
+   rejected. It did cut style recalculation by 41% (2758ms -> 2241ms at 4x CPU
+   throttle), but it also moved a deep link: /#contact landed at -431 instead
+   of 96, and the scroll height grew by 672px. The cause is structural, not a
+   tuning error -- contain-intrinsic-size is one fixed number while the real
+   section heights change with viewport width, so the placeholder is wrong at
+   exactly the widths the optimisation was for. A benchmark is not worth a
+   broken shared link.
+
+   Also measured and rejected, for being worth nothing: removing the ambient
+   blur (3%), removing the ambient layer (0%), dropping every backdrop-filter
+   (18% worse). */
 
 /* ---------------------------------------------------------------- tokens */
 :root{
@@ -29,20 +59,22 @@
   --line:rgba(15,18,34,.08); --line-2:rgba(15,18,34,.15);
   /* Brand palette — change these three to re-theme the whole site.
      accent = navy, accent-2 = sky blue, accent-3 = amber. */
-  --accent:#1E3A6E; --accent-2:#2563EB; --accent-3:#F59E0B;
+  --accent:#12367A; --accent-2:#2563EB; --accent-3:#F59E0B;
   /* Accent text sits on the accent tint as often as on a plain surface — the
      eyebrow and the accent chips do exactly that — so it is measured against
      the composite, not just the plain ground: 5.82 on the tint over --card-2.
      It is deliberately lighter than --accent-solid. A navy dark enough to
      carry white sits only 1.67x off the body ink, so as *text* it would read
-     as ordinary copy that happened to be dark; this one is 2.37x off and
-     still clears 4.5 everywhere, so it reads as a colour that was chosen. */
-  --accent-soft:rgba(30,58,110,.12); --accent-ink:#264F9B;
+     as ordinary copy that happened to be dark; this one is 2.4x off and
+     still clears 4.5 everywhere, so it reads as a colour that was chosen.
+     Saturation was raised from 57% to 74% at the same hue and lightness, so
+     the navy reads sharper without moving a single contrast ratio. */
+  --accent-soft:rgba(18,54,122,.12); --accent-ink:#194BA8;
   /* The one filled accent surface, and the ink that is legible on it.
-     White on this navy is 11.14:1. Unlike the teal it replaces, a navy can
+     White on this navy is 11.45:1. Unlike the teal it replaces, a navy can
      carry white in *both* themes, so --on-accent no longer flips to a dark
      ink in the dark palette — one rule for every filled accent surface. */
-  --accent-solid:#1E3A6E; --on-accent:#FFFFFF;
+  --accent-solid:#12367A; --on-accent:#FFFFFF;
   /* String literals in the code samples. The decorative amber is 1.96:1 on
      the code panel — fine as a wash behind the page, unreadable as 12.5px
      type — so the syntax colour is its own token and the wash keeps its. */
@@ -52,7 +84,7 @@
      body contrast, not the 3.29:1 the brighter green gave on white. */
   --ok:#117F3A;
   --shadow:0 1px 2px rgba(15,18,34,.05), 0 20px 50px -24px rgba(15,18,34,.25);
-  --glow:0 0 0 1px rgba(30,58,110,.2), 0 20px 60px -20px rgba(30,58,110,.45);
+  --glow:0 0 0 1px rgba(18,54,122,.2), 0 20px 60px -20px rgba(18,54,122,.45);
   --radius:22px;
   color-scheme:light;
 }
@@ -69,18 +101,27 @@
      manages only 1.77:1 against this ground and would sink into it. Measured
      against all three dark surfaces, not just the page: #35619F cleared the
      ground at 3.15 but fell to 2.92 on --card, where the language switch and
-     the dock sit. #3C6AA8 clears 3:1 on every one of them (3.58 / 3.32 /
-     3.09) and still carries white at 5.50:1. */
-  --accent:#3C6AA8; --accent-2:#60A5FA; --accent-3:#FBBF24;
-  --accent-soft:rgba(60,106,168,.18); --accent-ink:#9CBCEF;
-  --accent-solid:#3C6AA8; --on-accent:#FFFFFF;
+     the dock sit. #3369B1 clears 3:1 on every one of them (3.55 / 3.30 /
+     3.07) and still carries white at 5.53:1. */
+  --accent:#3369B1; --accent-2:#60A5FA; --accent-3:#FBBF24;
+  --accent-soft:rgba(51,105,177,.18); --accent-ink:#96BBF5;
+  --accent-solid:#3369B1; --on-accent:#FFFFFF;
   --code-string:#FBBF24;
   --glass:rgba(19,21,28,.62); --glass-line:rgba(255,255,255,.09);
   --ok:#4ADE80;
   --shadow:0 1px 2px rgba(0,0,0,.5), 0 24px 60px -24px rgba(0,0,0,.8);
-  --glow:0 0 0 1px rgba(60,106,168,.26), 0 24px 70px -20px rgba(60,106,168,.45);
+  --glow:0 0 0 1px rgba(51,105,177,.26), 0 24px 70px -20px rgba(51,105,177,.45);
   color-scheme:dark;
 }
+
+/* --------------------------------------------------- hero title casing */
+/* Every word in the hero headline opens with a capital. Scoped to the English
+   tree because Arabic has no letter case at all — `text-transform` is simply
+   inert there, and the Arabic headline keeps the shape it was drawn with.
+   Only the headline: the eyebrow is already a name and the technology line is
+   made of proper nouns, so capitalising either would change nothing or would
+   damage a spelling somebody else owns (`MySQL`, `PHP`). */
+html[lang="en"] #home h1{text-transform:capitalize}
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -89,11 +130,11 @@ html{scroll-behavior:smooth}
 
 body{
   margin:0;background:var(--bg);color:var(--ink);
-  font-family:'PlexAr','PlexLat',system-ui,sans-serif;
+  font-family:'PlexAr','Manrope',system-ui,sans-serif;
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
   overflow-x:hidden;
 }
-html[lang="en"] body{font-family:'PlexLat',system-ui,sans-serif}
+html[lang="en"] body{font-family:'Manrope',system-ui,sans-serif}
 
 /* Ambient background: two soft colour fields and a faint grid. Fixed so it
    never repaints while scrolling. */
@@ -113,8 +154,8 @@ html[lang="en"] body{font-family:'PlexLat',system-ui,sans-serif}
 ::selection{background:var(--accent);color:#fff}
 
 /* Latin runs inside Arabic text keep their own font and direction */
-.lat{font-family:'PlexLat',system-ui,sans-serif;direction:ltr;unicode-bidi:isolate}
-.mono{font-family:ui-monospace,'PlexLat',Menlo,monospace;direction:ltr;unicode-bidi:isolate;
+.lat{font-family:'Manrope',system-ui,sans-serif;direction:ltr;unicode-bidi:isolate}
+.mono{font-family:'DMMono',ui-monospace,Menlo,monospace;direction:ltr;unicode-bidi:isolate;
   font-variant-numeric:tabular-nums}
 
 /* -------------------------------------------------------------- helpers */
@@ -288,7 +329,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 .runner{border-radius:20px;overflow:hidden;background:var(--card);border:1px solid var(--line-2);box-shadow:var(--shadow)}
 .runner-bar{display:flex;align-items:center;gap:12px;height:40px;padding-inline:14px;background:var(--card-2);border-bottom:1px solid var(--line)}
 .runner-bar .dots{display:flex;gap:6px}.runner-bar .dots i{width:9px;height:9px;border-radius:50%;display:block;background:var(--line-2)}
-.runner-cmd{flex:1;min-width:0;font-family:ui-monospace,'PlexLat',Menlo,monospace;font-size:12px;color:var(--ink-3);direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.runner-cmd{flex:1;min-width:0;font-family:'DMMono',ui-monospace,Menlo,monospace;font-size:12px;color:var(--ink-3);direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .runner-rerun{display:grid;place-items:center;width:24px;height:24px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-3);cursor:pointer}
 .runner-rerun svg{transform:rotate(45deg)}
 .runner-body{margin:0;padding:10px 6px;list-style:none}
@@ -308,8 +349,8 @@ a:hover .tint,button:hover .tint{opacity:1}
 .runner-text{display:grid;gap:3px;min-width:0}
 .runner-text > span:first-child{font-size:14px;font-weight:700;line-height:1.55;color:var(--ink)}
 .is-pass .runner-text > span:first-child{color:var(--ink-2)}
-.runner-file{font-family:ui-monospace,'PlexLat',Menlo,monospace;font-size:11px;color:var(--ink-3);direction:ltr;text-align:start;unicode-bidi:isolate}
-.runner-sum{display:flex;gap:16px;align-items:center;padding:10px 16px;border-top:1px solid var(--line);font-family:ui-monospace,'PlexLat',Menlo,monospace;font-size:12px;color:var(--ink-3);
+.runner-file{font-family:'DMMono',ui-monospace,Menlo,monospace;font-size:11px;color:var(--ink-3);direction:ltr;text-align:start;unicode-bidi:isolate}
+.runner-sum{display:flex;gap:16px;align-items:center;padding:10px 16px;border-top:1px solid var(--line);font-family:'DMMono',ui-monospace,Menlo,monospace;font-size:12px;color:var(--ink-3);
   direction:ltr;opacity:0;transition:opacity .4s}
 .runner-sum.is-on{opacity:1}
 .runner-sum .ok{color:var(--ok);font-weight:700}
@@ -441,7 +482,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 .hdr-loc{display:none;align-items:center;gap:5px;height:26px;padding-inline:10px;
   border-radius:8px;background:var(--bg);border:1px solid var(--line);
   max-width:12rem;overflow:hidden;flex:none}
-.hdr-loc-slash{font-family:var(--mono-stack,ui-monospace,'PlexLat',monospace);
+.hdr-loc-slash{font-family:var(--mono-stack,'DMMono',ui-monospace,monospace);
   font-size:12px;font-weight:700;color:var(--accent-ink);opacity:.75}
 .hdr-loc-text{font-size:12px;font-weight:700;color:var(--ink-2);white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis;animation:loc-in .26s cubic-bezier(.2,.8,.2,1)}
@@ -629,7 +670,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 
 /* Code tile */
 .code{margin:12px 0 0;padding:14px 16px;border-radius:14px;direction:ltr;text-align:left;overflow:auto;
-  font:12.5px/1.65 ui-monospace,'PlexLat',Menlo,monospace;color:var(--ink-2);background:var(--card-2);border:1px solid var(--line)}
+  font:12.5px/1.65 'DMMono',ui-monospace,Menlo,monospace;color:var(--ink-2);background:var(--card-2);border:1px solid var(--line)}
 .code .k{color:var(--accent-2);font-weight:700}.code .f{color:var(--accent-ink)}.code .c{color:var(--ink-3);font-style:italic}.code .s{color:var(--code-string)}
 
 /* Clock digits flip softly on change */
@@ -654,7 +695,9 @@ a:hover .tint,button:hover .tint{opacity:1}
   font-weight:700;color:var(--ink-2);background:transparent;border:0;cursor:pointer;white-space:nowrap;transition:background .25s,color .25s,box-shadow .25s}
 .seg button[aria-pressed="true"]{color:var(--on-accent);background:var(--accent-solid);
   box-shadow:0 6px 16px -8px color-mix(in srgb, var(--accent) 80%, transparent)}
-.seg .n{font-size:11px;font-weight:700;opacity:.75;font-family:'PlexLat',monospace}
+/* 500, not 700: DM Mono has no cut above Medium, and asking for one buys a
+   synthesised bold rather than a drawn one. */
+.seg .n{font-size:11px;font-weight:500;opacity:.75;font-family:'DMMono',ui-monospace,monospace}
 
 /* Desktop shot: browser chrome with the page path in the address pill. */
 .shot{display:block;width:100%;text-align:start;border-radius:18px;overflow:hidden;border:1px solid var(--line-2);
@@ -668,7 +711,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 .shot .chrome i{width:9px;height:9px;border-radius:50%;display:block}
 .shot .chrome i:nth-child(1){background:#FF5F57}.shot .chrome i:nth-child(2){background:#FEBC2E}.shot .chrome i:nth-child(3){background:#28C840}
 .shot .url{margin-inline-start:8px;flex:1;min-width:0;height:20px;line-height:20px;padding-inline:10px;border-radius:6px;
-  font-family:'PlexLat',monospace;font-size:11px;direction:ltr;text-align:left;color:var(--ink-3);background:var(--bg);
+  font-family:'DMMono',ui-monospace,monospace;font-size:11px;direction:ltr;text-align:left;color:var(--ink-3);background:var(--bg);
   border:1px solid var(--line);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .shot .pic{position:relative;overflow:hidden;background:var(--bg-2)}
 .shot .pic img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center;

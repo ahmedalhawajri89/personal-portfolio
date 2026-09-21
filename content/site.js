@@ -57,15 +57,20 @@ export const CAPABILITIES = [
   },
   {
     icon: 'database',
-    ar: { h: 'البيانات', b: 'مخطّط يمنع الخطأ، وأقفال تحسم التزامن.' },
-    en: { h: 'Data', b: 'A schema that prevents the mistake, and locks that settle concurrency.' },
+    // Was the services line repeated. Kafala's first point is the fact that
+    // belongs to this layer and to nothing else on the page.
+    ar: { h: 'البيانات', b: 'خمسة مخطّطات من الصفر على MySQL — منها قيد فريد جزئي على محرّك لا يملك واحداً.' },
+    en: { h: 'Data', b: 'Five schemas designed from scratch on MySQL — including a partial unique constraint on an engine that has none.' },
     items: ['MySQL', 'تصميم المخطّط', 'المعاملات والأقفال', 'Yajra DataTables'],
     itemsEn: ['MySQL', 'Schema design', 'Transactions & locks', 'Yajra DataTables'],
   },
   {
     icon: 'shield',
-    ar: { h: 'الجودة', b: 'اختبار لكل قاعدة تهمّ، لا لكل دالّة.' },
-    en: { h: 'Quality', b: 'A test for every rule that matters, not for every function.' },
+    // Was the fourth copy of the `اختبار لكل قاعدة تهمّ` line. What is true of
+    // this layer alone: two PHP runners plus a browser one, and the
+    // concurrency test opens two real sessions rather than simulating them.
+    ar: { h: 'الجودة', b: 'اختبارات PHP للقواعد وPlaywright للمتصفّح — واختبار التزامن يفتح جلستين حقيقيتين لا محاكاة.' },
+    en: { h: 'Quality', b: 'PHP tests for the rules and Playwright for the browser — and the concurrency test opens two real sessions rather than simulating them.' },
     items: ['Pest', 'PHPUnit', 'Playwright', 'التحقّق والصلاحيات', 'قواعد العمل'],
     itemsEn: ['Pest', 'PHPUnit', 'Playwright', 'Validation & policies', 'Business rules'],
   },
@@ -75,28 +80,6 @@ export const SKILLS = [
   'Laravel 12', 'PHP 8.2', 'MySQL', 'Vue 3', 'Pinia', 'Vite', 'Tailwind CSS', 'Blade',
   'REST APIs', 'Sanctum', 'Pest', 'Playwright', 'Yajra DataTables', 'Next.js', 'Git', 'RTL / i18n',
 ];
-
-export const CORE = {
-  ar: ['Laravel', 'PHP', 'Vue 3', 'MySQL', 'REST APIs', 'Tailwind', 'اختبارات', 'RTL'],
-  en: ['Laravel', 'PHP', 'Vue 3', 'MySQL', 'REST APIs', 'Tailwind', 'Testing', 'RTL'],
-};
-
-// Skill bars are NOT self-assessed percentages: each bar is how many of the
-// projects above use that tool. `match` maps the raw stack names onto one row.
-export const SKILL_ROWS = [
-  { icon: 'layers', match: /^laravel/i, ar: 'Laravel', en: 'Laravel' },
-  { icon: 'code', match: /^php/i, ar: 'PHP', en: 'PHP' },
-  { icon: 'database', match: /^mysql/i, ar: 'MySQL', en: 'MySQL' },
-  { icon: 'layout', match: /^(vue|pinia)/i, ar: 'Vue 3 + Pinia', en: 'Vue 3 + Pinia' },
-  { icon: 'sparkles', match: /^(blade|tailwind)/i, ar: 'Blade + Tailwind', en: 'Blade + Tailwind' },
-  { icon: 'shield', match: /^(pest|phpunit|playwright)/i, ar: 'اختبارات Pest / Playwright', en: 'Pest / Playwright tests' },
-];
-
-// Working traits — each one is demonstrated somewhere in projects.js.
-export const TRAITS = {
-  ar: ['عربي RTL أولاً', 'تصميم قواعد البيانات', 'REST APIs', 'التزامن والأقفال', 'اختبارات على القواعد', 'مفتوح المصدر'],
-  en: ['Arabic-first RTL', 'Database design', 'REST APIs', 'Concurrency & locks', 'Tests on the rules', 'Open source'],
-};
 
 // Client quotes. Leave empty and the section is not rendered.
 // Each item: { ar: { quote, name, role }, en: { quote, name, role } }

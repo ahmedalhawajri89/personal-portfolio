@@ -287,12 +287,12 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
   const sections = [
     ['home', t.nav.home2, 'home'],
     ['work', t.nav.work, 'layout'],
+    ['services', t.nav.services, 'layers'],
     // A list, because the section is a numbered list of working rules.
     ['process', t.nav.process, 'list'],
     // The same shield the capabilities grid uses for `الجودة` — tests are
     // what that section is about, so the glyph is borrowed, not invented.
     ['proof', t.nav.proof, 'shield'],
-    ['services', t.nav.services, 'layers'],
     ['skills', t.nav.skills, 'code'],
     ['about', t.nav.about, 'user'],
     ['contact', t.nav.contact, 'send'],

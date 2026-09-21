@@ -27,7 +27,9 @@ export async function generateMetadata({ params }) {
     authors: [{ name: 'Ahmed Al-Hawajiri' }],
     alternates: {
       canonical: `${SITE}/${lang}/`,
-      languages: { ar: `${SITE}/ar/`, en: `${SITE}/en/` },
+      // x-default names the language the bare origin serves, so a crawler that
+      // matches neither ar nor en lands where a human landing on `/` would.
+      languages: { ar: `${SITE}/ar/`, en: `${SITE}/en/`, 'x-default': `${SITE}/en/` },
     },
     openGraph: {
       type: 'website',
@@ -65,9 +67,11 @@ export default async function RootLayout({ children, params }) {
       <head>
         <meta name="theme-color" content="#F6F7FB" />
         {/* The two cuts every page paints with, for the language it is in.
-            Plex Arabic is four times Tajawal's weight, so the text would sit
-            in the fallback face noticeably longer without this. */}
-        {(lang === 'ar' ? ['plex-arabic-400', 'plex-arabic-700'] : ['plex-latin-400', 'plex-latin-700']).map((f) => (
+            Arabic pages preload Plex Arabic, English pages preload Manrope;
+            preloading all four would put the wrong script's 37KB ahead of the
+            text actually on screen. DM Mono is not here on purpose — nothing
+            above the fold is monospaced. */}
+        {(lang === 'ar' ? ['plex-arabic-400', 'plex-arabic-700'] : ['manrope-400', 'manrope-700']).map((f) => (
           <link key={f} rel="preload" as="font" type="font/woff2" href={`/fonts/${f}.woff2`} crossOrigin="anonymous" />
         ))}
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />
