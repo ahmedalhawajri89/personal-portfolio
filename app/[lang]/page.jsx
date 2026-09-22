@@ -3,7 +3,7 @@ import { LANGS, T } from '../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../content/projects';
 import { SERVICES, SKILLS, CAPABILITIES, PROCESS, TIMELINE, TESTIMONIALS, HERO_TESTS } from '../../content/site';
 import { shotsOf, coverOf, pagesOf } from '../../lib/shots';
-import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, ContactForm, BackToTop, TimelineScroll, TestRunner, SchemaTrace, CaseFiles, ServiceStack } from '../../components/Chrome';
+import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, ContactForm, BackToTop, TimelineScroll, TestRunner, CaseFiles, ServiceStack } from '../../components/Chrome';
 import Marquee from '../../components/Marquee';
 import Icon from '../../components/Icons';
 import { CvButton } from '../../components/CvPanel';
@@ -113,8 +113,13 @@ export default async function Home({ params }) {
           screen reader can jump past the bar and the rail in one move. */}
       <main id="main">
         {/* ---------------------------------------------------------- hero */}
-        <section id="home" className="wrap relative grid scroll-mt-24 grid-cols-1 items-center gap-12 pb-16 pt-28 sm:pt-36 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,.9fr)] lg:gap-16 lg:pb-20">
-          <div className="relative z-10">
+        {/* An editorial opening. A masthead strip -- availability and place on
+            one side, the stack on the other -- then the offer, set large across
+            the whole measure, with the three words that carry it underlined by
+            the same pen that writes the logo. Under it the argument in two
+            columns: what I do and how to start, and the proof, running. */}
+        <section id="home" className="wrap hero relative scroll-mt-24 pb-16 pt-28 sm:pt-32 lg:pb-20">
+          <div className="hero-top">
             <p className="inline-flex items-center gap-2.5 rounded-[var(--r-chip)] border px-3.5 py-1.5 text-[13px] font-bold"
                style={{ borderColor: 'var(--line)', background: 'var(--glass)', color: 'var(--ink-2)' }}>
               <span className="relative flex h-2 w-2">
@@ -127,64 +132,68 @@ export default async function Home({ params }) {
                 <Icon name="mapPin" size={13} />{PROFILE.location[lang]}
               </span>
             </p>
+            <p className="hero-role lat">{t.hero.roleLine}</p>
+          </div>
 
-            {/* The name is a label; the headline is the offer. Someone who has
-                never heard of me needs to know what gets built before they need
-                to know who builds it — and the name is on the bar, in the footer
-                and in the page title anyway. Two lines with the second lighter,
-                so the promise and its reach read as one sentence with a hinge. */}
-            <p className="mt-8 text-[14px] font-bold tracking-[.14em]" style={{ color: 'var(--ink-3)' }}>
-              {PROFILE.name[lang]}
-            </p>
-            <h1 className="mt-3 text-[clamp(29px,3.9vw,44px)] font-extrabold leading-[1.2] tracking-tight" style={{ color: 'var(--ink)' }}>
-              <span className="block" style={{ textWrap: 'balance' }}>{t.hero.h1a}</span>
-              <span className="block font-bold" style={{ color: 'var(--ink-2)', textWrap: 'balance' }}>{t.hero.h1b}</span>
-            </h1>
-            <p className="lat mt-5 text-[13px] font-bold tracking-[.12em]" style={{ color: 'var(--accent-ink)' }}>{t.hero.roleLine}</p>
+          {/* The name is on the bar, in the footer and in the title; the
+              headline is the offer. */}
+          <h1 className="hero-h">
+            <span className="hero-l">
+              {t.hero.h1a.split(t.hero.mark)[0]}
+              <span className="hero-mark">
+                {t.hero.mark}
+                <svg className="hero-pen" viewBox="0 0 300 16" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M3 11 C 70 5, 170 3, 297 8" pathLength="1" />
+                </svg>
+              </span>
+              {t.hero.h1a.split(t.hero.mark)[1]}
+            </span>
+            <span className="hero-l is-soft">{t.hero.h1b}</span>
+          </h1>
 
-            <p className="mt-6 max-w-[56ch] text-[17px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>
-              {PROFILE.lede[lang]}
-            </p>
+          <div className="hero-grid">
+            <div className="hero-copy">
+              <p className="max-w-[48ch] text-[17px] leading-[1.85]" style={{ color: 'var(--ink-2)' }}>
+                {PROFILE.lede[lang]}
+              </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <a href="#work" className="btn btn-primary">
-                {t.hero.cta1} <Icon name={arrow} size={16} />
-              </a>
-              <a href="#contact" className="btn btn-ghost">{t.hero.cta2}</a>
-              <CvButton lang={lang} />
-              {/* Direct channels as one segmented pill: it reads as a unit and wraps as a unit. */}
-              <div className="social-pill" role="group" aria-label={t.contact.eyebrow}>
-                <a href={PROFILE.links.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><Icon name="github" size={18} /></a>
-                <a href={`mailto:${PROFILE.links.email}`} aria-label="Email" title={PROFILE.links.email}><Icon name="mail" size={18} /></a>
-                <a href={PROFILE.links.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp"><Icon name="whatsapp" size={18} /></a>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <a href="#work" className="btn btn-primary">
+                  {t.hero.cta1} <Icon name={arrow} size={16} />
+                </a>
+                <a href="#contact" className="btn btn-ghost">{t.hero.cta2}</a>
               </div>
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <CvButton lang={lang} />
+                {/* Direct channels as one segmented pill: it reads as a unit and wraps as a unit. */}
+                <div className="social-pill" role="group" aria-label={t.contact.eyebrow}>
+                  <a href={PROFILE.links.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><Icon name="github" size={18} /></a>
+                  <a href={`mailto:${PROFILE.links.email}`} aria-label="Email" title={PROFILE.links.email}><Icon name="mail" size={18} /></a>
+                  <a href={PROFILE.links.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp"><Icon name="whatsapp" size={18} /></a>
+                </div>
+              </div>
+
+              {/* Four figures as a ruled two-by-two: each cell a number and a
+                  two-word label, hairlines between, nothing to wrap. */}
+              <ul className="hero-stats">
+                {stats.map(([n, l]) => (
+                  <li key={l}>
+                    <span className="lat">{n}</span>
+                    <small>{l}</small>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            {/* Four figures on one baseline: two-word labels, no wrapping, hairlines between.
-                The indent and the hairline belong to the one-row layout only. On a
-                phone the grid is two columns, the third figure opens a new row, and
-                an indent meant for "after a hairline" pushed it 20px off the one
-                above it. Below sm the columns are spaced by gap and start flush. */}
-            <ul className="mt-12 grid grid-cols-2 gap-x-6 border-t pt-8 sm:grid-cols-4 sm:gap-x-0" style={{ borderColor: 'var(--line)' }}>
-              {stats.map(([n, l]) => (
-                <li key={l} className="flex flex-col items-start gap-1.5 py-2 sm:me-5 sm:ps-5 sm:first:ps-0 sm:last:me-0 sm:[&:nth-child(n+2)]:border-s"
-                    style={{ borderColor: 'var(--line)' }}>
-                  <span className="lat text-[30px] font-extrabold leading-none tracking-tight" style={{ color: 'var(--ink)' }}>{n}</span>
-                  <span className="whitespace-nowrap text-[13px] font-bold" style={{ color: 'var(--ink-3)' }}>{l}</span>
-                </li>
-              ))}
-            </ul>
+            {/* The proof, not a picture of it: the real tests behind the claims,
+                running -- set on a plate of the one strong colour on the page. */}
+            <div className="hero-proof">
+              <div className="hero-plate">
+                <TestRunner lang={lang} tests={HERO_TESTS} />
+              </div>
+              <p className="mt-5 text-center text-[12.5px]" style={{ color: 'var(--ink-3)' }}>{t.hero.runner.caption}</p>
+            </div>
           </div>
-
-          {/* The proof, not a picture of it: the real tests behind the claims, running. */}
-          <div className="relative">
-            <TestRunner lang={lang} tests={HERO_TESTS} />
-            <p className="mt-3 text-center text-[12.5px]" style={{ color: 'var(--ink-3)' }}>{t.hero.runner.caption}</p>
-          </div>
-          {/* The offer drawn behind itself: tables, the API, the screen, and one
-              request travelling between them. Sits in the gaps around the two
-              columns, never behind the text. */}
-          <SchemaTrace />
         </section>
 
         {/* -------------------------------------------------------- marquee */}

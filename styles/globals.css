@@ -120,12 +120,9 @@ body{
 }
 html[lang="en"] body{font-family:'Geist',system-ui,sans-serif}
 
-/* The page itself is plain paper. The one drawn element is the diagram
-   behind the hero (SchemaTrace), so nothing competes with it. */
+/* The page itself is plain paper; the hero draws with type, a pen line
+   and one plate of colour, so nothing sits behind it. */
 .ambient{display:none}
-
-.schema-trace{position:absolute;inset:0;z-index:0;pointer-events:none;display:none}
-@media (min-width:1024px){.schema-trace{display:block}}
 
 ::selection{background:var(--accent);color:#fff}
 
@@ -1242,3 +1239,49 @@ a.svs-proof:hover small{color:inherit;opacity:.75}
 }
 
 @media (prefers-reduced-motion:reduce){.svs-in{transform:none}.svs-in::after{opacity:0}.ui-float{transition:none}}
+
+/* ------------------------------------------------------------ hero */
+.hero-top{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;
+  padding-bottom:22px;border-bottom:1px solid var(--line)}
+.hero-role{margin:0;font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;font-weight:500;letter-spacing:.04em;color:var(--accent-ink)}
+.hero-h{position:relative;z-index:1;margin:clamp(28px,4vw,52px) 0 0;font-size:clamp(38px,5.4vw,76px);font-weight:800;line-height:1.04;letter-spacing:-.035em;color:var(--ink)}
+[dir="rtl"] .hero-h{letter-spacing:0;line-height:1.3;font-size:clamp(36px,5vw,70px)}
+.hero-l{display:block;text-wrap:balance;animation:hero-rise .8s cubic-bezier(.22,1,.36,1) both}
+.hero-l.is-soft{color:var(--ink-3);font-weight:700;animation-delay:.08s}
+/* transform only: the words are readable from the first frame */
+@keyframes hero-rise{from{transform:translateY(.28em)}to{transform:none}}
+.hero-mark{position:relative;display:inline-block;white-space:nowrap}
+.hero-pen{position:absolute;inset-inline:-.04em;bottom:-.1em;width:calc(100% + .08em);height:.2em;overflow:visible}
+[dir="rtl"] .hero-pen{transform:scaleX(-1);bottom:-.02em}
+.hero-pen path{fill:none;stroke:var(--accent);stroke-width:6;stroke-linecap:round;
+  stroke-dasharray:1;stroke-dashoffset:1;animation:hero-pen .9s cubic-bezier(.65,0,.35,1) .45s forwards}
+/* the dot where the pen stops, as in the logo */
+.hero-mark::after{content:'';position:absolute;inset-inline-end:-.17em;bottom:-.075em;width:.12em;height:.12em;border-radius:50%;background:var(--accent);
+  transform:scale(0);animation:hero-dot .35s cubic-bezier(.34,1.56,.64,1) 1.3s forwards}
+[dir="rtl"] .hero-mark::after{bottom:.02em}
+@keyframes hero-pen{to{stroke-dashoffset:0}}
+@keyframes hero-dot{to{transform:scale(1)}}
+
+.hero-grid{position:relative;z-index:1;display:grid;gap:48px;margin-top:clamp(36px,4.4vw,60px)}
+@media (min-width:1024px){.hero-grid{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:64px;align-items:start}}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;margin:40px 0 0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.hero-stats li{display:flex;flex-direction:column;gap:6px;padding:18px 0 16px;border-bottom:1px solid var(--line)}
+.hero-stats li:nth-child(odd){padding-inline-end:20px;border-inline-end:1px solid var(--line)}
+.hero-stats li:nth-child(even){padding-inline-start:20px}
+.hero-stats span{font-size:34px;font-weight:800;line-height:1;letter-spacing:-.03em;color:var(--ink)}
+.hero-stats small{font-size:13px;font-weight:700;color:var(--ink-3);white-space:nowrap}
+
+/* the plate: the panel sits on a block of the accent, offset toward the reading end */
+.hero-plate{position:relative;margin-inline-end:12px;margin-bottom:12px}
+.hero-plate::before{content:'';position:absolute;inset:0;transform:translate(12px,12px);border-radius:var(--r-card);background:var(--accent)}
+[dir="rtl"] .hero-plate::before{transform:translate(-12px,12px)}
+.hero-plate .runner{position:relative;animation:hero-lift .9s cubic-bezier(.22,1,.36,1) .15s both}
+@keyframes hero-lift{from{transform:translate(12px,12px)}to{transform:none}}
+[dir="rtl"] .hero-plate .runner{animation-name:hero-lift-r}
+@keyframes hero-lift-r{from{transform:translate(-12px,12px)}to{transform:none}}
+
+@media (prefers-reduced-motion:reduce){
+  .hero-l,.hero-plate .runner{animation:none}
+  .hero-pen path{animation:none;stroke-dashoffset:0}
+  .hero-mark::after{animation:none;transform:none}
+}
