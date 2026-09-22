@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { T, other } from '../lib/i18n';
-import { PROFILE } from '../content/projects';
+import { PROFILE, PROJECTS } from '../content/projects';
 import Icon from './Icons';
 import { CvButton } from './CvPanel';
 
@@ -27,11 +27,16 @@ export function SmoothScroll() {
       if (gone) return;
       lenis = new Lenis({
         autoRaf: true,
-        duration: 1.1,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        // Follow-through, not a fixed-length glide. A 1.1s exponential ease made
+        // the page trail the wheel and read as heavy; lerp closes 14% of the
+        // gap each frame, so the page moves with the hand and only settles at
+        // the very end.
+        lerp: 0.14,
+        wheelMultiplier: 1,
         // Lenis already honours each section's scroll-margin (96px); an extra
-        // offset here doubled it and landed every anchor at 192.
-        anchors: true,
+        // offset here doubled it and landed every anchor at 192. Jumps to a
+        // section are a touch quicker than the old glide.
+        anchors: { duration: 0.8 },
       });
     };
     window.addEventListener('wheel', start, { passive: true });
@@ -1151,3 +1156,72 @@ export function SchemaTrace() {
   return <canvas ref={ref} className="schema-trace" aria-hidden="true" />;
 }
 
+
+/* Engineering proof as case files. The hero runs the six tests as a list;
+   this is where each one is read in depth, one at a time: the problem in the
+   client's words, the decision in the engineer's, and the test that proves
+   it, with the repository it lives in. A list of cases on one side and the
+   open file on the other -- a proper tablist, so arrow keys move between
+   cases and the panel is labelled by the tab that opened it. */
+export function CaseFiles({ lang, tests }) {
+  const t = T[lang].proof;
+  const ar = lang === 'ar';
+  const L = ar ? 'Ar' : 'En';
+  const [i, setI] = useState(0);
+  const tabs = useRef([]);
+  const proj = (slug) => PROJECTS.find((x) => x.slug === slug);
+  const key = (e) => {
+    const next = { ArrowDown: 1, ArrowUp: -1, ArrowRight: ar ? -1 : 1, ArrowLeft: ar ? 1 : -1 }[e.key];
+    if (next === undefined) return;
+    e.preventDefault();
+    const n = (i + next + tests.length) % tests.length;
+    setI(n); tabs.current[n]?.focus();
+  };
+  const x = tests[i];
+  const pr = proj(x.project);
+  return (
+    <div className="cf">
+      <div className="cf-list" role="tablist" aria-orientation="vertical" aria-label={t.eyebrow} onKeyDown={key}>
+        {tests.map((y, n) => (
+          <button key={y.file} ref={(el) => (tabs.current[n] = el)} type="button" role="tab"
+                  id={`cf-tab-${n}`} aria-controls="cf-panel" aria-selected={n === i} tabIndex={n === i ? 0 : -1}
+                  className={`cf-tab${n === i ? ' is-on' : ''}`} onClick={() => setI(n)}>
+            <span className="cf-n lat">{String(n + 1).padStart(2, '0')}</span>
+            <span className="cf-t">{y[`prob${L}`]}</span>
+            <span className="cf-p">{proj(y.project)?.[lang].name}</span>
+          </button>
+        ))}
+      </div>
+
+      <div id="cf-panel" role="tabpanel" aria-labelledby={`cf-tab-${i}`} className="cf-panel">
+        {/* keyed on the case so each one enters fresh rather than morphing */}
+        <div key={i} className="cf-file">
+          <p className="cf-head lat">CASE {String(i + 1).padStart(2, '0')} · {pr?.[lang].name}</p>
+          <ol className="cf-steps">
+            <li>
+              <span className="cf-dot" aria-hidden="true" />
+              <p className="cf-k">{t.lProblem}</p>
+              <p className="cf-v">{x[`prob${L}`]}</p>
+            </li>
+            <li>
+              <span className="cf-dot" aria-hidden="true" />
+              <p className="cf-k">{t.lDecision}</p>
+              <p className="cf-v">{x[`dec${L}`]}</p>
+            </li>
+            <li className="is-proof">
+              <span className="cf-dot" aria-hidden="true"><Icon name="check" size={11} /></span>
+              <p className="cf-k">{t.lProof}</p>
+              <p className="cf-file-path lat">{x.project}/tests/{x.file}</p>
+              <p className="cf-rule">{ar ? x.ar : x.en}</p>
+              {pr?.repo && (
+                <a className="cf-repo" href={pr.repo} target="_blank" rel="noopener noreferrer">
+                  {t.repo} <span aria-hidden="true">↗</span>
+                </a>
+              )}
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  );
+}
