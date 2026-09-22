@@ -238,73 +238,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 .zoom img{transition:transform .8s cubic-bezier(.22,1,.36,1)}
 .zoom:hover img{transform:scale(1.03)}
 
-/* ------------------------------------------------------------- marquee */
-.marquee{direction:ltr;overflow:hidden;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
-  mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
-.marquee-track{display:flex;width:max-content;gap:12px;animation:marquee 38s linear infinite}
-.marquee:hover .marquee-track{animation-play-state:paused}
-@keyframes marquee{to{transform:translateX(-50%)}}
-@media (prefers-reduced-motion:reduce){.marquee-track{animation:none;flex-wrap:wrap;width:auto}
-  .marquee{mask-image:none;-webkit-mask-image:none}}
-
-/* ----------------------------------------------------------- rotating word */
-.rot{display:inline-grid;vertical-align:bottom}
-.rot > span{grid-area:1/1;transition:opacity .5s,transform .5s cubic-bezier(.22,1,.36,1);white-space:nowrap}
-.rot > span[aria-hidden="true"]{opacity:0;transform:translateY(.55em);pointer-events:none}
-
-/* ------------------------------------------------------------ timeline */
-/* The centre line fills as you scroll (--tl-p is 0..1, set by TimelineScroll)
-   and drains back when you scroll up. Dots light up once the fill passes them. */
-.tl{position:relative;--tl-p:0}
-.tl::before,.tl::after{content:'';position:absolute;top:0;bottom:0;inset-inline-start:19px;width:2px;border-radius:2px}
-.tl::before{background:var(--line-2)}
-.tl::after{background:var(--accent-solid);
-  transform:scaleY(var(--tl-p));transform-origin:top center;
-  box-shadow:0 0 12px color-mix(in srgb, var(--accent) 60%, transparent);
-  transition:transform .15s linear}
-.tl-head{position:absolute;inset-inline-start:20px;top:calc(var(--tl-p) * 100%);width:12px;height:12px;margin-inline-start:-6px;
-  margin-top:-6px;border-radius:50%;background:var(--accent-2);z-index:2;pointer-events:none;
-  box-shadow:0 0 0 4px color-mix(in srgb, var(--accent-2) 30%, transparent),0 0 18px var(--accent-2);
-  transition:top .15s linear;opacity:calc(var(--tl-p) * 40)}
-.tl-dot{position:absolute;inset-inline-start:11px;top:26px;width:18px;height:18px;border-radius:50%;z-index:1;
-  background:var(--bg);border:3px solid var(--line-2);box-shadow:0 0 0 0 transparent;
-  transition:border-color .35s,box-shadow .35s,transform .35s cubic-bezier(.22,1,.36,1)}
-.tl .on .tl-dot{border-color:var(--accent);box-shadow:0 0 0 6px var(--accent-soft);transform:scale(1.12)}
-.tl .on .card{border-color:color-mix(in srgb, var(--accent) 35%, var(--line))}
-@media (min-width:1024px){
-  .tl::before,.tl::after{inset-inline-start:50%;margin-inline-start:-1px}
-  .tl-head{inset-inline-start:50%}
-  .tl-dot{inset-inline-start:50%;margin-inline-start:-9px}
-}
-@media (prefers-reduced-motion:reduce){.tl{--tl-p:1}.tl-head{display:none}}
-
-/* ----------------------------------------------------------- hero float */
-@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.floaty{animation:floaty 6s ease-in-out infinite}
-.floaty-2{animation:floaty 7.5s ease-in-out -2s infinite}
-@keyframes pulse-ring{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.4);opacity:0}}
-.pulse-ring{animation:pulse-ring 1.8s cubic-bezier(.22,1,.36,1) infinite}
-
-
-/* ---------------------------------------------------------- scroll bar */
-.progress{position:fixed;top:0;left:0;height:2px;z-index:60;width:100%;transform-origin:0 50%;
-  background:var(--accent-solid);transform:scaleX(var(--p,0))}
-
-/* ---------------------------------------------------------- theme reveal */
-/* The theme toggle uses the View Transitions API: the new theme spreads as a
-   circle from the button. Browsers without it just switch instantly. */
-::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
-::view-transition-old(root){z-index:1}
-::view-transition-new(root){z-index:2;animation:vt-reveal .6s cubic-bezier(.22,1,.36,1)}
 @keyframes vt-reveal{from{clip-path:circle(0 at var(--vt-x,50%) var(--vt-y,0))}to{clip-path:circle(var(--vt-r,150vmax) at var(--vt-x,50%) var(--vt-y,0))}}
-
-/* ------------------------------------------------------- skill strip logos */
-.chip.tech{gap:8px;transition:border-color .3s,color .3s,transform .3s}
-.chip.tech .logo{color:var(--ink-3);transition:color .3s,transform .3s}
-.chip.tech:hover{border-color:color-mix(in srgb, var(--brand, var(--accent)) 45%, var(--line));color:var(--ink)}
-.chip.tech:hover .logo{color:var(--brand, var(--accent));transform:scale(1.12)}
-.marquee:hover .marquee-track{animation-play-state:paused}
 
 /* ---------------------------------------------------------- test runner */
 /* A test report, not a terminal toy: no traffic-light dots, a command line
@@ -1285,3 +1219,21 @@ a.svs-proof:hover small{color:inherit;opacity:.75}
   .hero-pen path{animation:none;stroke-dashoffset:0}
   .hero-mark::after{animation:none;transform:none}
 }
+
+/* ------------------------------------------------------------ stack ticker */
+.tk{border-block:1px solid var(--line);overflow:hidden}
+.tk-band{direction:ltr;padding:clamp(18px,2.4vw,30px) 0}
+.tk-track{display:flex;width:max-content;animation:tk 64s linear infinite}
+[dir="rtl"] .tk-track{animation-direction:reverse}
+.tk:not(.in-view) .tk-track,.tk:hover .tk-track{animation-play-state:paused}
+@keyframes tk{to{transform:translateX(-50%)}}
+.tk-item{display:inline-flex;align-items:center;gap:.32em;padding-inline-end:.7em;font-size:clamp(30px,4.2vw,58px);line-height:1;white-space:nowrap}
+.tk-logo{width:.62em;height:.62em;flex:none;color:var(--ink-3);transition:color .3s}
+.tk-item b{font-weight:800;letter-spacing:-.035em;color:var(--ink);transition:color .3s}
+.tk-item small{align-self:flex-start;margin-top:.15em;font-family:'GeistMono',ui-monospace,monospace;font-size:12px;font-weight:500;
+  letter-spacing:.02em;color:var(--accent-ink)}
+[dir="rtl"] .tk-item small{font-family:inherit;font-size:13px;font-weight:700}
+.tk-dot{flex:none;width:.16em;height:.16em;margin-inline-start:.45em;border-radius:50%;background:var(--accent)}
+.tk-item:hover b,.tk-item:hover .tk-logo{color:var(--accent-ink)}
+@media (prefers-reduced-motion:reduce){.tk-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center;row-gap:14px;padding-inline:16px}
+  .tk-track .tk-item:nth-child(n+10){display:none}}

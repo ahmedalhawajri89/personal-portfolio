@@ -1,49 +1,42 @@
 import { LOGOS } from './TechLogos';
 import Icon from './Icons';
 
-// Which logo a skill name maps to; anything unmatched gets a generic glyph.
+// Which logo a tool maps to; anything unmatched gets a generic glyph.
 const MATCH = [
-  [/laravel/i, 'laravel'], [/^php/i, 'php'], [/mysql/i, 'mysql'], [/vue/i, 'vue'], [/pinia/i, 'pinia'],
-  [/vite/i, 'vite'], [/tailwind/i, 'tailwind'], [/pest/i, 'pest'], [/playwright/i, 'playwright'],
-  [/next/i, 'next'], [/^git$/i, 'git'],
+  [/laravel/i, 'laravel'], [/^php/i, 'php'], [/mysql/i, 'mysql'], [/vue/i, 'vue'],
+  [/tailwind/i, 'tailwind'], [/next/i, 'next'],
 ];
-// Pinia, Pest and Playwright have no simple-icons glyph; they take a fitting generic one.
-const GENERIC = [[/api/i, 'code'], [/rtl|i18n/i, 'languages'], [/blade/i, 'layout'], [/datatables/i, 'database'], [/sanctum|pest|playwright/i, 'shield'], [/pinia/i, 'layers']];
+const GENERIC = [[/api/i, 'code'], [/pest|playwright/i, 'shield']];
 
-// The brand colour lives on the chip, so hover can tint its border as well as the glyph.
-const logoFor = (name) => { const k = MATCH.find(([re]) => re.test(name))?.[1]; return (k && LOGOS[k]) || null; };
-
-function Logo({ name, logo }) {
-  if (logo) {
-    return (
-      <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" className="logo">
-        <path d={logo.d} fill="currentColor" />
-      </svg>
-    );
+function Mark({ name }) {
+  const k = MATCH.find(([re]) => re.test(name))?.[1];
+  if (k && LOGOS[k]) {
+    return <svg viewBox="0 0 24 24" className="tk-logo" aria-hidden="true"><path d={LOGOS[k].d} fill="currentColor" /></svg>;
   }
-  const g = GENERIC.find(([re]) => re.test(name))?.[1] || 'sparkles';
-  return <Icon name={g} size={14} className="logo" />;
+  return <Icon name={GENERIC.find(([re]) => re.test(name))?.[1] || 'code'} size={24} className="tk-logo" />;
 }
 
-// Infinite skill strip. Pure CSS: the list is rendered twice and the track
-// slides by exactly half its width, so the loop is seamless. Logos are
-// monochrome in the strip and take their brand colour on hover.
-export default function Marquee({ items }) {
-  const row = [...items, ...items];
+// The stack as a ticker, set like a headline rather than a row of badges:
+// each tool at display size with the job it does in the work beside it, the
+// logo's dot between them. Full bleed, between two hairlines. The moving copy
+// is decoration (aria-hidden); a plain list carries the same words for a
+// screen reader. It pauses under the pointer and off screen, and stands
+// still for reduced motion.
+export default function Marquee({ items, roles, label }) {
+  const one = (k) => items.map((x) => (
+    <span key={`${k}-${x}`} className="tk-item">
+      <Mark name={x} />
+      <b className="lat">{x}</b>
+      {roles?.[x] && <small>{roles[x]}</small>}
+      <i className="tk-dot" />
+    </span>
+  ));
   return (
-    <div className="marquee py-1" aria-label={items.join(', ')}>
-      <div className="marquee-track">
-        {row.map((x, i) => {
-          const logo = logoFor(x);
-          return (
-            <span key={i} className="chip tech lat whitespace-nowrap px-4 py-2 text-[13px]" aria-hidden={i >= items.length}
-                  style={logo ? { '--brand': logo.hex } : undefined}>
-              <Logo name={x} logo={logo} />
-              {x}
-            </span>
-          );
-        })}
+    <section className="tk" aria-label={label}>
+      <ul className="sr-only">{items.map((x) => <li key={x}>{roles?.[x] ? `${x} — ${roles[x]}` : x}</li>)}</ul>
+      <div className="tk-band" aria-hidden="true">
+        <div className="tk-track">{one('a')}{one('b')}</div>
       </div>
-    </div>
+    </section>
   );
 }

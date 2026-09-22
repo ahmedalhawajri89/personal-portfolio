@@ -196,12 +196,8 @@ export default async function Home({ params }) {
           </div>
         </section>
 
-        {/* -------------------------------------------------------- marquee */}
-        <div className="wrap rise">
-          <div className="glass px-2" style={{ borderRadius: 999 }}>
-            <Marquee items={SKILLS} />
-          </div>
-        </div>
+        {/* ---------------------------------------------------------- stack */}
+        <Marquee items={SKILLS} roles={t.hero.tools.roles} label={t.hero.tools.label} />
 
         {/* ---------------------------------------------------------- work */}
         {/* Five projects at one size is a contact sheet, not an exhibition: it
