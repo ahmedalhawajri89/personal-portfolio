@@ -1010,3 +1010,21 @@ a:hover .tint,button:hover .tint{opacity:1}
 @media (min-width:768px) and (max-width:1023px){.tb-name{display:none}}
 @media (max-width:767px){.tb-in{height:60px}.tb-cta{display:none}}
 @media (prefers-reduced-motion:reduce){.tb,.tb-in,.tb-ind{transition:none}}
+
+/* ------------------------------------------------------------ logo */
+.logo{display:block;flex-shrink:0;overflow:visible}
+.logo-bg{fill:var(--ink)}
+.logo-a{fill:none;stroke:var(--bg);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:1;stroke-dashoffset:1;opacity:0;animation:logo-write .9s cubic-bezier(.65,0,.35,1) .15s forwards}
+/* hidden until the pen moves: a round cap on a zero-length line shows as a dot */
+.logo-dot{fill:var(--accent);transform-box:fill-box;transform-origin:center;transform:scale(0);
+  animation:logo-land .45s cubic-bezier(.34,1.56,.64,1) .95s forwards}
+@keyframes logo-write{0%{opacity:1;stroke-dashoffset:1}100%{opacity:1;stroke-dashoffset:0}}
+@keyframes logo-land{to{transform:scale(1)}}
+/* hover: write again, and the dot hops once it arrives */
+.tb-brand:hover .logo-a{animation:logo-rewrite .7s cubic-bezier(.65,0,.35,1)}
+.tb-brand:hover .logo-dot{animation:logo-hop .5s cubic-bezier(.34,1.56,.64,1) .55s}
+@keyframes logo-rewrite{0%{opacity:1;stroke-dashoffset:1}100%{opacity:1;stroke-dashoffset:0}}
+@keyframes logo-hop{0%,100%{transform:scale(1) translateY(0)}45%{transform:scale(1.15) translateY(-22%)}}
+@media (prefers-reduced-motion:reduce){.logo-a{animation:none;stroke-dashoffset:0;opacity:1}.logo-dot{animation:none;transform:none}
+  .tb-brand:hover .logo-a,.tb-brand:hover .logo-dot{animation:none}}

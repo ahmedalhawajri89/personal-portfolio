@@ -329,7 +329,7 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     <div className={`tb${scrolled ? ' is-scrolled' : ''}${away ? ' is-away' : ''}`}>
       <header className="wrap tb-in">
         <a href={`/${lang}/`} className="tb-brand">
-          <span className="brand-mark" aria-hidden="true"><span className="lat">A</span></span>
+          <Logo />
           <span className="tb-name">{PROFILE.name[lang]}</span>
         </a>
 
@@ -360,6 +360,23 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
         </div>
       </header>
     </div>
+  );
+}
+
+/* The mark: the favicon, drawn. An A written as one stroke -- up from the
+   left foot, over the apex, down to the right -- and an orange dot where the
+   pen stops, like the full stop at the end of a sentence. On load the stroke
+   writes itself and the dot lands on the last point; on hover it writes again
+   and the dot gives a small hop. The same geometry as /favicon.svg, so the tab
+   and the page carry one mark, and it inverts with the theme through the ink
+   and paper tokens. Still for reduced motion. */
+export function Logo({ size = 30 }) {
+  return (
+    <svg className="logo" width={size} height={size} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <rect width="64" height="64" rx="14" className="logo-bg" />
+      <path className="logo-a" d="M18 46 L32 17 L46 46" pathLength="1" />
+      <circle className="logo-dot" cx="46" cy="46" r="5" />
+    </svg>
   );
 }
 
