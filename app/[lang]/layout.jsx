@@ -15,11 +15,11 @@ export async function generateMetadata({ params }) {
   const { lang } = await params;
   const ar = lang === 'ar';
   const title = ar
-    ? 'أحمد الحواجري — مطوّر ويب Full-Stack'
-    : 'Ahmed Al-Hawajiri — Full-Stack Web Developer';
+    ? 'أحمد الحواجري — مطوّر ويب Full-Stack وجودة واختبارات'
+    : 'Ahmed Al-Hawajiri — Full-Stack Web Developer & QA';
   const description = ar
-    ? 'مطوّر ويب Full-Stack من غزة. أبني تطبيقات كاملة بلارافيل وPHP وVue — من مخطط قاعدة البيانات إلى الواجهة، بعربية RTL من أول سطر.'
-    : 'Full-stack web developer from Gaza. Complete applications in Laravel, PHP and Vue — from the database schema to the interface, Arabic-first.';
+    ? 'مطوّر ويب Full-Stack من غزة. أبني تطبيقات كاملة بلارافيل وPHP وVue — من مخطط قاعدة البيانات إلى الواجهة — وأحرس قواعدها باختبارات آلية.'
+    : 'Full-stack web developer from Gaza. Complete applications in Laravel, PHP and Vue — from the database schema to the interface — with the rules held by automated tests.';
   return {
     metadataBase: new URL(SITE),
     title,
@@ -55,7 +55,7 @@ const BOOT = `(function(){try{
 var d=localStorage.getItem('theme')==='dark';
 document.documentElement.setAttribute('data-theme',d?'dark':'light');
 var m=document.querySelector('meta[name=theme-color]');
-if(m)m.setAttribute('content',d?'#0A0B10':'#F6F7FB');
+if(m)m.setAttribute('content',d?'#0E0E0D':'#F7F6F3');
 document.documentElement.classList.add('js');
 }catch(e){}})();`;
 
@@ -65,13 +65,13 @@ export default async function RootLayout({ children, params }) {
   return (
     <html lang={lang} dir={t.dir} suppressHydrationWarning>
       <head>
-        <meta name="theme-color" content="#F6F7FB" />
+        <meta name="theme-color" content="#F7F6F3" />
         {/* The two cuts every page paints with, for the language it is in.
-            Arabic pages preload Plex Arabic, English pages preload Manrope;
-            preloading all four would put the wrong script's 37KB ahead of the
-            text actually on screen. DM Mono is not here on purpose — nothing
-            above the fold is monospaced. */}
-        {(lang === 'ar' ? ['plex-arabic-400', 'plex-arabic-700'] : ['manrope-400', 'manrope-700']).map((f) => (
+            Arabic pages preload Plex Arabic, English pages preload Geist;
+            preloading both would put the wrong script's 37KB ahead of the
+            text actually on screen. Geist Mono is not preloaded: the only
+            monospaced text above the fold is the runner, which starts later. */}
+        {(lang === 'ar' ? ['plex-arabic-400', 'plex-arabic-700'] : ['geist-400', 'geist-700']).map((f) => (
           <link key={f} rel="preload" as="font" type="font/woff2" href={`/fonts/${f}.woff2`} crossOrigin="anonymous" />
         ))}
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />
@@ -83,11 +83,11 @@ export default async function RootLayout({ children, params }) {
               '@type': 'Person',
               name: 'Ahmed Al-Hawajiri',
               alternateName: 'أحمد الحواجري',
-              jobTitle: 'Full-Stack Web Developer',
+              jobTitle: 'Full-Stack Web Developer & QA',
               url: SITE,
               address: { '@type': 'PostalAddress', addressLocality: 'Gaza', addressCountry: 'PS' },
               knowsLanguage: ['ar', 'en'],
-              knowsAbout: ['Laravel', 'PHP', 'Vue.js', 'MySQL', 'REST APIs', 'RTL interfaces'],
+              knowsAbout: ['Laravel', 'PHP', 'Vue.js', 'MySQL', 'REST APIs', 'Automated testing', 'RTL interfaces'],
               sameAs: [PROFILE.links.github, PROFILE.links.khamsat],
             }),
           }}

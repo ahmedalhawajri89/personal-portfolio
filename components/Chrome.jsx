@@ -168,7 +168,7 @@ export function ThemeToggle({ lang }) {
     document.documentElement.setAttribute('data-theme', next);
     // Keep the browser chrome in step with the page it frames.
     document.querySelector('meta[name=theme-color]')
-      ?.setAttribute('content', next === 'dark' ? '#0A0B10' : '#F6F7FB');
+      ?.setAttribute('content', next === 'dark' ? '#0E0E0D' : '#F7F6F3');
     try { localStorage.setItem('theme', next); } catch {}
     setDark(!dark);
   };
@@ -658,7 +658,7 @@ export function ContactForm({ lang, to }) {
 
   if (state === 'sent') {
     return (
-      <div className="flex h-full min-h-[320px] flex-col items-center justify-center rounded-2xl border p-8 text-center"
+      <div className="flex h-full min-h-[320px] flex-col items-center justify-center rounded-[var(--r-card)] border p-8 text-center"
            style={{ borderColor: 'var(--line)', background: 'var(--card-2)' }} role="status" aria-live="polite">
         <span className="on-accent grid h-16 w-16 place-items-center rounded-full">
           <Icon name="check" size={28} />
@@ -745,7 +745,7 @@ export function ContactForm({ lang, to }) {
       </div>
 
       {state === 'failed' && (
-        <div className="rounded-xl border px-4 py-3" role="alert"
+        <div className="rounded-[var(--r-ctl)] border px-4 py-3" role="alert"
              style={{ borderColor: 'color-mix(in srgb, #E11D48 40%, transparent)', background: 'color-mix(in srgb, #E11D48 8%, transparent)' }}>
           <p className="text-[13.5px] font-bold">
             {f.failed} <a href={`mailto:${to}`} className="lat underline">{to}</a>
@@ -817,7 +817,7 @@ export function Footer({ lang, links, home = false }) {
         <div className="wrap">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-6" style={{ borderColor: 'var(--line)' }}>
           <a href={`/${lang}/`} className="flex items-center gap-3">
-            <span className="on-accent lat grid h-10 w-10 place-items-center rounded-2xl text-[14px] font-extrabold">A</span>
+            <span className="on-accent lat grid h-10 w-10 place-items-center rounded-[var(--r-ctl)] text-[14px] font-extrabold">A</span>
             <span>
               <span className="block text-[15px] font-extrabold leading-tight">{lang === 'ar' ? 'أحمد الحواجري' : 'Ahmed Al-Hawajiri'}</span>
               <span className="block text-[10.5px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.badge.title}</span>
@@ -829,7 +829,7 @@ export function Footer({ lang, links, home = false }) {
         </div>
 
         {/* Big statement, like a closing title card. */}
-        <div className="foot-statement my-8 rounded-[28px] border px-6 py-14 text-center sm:py-20"
+        <div className="foot-statement my-8 rounded-[var(--r-card)] border px-6 py-14 text-center sm:py-20"
              style={{ borderColor: 'var(--line)' }}>
           <p className="eyebrow">{t.footerEyebrow}</p>
           <p className="mt-4 text-[clamp(30px,6vw,64px)] font-extrabold leading-[1.15] tracking-tight">
@@ -867,13 +867,16 @@ export function TestRunner({ lang, tests }) {
   const t = T[lang].hero.runner;
   const [n, setN] = useState(0);        // how many lines have been started
   const [done, setDone] = useState(0);  // how many have passed
-  const [cycle, setCycle] = useState(0);
-  const finished = done >= tests.length;
-  // The loop re-renders every 260-520ms, forever. It used to start 700ms after
-  // mount, which put it inside the window where the page is still hydrating;
-  // measured on the live site at 4x CPU throttle, stopping it cut blocking time
-  // after load from 318ms to 197ms. So it waits for the browser to be idle, and
-  // it only runs while the runner is on screen.
+  const total = tests.length;
+  const finished = done >= total;
+  // Every row is on the page from the first frame, queued. The old runner
+  // hid rows until they ran, so the first thing a visitor saw was an empty
+  // white box -- it read as a page that had not loaded. Now the motion is a
+  // change of state on rows that are already there.
+  //
+  // It runs once and then holds: a loop that re-rendered every few hundred
+  // milliseconds forever was noise to read past and cost to scroll past. It
+  // waits for the browser to be idle and for the panel to be on screen.
   const box = useRef(null);
   const [ready, setReady] = useState(false);
   const [live, setLive] = useState(false);
@@ -889,25 +892,24 @@ export function TestRunner({ lang, tests }) {
     };
   }, []);
   useEffect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setN(tests.length); setDone(tests.length); return; }
-    if (!ready || !live) return;
-    let a, b;
-    if (!finished) {
-      if (n === done) a = setTimeout(() => setN((x) => x + 1), n === 0 ? 300 : 260);
-      else b = setTimeout(() => setDone((x) => x + 1), 520);
-    } else {
-      a = setTimeout(() => { setN(0); setDone(0); setCycle((c) => c + 1); }, 4200);
-    }
-    return () => { clearTimeout(a); clearTimeout(b); };
-  }, [n, done, finished, ready, live, tests.length]);
-  const rerun = () => { setN(0); setDone(0); setCycle((c) => c + 1); };
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setN(total); setDone(total); return; }
+    if (!ready || !live || finished) return;
+    const id = n === done
+      ? setTimeout(() => setN((x) => x + 1), n === 0 ? 250 : 220)
+      : setTimeout(() => setDone((x) => x + 1), 480);
+    return () => clearTimeout(id);
+  }, [n, done, finished, ready, live, total]);
+  const rerun = () => { setN(0); setDone(0); };
+  // Counted from the tests themselves, not typed: how many projects they span.
+  const projects = new Set(tests.map((x) => x.project)).size;
   return (
-    <div ref={box} className="runner" aria-live="polite" aria-label={t.cmd}>
+    <div ref={box} className="runner" aria-label={t.cmd}>
       <div className="runner-bar">
-        <span className="dots"><i /><i /><i /></span>
-        <span className="runner-cmd">$ {t.cmd}</span>
+        <span className="runner-cmd"><span aria-hidden="true">$ </span>{t.cmd}</span>
         <button type="button" onClick={rerun} className="runner-rerun" aria-label={t.rerun} title={t.rerun}><Icon name="arrowUp" size={12} /></button>
       </div>
+      {/* The only orange on the panel: it fills as each rule passes. */}
+      <div className="runner-progress" aria-hidden="true"><i style={{ transform: `scaleX(${done / total})` }} /></div>
       <ol className="runner-body">
         {tests.map((x, i) => {
           const state = i < done ? 'pass' : i < n ? 'run' : 'wait';
@@ -922,10 +924,14 @@ export function TestRunner({ lang, tests }) {
           );
         })}
       </ol>
-      <div className={`runner-sum${finished ? ' is-on' : ''}`}>
-        <span className="ok">✓ {tests.length} {t.passed}</span>
-        <span>{t.total} {tests.length}</span>
-        <span>1.{(cycle * 7 + 24) % 90 + 10}{t.time}</span>
+      <div className="runner-sum">
+        <span className="runner-status" aria-live="polite">
+          {finished
+            ? <span className="ok">✓ {total} {t.passed}</span>
+            : <span>{n ? t.running : t.queued}</span>}
+          <span className="runner-meta">{total} {t.rules} · {projects} {t.projects}</span>
+        </span>
+        <a href={PROFILE.links.github} target="_blank" rel="noopener noreferrer" className="runner-code">{t.code} <span aria-hidden="true">{lang === 'ar' ? '←' : '→'}</span></a>
       </div>
     </div>
   );

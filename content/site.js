@@ -8,13 +8,13 @@
 export const SERVICES = [
   {
     icon: 'store', proof: 'diwan',
-    ar: { h: 'متاجر إلكترونية', b: 'كتالوج ومخزون وسلّة وطلبات — والمخزون يُحسم في قاعدة البيانات، فلا تُباع آخر قطعة مرّتين.' },
-    en: { h: 'E-commerce', b: 'Catalogue, stock, cart and orders — with stock settled in the database, so the last piece cannot sell twice.' },
+    ar: { h: 'متاجر إلكترونية', b: 'كتالوج ومخزون وسلّة وطلبات بعربية RTL — والمخزون يُحسم في قاعدة البيانات، فلا تُباع آخر قطعة مرّتين.' },
+    en: { h: 'E-commerce', b: 'Catalogue, stock, cart and orders, Arabic-first — with stock settled in the database, so the last piece cannot sell twice.' },
   },
   {
     icon: 'calendar', proof: 'booking',
-    ar: { h: 'أنظمة حجوزات ومواعيد', b: 'التوفّر يُحسب من ساعات العمل ومدّة الخدمة، وكشف التعارض يمنع فوز اثنين بالموعد نفسه.' },
-    en: { h: 'Booking systems', b: 'Availability computed from business hours and service duration, with conflict detection that stops two people winning the same slot.' },
+    ar: { h: 'أنظمة حجوزات ومواعيد', b: 'حجز عربي RTL، والتوفّر يُحسب من ساعات العمل ومدّة الخدمة، وكشف التعارض يمنع فوز اثنين بالموعد نفسه.' },
+    en: { h: 'Booking systems', b: 'Arabic-first booking, with availability computed from business hours and service duration, and conflict detection that stops two people winning the same slot.' },
   },
   {
     icon: 'layout', proof: 'takharruj',
@@ -27,9 +27,12 @@ export const SERVICES = [
     en: { h: 'Database design and APIs', b: 'A schema that prevents the mistake rather than detecting it, and a documented REST API held up by tests.' },
   },
   {
-    icon: 'languages', proof: 'mawaheb',
-    ar: { h: 'عربي RTL من أول سطر', b: 'الاتجاه مبني في التخطيط لا معكوس في النهاية. الأرقام والأيقونات والفلاتر في مكانها الصحيح.' },
-    en: { h: 'Arabic-first, RTL by design', b: 'Direction is built into the layout, not mirrored at the end. Numbers, icons and filters stay where they belong.' },
+    // Testing is demonstrated in the work itself: Pest and PHPUnit suites in
+    // four of the five projects, Playwright in two, and the booking system's
+    // concurrency test opens two real sessions. A skill, not a job title.
+    icon: 'shield', proof: 'booking',
+    ar: { h: 'اختبارات وضمان جودة', b: 'اختبارات آلية لتطبيق Laravel قائم — قواعد العمل والصلاحيات والتزامن — بـPest وPlaywright، حتى لا يعود الخطأ بعد أول تعديل.' },
+    en: { h: 'Testing & QA', b: 'Automated tests for an existing Laravel app — business rules, permissions and concurrency — in Pest and Playwright, so a fixed bug stays fixed after the next edit.' },
   },
   {
     icon: 'code', proof: null,
@@ -47,13 +50,13 @@ export const CAPABILITIES = [
     icon: 'layers',
     ar: { h: 'الواجهة الخلفية', b: 'منطق العمل والصلاحيات والمعاملات، وواجهات REST.' },
     en: { h: 'Backend', b: 'Business logic, permissions, transactions and REST APIs.' },
-    items: ['Laravel 12', 'PHP 8.2', 'REST APIs', 'Sanctum', 'Breeze', 'Socialite'],
+    items: ['Laravel', 'PHP', 'REST APIs'],
   },
   {
     icon: 'layout',
     ar: { h: 'الواجهة الأمامية', b: 'لوحات وكونسولات وواجهات عربية.' },
     en: { h: 'Frontend', b: 'Dashboards, operator consoles and Arabic interfaces.' },
-    items: ['Vue 3', 'Pinia', 'Vite', 'Blade', 'Tailwind CSS', 'Next.js'],
+    items: ['Vue 3', 'Next.js', 'Tailwind CSS'],
   },
   {
     icon: 'database',
@@ -61,24 +64,25 @@ export const CAPABILITIES = [
     // belongs to this layer and to nothing else on the page.
     ar: { h: 'البيانات', b: 'خمسة مخطّطات من الصفر على MySQL — منها قيد فريد جزئي على محرّك لا يملك واحداً.' },
     en: { h: 'Data', b: 'Five schemas designed from scratch on MySQL — including a partial unique constraint on an engine that has none.' },
-    items: ['MySQL', 'تصميم المخطّط', 'المعاملات والأقفال', 'Yajra DataTables'],
-    itemsEn: ['MySQL', 'Schema design', 'Transactions & locks', 'Yajra DataTables'],
+    items: ['MySQL', 'تصميم المخطّط', 'المعاملات والأقفال'],
+    itemsEn: ['MySQL', 'Schema design', 'Transactions & locks'],
   },
   {
     icon: 'shield',
     // Was the fourth copy of the `اختبار لكل قاعدة تهمّ` line. What is true of
     // this layer alone: two PHP runners plus a browser one, and the
     // concurrency test opens two real sessions rather than simulating them.
-    ar: { h: 'الجودة', b: 'اختبارات PHP للقواعد وPlaywright للمتصفّح — واختبار التزامن يفتح جلستين حقيقيتين لا محاكاة.' },
-    en: { h: 'Quality', b: 'PHP tests for the rules and Playwright for the browser — and the concurrency test opens two real sessions rather than simulating them.' },
-    items: ['Pest', 'PHPUnit', 'Playwright', 'التحقّق والصلاحيات', 'قواعد العمل'],
-    itemsEn: ['Pest', 'PHPUnit', 'Playwright', 'Validation & policies', 'Business rules'],
+    ar: { h: 'الجودة والاختبار (QA)', b: 'اختبارات PHP للقواعد وPlaywright للمتصفّح — واختبار التزامن يفتح جلستين حقيقيتين لا محاكاة.' },
+    en: { h: 'Quality & testing (QA)', b: 'PHP tests for the rules and Playwright for the browser — and the concurrency test opens two real sessions rather than simulating them.' },
+    items: ['Pest', 'PHPUnit', 'Playwright'],
   },
 ];
 
+// Nine a client can recognise. The full stacks -- Pinia, Vite, Sanctum,
+// Breeze, Yajra and the rest -- stay on each case study, where they belong
+// to a project rather than to a list.
 export const SKILLS = [
-  'Laravel 12', 'PHP 8.2', 'MySQL', 'Vue 3', 'Pinia', 'Vite', 'Tailwind CSS', 'Blade',
-  'REST APIs', 'Sanctum', 'Pest', 'Playwright', 'Yajra DataTables', 'Next.js', 'Git', 'RTL / i18n',
+  'Laravel', 'PHP', 'MySQL', 'Vue 3', 'Next.js', 'Tailwind CSS', 'REST APIs', 'Pest', 'Playwright',
 ];
 
 // Client quotes. Leave empty and the section is not rendered.

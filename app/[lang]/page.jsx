@@ -78,7 +78,7 @@ export default async function Home({ params }) {
         {/* ---------------------------------------------------------- hero */}
         <section id="home" className="wrap relative grid scroll-mt-24 grid-cols-1 items-center gap-12 pb-16 pt-28 sm:pt-36 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,.9fr)] lg:gap-16 lg:pb-20">
           <div className="relative z-10">
-            <p className="inline-flex items-center gap-2.5 rounded-full border px-3.5 py-1.5 text-[13px] font-bold"
+            <p className="inline-flex items-center gap-2.5 rounded-[var(--r-chip)] border px-3.5 py-1.5 text-[13px] font-bold"
                style={{ borderColor: 'var(--line)', background: 'var(--glass)', color: 'var(--ink-2)' }}>
               <span className="relative flex h-2 w-2">
                 <span className="pulse-ring absolute inline-flex h-full w-full rounded-full" style={{ background: 'var(--ok)' }} />
@@ -202,12 +202,19 @@ export default async function Home({ params }) {
                 </picture>
               );
 
+              // A thin browser bar with the address the screen actually lives at:
+              // the live demo where there is one, otherwise the repository. It
+              // says "this is a product that runs" before a word is read.
+              const where = p.demo ? new URL(p.demo).host : p.repo.replace('https://', '');
               const frame = (extra = '') => (
-                <div className={`zoom relative m-3 overflow-hidden rounded-[16px] border ${extra}`} style={{ borderColor: 'var(--line)' }}>
-                  {img}
-                  <span className="tint" />
-                  <span className="glass lat absolute top-3 px-2.5 py-1 text-[11.5px] font-bold"
-                        style={{ insetInlineStart: 12, borderRadius: 999 }}>{num}</span>
+                <div className={`m-3 overflow-hidden rounded-[var(--r-ctl)] border ${extra}`} style={{ borderColor: 'var(--line)' }}>
+                  <div className="card-bar" aria-hidden="true"><span className="lat">{where}</span></div>
+                  <div className="zoom relative overflow-hidden">
+                    {img}
+                    <span className="tint" />
+                    <span className="glass lat absolute top-3 px-2 py-0.5 text-[11.5px] font-bold"
+                          style={{ insetInlineStart: 12, borderRadius: 'var(--r-chip)' }}>{num}</span>
+                  </div>
                 </div>
               );
 
@@ -229,7 +236,8 @@ export default async function Home({ params }) {
                       <span><span className="lat">{shots}</span> {t.work.shots}</span>
                     </p>
                     <ul className="mono flex flex-wrap gap-1.5">
-                      {p.stack.slice(0, layout === 'half' ? 4 : 6).map((x) => (
+                      {/* Three is what a client reads; the full stack is on the case study. */}
+                      {p.stack.slice(0, 3).map((x) => (
                         <li key={x} className="chip px-2.5 py-1 text-[11.5px]">{x}</li>
                       ))}
                     </ul>
@@ -634,7 +642,7 @@ export default async function Home({ params }) {
                   ].map(([icon, href, label, sub, ext]) => {
                     const inner = (
                       <>
-                        <span className="icon-tile shrink-0" style={{ width: 42, height: 42, borderRadius: 999 }}><Icon name={icon} size={17} /></span>
+                        <span className="icon-tile shrink-0" style={{ width: 42, height: 42 }}><Icon name={icon} size={17} /></span>
                         <span className="min-w-0">
                           <span className="block truncate text-[14.5px] font-extrabold">{label}</span>
                           <span className="lat block truncate text-[12.5px]" style={{ color: 'var(--ink-3)' }}>{sub}</span>
@@ -642,7 +650,7 @@ export default async function Home({ params }) {
                         {href && <Icon name="external" size={14} className="ms-auto shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />}
                       </>
                     );
-                    const cls = 'group flex min-w-0 items-center gap-3 rounded-2xl border p-3 transition-colors';
+                    const cls = 'group flex min-w-0 items-center gap-3 rounded-[var(--r-card)] border p-3 transition-colors';
                     const style = { borderColor: 'var(--line)', background: 'var(--card-2)' };
                     return (
                       <li key={icon} className="min-w-0">

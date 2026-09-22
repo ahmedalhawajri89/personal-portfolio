@@ -5,32 +5,25 @@
 /* ---------------------------------------------------------------- fonts */
 /* Three faces, one per job.
 
-   Manrope carries the Latin. It ships real 400/700/800 cuts, so the weight
-   remap the old Latin face needed is gone: the CSS asks for 800 and gets a
-   drawn ExtraBold, not a SemiBold standing in for one.
+   Geist carries the Latin, and Geist Mono carries anything that is a command,
+   a file path or a test name -- one family for prose and code, so the hero's
+   terminal and the headline next to it read as the same hand. The scale is
+   set one step lighter than the CSS asks for: 700 draws SemiBold and 800
+   draws Bold. Geist's heavier cuts turn blunt at display size, and one step
+   down is also where it matches Plex Arabic Bold on a mixed line.
 
-   DM Mono carries anything that is a command, a file path or a test name.
-   That role used to fall through to whatever `ui-monospace` resolved to on
-   the visitor's machine, so it looked different on every OS. DM Mono has no
-   cut above Medium, so mono text tops out at 500 rather than being smeared
-   into a synthetic bold.
+   IBM Plex Sans Arabic stays: Geist draws no Arabic glyphs. It keeps the
+   same remap for the same reason.
 
-   IBM Plex Sans Arabic stays, because neither Manrope nor DM Mono draws a
-   single Arabic glyph -- their subsets are latin, latin-ext, greek, cyrillic
-   and vietnamese. Arabic still has three cuts, so it keeps its remap: the
-   CSS asks for 700 and gets SemiBold, asks for 800 and gets Bold. That is
-   also what keeps a mixed line even, since Plex Bold and Manrope ExtraBold
-   sit at about the same colour.
-
-   All three are subset and self-hosted; nothing is fetched from a font CDN. */
+   All three are subset to what the page uses and self-hosted. */
 @font-face{font-family:'PlexAr';src:url('/fonts/plex-arabic-400.woff2') format('woff2');font-weight:400;font-display:swap;}
 @font-face{font-family:'PlexAr';src:url('/fonts/plex-arabic-600.woff2') format('woff2');font-weight:700;font-display:swap;}
 @font-face{font-family:'PlexAr';src:url('/fonts/plex-arabic-700.woff2') format('woff2');font-weight:800;font-display:swap;}
-@font-face{font-family:'Manrope';src:url('/fonts/manrope-400.woff2') format('woff2');font-weight:400;font-display:swap;}
-@font-face{font-family:'Manrope';src:url('/fonts/manrope-700.woff2') format('woff2');font-weight:700;font-display:swap;}
-@font-face{font-family:'Manrope';src:url('/fonts/manrope-800.woff2') format('woff2');font-weight:800;font-display:swap;}
-@font-face{font-family:'DMMono';src:url('/fonts/dmmono-400.woff2') format('woff2');font-weight:400;font-display:swap;}
-@font-face{font-family:'DMMono';src:url('/fonts/dmmono-500.woff2') format('woff2');font-weight:500;font-display:swap;}
+@font-face{font-family:'Geist';src:url('/fonts/geist-400.woff2') format('woff2');font-weight:400;font-display:swap;}
+@font-face{font-family:'Geist';src:url('/fonts/geist-600.woff2') format('woff2');font-weight:700;font-display:swap;}
+@font-face{font-family:'Geist';src:url('/fonts/geist-700.woff2') format('woff2');font-weight:800;font-display:swap;}
+@font-face{font-family:'GeistMono';src:url('/fonts/geistmono-400.woff2') format('woff2');font-weight:400;font-display:swap;}
+@font-face{font-family:'GeistMono';src:url('/fonts/geistmono-500.woff2') format('woff2');font-weight:500;font-display:swap;}
 
 /* ------------------------------------------------- off-screen sections */
 /* `content-visibility:auto` on the seven below-fold sections was measured and
@@ -47,70 +40,56 @@
    (18% worse). */
 
 /* ---------------------------------------------------------------- tokens */
+/* Ink and a signal.
+
+   The identity comes from the mark that already existed -- the favicon is a
+   near-black square, a warm off-white letter and one orange dot. So the page
+   is ink on a neutral paper, filled controls are ink, and orange is a signal
+   used in small doses: the availability dot, the active item, the hero's
+   progress bar. Navy was dropped because every neutral here leaned blue
+   (+5 to +29), so a blue accent read as a darker shade of the page rather
+   than as a colour of its own; these neutrals are warm-neutral instead.
+
+   Every text token is measured against all four surfaces, and against the
+   orange tint composited over each -- --bg-2 and --card-2 are where the
+   first draft failed (4.36 and 4.47), so the text orange and the success
+   green were each taken one step darker. Tightest margin: 102% light, 105%
+   dark. Green stays for "passed" only: it is a status, not the brand. */
 :root{
-  --bg:#F6F7FB; --bg-2:#EEF0F6; --card:#FFFFFF; --card-2:#F3F4F9;
-  --ink:#0F1222; --ink-2:#3F4458;
-  /* The muted tone carries fifteen pieces of real text — metadata, hints,
-     captions — so it has to clear AA for body copy, not the 3:1 large-text
-     floor. #7A8096 measured 3.66:1 on the page ground. Checked against all
-     three light surfaces, not just two: --card-2 is darker than the ground,
-     and an earlier pass that tested only bg and card left this at 4.42 there. */
-  --ink-3:#686F85;
-  --line:rgba(15,18,34,.08); --line-2:rgba(15,18,34,.15);
-  /* Brand palette — change these three to re-theme the whole site.
-     accent = navy, accent-2 = sky blue, accent-3 = amber. */
-  --accent:#12367A; --accent-2:#2563EB; --accent-3:#F59E0B;
-  /* Accent text sits on the accent tint as often as on a plain surface — the
-     eyebrow and the accent chips do exactly that — so it is measured against
-     the composite, not just the plain ground: 5.82 on the tint over --card-2.
-     It is deliberately lighter than --accent-solid. A navy dark enough to
-     carry white sits only 1.67x off the body ink, so as *text* it would read
-     as ordinary copy that happened to be dark; this one is 2.4x off and
-     still clears 4.5 everywhere, so it reads as a colour that was chosen.
-     Saturation was raised from 57% to 74% at the same hue and lightness, so
-     the navy reads sharper without moving a single contrast ratio. */
-  --accent-soft:rgba(18,54,122,.12); --accent-ink:#194BA8;
-  /* The one filled accent surface, and the ink that is legible on it.
-     White on this navy is 11.45:1. Unlike the teal it replaces, a navy can
-     carry white in *both* themes, so --on-accent no longer flips to a dark
-     ink in the dark palette — one rule for every filled accent surface. */
-  --accent-solid:#12367A; --on-accent:#FFFFFF;
-  /* String literals in the code samples. The decorative amber is 1.96:1 on
-     the code panel — fine as a wash behind the page, unreadable as 12.5px
-     type — so the syntax colour is its own token and the wash keeps its. */
-  --code-string:#9A6306;
-  --glass:rgba(255,255,255,.66); --glass-line:rgba(15,18,34,.08);
-  /* Success green as *text* — it labels the passing test count, so it needs
-     body contrast, not the 3.29:1 the brighter green gave on white. */
-  --ok:#117F3A;
-  --shadow:0 1px 2px rgba(15,18,34,.05), 0 20px 50px -24px rgba(15,18,34,.25);
-  --glow:0 0 0 1px rgba(18,54,122,.2), 0 20px 60px -20px rgba(18,54,122,.45);
-  --radius:22px;
+  --bg:#F7F6F3; --bg-2:#EFEDE8; --card:#FFFFFF; --card-2:#F2F0EB;
+  --ink:#141414; --ink-2:#4A4741; --ink-3:#6E6A63;
+  --line:rgba(20,20,20,.08); --line-2:rgba(20,20,20,.15);
+  --accent:#FF4D00; --accent-2:#A93405; --accent-3:#FF4D00;
+  --accent-soft:rgba(255,77,0,.10); --accent-ink:#A93405;
+  --accent-solid:#141414; --on-accent:#FFFFFF;
+  --code-string:#8A5A06;
+  --glass:rgba(255,255,255,.72); --glass-line:rgba(20,20,20,.08);
+  --ok:#0E7434;
+  --shadow:0 1px 2px rgba(20,20,20,.05), 0 16px 40px -24px rgba(20,20,20,.22);
+  --glow:0 0 0 1px rgba(20,20,20,.12), 0 16px 40px -20px rgba(20,20,20,.3);
+  /* Corners by role, not one radius on everything. A 22px radius and pill
+     buttons on every surface is the look of a SaaS template; small corners
+     that step down with the size of the thing read as drawn on purpose.
+     The pill survives only where an object floats: the header bar and the
+     phone dock. */
+  --r-card:10px; --r-ctl:6px; --r-chip:4px;
+  --radius:var(--r-card);
   color-scheme:light;
 }
 :root[data-theme="dark"]{
-  --bg:#0A0B10; --bg-2:#0F1117; --card:#13151C; --card-2:#191C25;
-  /* Same check as the light palette, against the darkest surface here:
-     #7D8296 measured 4.46 on --card-2, where the runner's command line
-     and the unlit half of the language switch sit. */
-  --ink:#F4F5FA; --ink-2:#B7BBCB; --ink-3:#7F8498;
+  --bg:#0E0E0D; --bg-2:#141413; --card:#181816; --card-2:#1E1E1C;
+  --ink:#F2F0EC; --ink-2:#BDB9B1; --ink-3:#8C887F;
   --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.15);
-  /* The navy lightens here for one reason: nothing that carries the accent
-     has a border, so the fill alone has to separate the monogram and the
-     active dock pill from a near-black chrome. The light theme's #1E3A6E
-     manages only 1.77:1 against this ground and would sink into it. Measured
-     against all three dark surfaces, not just the page: #35619F cleared the
-     ground at 3.15 but fell to 2.92 on --card, where the language switch and
-     the dock sit. #3369B1 clears 3:1 on every one of them (3.55 / 3.30 /
-     3.07) and still carries white at 5.53:1. */
-  --accent:#3369B1; --accent-2:#60A5FA; --accent-3:#FBBF24;
-  --accent-soft:rgba(51,105,177,.18); --accent-ink:#96BBF5;
-  --accent-solid:#3369B1; --on-accent:#FFFFFF;
-  --code-string:#FBBF24;
-  --glass:rgba(19,21,28,.62); --glass-line:rgba(255,255,255,.09);
+  --accent:#FF6A1F; --accent-2:#FF8A4C; --accent-3:#FF6A1F;
+  --accent-soft:rgba(255,106,31,.14); --accent-ink:#FF8A4C;
+  /* Filled controls invert: paper-coloured with ink text, so a primary
+     button is still the strongest mark on a dark page. */
+  --accent-solid:#F2F0EC; --on-accent:#141414;
+  --code-string:#E7B45A;
+  --glass:rgba(24,24,22,.72); --glass-line:rgba(255,255,255,.09);
   --ok:#4ADE80;
-  --shadow:0 1px 2px rgba(0,0,0,.5), 0 24px 60px -24px rgba(0,0,0,.8);
-  --glow:0 0 0 1px rgba(51,105,177,.26), 0 24px 70px -20px rgba(51,105,177,.45);
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 20px 50px -24px rgba(0,0,0,.8);
+  --glow:0 0 0 1px rgba(255,255,255,.12), 0 20px 50px -20px rgba(0,0,0,.8);
   color-scheme:dark;
 }
 
@@ -130,41 +109,43 @@ html{scroll-behavior:smooth}
 
 body{
   margin:0;background:var(--bg);color:var(--ink);
-  font-family:'PlexAr','Manrope',system-ui,sans-serif;
+  font-family:'PlexAr','Geist',system-ui,sans-serif;
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
   overflow-x:hidden;
 }
-html[lang="en"] body{font-family:'Manrope',system-ui,sans-serif}
+html[lang="en"] body{font-family:'Geist',system-ui,sans-serif}
 
-/* Ambient background: two soft colour fields and a faint grid. Fixed so it
-   never repaints while scrolling. */
+/* Ambient background: the layout's own columns, drawn. Four columns inside
+   the same box as .wrap (1200px, the same side padding), so every line sits
+   on an edge the content actually aligns to -- the structure is the ornament.
+   It replaces a 64px square grid and three blurred colour fields: the grid
+   was a template pattern, and the fields were decorative gradients. Fixed, so
+   it never repaints on scroll. On a phone only the two outer edges remain. */
 .ambient{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-.ambient::before{content:'';position:absolute;inset:-20%;
-  background:
-    radial-gradient(38% 32% at 18% 12%, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 70%),
-    radial-gradient(30% 28% at 84% 18%, color-mix(in srgb, var(--accent-2) 16%, transparent) 0%, transparent 70%),
-    radial-gradient(34% 30% at 70% 90%, color-mix(in srgb, var(--accent-3) 10%, transparent) 0%, transparent 70%);
-  filter:blur(40px)}
-.ambient::after{content:'';position:absolute;inset:0;opacity:.5;
-  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:64px 64px;
-  -webkit-mask-image:radial-gradient(70% 60% at 50% 0%,#000 30%,transparent 100%);
-  mask-image:radial-gradient(70% 60% at 50% 0%,#000 30%,transparent 100%)}
+.ambient::after{content:'';position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);
+  width:min(1200px,100%);padding-inline:clamp(18px,4vw,44px);box-sizing:border-box;
+  background-image:linear-gradient(to right,var(--line) 1px,transparent 1px),linear-gradient(to left,var(--line) 1px,transparent 1px);
+  background-origin:content-box;background-clip:content-box;
+  background-size:25% 100%,100% 100%;background-repeat:repeat-x,no-repeat}
+@media (max-width:639px){.ambient::after{background-size:100% 100%,100% 100%}}
 
 ::selection{background:var(--accent);color:#fff}
 
 /* Latin runs inside Arabic text keep their own font and direction */
-.lat{font-family:'Manrope',system-ui,sans-serif;direction:ltr;unicode-bidi:isolate}
-.mono{font-family:'DMMono',ui-monospace,Menlo,monospace;direction:ltr;unicode-bidi:isolate;
+.lat{font-family:'Geist',system-ui,sans-serif;direction:ltr;unicode-bidi:isolate}
+.mono{font-family:'GeistMono',ui-monospace,Menlo,monospace;direction:ltr;unicode-bidi:isolate;
   font-variant-numeric:tabular-nums}
 
 /* -------------------------------------------------------------- helpers */
 .wrap{width:100%;max-width:1200px;margin-inline:auto;padding-inline:clamp(18px,4vw,44px)}
 .rule{height:1px;background:var(--line);border:0}
 
-.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;
-  font-size:12.5px;font-weight:700;letter-spacing:.04em;
-  color:var(--accent-ink);background:var(--accent-soft);border:1px solid color-mix(in srgb, var(--accent) 30%, transparent)}
+/* A section label is text with a dot, not a tinted box. Filled orange on
+   every section spent the signal colour eight times a page; now the only
+   orange here is the 6px dot. */
+.eyebrow{display:inline-flex;align-items:center;gap:8px;
+  font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+[dir="rtl"] .eyebrow{letter-spacing:0;text-transform:none}
 .eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent)}
 
 /* Was three colour stops clipped to the glyphs. One colour says the same
@@ -191,7 +172,7 @@ html[lang="en"] body{font-family:'Manrope',system-ui,sans-serif}
 [dir="rtl"] .group:hover .arrow-slide{transform:translateX(3px)}
 
 .hover-lift{transition:transform .45s cubic-bezier(.22,1,.36,1),box-shadow .45s cubic-bezier(.22,1,.36,1),border-color .3s}
-.hover-lift:hover{transform:translateY(-4px);box-shadow:var(--glow);border-color:color-mix(in srgb, var(--accent) 40%, var(--line))}
+.hover-lift:hover{transform:translateY(-4px);box-shadow:var(--glow);border-color:color-mix(in srgb, var(--ink) 22%, var(--line))}
 
 /* Animated conic border: the card sits on a spinning gradient. */
 .gradient-border{position:relative;border-radius:var(--radius);background:var(--card)}
@@ -213,26 +194,27 @@ html[lang="en"] body{font-family:'Manrope',system-ui,sans-serif}
 .js .pipe:not(.in-view) .wire::after{animation-play-state:paused}
 
 /* buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r-ctl);
   padding:12px 24px;font-size:15px;font-weight:700;line-height:1;white-space:nowrap;
   transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s,background .3s,border-color .3s}
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:translateY(0) scale(.98)}
 .btn-primary{color:var(--on-accent);background:var(--accent-solid);
-  box-shadow:0 10px 30px -10px color-mix(in srgb, var(--accent) 70%, transparent)}
-.btn-primary:hover{box-shadow:0 16px 40px -12px color-mix(in srgb, var(--accent) 85%, transparent)}
+  box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.btn-primary:hover{box-shadow:0 8px 20px -10px rgba(0,0,0,.45)}
 .btn-ghost{color:var(--ink);background:var(--glass);border:1px solid var(--line-2);
   -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
-.btn-ghost:hover{border-color:color-mix(in srgb, var(--accent) 50%, var(--line-2))}
+.btn-ghost:hover{border-color:color-mix(in srgb, var(--ink) 30%, var(--line-2))}
 
 /* chips */
-.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 12px;
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:var(--r-chip);padding:6px 12px;
   font-size:12.5px;font-weight:700;color:var(--ink-2);background:var(--card-2);border:1px solid var(--line)}
 .chip-accent{color:var(--accent-ink);background:var(--accent-soft);border-color:color-mix(in srgb, var(--accent) 30%, transparent)}
 
 /* icon tile */
-.icon-tile{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;color:var(--accent-ink);
-  background:var(--accent-soft);border:1px solid color-mix(in srgb, var(--accent) 25%, transparent)}
+/* Neutral on purpose: an icon labels a card, it is not a signal. */
+.icon-tile{display:grid;place-items:center;width:46px;height:46px;border-radius:var(--r-ctl);color:var(--ink);
+  background:var(--card-2);border:1px solid var(--line)}
 
 /* Entrance: opacity only, and ONLY below the fold. Content is never
    invisible on first paint. `no-js` and reduced-motion both leave it visible. */
@@ -247,7 +229,7 @@ html[lang="en"] body{font-family:'Manrope',system-ui,sans-serif}
   outline:2px solid var(--accent);outline-offset:3px;border-radius:8px}
 
 /* --------------------------------------------------------------- shot frame */
-.frame{position:relative;overflow:hidden;border-radius:16px;border:1px solid var(--line-2);
+.frame{position:relative;overflow:hidden;border-radius:var(--r-card);border:1px solid var(--line-2);
   background:var(--bg-2);box-shadow:var(--shadow)}
 .frame .bar{height:30px;display:flex;align-items:center;gap:6px;padding-inline:12px;
   background:var(--card-2);border-bottom:1px solid var(--line)}
@@ -312,7 +294,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 /* ---------------------------------------------------------- cursor glow */
 .cursor-glow{position:fixed;z-index:0;pointer-events:none;width:520px;height:520px;border-radius:50%;
   left:0;top:0;transform:translate(-50%,-50%);opacity:0;transition:opacity .6s;
-  background:radial-gradient(circle,color-mix(in srgb, var(--accent) 16%, transparent) 0%,transparent 60%)}
+  background:radial-gradient(circle,color-mix(in srgb, var(--ink) 5%, transparent) 0%,transparent 60%)}
 @media (hover:hover) and (pointer:fine){.cursor-glow.on{opacity:1}}
 
 /* ---------------------------------------------------------- scroll bar */
@@ -335,43 +317,47 @@ a:hover .tint,button:hover .tint{opacity:1}
 .marquee:hover .marquee-track{animation-play-state:paused}
 
 /* ---------------------------------------------------------- test runner */
-.runner{border-radius:20px;overflow:hidden;background:var(--card);border:1px solid var(--line-2);box-shadow:var(--shadow)}
-.runner-bar{display:flex;align-items:center;gap:12px;height:40px;padding-inline:14px;background:var(--card-2);border-bottom:1px solid var(--line)}
-.runner-bar .dots{display:flex;gap:6px}.runner-bar .dots i{width:9px;height:9px;border-radius:50%;display:block;background:var(--line-2)}
-.runner-cmd{flex:1;min-width:0;font-family:'DMMono',ui-monospace,Menlo,monospace;font-size:12px;color:var(--ink-3);direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.runner-rerun{display:grid;place-items:center;width:24px;height:24px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-3);cursor:pointer}
+/* A test report, not a terminal toy: no traffic-light dots, a command line
+   in mono, one progress hairline in the signal orange, and every row on the
+   page from the first frame. Queued rows are set in --ink-3, which clears
+   AA on its own, so nothing ever fades through an unreadable grey. */
+.runner{border-radius:var(--r-card);overflow:hidden;background:var(--card);border:1px solid var(--line-2);box-shadow:var(--shadow)}
+.runner-bar{display:flex;align-items:center;gap:12px;height:42px;padding-inline:16px;background:var(--card-2);border-bottom:1px solid var(--line)}
+.runner-cmd{flex:1;min-width:0;font-family:'GeistMono',ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--ink-2);direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.runner-cmd > span{color:var(--ink-3)}
+.runner-rerun{display:grid;place-items:center;width:26px;height:26px;border-radius:var(--r-ctl);border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);cursor:pointer;transition:border-color .2s,color .2s}
+.runner-rerun:hover{border-color:var(--ink-3);color:var(--ink)}
 .runner-rerun svg{transform:rotate(45deg)}
-.runner-body{margin:0;padding:10px 6px;list-style:none}
-/* The row slides in at full opacity rather than fading up from zero. A
-   fade puts the text through partial transparency on its way in, and a
-   muted grey at 85% measures 4.05:1 — below AA for the moment it takes.
-   Visibility flips at the start of the transition, so the motion reads
-   the same and the type never dips. */
-.runner-line{display:flex;align-items:flex-start;gap:12px;padding:8px 10px;border-radius:12px;visibility:hidden;transform:translateY(4px);
-  transition:transform .35s cubic-bezier(.22,1,.36,1),background .3s}
-.runner-line.is-run,.runner-line.is-pass{visibility:visible;transform:none}
+/* scaleX is composited; the width never animates. */
+.runner-progress{height:2px;background:var(--line)}
+.runner-progress i{display:block;height:100%;background:var(--accent);transform-origin:left;transition:transform .45s cubic-bezier(.22,1,.36,1)}
+[dir="rtl"] .runner-progress i{transform-origin:right}
+.runner-body{margin:0;padding:8px;list-style:none}
+.runner-line{display:flex;align-items:flex-start;gap:12px;padding:9px 10px;border-radius:var(--r-ctl);transition:background .3s}
+.runner-line + .runner-line{border-top:1px solid var(--line)}
 .runner-line.is-run{background:var(--card-2)}
-.runner-mark{flex:0 0 auto;width:20px;height:20px;margin-top:2px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line-2);color:#fff;transition:background .3s,border-color .3s}
+.runner-mark{flex:0 0 auto;width:18px;height:18px;margin-top:3px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line-2);color:#fff;transition:background .3s,border-color .3s}
 .is-pass .runner-mark{background:var(--ok);border-color:var(--ok)}
-.spin{width:10px;height:10px;border-radius:50%;border:2px solid var(--line-2);border-top-color:var(--accent);animation:spin .7s linear infinite}
+.spin{width:9px;height:9px;border-radius:50%;border:2px solid var(--line-2);border-top-color:var(--accent);animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .runner-text{display:grid;gap:3px;min-width:0}
-.runner-text > span:first-child{font-size:14px;font-weight:700;line-height:1.55;color:var(--ink)}
-.is-pass .runner-text > span:first-child{color:var(--ink-2)}
-.runner-file{font-family:'DMMono',ui-monospace,Menlo,monospace;font-size:11px;color:var(--ink-3);direction:ltr;text-align:start;unicode-bidi:isolate}
-.runner-sum{display:flex;gap:16px;align-items:center;padding:10px 16px;border-top:1px solid var(--line);font-family:'DMMono',ui-monospace,Menlo,monospace;font-size:12px;color:var(--ink-3);
-  direction:ltr;opacity:0;transition:opacity .4s}
-.runner-sum.is-on{opacity:1}
-.runner-sum .ok{color:var(--ok);font-weight:700}
-[dir="rtl"] .runner-sum{justify-content:flex-end}
-@media (prefers-reduced-motion:reduce){.spin{animation:none}.runner-line{transition:none}}
+.runner-text > span:first-child{font-size:14px;font-weight:700;line-height:1.55;color:var(--ink);transition:color .3s}
+.is-wait .runner-text > span:first-child{color:var(--ink-3);font-weight:400}
+.runner-file{font-family:'GeistMono',ui-monospace,Menlo,monospace;font-size:11px;color:var(--ink-3);direction:ltr;text-align:start;unicode-bidi:isolate}
+.runner-sum{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-3)}
+.runner-status{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+.runner-status .ok{color:var(--ok);font-weight:700}
+.runner-meta{font-family:'GeistMono',ui-monospace,Menlo,monospace;font-size:11.5px}
+.runner-code{display:inline-flex;align-items:center;gap:6px;min-height:24px;font-weight:700;color:var(--accent-ink);text-decoration:none}
+.runner-code:hover{text-decoration:underline;text-underline-offset:3px}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}.runner-line,.runner-progress i{transition:none}}
 
 /* ------------------------------------------------------------- cv panel */
 .cvp{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:16px;
   background:color-mix(in srgb, var(--bg) 78%, transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
   animation:lb-overlay .3s ease-out both}
 .cvp.is-closing{animation:lb-overlay-out .22s ease-in both}
-.cvp-sheet{display:grid;grid-template-columns:minmax(0,1fr);width:min(1100px,100%);max-height:min(88vh,860px);border-radius:24px;overflow:hidden;
+.cvp-sheet{display:grid;grid-template-columns:minmax(0,1fr);width:min(1100px,100%);max-height:min(88vh,860px);border-radius:var(--r-card);overflow:hidden;
   background:var(--card);border:1px solid var(--line-2);box-shadow:var(--shadow);animation:lb-pop .45s cubic-bezier(.22,1,.36,1) both}
 .cvp.is-closing .cvp-sheet{animation:lb-shrink .22s ease-in both}
 @media (min-width:768px){.cvp-sheet{grid-template-columns:340px minmax(0,1fr)}}
@@ -388,7 +374,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 /* ------------------------------------------------------ topic chips */
 .chip-add{border-style:dashed;border-color:var(--line-2);color:var(--ink-3);background:transparent;cursor:pointer;font:inherit;font-size:12.5px;font-weight:700}
 .chip-add:hover{color:var(--accent-ink);border-color:var(--accent)}
-.chip-in{display:inline-flex;align-items:center;gap:6px;padding:3px 4px 3px 12px;border-radius:999px;border:1px solid var(--accent);
+.chip-in{display:inline-flex;align-items:center;gap:6px;padding:3px 4px 3px 12px;border-radius:var(--r-chip);border:1px solid var(--accent);
   background:var(--card);box-shadow:0 0 0 4px var(--accent-soft);animation:lb-fade .25s cubic-bezier(.22,1,.36,1) both}
 .chip-in input{border:0;outline:0;background:transparent;font:inherit;font-size:12.5px;font-weight:700;color:var(--ink);width:15ch;min-width:0}
 .chip-in input::placeholder{color:var(--ink-3);font-weight:400}
@@ -400,7 +386,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 .chip-x:hover{background:rgba(255,255,255,.4)}
 
 /* ------------------------------------------------------- social pill */
-.social-pill{display:inline-flex;align-items:stretch;height:44px;border-radius:999px;overflow:hidden;
+.social-pill{display:inline-flex;align-items:stretch;height:44px;border-radius:var(--r-ctl);overflow:hidden;
   background:var(--glass);border:1px solid var(--line-2);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .social-pill a{display:grid;place-items:center;width:46px;color:var(--ink-2);transition:background .25s,color .25s}
 .social-pill a + a{border-inline-start:1px solid var(--line)}
@@ -416,7 +402,7 @@ a:hover .tint,button:hover .tint{opacity:1}
    it from the page — the same treatment as the floating nav, so the page
    opens and closes on the same material. */
 .foot-base{margin-top:7rem}
-.foot-sheet{position:relative;overflow:hidden;border-radius:48px 48px 0 0;
+.foot-sheet{position:relative;overflow:hidden;border-radius:16px 16px 0 0;
   padding:clamp(40px,5vw,64px) 0 calc(36px + env(safe-area-inset-bottom));
   background:var(--glass);border-top:1px solid var(--glass-line);
   -webkit-backdrop-filter:blur(40px) saturate(160%);backdrop-filter:blur(40px) saturate(160%);
@@ -432,7 +418,7 @@ a:hover .tint,button:hover .tint{opacity:1}
   background-size:40px 40px;
   -webkit-mask-image:radial-gradient(60% 70% at 50% 50%,#000 20%,transparent 100%);mask-image:radial-gradient(60% 70% at 50% 50%,#000 20%,transparent 100%)}
 .foot-statement > *{position:relative}
-@media (max-width:640px){.foot-sheet{border-radius:28px 28px 0 0}}
+@media (max-width:640px){.foot-sheet{border-radius:12px 12px 0 0}}
 /* the phone dock floats over the sheet; leave it room */
 @media (max-width:767px){.foot-sheet{padding-bottom:calc(96px + env(safe-area-inset-bottom))}}
 
@@ -449,7 +435,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 .dock-item .dock-label{font-size:12.5px;font-weight:800;max-width:0;opacity:0;overflow:hidden;
   transition:max-width .45s cubic-bezier(.22,1,.36,1),opacity .3s}
 .dock-item[aria-current="true"]{color:var(--on-accent);padding:0 14px;background:var(--accent-solid);
-  box-shadow:0 8px 18px -8px color-mix(in srgb, var(--accent) 80%, transparent)}
+  box-shadow:0 6px 14px -8px rgba(0,0,0,.45)}
 .dock-item[aria-current="true"] .dock-label{max-width:120px;opacity:1}
 .dock-item:active{transform:scale(.94)}
 /* The same item language inside the desktop header: a row of icons whose
@@ -491,7 +477,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 .hdr-loc{display:none;align-items:center;gap:5px;height:26px;padding-inline:10px;
   border-radius:8px;background:var(--bg);border:1px solid var(--line);
   max-width:12rem;overflow:hidden;flex:none}
-.hdr-loc-slash{font-family:var(--mono-stack,'DMMono',ui-monospace,monospace);
+.hdr-loc-slash{font-family:var(--mono-stack,'GeistMono',ui-monospace,monospace);
   font-size:12px;font-weight:700;color:var(--accent-ink);opacity:.75}
 .hdr-loc-text{font-size:12px;font-weight:700;color:var(--ink-2);white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis;animation:loc-in .26s cubic-bezier(.2,.8,.2,1)}
@@ -506,7 +492,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 @media (prefers-reduced-motion:reduce){.hdr-loc-text{animation:none}}
 .brand-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:999px;
   color:var(--on-accent);font-size:13px;font-weight:800;background:var(--accent-solid);
-  box-shadow:0 2px 10px -3px color-mix(in srgb,var(--accent) 55%,transparent);
+  box-shadow:0 1px 3px rgba(0,0,0,.2);
   transition:transform .3s cubic-bezier(.2,.8,.2,1)}
 .brand:hover .brand-mark{transform:rotate(-8deg) scale(1.06)}
 .brand-name{font-size:14.5px;font-weight:800;letter-spacing:.055em;color:var(--ink)}
@@ -660,9 +646,9 @@ a:hover .tint,button:hover .tint{opacity:1}
 @media (prefers-reduced-motion:reduce){.xf-in,.xf-out{animation:none}.xf-out{display:none}}
 
 /* ---------------------------------------------------------- bento tiles */
-.tile{position:relative;overflow:hidden;padding:20px;border-radius:22px;background:var(--card);border:1px solid var(--line);
+.tile{position:relative;overflow:hidden;padding:20px;border-radius:var(--r-card);background:var(--card);border:1px solid var(--line);
   box-shadow:var(--shadow);transition:transform .45s cubic-bezier(.22,1,.36,1),box-shadow .45s,border-color .3s}
-.tile:hover{transform:translateY(-3px);box-shadow:var(--glow);border-color:color-mix(in srgb, var(--accent) 40%, var(--line))}
+.tile:hover{transform:translateY(-3px);box-shadow:var(--glow);border-color:color-mix(in srgb, var(--ink) 22%, var(--line))}
 .tile-k{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
 
 /* Pipeline: DB → API → UI, with a dash of light travelling along the wires. */
@@ -687,8 +673,8 @@ a:hover .tint,button:hover .tint{opacity:1}
   [dir="rtl"] .pipe .wire::after{transform:translateX(-82%)}}
 
 /* Code tile */
-.code{margin:12px 0 0;padding:14px 16px;border-radius:14px;direction:ltr;text-align:left;overflow:auto;
-  font:12.5px/1.65 'DMMono',ui-monospace,Menlo,monospace;color:var(--ink-2);background:var(--card-2);border:1px solid var(--line)}
+.code{margin:12px 0 0;padding:14px 16px;border-radius:var(--r-card);direction:ltr;text-align:left;overflow:auto;
+  font:12.5px/1.65 'GeistMono',ui-monospace,Menlo,monospace;color:var(--ink-2);background:var(--card-2);border:1px solid var(--line)}
 .code .k{color:var(--accent-2);font-weight:700}.code .f{color:var(--accent-ink)}.code .c{color:var(--ink-3);font-style:italic}.code .s{color:var(--code-string)}
 
 /* Clock digits flip softly on change */
@@ -708,28 +694,28 @@ a:hover .tint,button:hover .tint{opacity:1}
 @media (prefers-reduced-motion:reduce){.bar i{transform:none}}
 
 /* --------------------------------------------------------------- gallery */
-.seg{display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:var(--card-2);border:1px solid var(--line)}
-.seg button{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;font:inherit;font-size:13px;
+.seg{display:inline-flex;gap:2px;padding:3px;border-radius:var(--r-ctl);background:var(--card-2);border:1px solid var(--line)}
+.seg button{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:calc(var(--r-ctl) - 2px);font:inherit;font-size:13px;
   font-weight:700;color:var(--ink-2);background:transparent;border:0;cursor:pointer;white-space:nowrap;transition:background .25s,color .25s,box-shadow .25s}
 .seg button[aria-pressed="true"]{color:var(--on-accent);background:var(--accent-solid);
-  box-shadow:0 6px 16px -8px color-mix(in srgb, var(--accent) 80%, transparent)}
+  box-shadow:0 1px 3px rgba(0,0,0,.2)}
 /* 500, not 700: DM Mono has no cut above Medium, and asking for one buys a
    synthesised bold rather than a drawn one. */
-.seg .n{font-size:11px;font-weight:500;opacity:.75;font-family:'DMMono',ui-monospace,monospace}
+.seg .n{font-size:11px;font-weight:500;opacity:.75;font-family:'GeistMono',ui-monospace,monospace}
 
 /* Desktop shot: browser chrome with the page path in the address pill. */
-.shot{display:block;width:100%;text-align:start;border-radius:18px;overflow:hidden;border:1px solid var(--line-2);
+.shot{display:block;width:100%;text-align:start;border-radius:var(--r-card);overflow:hidden;border:1px solid var(--line-2);
   background:var(--card);box-shadow:var(--shadow);cursor:zoom-in;
   transition:transform .5s cubic-bezier(.22,1,.36,1),box-shadow .5s,border-color .3s}
-.shot:hover{transform:translateY(-4px);box-shadow:var(--glow);border-color:color-mix(in srgb, var(--accent) 45%, var(--line-2))}
+.shot:hover{transform:translateY(-4px);box-shadow:var(--glow);border-color:color-mix(in srgb, var(--ink) 22%, var(--line-2))}
 /* The tour frames are read, not opened, so they do not offer to lift. */
 .shot.is-static{cursor:default}
 .shot.is-static:hover{transform:none;box-shadow:var(--shadow);border-color:var(--line-2)}
 .shot .chrome{display:flex;align-items:center;gap:8px;height:34px;padding-inline:12px;background:var(--card-2);border-bottom:1px solid var(--line)}
 .shot .chrome i{width:9px;height:9px;border-radius:50%;display:block}
 .shot .chrome i:nth-child(1){background:#FF5F57}.shot .chrome i:nth-child(2){background:#FEBC2E}.shot .chrome i:nth-child(3){background:#28C840}
-.shot .url{margin-inline-start:8px;flex:1;min-width:0;height:20px;line-height:20px;padding-inline:10px;border-radius:6px;
-  font-family:'DMMono',ui-monospace,monospace;font-size:11px;direction:ltr;text-align:left;color:var(--ink-3);background:var(--bg);
+.shot .url{margin-inline-start:8px;flex:1;min-width:0;height:20px;line-height:20px;padding-inline:10px;border-radius:var(--r-chip);
+  font-family:'GeistMono',ui-monospace,monospace;font-size:11px;direction:ltr;text-align:left;color:var(--ink-3);background:var(--bg);
   border:1px solid var(--line);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .shot .pic{position:relative;overflow:hidden;background:var(--bg-2)}
 .shot .pic img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center;
@@ -737,7 +723,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 .shot .pic .veil{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .3s;
   background:linear-gradient(180deg,transparent 30%,color-mix(in srgb, var(--ink) 55%, transparent))}
 .shot:hover .pic .veil{opacity:1}
-.shot .veil span{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;font-size:13.5px;font-weight:700;
+.shot .veil span{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:var(--r-chip);font-size:13.5px;font-weight:700;
   color:#fff;background:rgba(15,18,34,.6);border:1px solid rgba(255,255,255,.25);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 
 /* Phone shot: a bezel with a notch, image behind rounded glass. */
@@ -801,7 +787,7 @@ a:hover .tint,button:hover .tint{opacity:1}
 .lb-btn:hover{transform:scale(1.06);border-color:var(--accent)}
 
 /* --------------------------------------------------------------- forms */
-.field{width:100%;border-radius:14px;padding:12px 14px;font:inherit;font-size:15px;color:var(--ink);
+.field{width:100%;border-radius:var(--r-ctl);padding:12px 14px;font:inherit;font-size:15px;color:var(--ink);
   background:var(--card-2);border:1px solid var(--line);transition:border-color .2s,box-shadow .2s}
 .field::placeholder{color:var(--ink-3)}
 .field:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
@@ -825,3 +811,8 @@ a:hover .tint,button:hover .tint{opacity:1}
 @keyframes shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-3px)}40%,60%{transform:translateX(3px)}}
 .shake{animation:shake .5s cubic-bezier(.36,.07,.19,.97) both}
 @media (prefers-reduced-motion:reduce){.shake,.ferr,.fwrap .fmark{animation:none}}
+
+/* ------------------------------------------------------ work card bar */
+/* The address bar above each project screen: one line of mono, no dots. */
+.card-bar{display:flex;align-items:center;height:26px;padding-inline:10px;background:var(--card-2);border-bottom:1px solid var(--line)}
+.card-bar span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'GeistMono',ui-monospace,Menlo,monospace;font-size:11px;color:var(--ink-3)}

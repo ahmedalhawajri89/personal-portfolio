@@ -8,7 +8,9 @@ export const PROJECTS = [
     // the capture set stays available behind the full gallery.
     tour: ['home', 'catalogue', 'product', 'rooms', 'cart', 'checkout', 'adm-dash', 'adm-orders'],
     shots: 'diwan',
-    cover: 'catalogue',
+    // The product page, not the catalogue: its top already carries the
+    // "fit against your room" panel, which is the idea in one glance.
+    cover: 'product',
     year: '2026',
     stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Tailwind', 'Pest'],
     repo: 'https://github.com/ahmedalhawajri89/diwan-e-commerce',
@@ -195,7 +197,9 @@ export const PROJECTS = [
     // the capture set stays available behind the full gallery.
     tour: ['home', 'orphans', 'orphan', 'transparency', 'checkout', 'portal', 'adm-dash', 'adm-disburse'],
     shots: 'kafala',
-    cover: 'home',
+    // The transparency page: "we don't ask you to trust us, we ask you to
+    // verify" is the whole platform in a sentence; the home page was a hero.
+    cover: 'transparency',
     year: '2026',
     stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Vue 3', 'Sanctum', 'Pest', 'Playwright'],
     repo: 'https://github.com/ahmedalhawajri89/kafala-orphan-sponsorship',
@@ -318,8 +322,8 @@ export const PROJECTS = [
 export const PROFILE = {
   name: { ar: 'أحمد الحواجري', en: 'Ahmed Al-Hawajiri' },
   role: {
-    ar: 'مطوّر ويب Full-Stack — لارافيل وفيو، عربي أولاً',
-    en: 'Full-stack web developer — Laravel & Vue, Arabic-first',
+    ar: 'مطوّر Full-Stack وجودة واختبارات — لارافيل وفيو، عربي أولاً',
+    en: 'Full-stack developer & QA — Laravel & Vue, Arabic-first',
   },
   location: { ar: 'غزة، فلسطين', en: 'Gaza, Palestine' },
   years: 4,
