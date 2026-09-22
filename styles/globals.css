@@ -863,3 +863,20 @@ a:hover .tint,button:hover .tint{opacity:1}
 .v-pages i{display:grid;place-items:center;min-width:22px;height:22px;padding-inline:4px;font-style:normal;font-size:11px;color:var(--ink-3);border:1px solid var(--line);border-radius:4px;background:var(--card)}
 .v-pages i.on{color:var(--on-accent);background:var(--accent-solid);border-color:var(--accent-solid)}
 .v-scale small{font-size:11px;color:var(--ink-3)}
+
+/* ------------------------------------------------------------ contact */
+.ct-h{margin:34px 0 12px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+[dir="rtl"] .ct-h{letter-spacing:0;text-transform:none}
+.ct-steps{margin:0;padding:0;list-style:none;display:grid}
+.ct-steps li{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);gap:14px;padding-block:12px}
+/* a hairline joining the step numbers, so three steps read as one path */
+.ct-steps li:not(:last-child)::after{content:'';position:absolute;inset-inline-start:13.5px;top:40px;bottom:-4px;width:1px;background:var(--line-2)}
+.ct-n{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;font-family:'GeistMono',ui-monospace,monospace;font-size:12px;color:var(--ink);background:var(--card-2);border:1px solid var(--line-2)}
+.ct-steps li:first-child .ct-n{color:var(--on-accent);background:var(--accent-solid);border-color:var(--accent-solid)}
+.ct-steps b{display:block;font-size:15.5px;font-weight:800;color:var(--ink)}
+.ct-steps li > span:last-child > span{display:block;margin-top:2px;font-size:14px;line-height:1.7;color:var(--ink-2)}
+.ct-direct{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0}
+.ct-direct a{display:inline-flex;align-items:center;gap:8px;min-height:32px;font-size:14.5px;font-weight:700;color:var(--ink);text-decoration:none}
+.ct-direct a span.lat{font-family:'GeistMono',ui-monospace,monospace;font-size:13.5px;font-weight:500}
+.ct-direct a:hover{text-decoration:underline;text-underline-offset:3px}
+.ct-direct svg{color:var(--ink-3)}

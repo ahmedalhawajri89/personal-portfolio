@@ -674,9 +674,11 @@ export function ContactForm({ lang, to }) {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col">
+      {/* A fixed, honest size: it used to stretch to the height of the column
+          beside it, and a box that large reads as homework. */}
+      <div className="flex flex-col">
         <label className="flabel" htmlFor="f-msg">{f.msg}</label>
-        <textarea id="f-msg" name="msg" className="field min-h-[140px] flex-1 resize-none" value={v.msg} onChange={set('msg')} onBlur={blur('msg')}
+        <textarea id="f-msg" name="msg" rows={6} className="field min-h-[150px] resize-y" value={v.msg} onChange={set('msg')} onBlur={blur('msg')}
                   disabled={busy} aria-invalid={!!show('msg') || undefined} aria-describedby="msg-hint" />
         {show('msg')
           ? <p id="msg-hint" className="ferr" role="alert"><Icon name="alert" size={13} className="mt-0.5 shrink-0" />{errors.msg} <span className="lat">({f.moreChars.replace('{n}', left)})</span></p>

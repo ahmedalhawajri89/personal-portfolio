@@ -680,50 +680,33 @@ export default async function Home({ params }) {
 
         {/* ------------------------------------------------------- contact */}
         <section id="contact" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <div className="gradient-border rise">
-            <div className="card grid grid-cols-1 gap-10 p-7 sm:p-10 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]" style={{ boxShadow: 'none' }}>
-              <div>
-                <p className="eyebrow">{t.contact.eyebrow}</p>
-                <h2 className="mt-4 max-w-[16ch] text-[clamp(28px,4.6vw,46px)] font-extrabold leading-[1.2] tracking-tight">
-                  {t.contact.h}
-                </h2>
-                <p className="mt-4 max-w-[48ch] text-[16.5px] leading-[1.85]" style={{ color: 'var(--ink-2)' }}>{t.contact.b}</p>
-                {/* Names both ways in, so neither reader has to wonder whether
-                    the form is meant for them. */}
-                <p className="mt-3 max-w-[48ch] border-s-2 ps-4 text-[15px] leading-[1.8]"
-                   style={{ color: 'var(--ink-3)', borderColor: 'var(--accent-soft)' }}>{t.contact.paths}</p>
-                <ul className="mt-7 grid gap-3">
-                  {[
-                    ['mail', `mailto:${PROFILE.links.email}`, t.contact.email, PROFILE.links.email, false],
-                    ['github', PROFILE.links.github, t.contact.github, 'github.com/ahmedalhawajri89', true],
-                    ['whatsapp', PROFILE.links.whatsapp, t.contact.whatsapp, '+972 599 520 085', true],
-                    ['store', PROFILE.links.khamsat, t.contact.khamsat, 'khamsat.com/user/ahmed12089', true],
-                    ['mapPin', null, PROFILE.location[lang], 'GMT+3', false],
-                  ].map(([icon, href, label, sub, ext]) => {
-                    const inner = (
-                      <>
-                        <span className="icon-tile shrink-0" style={{ width: 42, height: 42 }}><Icon name={icon} size={17} /></span>
-                        <span className="min-w-0">
-                          <span className="block truncate text-[14.5px] font-extrabold">{label}</span>
-                          <span className="lat block truncate text-[12.5px]" style={{ color: 'var(--ink-3)' }}>{sub}</span>
-                        </span>
-                        {href && <Icon name="external" size={14} className="ms-auto shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />}
-                      </>
-                    );
-                    const cls = 'group flex min-w-0 items-center gap-3 rounded-[var(--r-card)] border p-3 transition-colors';
-                    const style = { borderColor: 'var(--line)', background: 'var(--card-2)' };
-                    return (
-                      <li key={icon} className="min-w-0">
-                        {href
-                          ? <a href={href} className={cls} style={style} target={ext ? '_blank' : undefined} rel={ext ? 'noopener noreferrer' : undefined}>{inner}</a>
-                          : <span className={cls} style={style}>{inner}</span>}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-              <ContactForm lang={lang} to={PROFILE.links.email} />
+          {/* One card, two jobs. The left answers "and then what?" -- the thing a
+              client is actually unsure about before writing -- in three steps,
+              and offers the two direct channels. The full list of channels is
+              in the footer directly below, so it is not repeated here. */}
+          <div className="card rise grid grid-cols-1 gap-10 p-7 sm:p-10 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] lg:gap-14" style={{ boxShadow: 'none' }}>
+            <div>
+              <p className="eyebrow">{t.contact.eyebrow}</p>
+              <h2 className="mt-4 max-w-[16ch] text-[clamp(28px,4.6vw,46px)] font-extrabold leading-[1.2] tracking-tight">{t.contact.h}</h2>
+              <p className="mt-4 max-w-[46ch] text-[16.5px] leading-[1.85]" style={{ color: 'var(--ink-2)' }}>{t.contact.b}</p>
+
+              <p className="ct-h">{t.contact.next}</p>
+              <ol className="ct-steps">
+                {t.contact.steps.map((st, i) => (
+                  <li key={st.h}>
+                    <span className="ct-n lat" aria-hidden="true">{i + 1}</span>
+                    <span><b>{st.h}</b><span>{st.b}</span></span>
+                  </li>
+                ))}
+              </ol>
+
+              <p className="ct-h">{t.contact.direct}</p>
+              <p className="ct-direct">
+                <a href={`mailto:${PROFILE.links.email}`}><Icon name="mail" size={15} /><span className="lat">{PROFILE.links.email}</span></a>
+                <a href={PROFILE.links.whatsapp} target="_blank" rel="noopener noreferrer"><Icon name="whatsapp" size={15} />{t.contact.whatsapp}</a>
+              </p>
             </div>
+            <ContactForm lang={lang} to={PROFILE.links.email} />
           </div>
         </section>
       </main>
