@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { T, other } from '../lib/i18n';
 import { PROFILE, PROJECTS } from '../content/projects';
 import Icon from './Icons';
-import { CvButton } from './CvPanel';
 
 /* Inertial scrolling for a mouse or trackpad: the page glides to a stop
    instead of stepping with each notch of the wheel. Off for touch, where the
@@ -245,118 +244,37 @@ export function ThemeToggle({ lang }) {
  * carousel would use: length and weight carry the state, and the accent —
  * spent nowhere else in this component — marks the section in view.
  */
-function SectionRail({ items, active, label, lang }) {
-  // The rail maps the sections; the footer is not one of them. Once the page
-  // has run out of sections the rail has nothing left to point at, and a map
-  // of a finished thing floating over the closing panel reads as a leftover.
-  // So it retires — at the moment the footer reaches the rail's own height,
-  // which is the viewport's middle, because that is where the rail sits.
-  // Observed rather than computed from a scroll offset: the footer moves when
-  // content above it changes, and a number would not.
-  const [done, setDone] = useState(false);
-  const railRef = useRef(null);
-  const idx = items.findIndex(([id]) => id === active);
-  useEffect(() => {
-    const foot = document.querySelector('footer.foot-sheet');
-    if (!foot) return;
-    let io;
-    // The line to cross is the rail's *lowest* mark, because that is where an
-    // overlap starts. The rail is centred, so its bottom edge sits at half the
-    // viewport plus half its own height from the top — which is the same
-    // distance up from the bottom, and that is what rootMargin takes.
-    const watch = () => {
-      io?.disconnect();
-      const h = railRef.current?.offsetHeight || 240;
-      const up = Math.max(0, Math.round(window.innerHeight / 2 - h / 2));
-      io = new IntersectionObserver(([e]) => setDone(e.isIntersecting), {
-        rootMargin: `0px 0px -${up}px 0px`,
-        threshold: 0,
-      });
-      io.observe(foot);
-    };
-    watch();
-    // Recomputed on resize because both terms are viewport-dependent — no
-    // scroll listener, and no number baked into the stylesheet.
-    window.addEventListener('resize', watch);
-    return () => { io?.disconnect(); window.removeEventListener('resize', watch); };
-  }, []);
-
-  return (
-    <nav ref={railRef} className={`rail${done ? ' is-done' : ''}`} aria-label={label} aria-hidden={done || undefined}>
-      <span className="rail-track" aria-hidden="true" />
-      <span className="rail-fill" aria-hidden="true" />
-      {/* One marker that travels between the items rather than eight that
-          each blink on and off. The move is the only animation here, and it
-          is the thing that reads as scrolling. */}
-      {idx >= 0 && <span className="rail-thumb" style={{ '--i': idx }} aria-hidden="true" />}
-      <ol className="rail-list">
-        {items.map(([id, text, icon]) => {
-          const on = active === id;
-          return (
-            <li key={id}>
-              {/* `location` rather than `true`: this is a position within the
-                  page, which is the one thing that value is for. */}
-              <a href={`#${id}`} className="rail-item" aria-current={on ? 'location' : undefined}>
-                <span className="rail-ico" aria-hidden="true"><Icon name={icon} size={15} /></span>
-                <span className="rail-label">{text}</span>
-              </a>
-            </li>
-          );
-        })}
-      </ol>
-    </nav>
-  );
-}
-
 export function Nav({ lang, path = '', home = false, title = '' }) {
   const t = T[lang];
   const o = other(lang);
+  const ar = lang === 'ar';
   const [active, setActive] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const [away, setAway] = useState(false);
 
-  // Icon + name. The name stays visible for the active section and unfolds
-  // on hover for the rest, so the bar reads as icons but never has to be guessed.
-  // Four destinations in the bar: the places somebody jumps to on purpose.
-  const items = [
-    ['work', t.nav.work, 'layout'],
-    ['services', t.nav.services, 'layers'],
-    ['about', t.nav.about, 'user'],
-    ['contact', t.nav.contact, 'send'],
+  // An editorial bar across the page: the name, the five places a reader
+  // jumps to on purpose, and the tools. It replaces a floating pill that held
+  // seven things -- a breadcrumb among them that only ever said "Home" -- and
+  // the side rail, whose job the bar's own links and indicator now do.
+  // Contact is the call to action on the right, not a sixth link.
+  const links = [
+    ['work', t.nav.work],
+    ['services', t.nav.services],
+    ['process', t.nav.process],
+    ['proof', t.nav.proof],
+    ['about', t.nav.about],
   ];
+  const watched = ['home', 'work', 'services', 'process', 'proof', 'skills', 'about', 'contact'];
 
-  // …and every section the page renders, for the rail. `timeline` and
-  // `testimonials` are deliberately absent: their content lists are empty, so
-  // those sections are not in the document and must not be in the map of it.
-  const sections = [
-    ['home', t.nav.home2, 'home'],
-    ['work', t.nav.work, 'layout'],
-    ['services', t.nav.services, 'layers'],
-    // A list, because the section is a numbered list of working rules.
-    ['process', t.nav.process, 'list'],
-    // The same shield the capabilities grid uses for `الجودة` — tests are
-    // what that section is about, so the glyph is borrowed, not invented.
-    ['proof', t.nav.proof, 'shield'],
-    ['skills', t.nav.skills, 'code'],
-    ['about', t.nav.about, 'user'],
-    ['contact', t.nav.contact, 'send'],
-  ];
-
-  // Reading down, the bar is in the way and the rail can name the sections on
-  // its own, so the bar leaves. Any upward move is a reader looking for it
-  // again, and so is a pointer at the very top edge — that one costs no
-  // scrolling at all.
-  //
-  // Travel is accumulated per direction rather than judged frame by frame: a
-  // page of lazy images re-anchors the scroll by a few pixels now and then,
-  // and against a single-frame test that reads as "went up" and flaps the bar
-  // back into view mid-read. 24px of deliberate movement is the price of a
-  // flip, and the run resets whenever the direction genuinely changes.
+  // Reading down, the bar gets out of the way; any upward move brings it back,
+  // and so does a pointer at the top edge. Travel is accumulated per
+  // direction, so a few pixels of scroll anchoring from lazy images never
+  // flaps it in and out mid-read.
   useEffect(() => {
     let last = window.scrollY, run = 0;
     const on = () => {
       const y = window.scrollY;
-      setScrolled(y > 40);
+      setScrolled(y > 24);
       const d = y - last;
       if (d) {
         run = (d > 0) === (run > 0) ? run + d : d;
@@ -370,18 +288,15 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     const peek = (e) => { if (e.clientY < 10) setAway(false); };
     window.addEventListener('scroll', on, { passive: true });
     window.addEventListener('mousemove', peek, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', on);
-      window.removeEventListener('mousemove', peek);
-    };
+    return () => { window.removeEventListener('scroll', on); window.removeEventListener('mousemove', peek); };
   }, []);
 
   useEffect(() => {
     if (!home) return;
-    const secs = sections.map(([id]) => document.getElementById(id)).filter(Boolean);
+    const secs = watched.map((id) => document.getElementById(id)).filter(Boolean);
     const io = new IntersectionObserver(
       (entries) => {
-        const v = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        const v = entries.filter((e) => e.isIntersecting).sort((x, y) => y.intersectionRatio - x.intersectionRatio)[0];
         if (v) setActive(v.target.id);
       },
       { rootMargin: '-40% 0px -50% 0px', threshold: [0, 0.2, 0.5] }
@@ -391,97 +306,60 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [home]);
 
+  // One indicator that slides to the active link, measured from the link
+  // itself so it fits any label in either language.
+  const navRef = useRef(null);
+  const [ind, setInd] = useState(null);
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const place = () => {
+      const a = nav.querySelector(`a[data-id="${active}"]`);
+      // the word, not the padded box around it
+      setInd(a ? { x: a.offsetLeft + 12, w: a.offsetWidth - 24 } : null);
+    };
+    place();
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  }, [active]);
+
   const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
 
-  // What the location field says. On the home page it is the section in view;
-  // on a case study the page is the location, so it names the project.
-  const here = home
-    ? (sections.find(([id]) => id === active)?.[1] ?? sections[0][1])
-    : (title || t.nav.back);
-
   return (
-    <>
-    {home && <SectionRail items={sections} active={active} label={t.nav.inPage} lang={lang} />}
-    <div className={`hdr-wrap fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:pt-4${away ? ' is-away' : ''}`} style={{ pointerEvents: 'none' }}>
-      <header
-        className={`glass hdr transition-all duration-500${scrolled ? ' hdr-tight' : ''}`}
-        style={{
-          pointerEvents: 'auto',
-          '--hdr-max': scrolled ? '860px' : '1200px',
-          borderRadius: scrolled ? 999 : 20,
-          boxShadow: scrolled ? 'var(--glow)' : 'var(--shadow)',
-        }}
-      >
-        <div className="flex h-14 items-center justify-between gap-3 ps-2.5 pe-2 sm:ps-3">
-          {/* Two lines at the top of the page, one after that. A visitor who
-              has not scrolled yet has no idea who this is; a visitor who has
-              read three sections does, and wants the bar out of the way. */}
-          <a href={`/${lang}/`} className="brand">
-            <span className="brand-mark"><span className="lat">A</span></span>
-            <span className="brand-id hidden sm:grid">
-              <span className="brand-name">{PROFILE.name[lang]}</span>
-              {/* Latin only, and deliberately: this line is letter-spaced, and
-                  letter-spacing on Arabic pulls the joined letterforms apart.
-                  It also states the role rather than two of the tools — the
-                  whole point of the positioning is that it is not a tech list. */}
-              <span className="lat brand-role">FULL-STACK</span>
-            </span>
-          </a>
+    <div className={`tb${scrolled ? ' is-scrolled' : ''}${away ? ' is-away' : ''}`}>
+      <header className="wrap tb-in">
+        <a href={`/${lang}/`} className="tb-brand">
+          <span className="brand-mark" aria-hidden="true"><span className="lat">A</span></span>
+          <span className="tb-name">{PROFILE.name[lang]}</span>
+        </a>
 
-          {/* Where you are, in the field treatment the gallery uses for a page
-              URL. The screenshots in this site all sit in a browser frame with
-              their real path in an inset mono field; the bar borrows that one
-              element — not the frame, not the traffic lights, which inside a
-              real browser would be fancy dress. */}
-          <span className="hdr-sep hdr-sep-loc" aria-hidden="true" />
-          {/* Hidden from assistive tech on purpose. The rail already carries
-              the position as aria-current, and a live region repeating it on
-              every scroll would announce the same fact twice, continuously.
-              One source of truth; this one is the visual half of it. */}
-          <span className="hdr-loc" aria-hidden="true">
-            <span className="hdr-loc-slash lat" aria-hidden="true">/</span>
-            <span className="hdr-loc-text">{here}</span>
-          </span>
-
-          {home && (
-          <nav className="nav-dock hidden md:flex xl:hidden" aria-label={t.nav.menu}>
-            {items.map(([id, label, icon]) => (
-              <a key={id} href={link(id)} className="dock-item" aria-current={active === id ? 'true' : undefined} aria-label={label}>
-                <Icon name={icon} size={17} />
-                <span className="dock-label">{label}</span>
-              </a>
+        {home ? (
+          <nav ref={navRef} className="tb-nav" aria-label={t.nav.menu}>
+            {links.map(([id, label]) => (
+              <a key={id} data-id={id} href={link(id)} aria-current={active === id ? 'location' : undefined}>{label}</a>
             ))}
+            {ind && <span className="tb-ind" aria-hidden="true" style={{ transform: `translateX(${ind.x}px)`, width: ind.w }} />}
           </nav>
-          )}
+        ) : (
+          <a href={`/${lang}/#work`} className="tb-back">
+            <span aria-hidden="true">{ar ? '→' : '←'}</span> {title ? `${t.nav.back} · ${title}` : t.nav.back}
+          </a>
+        )}
 
-          <div className="flex items-center gap-1">
-            <a href={home ? '#contact' : `/${lang}/#contact`} className="hdr-cta">{t.nav.cta}</a>
-            <span className="hdr-sep" aria-hidden="true" />
-            {/* Both languages are shown, the current one lit. A single button
-                labelled with the *other* language asks the reader to work out
-                which way it goes; a pair states where they are and where they
-                can be. The lit half is decoration — the reader is already
-                there — so only the link carries a name. */}
-            <div className="lang-seg">
-              <span className={`lang-on${lang === 'en' ? ' lat' : ''}`} aria-hidden="true">
-                {lang === 'en' ? 'EN' : 'ع'}
-              </span>
-              <a
-                href={`/${o}${path}`}
-                className={`lang-off${o === 'en' ? ' lat' : ''}`}
-                aria-label={o === 'en' ? 'English' : 'العربية'}
-                hrefLang={o}
-              >
-                {o === 'en' ? 'EN' : 'ع'}
-              </a>
-            </div>
-            <CvButton lang={lang} compact />
-            <ThemeToggle lang={lang} />
+        <div className="tb-tools">
+          {/* Both languages shown, the current one lit; only the link to the
+              other one carries a name. */}
+          <div className="lang-seg">
+            <span className={`lang-on${lang === 'en' ? ' lat' : ''}`} aria-hidden="true">{lang === 'en' ? 'EN' : 'ع'}</span>
+            <a href={`/${o}${path}`} className={`lang-off${o === 'en' ? ' lat' : ''}`} aria-label={o === 'en' ? 'English' : 'العربية'} hrefLang={o}>
+              {o === 'en' ? 'EN' : 'ع'}
+            </a>
           </div>
+          <ThemeToggle lang={lang} />
+          <a href={link('contact')} className="tb-cta">{t.nav.cta}</a>
         </div>
       </header>
     </div>
-    </>
   );
 }
 
