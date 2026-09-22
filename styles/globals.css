@@ -115,19 +115,12 @@ body{
 }
 html[lang="en"] body{font-family:'Geist',system-ui,sans-serif}
 
-/* Ambient background: the layout's own columns, drawn. Four columns inside
-   the same box as .wrap (1200px, the same side padding), so every line sits
-   on an edge the content actually aligns to -- the structure is the ornament.
-   It replaces a 64px square grid and three blurred colour fields: the grid
-   was a template pattern, and the fields were decorative gradients. Fixed, so
-   it never repaints on scroll. On a phone only the two outer edges remain. */
-.ambient{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-.ambient::after{content:'';position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);
-  width:min(1200px,100%);padding-inline:clamp(18px,4vw,44px);box-sizing:border-box;
-  background-image:linear-gradient(to right,var(--line) 1px,transparent 1px),linear-gradient(to left,var(--line) 1px,transparent 1px);
-  background-origin:content-box;background-clip:content-box;
-  background-size:25% 100%,100% 100%;background-repeat:repeat-x,no-repeat}
-@media (max-width:639px){.ambient::after{background-size:100% 100%,100% 100%}}
+/* The page itself is plain paper. The one drawn element is the diagram
+   behind the hero (SchemaTrace), so nothing competes with it. */
+.ambient{display:none}
+
+.schema-trace{position:absolute;inset:0;z-index:0;pointer-events:none;display:none}
+@media (min-width:1024px){.schema-trace{display:block}}
 
 ::selection{background:var(--accent);color:#fff}
 
@@ -291,11 +284,6 @@ a:hover .tint,button:hover .tint{opacity:1}
 @keyframes pulse-ring{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.4);opacity:0}}
 .pulse-ring{animation:pulse-ring 1.8s cubic-bezier(.22,1,.36,1) infinite}
 
-/* ---------------------------------------------------------- cursor glow */
-.cursor-glow{position:fixed;z-index:0;pointer-events:none;width:520px;height:520px;border-radius:50%;
-  left:0;top:0;transform:translate(-50%,-50%);opacity:0;transition:opacity .6s;
-  background:radial-gradient(circle,color-mix(in srgb, var(--ink) 5%, transparent) 0%,transparent 60%)}
-@media (hover:hover) and (pointer:fine){.cursor-glow.on{opacity:1}}
 
 /* ---------------------------------------------------------- scroll bar */
 .progress{position:fixed;top:0;left:0;height:2px;z-index:60;width:100%;transform-origin:0 50%;
@@ -816,3 +804,41 @@ a:hover .tint,button:hover .tint{opacity:1}
 /* The address bar above each project screen: one line of mono, no dots. */
 .card-bar{display:flex;align-items:center;height:26px;padding-inline:10px;background:var(--card-2);border-bottom:1px solid var(--line)}
 .card-bar span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'GeistMono',ui-monospace,Menlo,monospace;font-size:11px;color:var(--ink-3)}
+
+/* ------------------------------------------------------------ rules */
+/* --tl-n (current rule) and --tl-p (0..1 through the list) come from
+   TimelineScroll. The counter is a CSS counter reset to --tl-n, so the number
+   changes with no React render. Only colour and transform ever animate. */
+.rules{--tl-n:1;--tl-p:0;counter-reset:rule var(--tl-n)}
+.rules-count{display:none;align-items:baseline;gap:10px;margin-top:40px;font-family:'GeistMono',ui-monospace,monospace}
+.rules-now::before{content:counter(rule,decimal-leading-zero);font-size:56px;font-weight:500;line-height:1;color:var(--ink);letter-spacing:-.02em}
+.rules-of{font-size:15px;color:var(--ink-3)}
+.rules-bar{display:none;margin-top:18px;height:2px;width:180px;background:var(--line-2);overflow:hidden}
+.rules-bar i{display:block;height:100%;background:var(--accent);transform:scaleX(var(--tl-p));transform-origin:left;transition:transform .2s linear}
+[dir="rtl"] .rules-bar i{transform-origin:right}
+@media (min-width:1024px){.rules-count{display:flex}.rules-bar{display:block}}
+
+.rules-list{margin:0;padding:0;list-style:none;border-bottom:1px solid var(--line)}
+.rules-row{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:18px;padding-block:28px;padding-inline-start:22px;border-top:1px solid var(--line)}
+.rules-row::before{content:'';position:absolute;inset-inline-start:0;top:28px;bottom:28px;width:2px;background:var(--accent);
+  transform:scaleY(0);transform-origin:top;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.rules-num{padding-top:5px;font-family:'GeistMono',ui-monospace,monospace;font-size:13px;color:var(--ink-3);transition:color .4s}
+.rules-body{transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.rules-body h3{margin:0;font-size:20px;font-weight:800;line-height:1.35;color:var(--ink-3);transition:color .4s}
+.rules-body p{margin:8px 0 0;max-width:58ch;font-size:15.5px;line-height:1.8;color:var(--ink-3);transition:color .4s}
+/* read */
+.rules-row.on h3{color:var(--ink-2)}
+/* current: the last row the reading line has reached */
+.rules-row.on:not(:has(~ .on))::before{transform:scaleY(1)}
+.rules-row.on:not(:has(~ .on)) .rules-num{color:var(--accent-ink)}
+.rules-row.on:not(:has(~ .on)) .rules-body{transform:translateX(4px)}
+[dir="rtl"] .rules-row.on:not(:has(~ .on)) .rules-body{transform:translateX(-4px)}
+.rules-row.on:not(:has(~ .on)) h3{color:var(--ink)}
+.rules-row.on:not(:has(~ .on)) p{color:var(--ink-2)}
+@media (prefers-reduced-motion:reduce){
+  .rules-row h3,.rules-row.on h3{color:var(--ink)}.rules-row p{color:var(--ink-2)}
+  .rules-row::before,.rules-body,.rules-bar i{transition:none}
+}
+/* The counter is Latin digits set LTR, but it belongs under an RTL heading:
+   anchor it to the start edge the heading uses. */
+[dir="rtl"] .rules-count{justify-content:flex-end}

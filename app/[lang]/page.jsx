@@ -3,7 +3,7 @@ import { LANGS, T } from '../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../content/projects';
 import { SERVICES, SKILLS, CAPABILITIES, PROCESS, TIMELINE, TESTIMONIALS, HERO_TESTS } from '../../content/site';
 import { shotsOf, coverOf, pagesOf } from '../../lib/shots';
-import { Nav, Dock, Footer, Reveal, ScrollProgress, CursorGlow, ContactForm, BackToTop, TimelineScroll, TestRunner } from '../../components/Chrome';
+import { Nav, Dock, Footer, Reveal, ScrollProgress, ContactForm, BackToTop, TimelineScroll, TestRunner, SchemaTrace } from '../../components/Chrome';
 import Marquee from '../../components/Marquee';
 import Icon from '../../components/Icons';
 import { CvButton } from '../../components/CvPanel';
@@ -67,7 +67,6 @@ export default async function Home({ params }) {
     <>
       <div className="ambient" aria-hidden="true" />
       <ScrollProgress />
-      <CursorGlow />
       <Reveal />
       <TimelineScroll />
       <Nav lang={lang} path="/" home />
@@ -144,6 +143,10 @@ export default async function Home({ params }) {
             <TestRunner lang={lang} tests={HERO_TESTS} />
             <p className="mt-3 text-center text-[12.5px]" style={{ color: 'var(--ink-3)' }}>{t.hero.runner.caption}</p>
           </div>
+          {/* The offer drawn behind itself: tables, the API, the screen, and one
+              request travelling between them. Sits in the gaps around the two
+              columns, never behind the text. */}
+          <SchemaTrace />
         </section>
 
         {/* -------------------------------------------------------- marquee */}
@@ -306,27 +309,32 @@ export default async function Home({ params }) {
 
         {/* ------------------------------------------------------- process */}
         <section id="process" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <SectionHead eyebrow={t.process.eyebrow} h={t.process.h} center />
-          <div className="tl">
-            <span className="tl-head" aria-hidden="true" />
-            <ol className="grid gap-8 lg:gap-10">
-              {PROCESS[lang].map((p, i) => {
-                const side = i % 2 === 0;
-                return (
-                  <li key={p.h} className="relative rise" style={{ '--i': i % 2 }}>
-                    <span className="tl-dot" />
-                    <div className={`ps-14 lg:w-1/2 lg:ps-0 ${side ? 'lg:pe-14' : 'lg:ms-auto lg:ps-14'}`}>
-                      <div className="card hover-lift p-6">
-                        <p className="lat text-[12px] font-bold tracking-widest" style={{ color: 'var(--accent-ink)' }}>
-                          {String(i + 1).padStart(2, '0')}
-                        </p>
-                        <h3 className="mt-1.5 text-[19px] font-extrabold">{p.h}</h3>
-                        <p className="mt-2 text-[15px] leading-[1.8]" style={{ color: 'var(--ink-2)' }}>{p.b}</p>
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
+          {/* Six rules read in order, one at a time. The heading, a counter and a
+              progress line hold still on one side while the rules pass on the
+              other; the one under the reading line is in full ink with an orange
+              edge, the ones already read stay legible, the ones ahead wait in
+              the quietest grey that still clears AA. No cards and no zigzag: it
+              was 1449px for 144 words, and the eye had to cross the page for
+              every rule. `rules` is driven by the same TimelineScroll as before. */}
+          <div className="rules grid gap-10 lg:grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] lg:gap-16">
+            <div className="lg:sticky lg:top-28 lg:self-start">
+              <p className="eyebrow">{t.process.eyebrow}</p>
+              <h2 className="mt-4 text-[clamp(27px,4.4vw,44px)] font-extrabold leading-[1.2] tracking-tight">{t.process.h}</h2>
+              <p className="rules-count lat" aria-hidden="true">
+                <span className="rules-now" /><span className="rules-of">/ {String(PROCESS[lang].length).padStart(2, '0')}</span>
+              </p>
+              <span className="rules-bar" aria-hidden="true"><i /></span>
+            </div>
+            <ol className="rules-list">
+              {PROCESS[lang].map((p, i) => (
+                <li key={p.h} className="rules-row">
+                  <span className="rules-num lat">{String(i + 1).padStart(2, '0')}</span>
+                  <div className="rules-body">
+                    <h3>{p.h}</h3>
+                    <p>{p.b}</p>
+                  </div>
+                </li>
+              ))}
             </ol>
           </div>
         </section>

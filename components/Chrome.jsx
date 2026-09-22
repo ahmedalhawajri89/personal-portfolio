@@ -56,7 +56,7 @@ export function ScrollProgress() {
    get `.on`. */
 export function TimelineScroll() {
   useEffect(() => {
-    const lists = Array.from(document.querySelectorAll('.tl'));
+    const lists = Array.from(document.querySelectorAll('.tl, .rules'));
     if (!lists.length) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
       lists.forEach((tl) => tl.querySelectorAll('li').forEach((li) => li.classList.add('on')));
@@ -70,10 +70,15 @@ export function TimelineScroll() {
         const r = tl.getBoundingClientRect();
         const p = Math.min(1, Math.max(0, (focus - r.top) / r.height));
         tl.style.setProperty('--tl-p', p.toFixed(4));
+        let reached = 0;
         tl.querySelectorAll(':scope li').forEach((li) => {
           const dot = li.getBoundingClientRect().top + 35;
-          li.classList.toggle('on', dot <= focus);
+          const on = dot <= focus;
+          li.classList.toggle('on', on);
+          if (on) reached++;
         });
+        // which rule is current, for the counter beside the list (CSS counter)
+        tl.style.setProperty('--tl-n', String(Math.max(1, reached)));
       });
     };
     const on = () => { if (!raf) raf = requestAnimationFrame(update); };
@@ -87,33 +92,6 @@ export function TimelineScroll() {
     };
   }, []);
   return null;
-}
-
-/* Soft light that follows the pointer. Desktop only, off for reduced motion. */
-export function CursorGlow() {
-  const ref = useRef(null);
-  useEffect(() => {
-    // A touch screen has no pointer to follow: no listener, no light.
-    if (matchMedia('(prefers-reduced-motion: reduce), (pointer: coarse)').matches) return;
-    const el = ref.current;
-    let raf = 0, x = 0, y = 0;
-    const move = (e) => {
-      x = e.clientX; y = e.clientY;
-      if (!raf) raf = requestAnimationFrame(() => {
-        el.style.transform = `translate(${x - 260}px, ${y - 260}px)`;
-        el.classList.add('on');
-        raf = 0;
-      });
-    };
-    const leave = () => el.classList.remove('on');
-    window.addEventListener('pointermove', move, { passive: true });
-    document.documentElement.addEventListener('pointerleave', leave);
-    return () => {
-      window.removeEventListener('pointermove', move);
-      document.documentElement.removeEventListener('pointerleave', leave);
-    };
-  }, []);
-  return <div ref={ref} className="cursor-glow" style={{ transform: 'translate(-50%,-50%)' }} aria-hidden="true" />;
 }
 
 /* Cycles through a list of phrases; the widest one reserves the space. */
@@ -939,3 +917,205 @@ export function TestRunner({ lang, tests }) {
 
 /* Local time in Gaza, ticking. Rendered empty on the server so there is no
    hydration mismatch, then filled on the client. */
+
+/* The hero's background: a faint schema -- two tables, the API, the screen --
+   and one orange request travelling from the database to the interface every
+   few seconds. It is the headline drawn rather than a texture: "from database
+   to interface". The names are the booking project's own: the API locks the
+   `resources` row before writing to `bookings`, and the operator's board is
+   a Vue screen.
+
+   It never sits behind text. Every box is placed at runtime in the gaps the
+   two columns leave -- the band above the runner, the corridor between the
+   columns, the band below -- so it follows the layout rather than guessing
+   it. Below 1024px the columns stack, there are no gaps, and it is hidden.
+
+   Cheap on purpose: one canvas, drawn only while the hero is on screen, at
+   most 2x pixel density, a still frame for reduced motion, colours read
+   from the theme tokens so dark mode needs nothing extra. */
+export function SchemaTrace() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const cv = ref.current;
+    const host = cv?.parentElement;
+    if (!cv || !host) return;
+    // Below lg the columns stack and the canvas is display:none. Hiding it is
+    // not enough -- the effect would still size a hero-sized bitmap and keep
+    // three observers alive on every phone -- so it does not start at all.
+    if (!matchMedia('(min-width: 1024px)').matches) return;
+    const ctx = cv.getContext('2d');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let W = 0, H = 0, nodes = [], path = [], len = 0, raf = 0, on = false, t0 = 0;
+    let ink = '#141414', sig = '#FF4D00';
+    const readTheme = () => {
+      const cs = getComputedStyle(document.documentElement);
+      ink = cs.getPropertyValue('--ink').trim() || ink;
+      sig = cs.getPropertyValue('--accent').trim() || sig;
+    };
+    const rgba = (hex, a) => {
+      const h = hex.replace('#', '');
+      const n = parseInt(h.length === 3 ? h.split('').map((c) => c + c).join('') : h, 16);
+      return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+    };
+
+    const layout = () => {
+      const hr = host.getBoundingClientRect();
+      const text = host.firstElementChild?.getBoundingClientRect();
+      const run = host.querySelector('.runner')?.getBoundingClientRect();
+      W = hr.width; H = hr.height;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      cv.style.width = W + 'px'; cv.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (!text || !run || W < 1000) { nodes = []; path = []; return; }
+      const rx = (r) => ({ l: r.left - hr.left, t: r.top - hr.top, r: r.right - hr.left, b: r.bottom - hr.top });
+      const T = rx(text), R = rx(run);
+      const rtl = document.dir === 'rtl';
+      // the corridor between the two columns
+      const cx = rtl ? (R.r + T.l) / 2 : (T.r + R.l) / 2;
+      const near = rtl ? R.r : R.l;                 // runner edge on the corridor side
+      const dir = rtl ? -1 : 1;                     // away from the corridor
+      const bw = 132, bh = 62, gap = 22;
+      const topY = Math.max(92, R.t - bh - 30);
+      const botY = Math.min(H - 58, R.b + 42);
+      const x0 = rtl ? near - bw : near;
+      // A box is never narrower than its longest label: sized from the text.
+      ctx.font = "500 10.5px GeistMono, ui-monospace, monospace";
+      const fit = (w, labels) => Math.max(w, ...labels.map((l) => Math.ceil(ctx.measureText(l).width) + 22));
+      const box = (x, y, w, h, title, rows) => ({ x, y, w: fit(w, [title, ...rows]), h, title, rows, lit: 0 });
+      const next = (prev, w) => (rtl ? prev.x - gap - w : prev.x + prev.w + gap);
+      const place = (n) => { if (rtl) n.x = near - n.w; return n; };
+      const resources = place(box(x0, topY, bw, bh, 'resources', ['id', 'capacity']));
+      const bookings = box(0, topY, bw + 10, bh, 'bookings', ['starts_at', 'ends_at']);
+      bookings.x = next(resources, bookings.w);
+      const api = place(box(x0, botY, 118, 30, 'POST /api/bookings', []));
+      const ui = box(0, botY, 118, 30, 'BookingBoard.vue', []);
+      ui.x = next(api, ui.w) + dir * 60;
+      nodes = [resources, bookings, api, ui];
+      // bookings -> resources -> corridor -> down -> api -> ui
+      const mid = (n) => n.y + n.h / 2;
+      const edgeNear = (n) => (rtl ? n.x + n.w : n.x);
+      const edgeFar = (n) => (rtl ? n.x : n.x + n.w);
+      path = [
+        [edgeNear(bookings), mid(bookings)],
+        [edgeFar(resources), mid(resources)],
+        [edgeNear(resources), mid(resources)],
+        [cx, mid(resources)],
+        [cx, mid(api)],
+        [edgeNear(api), mid(api)],
+        [edgeFar(api), mid(api)],
+        [edgeNear(ui), mid(ui)],
+      ];
+      path.hit = [[1, resources], [6, api], [7, ui]];   // vertex index -> node it enters
+      path.inside = new Set([1, 5]);                     // segments that cross a box: not drawn
+      len = 0; path.seg = [];
+      for (let i = 1; i < path.length; i++) {
+        const d = Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]);
+        path.seg.push([len, d]); len += d;
+      }
+    };
+
+    const at = (s) => {
+      for (let i = 0; i < path.seg.length; i++) {
+        const [start, d] = path.seg[i];
+        if (s <= start + d) {
+          const k = d ? (s - start) / d : 0;
+          const [ax, ay] = path[i], [bx, by] = path[i + 1];
+          return [ax + (bx - ax) * k, ay + (by - ay) * k, i];
+        }
+      }
+      const e = path[path.length - 1]; return [e[0], e[1], path.length - 2];
+    };
+
+    const round = (x, y, w, h, r) => {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+    };
+
+    const TRAVEL = 2600, REST = 3400;
+    const draw = (now) => {
+      ctx.clearRect(0, 0, W, H);
+      if (!nodes.length) return;
+      // links
+      ctx.strokeStyle = rgba(ink, 0.12); ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 1; i < path.length; i++) {
+        if (path.inside.has(i - 1)) continue;           // the line stops at the box edge
+        ctx.moveTo(path[i - 1][0], path[i - 1][1]); ctx.lineTo(path[i][0], path[i][1]);
+      }
+      ctx.stroke();
+      // the request
+      if (!reduce && now) {
+        const cycleId = Math.floor((now - t0) / (TRAVEL + REST));
+        const cyc = (now - t0) % (TRAVEL + REST);
+        if (cyc < TRAVEL) {
+          const e = cyc / TRAVEL, s = (e < 0.5 ? 2 * e * e : 1 - (-2 * e + 2) ** 2 / 2) * len;
+          const [hx, hy, seg] = at(s);
+          // a box lights once per trip, the moment the request reaches it
+          path.hit.forEach(([v, n]) => {
+            const reach = v < path.length - 1 ? path.seg[v][0] : len;
+            if (s >= reach - 1 && n.cyc !== cycleId) { n.lit = 1; n.cyc = cycleId; }
+          });
+          for (let k = 1; k <= 14; k++) {            // a short tail that fades
+            const [tx, ty, ts] = at(Math.max(0, s - k * 5));
+            if (path.inside.has(ts)) continue;
+            ctx.fillStyle = rgba(sig, 0.5 * (1 - k / 14)); ctx.beginPath(); ctx.arc(tx, ty, 1.6, 0, 7); ctx.fill();
+          }
+          if (!path.inside.has(seg)) {                   // inside a box the box lights instead
+            ctx.fillStyle = sig; ctx.beginPath(); ctx.arc(hx, hy, 3, 0, 7); ctx.fill();
+            ctx.fillStyle = rgba(sig, 0.18); ctx.beginPath(); ctx.arc(hx, hy, 7, 0, 7); ctx.fill();
+          }
+        }
+      }
+      // boxes
+      nodes.forEach((n) => {
+        n.lit = Math.max(0, n.lit - 0.02);
+        ctx.fillStyle = rgba(ink, 0.015 + n.lit * 0.02);
+        round(n.x, n.y, n.w, n.h, 4); ctx.fill();
+        ctx.strokeStyle = n.lit > 0.05 ? rgba(sig, 0.25 + n.lit * 0.45) : rgba(ink, 0.14);
+        ctx.stroke();
+        ctx.font = "500 10.5px GeistMono, ui-monospace, monospace";
+        // Table and file names are code: always left-to-right, anchored at the
+        // box's left edge. The canvas would otherwise inherit dir="rtl" and
+        // hang every label off the wrong side of its box on the Arabic page.
+        ctx.direction = 'ltr'; ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        const tx = n.x + 10;
+        if (n.rows.length) {
+          ctx.fillStyle = rgba(ink, 0.42); ctx.fillText(n.title, tx, n.y + 13);
+          ctx.strokeStyle = rgba(ink, 0.08); ctx.beginPath(); ctx.moveTo(n.x, n.y + 24); ctx.lineTo(n.x + n.w, n.y + 24); ctx.stroke();
+          ctx.fillStyle = rgba(ink, 0.3);
+          n.rows.forEach((r, i) => ctx.fillText(r, tx, n.y + 36 + i * 13));
+        } else {
+          ctx.fillStyle = rgba(ink, 0.42); ctx.fillText(n.title, tx, n.y + n.h / 2);
+        }
+      });
+    };
+
+    // Between trips nothing moves, so the loop sleeps until the next one
+    // instead of redrawing an identical frame sixty times a second.
+    let nap = 0;
+    const loop = (now) => {
+      draw(now); raf = 0;
+      if (!on) return;
+      const cyc = (now - t0) % (TRAVEL + REST);
+      const glowing = nodes.some((n) => n.lit > 0.01);
+      if (cyc >= TRAVEL && !glowing) nap = setTimeout(() => { nap = 0; if (on) raf = requestAnimationFrame(loop); }, TRAVEL + REST - cyc);
+      else raf = requestAnimationFrame(loop);
+    };
+    const start = () => { if (!raf && !nap && on && !reduce) { t0 = t0 || performance.now(); raf = requestAnimationFrame(loop); } };
+
+    readTheme(); layout(); draw(0);
+    document.fonts?.ready.then(() => { layout(); draw(0); });
+    const ro = new ResizeObserver(() => { layout(); draw(0); });
+    ro.observe(host);
+    const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on) start(); }, { threshold: 0 });
+    io.observe(host);
+    const mo = new MutationObserver(() => { readTheme(); draw(0); });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => { ro.disconnect(); io.disconnect(); mo.disconnect(); if (raf) cancelAnimationFrame(raf); clearTimeout(nap); };
+  }, []);
+  return <canvas ref={ref} className="schema-trace" aria-hidden="true" />;
+}
+
