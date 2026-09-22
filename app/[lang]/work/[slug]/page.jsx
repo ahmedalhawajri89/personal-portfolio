@@ -4,7 +4,7 @@ import { PROJECTS, PROFILE } from '../../../../content/projects';
 import { STORIES } from '../../../../content/stories';
 import { HERO_TESTS } from '../../../../content/site';
 import { shotsOf, coverOf, pagesOf, tourOf } from '../../../../lib/shots';
-import { Nav, Dock, Footer, Reveal, ScrollProgress, BackToTop } from '../../../../components/Chrome';
+import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, BackToTop } from '../../../../components/Chrome';
 import Gallery from '../../../../components/Gallery';
 import Icon from '../../../../components/Icons';
 
@@ -59,6 +59,7 @@ export default async function Project({ params }) {
     <>
       <div className="ambient" aria-hidden="true" />
       <ScrollProgress />
+      <SmoothScroll />
       <Reveal />
       <Nav lang={lang} path={`/work/${slug}/`} title={c.name} />
 

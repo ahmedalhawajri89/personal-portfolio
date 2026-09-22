@@ -104,6 +104,11 @@ html[lang="en"] #home h1{text-transform:capitalize}
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
+/* Lenis drives scrolling when it is running; native smooth scrolling on top
+   of it would ease every jump twice. */
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:hidden}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
 
@@ -896,3 +901,15 @@ a:hover .tint,button:hover .tint{opacity:1}
 .ab-code:hover{text-decoration:underline;text-underline-offset:3px}
 /* Latin values (the stack) keep LTR shaping but sit on the RTL column edge. */
 [dir="rtl"] .ab-row dd.lat{text-align:right}
+
+/* ------------------------------------------------------------ section entrance */
+/* A heading rises from behind a mask: clipped from the bottom and 24px low,
+   then opened and lifted. Only while script runs (.js), so without it the
+   heading is simply there. The open state reaches past the box so Arabic
+   descenders and accents are never trimmed. d1 and d2 stagger the sequence. */
+.js .mask-rise{clip-path:inset(0 0 100% 0);transform:translateY(24px);
+  transition:clip-path .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)}
+.js .mask-rise.seen{clip-path:inset(-40% -10% -40% -10%);transform:none}
+.js .mask-rise.d1{transition-delay:.08s}
+.js .mask-rise.d2{transition-delay:.16s}
+@media (prefers-reduced-motion:reduce){.js .mask-rise{clip-path:none;transform:none}}

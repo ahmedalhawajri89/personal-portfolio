@@ -6,10 +6,61 @@ import { PROFILE } from '../content/projects';
 import Icon from './Icons';
 import { CvButton } from './CvPanel';
 
+/* Inertial scrolling for a mouse or trackpad: the page glides to a stop
+   instead of stepping with each notch of the wheel. Off for touch, where the
+   platform already scrolls with momentum and a second layer of easing fights
+   the finger, and off for reduced motion. Anchor links go through Lenis too,
+   which reads each section's scroll-margin, so they land where native ones did. */
+//
+// Loaded on the first wheel or key press, not at startup. Created eagerly it
+// cost the desktop score 15 points (97 -> 82, TBT 330ms): its per-frame loop
+// ran through the window where the page is still becoming interactive. Now it
+// is not in the initial bundle at all, and it arrives the moment it is needed.
+export function SmoothScroll() {
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce), (pointer: coarse)').matches) return;
+    let lenis, gone = false;
+    const start = async () => {
+      window.removeEventListener('wheel', start);
+      window.removeEventListener('keydown', start);
+      const { default: Lenis } = await import('lenis');
+      if (gone) return;
+      lenis = new Lenis({
+        autoRaf: true,
+        duration: 1.1,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        // Lenis already honours each section's scroll-margin (96px); an extra
+        // offset here doubled it and landed every anchor at 192.
+        anchors: true,
+      });
+    };
+    window.addEventListener('wheel', start, { passive: true });
+    window.addEventListener('keydown', start);
+    return () => {
+      gone = true;
+      window.removeEventListener('wheel', start);
+      window.removeEventListener('keydown', start);
+      lenis?.destroy();
+    };
+  }, []);
+  return null;
+}
+
 /* Reveal-on-scroll that can never hide content that is already on screen:
    anything within the first viewport is marked seen immediately. */
 export function Reveal() {
   useEffect(() => {
+    // A masked heading starts clipped to nothing, and an element with no
+    // visible area never reports itself as intersecting -- observing it
+    // directly left every section heading hidden for good. So each group of
+    // masked lines is revealed by watching the box that contains them.
+    const masks = Array.from(new Set(Array.from(document.querySelectorAll('.mask-rise')).map((m) => m.parentElement)));
+    const showMasks = (box) => box.querySelectorAll(':scope > .mask-rise').forEach((m) => m.classList.add('seen'));
+    const mio = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) { showMasks(e.target); mio.unobserve(e.target); } }),
+      { rootMargin: '0px 0px -8% 0px', threshold: 0 }
+    );
+    masks.forEach((box) => mio.observe(box));
     const els = Array.from(document.querySelectorAll('.rise'));
     const vh = window.innerHeight;
     els.forEach((el) => {
@@ -29,7 +80,7 @@ export function Reveal() {
       entries.forEach((e) => e.target.classList.toggle('in-view', e.isIntersecting)));
     anims.forEach((el) => live.observe(el));
 
-    return () => { io.disconnect(); live.disconnect(); };
+    return () => { io.disconnect(); live.disconnect(); mio.disconnect(); };
   }, []);
   return null;
 }

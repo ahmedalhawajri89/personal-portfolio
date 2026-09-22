@@ -3,7 +3,7 @@ import { LANGS, T } from '../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../content/projects';
 import { SERVICES, SKILLS, CAPABILITIES, PROCESS, TIMELINE, TESTIMONIALS, HERO_TESTS } from '../../content/site';
 import { shotsOf, coverOf, pagesOf } from '../../lib/shots';
-import { Nav, Dock, Footer, Reveal, ScrollProgress, ContactForm, BackToTop, TimelineScroll, TestRunner, SchemaTrace } from '../../components/Chrome';
+import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, ContactForm, BackToTop, TimelineScroll, TestRunner, SchemaTrace } from '../../components/Chrome';
 import Marquee from '../../components/Marquee';
 import Icon from '../../components/Icons';
 import { CvButton } from '../../components/CvPanel';
@@ -15,9 +15,11 @@ export function generateStaticParams() {
 function SectionHead({ eyebrow, h, lede, center }) {
   return (
     <header className={`mb-12 ${center ? 'mx-auto max-w-[62ch] text-center' : 'max-w-[62ch]'}`}>
-      <p className="eyebrow">{eyebrow}</p>
-      <h2 className="mt-4 text-[clamp(27px,4.4vw,44px)] font-extrabold leading-[1.2] tracking-tight">{h}</h2>
-      {lede && <p className="mt-4 text-[16.5px] leading-[1.85]" style={{ color: 'var(--ink-2)' }}>{lede}</p>}
+      {/* Label, then the heading rising out from behind a mask, then the lede:
+          one short sequence per section instead of the whole block fading. */}
+      <p className="eyebrow mask-rise">{eyebrow}</p>
+      <h2 className="mask-rise d1 mt-4 text-[clamp(27px,4.4vw,44px)] font-extrabold leading-[1.2] tracking-tight">{h}</h2>
+      {lede && <p className="mask-rise d2 mt-4 text-[16.5px] leading-[1.85]" style={{ color: 'var(--ink-2)' }}>{lede}</p>}
     </header>
   );
 }
@@ -124,6 +126,7 @@ export default async function Home({ params }) {
     <>
       <div className="ambient" aria-hidden="true" />
       <ScrollProgress />
+      <SmoothScroll />
       <Reveal />
       <TimelineScroll />
       <Nav lang={lang} path="/" home />
@@ -512,10 +515,10 @@ export default async function Home({ params }) {
               where the rules came from. */}
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,.75fr)] lg:gap-16">
             <div>
-              <p className="eyebrow">{t.about.eyebrow}</p>
-              <h2 className="mt-4 text-[clamp(27px,4.4vw,44px)] font-extrabold leading-[1.15] tracking-tight">{t.about.h}</h2>
+              <p className="eyebrow mask-rise">{t.about.eyebrow}</p>
+              <h2 className="mask-rise d1 mt-4 text-[clamp(27px,4.4vw,44px)] font-extrabold leading-[1.15] tracking-tight">{t.about.h}</h2>
               <p className="mt-2 text-[15px] font-bold" style={{ color: 'var(--ink-2)' }}>{t.about.role}</p>
-              <blockquote className="ab-quote">{t.about.quote}</blockquote>
+              <blockquote className="ab-quote mask-rise d2">{t.about.quote}</blockquote>
               <div className="ab-prose">
                 <p>{t.about.pipelineB}</p>
                 <p>{t.about.lede}</p>
