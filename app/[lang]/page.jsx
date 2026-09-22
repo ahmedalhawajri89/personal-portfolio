@@ -63,6 +63,63 @@ export default async function Home({ params }) {
     return rows;
   };
 
+  // Words used inside the rule scenes. Code identifiers stay in English.
+  const V = ar
+    ? { stored: 'مُخزَّن', derived: 'مُشتقّ', approved: 'مُعتمَد', reversal: 'قيد مضاد', rows: 'سجل', server: 'من جهة الخادم' }
+    : { stored: 'stored', derived: 'derived', approved: 'approved', reversal: 'counter-entry', rows: 'rows', server: 'server-side' };
+  const scene = (i) => {
+    switch (i) {
+      case 0: // Arabic from the first line: the same line, built from each side
+        return (
+          <div className="v-rtl">
+            {['EN', 'AR'].map((l) => (
+              <div key={l} className={`v-rtl-row${l === 'AR' ? ' is-ar' : ''}`}>
+                <span className="v-tag lat">{l}</span>
+                <span className="v-line"><i style={{ '--w': '46%' }} /><i style={{ '--w': '22%' }} /><i style={{ '--w': '14%' }} /></span>
+              </div>
+            ))}
+          </div>
+        );
+      case 1: // rules in the data layer: a row locked inside the transaction
+        return (
+          <div className="v-lock">
+            <div className="v-table">
+              <span /><span className="is-locked">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+              </span><span />
+            </div>
+            <i className="v-req a" /><i className="v-req b" />
+            <code className="v-code lat">lockForUpdate()</code>
+          </div>
+        );
+      case 2: // a test for every rule: a suite filling green
+        return <div className="v-suite">{Array.from({ length: 18 }, (_, k) => <i key={k} style={{ '--d': `${k * 90}ms` }} />)}</div>;
+      case 3: // store the fact, derive the rest
+        return (
+          <div className="v-fact">
+            <span className="v-box lat">date_of_birth<small>{V.stored}</small></span>
+            <span className="v-flow"><i /></span>
+            <span className="v-box is-derived lat">age<small>{V.derived}</small></span>
+          </div>
+        );
+      case 4: // history is never deleted: an approved entry, then its counter-entry
+        return (
+          <div className="v-ledger">
+            <span className="v-entry"><b className="lat">+</b>{V.approved}</span>
+            <span className="v-entry is-rev"><b className="lat">−</b>{V.reversal}</span>
+          </div>
+        );
+      default: // works at 500 rows like at 5,000
+        return (
+          <div className="v-scale">
+            <span className="v-count lat"><span className="v-n" /> {V.rows}</span>
+            <span className="v-pages lat"><i>‹</i><i className="on">1</i><i>2</i><i>3</i><i>›</i></span>
+            <small>{V.server}</small>
+          </div>
+        );
+    }
+  };
+
   return (
     <>
       <div className="ambient" aria-hidden="true" />
@@ -309,34 +366,29 @@ export default async function Home({ params }) {
 
         {/* ------------------------------------------------------- process */}
         <section id="process" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          {/* Six rules read in order, one at a time. The heading, a counter and a
-              progress line hold still on one side while the rules pass on the
-              other; the one under the reading line is in full ink with an orange
-              edge, the ones already read stay legible, the ones ahead wait in
-              the quietest grey that still clears AA. No cards and no zigzag: it
-              was 1449px for 144 words, and the eye had to cross the page for
-              every rule. `rules` is driven by the same TimelineScroll as before. */}
-          <div className="rules grid gap-10 lg:grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] lg:gap-16">
-            <div className="lg:sticky lg:top-28 lg:self-start">
-              <p className="eyebrow">{t.process.eyebrow}</p>
-              <h2 className="mt-4 text-[clamp(27px,4.4vw,44px)] font-extrabold leading-[1.2] tracking-tight">{t.process.h}</h2>
-              <p className="rules-count lat" aria-hidden="true">
-                <span className="rules-now" /><span className="rules-of">/ {String(PROCESS[lang].length).padStart(2, '0')}</span>
-              </p>
-              <span className="rules-bar" aria-hidden="true"><i /></span>
-            </div>
-            <ol className="rules-list">
-              {PROCESS[lang].map((p, i) => (
-                <li key={p.h} className="rules-row">
-                  <span className="rules-num lat">{String(i + 1).padStart(2, '0')}</span>
-                  <div className="rules-body">
+          <SectionHead eyebrow={t.process.eyebrow} h={t.process.h} />
+          {/* Six rules as a bento, each with a small scene that shows the rule
+              instead of restating it. Every label in the scenes is either code
+              that exists in the projects (lockForUpdate, date_of_birth) or a
+              word for what the scene shows -- no invented data. The scenes run
+              only while the grid is on screen (.in-view, from <Reveal>) and
+              hold their final frame for reduced motion. */}
+          <ol className="bento grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
+            {PROCESS[lang].map((p, i) => {
+              const span = ['md:col-span-2 lg:col-span-4', 'lg:col-span-2', 'lg:col-span-2',
+                            'md:col-span-2 lg:col-span-4', 'lg:col-span-3', 'lg:col-span-3'][i];
+              return (
+                <li key={p.h} className={`bn-tile rise ${span}`} style={{ '--i': i % 3 }}>
+                  <div className="bn-vis" aria-hidden="true">{scene(i)}</div>
+                  <div className="bn-copy">
+                    <span className="bn-num lat">{String(i + 1).padStart(2, '0')}</span>
                     <h3>{p.h}</h3>
                     <p>{p.b}</p>
                   </div>
                 </li>
-              ))}
-            </ol>
-          </div>
+              );
+            })}
+          </ol>
         </section>
 
         {/* --------------------------------------------------- engineering proof */}

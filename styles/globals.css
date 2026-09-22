@@ -382,33 +382,40 @@ a:hover .tint,button:hover .tint{opacity:1}
 .social-pill a:hover svg{transform:scale(1.1)}
 .social-pill svg{transition:transform .25s cubic-bezier(.22,1,.36,1)}
 
-/* --------------------------------------------------------- footer sheet */
-/* A pane of glass, not a slab: the card colour at partial opacity over a
-   strong backdrop blur, so the page's ambient colour drifts through it. There
-   is no layer behind it, so the rounded corners reveal the page itself and
-   never a stray dark wedge. A hairline along the top edge is what separates
-   it from the page — the same treatment as the floating nav, so the page
-   opens and closes on the same material. */
-.foot-base{margin-top:7rem}
-.foot-sheet{position:relative;overflow:hidden;border-radius:16px 16px 0 0;
-  padding:clamp(40px,5vw,64px) 0 calc(36px + env(safe-area-inset-bottom));
-  background:var(--glass);border-top:1px solid var(--glass-line);
-  -webkit-backdrop-filter:blur(40px) saturate(160%);backdrop-filter:blur(40px) saturate(160%);
-  box-shadow:0 -20px 60px -40px color-mix(in srgb, var(--ink) 50%, transparent)}
-/* a soft wash of brand colour spilling down from the top edge */
-.foot-sheet::before{content:'';position:absolute;inset:0 0 auto;height:55%;pointer-events:none;
-  background:radial-gradient(60% 100% at 50% 0%,var(--accent-soft),transparent 72%)}
-.foot-sheet > .wrap{position:relative}
-/* Frosted on frosted: translucent too, so the glass stays readable as glass. */
-.foot-statement{position:relative;overflow:hidden;background:color-mix(in srgb, var(--card) 55%, transparent)}
-.foot-statement::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.7;
-  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:40px 40px;
-  -webkit-mask-image:radial-gradient(60% 70% at 50% 50%,#000 20%,transparent 100%);mask-image:radial-gradient(60% 70% at 50% 50%,#000 20%,transparent 100%)}
-.foot-statement > *{position:relative}
-@media (max-width:640px){.foot-sheet{border-radius:12px 12px 0 0}}
-/* the phone dock floats over the sheet; leave it room */
-@media (max-width:767px){.foot-sheet{padding-bottom:calc(96px + env(safe-area-inset-bottom))}}
+/* --------------------------------------------------------------- footer */
+/* Plain paper under a hairline: no glass, no glow, no grid. The weight of
+   the footer is the name set large at the bottom, cropped by the edge. */
+.foot{margin-top:7rem;padding-top:clamp(48px,6vw,72px);border-top:1px solid var(--line);overflow:hidden}
+.foot-grid{display:grid;gap:36px 24px;grid-template-columns:1fr}
+@media (min-width:640px){.foot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1024px){.foot-grid{grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr))}}
+.foot-name{margin:0;font-size:17px;font-weight:800;color:var(--ink)}
+.foot-role{margin:4px 0 0;font-size:13.5px;color:var(--ink-2)}
+.foot-line{margin:14px 0 0;max-width:28ch;font-size:14px;line-height:1.7;color:var(--ink-3)}
+.foot-line::first-letter{text-transform:uppercase}
+.foot-h{margin:0 0 14px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+[dir="rtl"] .foot-h{letter-spacing:0;text-transform:none}
+.foot-list{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.foot-list a{display:inline-flex;align-items:center;gap:6px;min-height:28px;font-size:14.5px;color:var(--ink-2);text-decoration:none;transition:color .2s}
+.foot-list a:hover{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.foot-list a span{font-size:12px;color:var(--ink-3)}
+.foot-mail{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.foot-mail a{font-family:'GeistMono',ui-monospace,monospace;font-size:13px}
+.foot-copy{min-height:26px;padding:0 9px;font-size:12px;font-weight:700;color:var(--ink-2);background:var(--card);border:1px solid var(--line-2);border-radius:var(--r-chip);cursor:pointer}
+.foot-copy:hover{border-color:var(--ink-3);color:var(--ink)}
+.foot-status li{display:flex;align-items:center;gap:8px;min-height:28px;font-size:14.5px;color:var(--ink-2)}
+.foot-dot{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+/* The signature. Sized to the viewport so it spans the width without ever
+   overflowing it. Not cropped: cutting the baseline took the tail off the j
+   ("Hawaiiri") and the lower strokes off the Arabic -- a name has to read. */
+.foot-mark{margin:clamp(48px,7vw,96px) 0 0;padding-inline:clamp(12px,2vw,24px);line-height:1;white-space:nowrap;overflow:hidden;text-align:center}
+.foot-mark span{display:inline-block;padding-bottom:.08em;font-size:clamp(44px,11.2vw,176px);font-weight:800;letter-spacing:-.045em;color:var(--ink)}
+[dir="rtl"] .foot-mark{line-height:1.35}
+[dir="rtl"] .foot-mark span{letter-spacing:0;padding-bottom:.3em;font-size:clamp(44px,12vw,184px)}
+.foot-base-row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;padding-block:18px calc(22px + env(safe-area-inset-bottom));border-top:1px solid var(--line);font-size:13px;color:var(--ink-3)}
+.foot-base-row p{margin:0}
+/* the phone dock floats over the footer; leave it room */
+@media (max-width:767px){.foot-base-row{padding-bottom:calc(96px + env(safe-area-inset-bottom))}}
 
 /* ---------------------------------------------------------- phone dock */
 .dock{position:fixed;bottom:max(12px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:50;
@@ -609,29 +616,6 @@ a:hover .tint,button:hover .tint{opacity:1}
 .to-top{bottom:20px}
 @media (max-width:767px){.to-top{bottom:74px}}
 
-/* Footer phrase: a simultaneous cross-fade through heavy blur. The two
-   layers sit on top of each other; nothing moves vertically, so the eye reads
-   one phrase condensing out of the other. */
-.xf{position:relative;display:block;color:var(--ink);font-weight:800;letter-spacing:-.01em}
-.xf-word{position:absolute;inset:0;display:block;will-change:opacity,filter}
-.xf-latin{font-weight:800;letter-spacing:-.03em}
-.xf-in{animation:xf-in .9s cubic-bezier(.4,0,.2,1) both}
-.xf-out{animation:xf-out .9s cubic-bezier(.4,0,.2,1) both;pointer-events:none}
-/* Blur climbs much faster than opacity falls — that is what makes the
-   dissolve read as "melting" rather than a plain fade. */
-@keyframes xf-out{
-  0%{opacity:1;filter:blur(0)}
-  35%{opacity:.85;filter:blur(6px)}
-  70%{opacity:.5;filter:blur(28px)}
-  100%{opacity:0;filter:blur(64px)}
-}
-@keyframes xf-in{
-  0%{opacity:0;filter:blur(64px)}
-  30%{opacity:.5;filter:blur(28px)}
-  65%{opacity:.85;filter:blur(6px)}
-  100%{opacity:1;filter:blur(0)}
-}
-@media (prefers-reduced-motion:reduce){.xf-in,.xf-out{animation:none}.xf-out{display:none}}
 
 /* ---------------------------------------------------------- bento tiles */
 .tile{position:relative;overflow:hidden;padding:20px;border-radius:var(--r-card);background:var(--card);border:1px solid var(--line);
@@ -805,40 +789,77 @@ a:hover .tint,button:hover .tint{opacity:1}
 .card-bar{display:flex;align-items:center;height:26px;padding-inline:10px;background:var(--card-2);border-bottom:1px solid var(--line)}
 .card-bar span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'GeistMono',ui-monospace,Menlo,monospace;font-size:11px;color:var(--ink-3)}
 
-/* ------------------------------------------------------------ rules */
-/* --tl-n (current rule) and --tl-p (0..1 through the list) come from
-   TimelineScroll. The counter is a CSS counter reset to --tl-n, so the number
-   changes with no React render. Only colour and transform ever animate. */
-.rules{--tl-n:1;--tl-p:0;counter-reset:rule var(--tl-n)}
-.rules-count{display:none;align-items:baseline;gap:10px;margin-top:40px;font-family:'GeistMono',ui-monospace,monospace}
-.rules-now::before{content:counter(rule,decimal-leading-zero);font-size:56px;font-weight:500;line-height:1;color:var(--ink);letter-spacing:-.02em}
-.rules-of{font-size:15px;color:var(--ink-3)}
-.rules-bar{display:none;margin-top:18px;height:2px;width:180px;background:var(--line-2);overflow:hidden}
-.rules-bar i{display:block;height:100%;background:var(--accent);transform:scaleX(var(--tl-p));transform-origin:left;transition:transform .2s linear}
-[dir="rtl"] .rules-bar i{transform-origin:right}
-@media (min-width:1024px){.rules-count{display:flex}.rules-bar{display:block}}
+/* ------------------------------------------------------------ bento rules */
+/* Each tile: a scene on the card-2 ground, then number, rule, reason. The
+   scenes animate transform and colour only, loop gently, pause off screen
+   (.js .bento:not(.in-view)) and fall back to their final frame for reduced
+   motion (the global rule shortens every animation to nothing). */
+.bn-tile{display:flex;flex-direction:column;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);
+  transition:border-color .3s,transform .4s cubic-bezier(.22,1,.36,1)}
+.bn-tile:hover{border-color:color-mix(in srgb, var(--ink) 22%, var(--line));transform:translateY(-2px)}
+.bn-vis{position:relative;height:150px;display:grid;place-items:center;overflow:hidden;background:var(--card-2);border-bottom:1px solid var(--line)}
+.bn-copy{padding:20px 24px 24px}
+.bn-num{font-family:'GeistMono',ui-monospace,monospace;font-size:12px;color:var(--ink-3)}
+.bn-copy h3{margin:6px 0 0;font-size:19px;font-weight:800;line-height:1.35;color:var(--ink)}
+.bn-copy p{margin:8px 0 0;max-width:60ch;font-size:15px;line-height:1.75;color:var(--ink-2)}
+.js .bento:not(.in-view) .bn-vis *{animation-play-state:paused}
+.v-code,.v-tag,.v-box,.v-count,.v-pages{font-family:'GeistMono',ui-monospace,monospace}
 
-.rules-list{margin:0;padding:0;list-style:none;border-bottom:1px solid var(--line)}
-.rules-row{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:18px;padding-block:28px;padding-inline-start:22px;border-top:1px solid var(--line)}
-.rules-row::before{content:'';position:absolute;inset-inline-start:0;top:28px;bottom:28px;width:2px;background:var(--accent);
-  transform:scaleY(0);transform-origin:top;transition:transform .5s cubic-bezier(.22,1,.36,1)}
-.rules-num{padding-top:5px;font-family:'GeistMono',ui-monospace,monospace;font-size:13px;color:var(--ink-3);transition:color .4s}
-.rules-body{transition:transform .5s cubic-bezier(.22,1,.36,1)}
-.rules-body h3{margin:0;font-size:20px;font-weight:800;line-height:1.35;color:var(--ink-3);transition:color .4s}
-.rules-body p{margin:8px 0 0;max-width:58ch;font-size:15.5px;line-height:1.8;color:var(--ink-3);transition:color .4s}
-/* read */
-.rules-row.on h3{color:var(--ink-2)}
-/* current: the last row the reading line has reached */
-.rules-row.on:not(:has(~ .on))::before{transform:scaleY(1)}
-.rules-row.on:not(:has(~ .on)) .rules-num{color:var(--accent-ink)}
-.rules-row.on:not(:has(~ .on)) .rules-body{transform:translateX(4px)}
-[dir="rtl"] .rules-row.on:not(:has(~ .on)) .rules-body{transform:translateX(-4px)}
-.rules-row.on:not(:has(~ .on)) h3{color:var(--ink)}
-.rules-row.on:not(:has(~ .on)) p{color:var(--ink-2)}
-@media (prefers-reduced-motion:reduce){
-  .rules-row h3,.rules-row.on h3{color:var(--ink)}.rules-row p{color:var(--ink-2)}
-  .rules-row::before,.rules-body,.rules-bar i{transition:none}
-}
-/* The counter is Latin digits set LTR, but it belongs under an RTL heading:
-   anchor it to the start edge the heading uses. */
-[dir="rtl"] .rules-count{justify-content:flex-end}
+/* 01 · the same line, built from each side */
+.v-rtl{display:grid;gap:12px;width:min(340px,80%)}
+.v-rtl-row{display:flex;align-items:center;gap:10px;height:34px;padding-inline:10px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-ctl);direction:ltr}
+.v-rtl-row.is-ar{flex-direction:row-reverse}
+.v-tag{font-size:10.5px;color:var(--ink-3)}
+.v-line{flex:1;display:flex;gap:6px}
+.is-ar .v-line{flex-direction:row-reverse}
+.v-line i{display:block;height:6px;width:var(--w);border-radius:3px;background:var(--ink-3);opacity:.45;transform-origin:left;animation:v-type 4s cubic-bezier(.22,1,.36,1) infinite}
+.is-ar .v-line i{transform-origin:right;background:var(--accent)}
+.v-line i:nth-child(2){animation-delay:.25s}.v-line i:nth-child(3){animation-delay:.5s}
+@keyframes v-type{0%{transform:scaleX(0)}25%,85%{transform:scaleX(1)}100%{transform:scaleX(0)}}
+
+/* 02 · a row locked inside the transaction; the second request waits */
+.v-lock{position:relative;display:grid;justify-items:center;gap:12px;direction:ltr}
+.v-table{display:grid;gap:5px;width:200px}
+.v-table span{display:flex;align-items:center;justify-content:flex-end;height:18px;padding-inline:8px;border-radius:3px;background:var(--card);border:1px solid var(--line)}
+.v-table .is-locked{color:var(--accent-ink);border-color:color-mix(in srgb, var(--accent) 45%, var(--line));animation:v-lockpulse 3.2s ease-in-out infinite}
+@keyframes v-lockpulse{0%,30%{box-shadow:0 0 0 0 transparent}40%,70%{box-shadow:0 0 0 3px var(--accent-soft)}100%{box-shadow:0 0 0 0 transparent}}
+.v-req{position:absolute;top:26px;left:-18px;width:8px;height:8px;border-radius:50%;background:var(--ink-3)}
+.v-req.a{background:var(--accent);animation:v-reqa 3.2s cubic-bezier(.22,1,.36,1) infinite}
+.v-req.b{animation:v-reqb 3.2s cubic-bezier(.22,1,.36,1) infinite}
+@keyframes v-reqa{0%{transform:translateX(0);opacity:0}10%{opacity:1}35%,70%{transform:translateX(60px);opacity:1}85%,100%{transform:translateX(60px);opacity:0}}
+@keyframes v-reqb{0%,15%{transform:translateX(0);opacity:0}25%{opacity:1}45%,75%{transform:translateX(34px);opacity:1}90%,100%{transform:translateX(34px);opacity:0}}
+.v-code{font-size:11.5px;color:var(--ink-2)}
+
+/* 03 · the suite fills green, one test at a time */
+.v-suite{display:grid;grid-template-columns:repeat(6,16px);gap:7px}
+.v-suite i{width:16px;height:16px;border-radius:4px;background:var(--card);border:1px solid var(--line-2);animation:v-pass 4.4s ease infinite;animation-delay:var(--d)}
+@keyframes v-pass{0%,8%{background:var(--card);border-color:var(--line-2)}14%,82%{background:var(--ok);border-color:var(--ok)}100%{background:var(--card);border-color:var(--line-2)}}
+
+/* 04 · the fact is stored, the rest is computed from it */
+.v-fact{display:flex;align-items:center;gap:14px;direction:ltr}
+.v-box{display:grid;gap:4px;padding:10px 14px;font-size:12px;color:var(--ink);background:var(--card);border:1px solid var(--line-2);border-radius:var(--r-ctl)}
+.v-box small{font-size:10.5px;color:var(--ink-3)}
+.v-box.is-derived{border-style:dashed}
+.v-flow{position:relative;width:70px;height:1px;background:var(--line-2)}
+.v-flow i{position:absolute;top:-3px;left:0;width:7px;height:7px;border-radius:50%;background:var(--accent);animation:v-flow 2.4s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes v-flow{0%{transform:translateX(0)}70%,100%{transform:translateX(63px)}}
+
+/* 05 · an approved entry is reversed by a new one, never edited */
+.v-ledger{display:grid;gap:8px;width:min(260px,76%)}
+.v-entry{display:flex;align-items:center;gap:10px;height:32px;padding-inline:12px;font-size:13px;color:var(--ink-2);background:var(--card);border:1px solid var(--line);border-radius:var(--r-ctl)}
+.v-entry b{font-family:'GeistMono',ui-monospace,monospace;font-weight:500;color:var(--ok)}
+.v-entry.is-rev b{color:var(--accent-ink)}
+.v-entry.is-rev{animation:v-rev 4s cubic-bezier(.22,1,.36,1) infinite}
+@keyframes v-rev{0%,20%{transform:translateY(8px);visibility:hidden}30%,88%{transform:none;visibility:visible}100%{transform:translateY(8px);visibility:hidden}}
+
+/* 06 · the same page whether the table holds 500 rows or 5,000 */
+@property --n{syntax:'<integer>';initial-value:500;inherits:false}
+.v-scale{display:grid;justify-items:center;gap:10px}
+.v-count{font-size:15px;color:var(--ink)}
+.v-n{--n:500;counter-reset:n var(--n);animation:v-count 4s cubic-bezier(.45,0,.55,1) infinite}
+.v-n::before{content:counter(n)}
+@keyframes v-count{0%,15%{--n:500}60%,90%{--n:5000}100%{--n:500}}
+.v-pages{display:flex;gap:4px}
+.v-pages i{display:grid;place-items:center;min-width:22px;height:22px;padding-inline:4px;font-style:normal;font-size:11px;color:var(--ink-3);border:1px solid var(--line);border-radius:4px;background:var(--card)}
+.v-pages i.on{color:var(--on-accent);background:var(--accent-solid);border-color:var(--accent-solid)}
+.v-scale small{font-size:11px;color:var(--ink-3)}

@@ -24,7 +24,7 @@ export function Reveal() {
     // The two endless animations (the contact card's spinning border and the
     // pipeline's travelling dot) run only while on screen. Unlike `.seen`,
     // this toggles both ways: scroll away and they stop costing anything.
-    const anims = document.querySelectorAll('.gradient-border, .pipe');
+    const anims = document.querySelectorAll('.gradient-border, .pipe, .bento');
     const live = new IntersectionObserver((entries) =>
       entries.forEach((e) => e.target.classList.toggle('in-view', e.isIntersecting)));
     anims.forEach((el) => live.observe(el));
@@ -479,43 +479,6 @@ export function Dock({ lang, home = false }) {
   );
 }
 
-/* Phrases cross-fade: the leaving one dissolves into a heavy blur while the
-   next one condenses out of it, both at the same instant, so the card is
-   never empty. Latin phrases get the tight, heavy setting Geist-style
-   wordmarks use. */
-export function CyclingStatement({ phrases, hold = 1900 }) {
-  const [i, setI] = useState(0);
-  const [prev, setPrev] = useState(-1);
-  const box = useRef(null);
-  // The dissolve blurs to 64px across a line as wide as the footer, which is
-  // expensive enough to hold the main thread. Only spend it while someone is
-  // actually looking: the footer sits off-screen for most of the visit.
-  const [live, setLive] = useState(false);
-  useEffect(() => {
-    const el = box.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setLive(e.isIntersecting), { threshold: 0 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  useEffect(() => {
-    if (!live || matchMedia('(prefers-reduced-motion: reduce)').matches || phrases.length < 2) return;
-    const id = setInterval(() => {
-      setI((n) => { setPrev(n); return (n + 1) % phrases.length; });
-    }, hold);
-    return () => clearInterval(id);
-  }, [live, phrases.length, hold]);
-  const latin = (s) => /^[ -~]+$/.test(s);
-  const cls = (s) => `xf-word${latin(s) ? ' lat xf-latin' : ''}`;
-  return (
-    <span ref={box} className="xf" aria-live="polite">
-      {prev >= 0 && <span key={`o${prev}-${i}`} className={`${cls(phrases[prev])} xf-out`} aria-hidden="true">{phrases[prev]}</span>}
-      <span key={`i${i}`} className={`${cls(phrases[i])}${prev >= 0 ? ' xf-in' : ''}`}>{phrases[i]}</span>
-      {/* The longest phrase reserves the height so the card never jumps. */}
-      <span className="invisible block" aria-hidden="true">{[...phrases].sort((a, b) => b.length - a.length)[0]}</span>
-    </span>
-  );
-}
 
 /* Contact form. With NEXT_PUBLIC_WEB3FORMS_KEY set it posts to Web3Forms and
    the message lands in the inbox; without a key it falls back to composing a
@@ -781,60 +744,76 @@ export function BackToTop({ lang }) {
 
 export function Footer({ lang, links, home = false }) {
   const t = T[lang];
+  const f = t.foot;
+  const ar = lang === 'ar';
   const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
-  const items = [['work', t.nav.work], ['services', t.nav.services], ['about', t.nav.about], ['contact', t.nav.contact]];
-  const social = links && [
-    ['github', links.github, 'GitHub', true],
-    ['mail', `mailto:${links.email}`, 'Email', false],
-    ['whatsapp', links.whatsapp, 'WhatsApp', true],
-    ['store', links.khamsat, 'Khamsat', true],
-  ];
+  const nav = [['work', t.nav.work], ['services', t.nav.services], ['process', t.nav.process], ['about', t.nav.about], ['contact', t.nav.contact]];
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(links.email); setCopied(true); setTimeout(() => setCopied(false), 1800); }
+    catch { window.location.href = `mailto:${links.email}`; }
+  };
+  const channels = links ? [
+    ['WhatsApp', links.whatsapp],
+    ['GitHub', links.github],
+    [ar ? 'خمسات' : 'Khamsat', links.khamsat],
+  ] : [];
   return (
-    <div className="foot-base">
-      <footer className="foot-sheet">
-        <div className="wrap">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-6" style={{ borderColor: 'var(--line)' }}>
-          <a href={`/${lang}/`} className="flex items-center gap-3">
-            <span className="on-accent lat grid h-10 w-10 place-items-center rounded-[var(--r-ctl)] text-[14px] font-extrabold">A</span>
-            <span>
-              <span className="block text-[15px] font-extrabold leading-tight">{lang === 'ar' ? 'أحمد الحواجري' : 'Ahmed Al-Hawajiri'}</span>
-              <span className="block text-[10.5px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.badge.title}</span>
-            </span>
-          </a>
-          <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="btn btn-ghost" style={{ padding: '10px 18px', fontSize: 13.5 }}>
-            {t.top} <Icon name="arrowUp" size={14} />
-          </button>
-        </div>
-
-        {/* Big statement, like a closing title card. */}
-        <div className="foot-statement my-8 rounded-[var(--r-card)] border px-6 py-14 text-center sm:py-20"
-             style={{ borderColor: 'var(--line)' }}>
-          <p className="eyebrow">{t.footerEyebrow}</p>
-          <p className="mt-4 text-[clamp(30px,6vw,64px)] font-extrabold leading-[1.15] tracking-tight">
-            <CyclingStatement phrases={t.footerStatement} />
-          </p>
-        </div>
-
-        <nav className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2 border-b pb-6 text-[14px] font-bold" style={{ borderColor: 'var(--line)', color: 'var(--ink-2)' }}>
-          {items.map(([id, label]) => <a key={id} href={link(id)} className="link-underline block py-1">{label}</a>)}
-        </nav>
-
-        <div className="flex flex-col items-center justify-between gap-4 pt-6 text-[13.5px] sm:flex-row" style={{ color: 'var(--ink-3)' }}>
-          {social && (
-            <p className="flex items-center gap-2">
-              {social.map(([icon, href, label, ext]) => (
-                <a key={icon} href={href} aria-label={label} target={ext ? '_blank' : undefined} rel={ext ? 'noopener noreferrer' : undefined}
-                   className="grid h-10 w-10 place-items-center rounded-full border transition-all hover:-translate-y-0.5 hover:text-[var(--accent-ink)]"
-                   style={{ borderColor: 'var(--line)', background: 'var(--card)' }}><Icon name={icon} size={16} /></a>
+    <footer className="foot">
+      <div className="wrap">
+        {/* Four columns a visitor scans in the order they need them: who this
+            is, where to go, how to reach him, and whether he is free. No
+            statement card and no second call to action -- the contact section
+            is directly above, and a footer that shouts again reads as unsure. */}
+        <div className="foot-grid">
+          <div>
+            <p className="foot-name">{PROFILE.name[lang]}</p>
+            <p className="foot-role">{t.about.role}</p>
+            <p className="foot-line">{t.hero.h1b}</p>
+          </div>
+          <nav aria-label={f.nav}>
+            <p className="foot-h">{f.nav}</p>
+            <ul className="foot-list">
+              {nav.map(([id, label]) => <li key={id}><a href={link(id)}>{label}</a></li>)}
+            </ul>
+          </nav>
+          <div>
+            <p className="foot-h">{f.contact}</p>
+            <ul className="foot-list">
+              {links && (
+                <li className="foot-mail">
+                  <a href={`mailto:${links.email}`} className="lat">{links.email}</a>
+                  <button type="button" onClick={copy} className="foot-copy" aria-live="polite">{copied ? f.copied : f.copy}</button>
+                </li>
+              )}
+              {channels.map(([label, href]) => (
+                <li key={label}><a href={href} target="_blank" rel="noopener noreferrer">{label} <span aria-hidden="true">↗</span></a></li>
               ))}
-            </p>
-          )}
-          <p>{t.footer}</p>
+            </ul>
+          </div>
+          <div>
+            <p className="foot-h">{f.status}</p>
+            <ul className="foot-list foot-status">
+              <li><span className="foot-dot" aria-hidden="true" />{t.hero.status}</li>
+              <li>{PROFILE.location[lang]}</li>
+              <li><span className="lat">GMT+3</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* The name set as a signature across the full width, its descenders
+          cropped by the page edge. Decorative: the same name is in the first
+          column as text, so screen readers hear it once. */}
+      <p className="foot-mark" aria-hidden="true"><span>{PROFILE.name[lang]}</span></p>
+
+      <div className="wrap">
+        <div className="foot-base-row">
           <p className="lat">© {new Date().getFullYear()} Ahmed Al-Hawajiri</p>
+          <p>{t.footer}</p>
         </div>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </footer>
   );
 }
 
