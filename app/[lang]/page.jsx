@@ -39,31 +39,9 @@ export default async function Home({ params }) {
     ['2', t.stats.langs],
   ];
   const cover = (p) => coverOf(p, lang);
-  // Skill bars: how many projects use each tool. Nothing self-assessed.
-  // Where each capability has actually been used. A count out of five reads
-  // as a score however it is labelled — `5/5 Laravel` is indistinguishable
-  // from a self-rating — so the evidence is the project names instead.
-  // For each capability, which projects each of its tools was actually used
-  // in — matched on the leading word so `Vue 3` finds `Vue 3.5` and `Tailwind
-  // CSS` finds `Tailwind 4`. Tools that share the same set of projects are
-  // shown on one line, because `Pinia · Vite → Booking` reads better than the
-  // same project named twice. Items that match no stack are capabilities
-  // rather than packages and carry no evidence line.
+  // A tool matches a project's stack on its leading word, so `Vue 3` finds
+  // `Vue 3.5` and `Tailwind CSS` finds `Tailwind 4`. Used by the evidence matrix.
   const head = (x) => x.toLowerCase().split(/[\s.]/)[0];
-  const evidence = (cap) => {
-    const items = lang === 'en' && cap.itemsEn ? cap.itemsEn : cap.items;
-    const rows = [];
-    items.forEach((label, i) => {
-      const key = head(cap.items[i]);
-      const hits = PROJECTS.filter((pr) => pr.stack.some((st) => head(st) === key));
-      if (!hits.length) return;
-      const sig = hits.map((x) => x.slug).join(',');
-      const prev = rows.find((r) => r.sig === sig);
-      if (prev) prev.tools.push(label);
-      else rows.push({ sig, tools: [label], projects: hits });
-    });
-    return rows;
-  };
 
   // Words used inside the rule scenes. Code identifiers stay in English.
   const V = ar
@@ -411,49 +389,64 @@ export default async function Home({ params }) {
             work itself divides. */}
         <section id="skills" className="wrap scroll-mt-24 pt-24 sm:pt-28">
           <SectionHead eyebrow={t.skills.eyebrow} h={t.skills.h} lede={t.skills.lede} center />
-          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {CAPABILITIES.map((cap, i) => {
-              const rows = evidence(cap);
-              return (
-              <li key={cap.icon} className="rise" style={{ '--i': i % 4 }}>
-                <div className="card flex h-full flex-col p-6">
-                  <span className="icon-tile"><Icon name={cap.icon} size={19} /></span>
-                  <h3 className="mt-4 text-[17px] font-extrabold">{cap[lang].h}</h3>
-                  <p className="mt-2 text-[14px] leading-[1.75]" style={{ color: 'var(--ink-2)' }}>{cap[lang].b}</p>
-                  {/* The tool, then where it was used. No number anywhere near
-                      a tool name — a figure out of five cannot be read as
-                      anything but a score, whatever the label above it says. */}
-                  <ul className="mt-5 grid gap-0">
-                    {rows.map((r) => (
-                      <li key={r.sig + r.tools[0]} className="border-b py-2.5 last:border-0" style={{ borderColor: 'var(--line)' }}>
-                        <span className="mono block text-[12.5px] font-bold">{r.tools.join(' · ')}</span>
-                        <span className="mt-1 block text-[12.5px] leading-[1.6]" style={{ color: 'var(--ink-3)' }}>
-                          {r.projects.length === PROJECTS.length
-                            ? t.skills.allFive
-                            : r.projects.map((pr, k) => (
-                                <span key={pr.slug}>
-                                  {k > 0 && <span aria-hidden="true"> · </span>}
-                                  {/* Padding with a matching negative margin: the
-                                      hit box goes from 19px to 27px tall without
-                                      moving the line. Four of these sit side by
-                                      side separated by a dot, and at 19px on a
-                                      phone the wrong one gets tapped. */}
-                                  <a href={`/${lang}/work/${pr.slug}/`}
-                                     className="inline-block -my-1 py-1 hover:underline"
-                                     style={{ color: 'var(--accent-ink)' }}>{pr[lang].name}</a>
-                                </span>
-                              ))}
-                        </span>
-                      </li>
+          {/* An evidence matrix: every tool against every project, a mark where
+              it was actually used. Read across, a tool's reach; read down, a
+              project's stack. It is the same fact the old cards carried in small
+              print, set so it can be checked at a glance -- and it cannot be read
+              as a self-rating, because the only thing it counts is the work.
+              Practices that are not a package (REST APIs, schema design, locks)
+              sit beside their group's name rather than faking a row of marks. */}
+          <div className="mx-wrap rise">
+            <table className="mx">
+              <caption className="sr-only">{t.skills.h}</caption>
+              {/* equal project columns, whatever the length of a project's name */}
+              <colgroup><col className="mx-c-tool" />{PROJECTS.map((pr) => <col key={pr.slug} />)}</colgroup>
+              <thead>
+                <tr>
+                  <th scope="col"><span className="sr-only">{t.skills.eyebrow}</span></th>
+                  {PROJECTS.map((pr) => (
+                    <th key={pr.slug} scope="col">
+                      <a href={`/${lang}/work/${pr.slug}/`}>{pr[lang].name}</a>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              {CAPABILITIES.map((cap) => {
+                const items = lang === 'en' && cap.itemsEn ? cap.itemsEn : cap.items;
+                const tools = [], practices = [];
+                items.forEach((label, k) => {
+                  const key = head(cap.items[k]);
+                  // Laravel is PHP: a project listing only `Laravel 12` still uses PHP,
+                  // and a dash there would tell the reader something false.
+                  const implied = { php: ['laravel'] }[key] || [];
+                  const used = PROJECTS.map((pr) => pr.stack.some((st) => head(st) === key || implied.includes(head(st))));
+                  (used.some(Boolean) ? tools : practices).push({ label, used });
+                });
+                return (
+                  <tbody key={cap.icon}>
+                    <tr className="mx-group">
+                      <th scope="colgroup" colSpan={PROJECTS.length + 1}>
+                        <span>{cap[lang].h}</span>
+                        {practices.length > 0 && <small>{practices.map((x) => x.label).join(' · ')}</small>}
+                      </th>
+                    </tr>
+                    {tools.map((tl) => (
+                      <tr key={tl.label}>
+                        <th scope="row" className="lat">{tl.label}</th>
+                        {tl.used.map((u, n) => (
+                          <td key={PROJECTS[n].slug}>
+                            {u
+                              ? <span className="mx-dot" role="img" aria-label={`${tl.label} — ${PROJECTS[n][lang].name}`} />
+                              : <span className="mx-none" aria-hidden="true" />}
+                          </td>
+                        ))}
+                      </tr>
                     ))}
-                  </ul>
-                </div>
-              </li>
-              );
-            })}
-          </ul>
-
-
+                  </tbody>
+                );
+              })}
+            </table>
+          </div>
         </section>
 
         {/* --------------------------------------------------------- about */}

@@ -957,3 +957,26 @@ a:hover .tint,button:hover .tint{opacity:1}
 .cf-panel{min-width:0}
 .cf-file-path,.cf-v,.cf-rule{overflow-wrap:anywhere}
 @media (max-width:639px){.cf-file{padding:22px 18px 24px}}
+
+/* ------------------------------------------------------------ evidence matrix */
+.mx-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--line-2);border-radius:var(--r-card);box-shadow:var(--shadow)}
+.mx{width:100%;min-width:640px;border-collapse:collapse;table-layout:fixed;font-size:14px}
+.mx-c-tool{width:24%}
+.mx th,.mx td{padding:0;text-align:center}
+.mx thead th{padding:18px 10px 14px;font-size:12.5px;font-weight:700;color:var(--ink-2);border-bottom:1px solid var(--line-2);vertical-align:bottom}
+.mx thead th a{color:inherit;text-decoration:none}
+.mx thead th a:hover{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.mx tbody th[scope="row"]{padding:11px 20px;text-align:start;font-family:'GeistMono',ui-monospace,monospace;font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap}
+.mx tbody td{padding:11px 10px;border-inline-start:1px solid var(--line)}
+.mx tbody tr:not(.mx-group){border-top:1px solid var(--line);transition:background .2s}
+.mx tbody tr:not(.mx-group):hover{background:var(--card-2)}
+.mx-group th{padding:22px 20px 8px;text-align:start;border-top:1px solid var(--line-2)}
+.mx tbody:first-of-type .mx-group th{border-top:0}
+.mx-group span{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+[dir="rtl"] .mx-group span{letter-spacing:0;text-transform:none;font-size:13px}
+.mx-group small{margin-inline-start:12px;font-size:12.5px;font-weight:400;color:var(--ink-3)}
+.mx-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--ink)}
+.mx tbody tr:hover .mx-dot{background:var(--accent)}
+.mx-none{display:inline-block;width:10px;height:1px;background:var(--line-2);vertical-align:middle}
+/* the tool column stays in view while the projects scroll sideways on a phone */
+@media (max-width:767px){.mx tbody th[scope="row"],.mx thead th:first-child{position:sticky;inset-inline-start:0;background:var(--card);z-index:1}}
