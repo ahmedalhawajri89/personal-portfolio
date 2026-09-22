@@ -57,6 +57,7 @@ document.documentElement.setAttribute('data-theme',d?'dark':'light');
 var m=document.querySelector('meta[name=theme-color]');
 if(m)m.setAttribute('content',d?'#0E0E0D':'#F7F6F3');
 document.documentElement.classList.add('js');
+if(location.hash)document.documentElement.classList.add('cv-off');
 }catch(e){}})();`;
 
 export default async function RootLayout({ children, params }) {

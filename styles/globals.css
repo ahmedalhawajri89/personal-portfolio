@@ -26,18 +26,25 @@
 @font-face{font-family:'GeistMono';src:url('/fonts/geistmono-500.woff2') format('woff2');font-weight:500;font-display:swap;}
 
 /* ------------------------------------------------- off-screen sections */
-/* `content-visibility:auto` on the seven below-fold sections was measured and
-   rejected. It did cut style recalculation by 41% (2758ms -> 2241ms at 4x CPU
-   throttle), but it also moved a deep link: /#contact landed at -431 instead
-   of 96, and the scroll height grew by 672px. The cause is structural, not a
-   tuning error -- contain-intrinsic-size is one fixed number while the real
-   section heights change with viewport width, so the placeholder is wrong at
-   exactly the widths the optimisation was for. A benchmark is not worth a
-   broken shared link.
+/* A phone opens on the hero, yet the first paint used to wait while the
+   browser laid out all eight sections below it. `content-visibility:auto`
+   skips that work until a section nears the screen, and the `auto` in
+   contain-intrinsic-size keeps each section's real height once it has been
+   drawn, so scrolling back never jumps.
 
-   Also measured and rejected, for being worth nothing: removing the ambient
-   blur (3%), removing the ambient layer (0%), dropping every backdrop-filter
-   (18% worse). */
+   The catch, which got this rejected once: a jump computed against guessed
+   heights lands in the wrong place (/#contact came to rest at -431). So the
+   skipping is switched off -- `cv-off` on <html> -- before any jump is
+   computed: by the boot script when the page opens on a #hash, and by
+   SmoothScroll on the first in-page link click or hash change. The full
+   layout is then paid once, when the reader is already acting, instead of
+   in front of the first paint.
+
+   Measured and rejected earlier, for being worth nothing: removing the
+   ambient blur (3%), removing the ambient layer (0%), dropping every
+   backdrop-filter (18% worse). */
+html:not(.cv-off) main > section:not(#home),
+html:not(.cv-off) body > footer{content-visibility:auto;contain-intrinsic-size:auto 1100px}
 
 /* ---------------------------------------------------------------- tokens */
 /* Ink and a signal.

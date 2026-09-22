@@ -16,6 +16,36 @@ import Icon from './Icons';
 // ran through the window where the page is still becoming interactive. Now it
 // is not in the initial bundle at all, and it arrives the moment it is needed.
 export function SmoothScroll() {
+  // Off-screen sections skip layout until they near the screen (see
+  // globals.css). Any jump must be computed against real heights, so the
+  // first in-page link click or hash change lays the whole page out first --
+  // in the capture phase, before Lenis or the browser reads the target.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (root.classList.contains('cv-off')) return;
+    const full = () => {
+      root.classList.add('cv-off');
+      document.removeEventListener('click', onClick, true);
+      window.removeEventListener('hashchange', onHash);
+    };
+    const onClick = (e) => {
+      const a = e.target.closest?.('a[href*="#"]');
+      if (a && a.pathname === location.pathname) full();
+    };
+    // A hash typed into the address bar (or reached with Back) scrolls before
+    // hashchange fires, against guessed heights; lay out, then land again.
+    const onHash = () => {
+      full();
+      const el = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (el) requestAnimationFrame(() => el.scrollIntoView());
+    };
+    document.addEventListener('click', onClick, true);
+    window.addEventListener('hashchange', onHash);
+    return () => {
+      document.removeEventListener('click', onClick, true);
+      window.removeEventListener('hashchange', onHash);
+    };
+  }, []);
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce), (pointer: coarse)').matches) return;
     let lenis, gone = false;
