@@ -504,132 +504,46 @@ export default async function Home({ params }) {
 
         {/* --------------------------------------------------------- about */}
         <section id="about" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
-            {/* Who, then what, then why — in that order, because that is the
-                order a client asks them in. The tool badges that used to sit
-                here said the same thing the capabilities section says, in the
-                same words; what belongs here is the work those tools produce. */}
+          {/* A portrait in words, and a sheet of facts beside it. Everything this
+              section used to hold that another section already says has gone:
+              the build list (Services), the time-zone tile (footer, hero), the
+              schema-to-screen diagram (hero), the start-up steps (contact). What
+              is left is what only this section can say -- how he thinks, and
+              where the rules came from. */}
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,.75fr)] lg:gap-16">
             <div>
               <p className="eyebrow">{t.about.eyebrow}</p>
               <h2 className="mt-4 text-[clamp(27px,4.4vw,44px)] font-extrabold leading-[1.15] tracking-tight">{t.about.h}</h2>
-              <p className="mt-2.5 text-[15px] font-bold" style={{ color: 'var(--accent-ink)' }}>
-                {t.about.role} <span style={{ color: 'var(--ink-3)' }}>· {PROFILE.location[lang]}</span>
-              </p>
-              {/* Not PROFILE.lede: the hero already prints that paragraph, and
-                  a visitor who reached here has read it. This one answers the
-                  question the hero does not — where the rules above came from. */}
-              <p className="mt-5 max-w-[56ch] text-[17px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>{t.about.lede}</p>
-
-              <h3 className="mt-9 text-[13px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.about.builds}</h3>
-              {/* Hairline rows rather than another wrap of badges: the same
-                  restraint the engineering index uses, and it lets six client
-                  phrases read as a list instead of a pile. */}
-              <ul className="mt-3 grid gap-0 sm:grid-cols-2 sm:gap-x-8">
-                {t.about.buildsList.map((x) => (
-                  <li key={x} className="border-b py-2.5 text-[15.5px] font-bold" style={{ borderColor: 'var(--line)' }}>{x}</li>
-                ))}
-              </ul>
-
-              <h3 className="mt-9 text-[19px] font-extrabold tracking-tight">{t.about.whyH}</h3>
-              <p className="mt-2.5 max-w-[58ch] text-[16px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>{t.about.whyB}</p>
-
-              {/* What working together looks like, which is the one thing the
-                  section never said. Not a card and not the method again — the
-                  six working rules above are how the engineering is done; these
-                  five words are how the weeks are shaped from the other side of
-                  the table. Plain type on a hairline, so it stays a sentence. */}
-              <h3 className="mt-9 text-[13px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.about.startH}</h3>
-              <p className="mt-2.5 max-w-[54ch] text-[16px] leading-[1.9]" style={{ color: 'var(--ink-2)' }}>{t.about.startB}</p>
-              <ol className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-2 border-t pt-4"
-                  style={{ borderColor: 'var(--line)' }}>
-                {t.about.startSteps.map((x, i) => (
-                  <li key={x} className="flex items-center gap-2.5">
-                    {i > 0 && (
-                      <span style={{ color: 'var(--ink-3)', opacity: .55 }} aria-hidden="true">
-                        <Icon name={arrow} size={13} />
-                      </span>
-                    )}
-                    <span className="text-[14.5px] font-bold">{x}</span>
-                  </li>
-                ))}
-              </ol>
-
-              {/* The method and the tests already have sections of their own,
-                  a screen or two up. This points at them instead of saying it
-                  all a second time. */}
-              <p className="mt-6 text-[15px] leading-[1.9]" style={{ color: 'var(--ink-3)' }}>
-                {t.about.seeMore}{' '}
-                {/* Same hit-box padding as the capability links: two of these sit
-                    a dot apart, which is where a thumb lands on the wrong one. */}
-                <a href="#process" className="inline-block -my-1 py-1 font-bold hover:underline" style={{ color: 'var(--accent-ink)' }}>{t.about.seeProcess}</a>
-                {' · '}
-                <a href="#proof" className="inline-block -my-1 py-1 font-bold hover:underline" style={{ color: 'var(--accent-ink)' }}>{t.about.seeProof}</a>
-              </p>
+              <p className="mt-2 text-[15px] font-bold" style={{ color: 'var(--ink-2)' }}>{t.about.role}</p>
+              <blockquote className="ab-quote">{t.about.quote}</blockquote>
+              <div className="ab-prose">
+                <p>{t.about.pipelineB}</p>
+                <p>{t.about.lede}</p>
+              </div>
             </div>
 
-            {/* Bento: small facts that are true right now, not a résumé card.
-                `content-start` matters here. The outer two-column grid stretches
-                this column to match the text beside it, and a grid's default
-                align-content then spreads that height across its auto rows —
-                which inflated three 170-220px cards into 392-440px boxes with a
-                quarter of a screen of nothing under each. The rows keep their
-                own height now, and the leftover falls to the bottom of a
-                container that has no background of its own.
-
-                From `lg` the column also sticks. Two things are needed for that
-                and neither works alone: `self-start` so the item stops being
-                stretched to the row's height — a sticky box cannot travel inside
-                a containing block it already fills — and then `sticky`, which
-                moves it within the grid area the row still occupies. The result
-                is that the facts stay beside the prose that they support for the
-                whole read, and the space under them is never looked at. */}
-            <div className="grid grid-cols-1 content-start gap-4 sm:grid-cols-2 lg:sticky lg:top-24 lg:self-start">
-              <div className="tile rise" style={{ '--i': 0 }}>
-                {/* A static export cannot know the time at build, so a live
-                    clock renders `--:--` on the server and on the first client
-                    frame every single load. The fact a remote client actually
-                    needs is the offset, not the seconds — and that one is true
-                    without JavaScript. */}
-                <p className="tile-k">{t.about.tz}</p>
-                <p className="lat mt-3 text-[38px] font-extrabold leading-none tracking-tight" style={{ color: 'var(--accent-ink)' }}>GMT+3</p>
-                <p className="mt-2 text-[13px] font-bold" style={{ color: 'var(--ink-3)' }}>{PROFILE.location[lang]}</p>
-                <p className="mt-4 inline-flex items-center gap-2 text-[13px] font-bold" style={{ color: 'var(--ink-2)' }}>
-                  <span className="relative flex h-2 w-2">
-                    <span className="pulse-ring absolute inline-flex h-full w-full rounded-full" style={{ background: 'var(--ok)' }} />
-                    <span className="relative inline-flex h-2 w-2 rounded-full" style={{ background: 'var(--ok)' }} />
-                  </span>
-                  {t.about.available}
-                </p>
-              </div>
-
-              <div className="tile rise" style={{ '--i': 1 }}>
-                <p className="tile-k">{t.about.langs}</p>
-                <p className="mt-2 text-[13.5px] leading-[1.7]" style={{ color: 'var(--ink-2)' }}>{t.about.langsB}</p>
-                <div className="mt-4 flex gap-3" aria-hidden="true">
-                  <div className="flex-1 rounded-xl border p-2.5" style={{ borderColor: 'var(--line)', background: 'var(--card-2)' }} dir="rtl">
-                    <span className="lat text-[10px] font-bold" style={{ color: 'var(--ink-3)' }}>AR · RTL</span>
-                    <div className="dir-demo"><i className="a" style={{ width: '70%' }} /><i style={{ width: '100%' }} /><i style={{ width: '55%' }} /></div>
+            {/* Facts, not claims: every value comes from the data the rest of the
+                page is built from, so the sheet cannot drift from the site. */}
+            <aside className="lg:sticky lg:top-24 lg:self-start">
+              <dl className="ab-facts">
+                {[
+                  [t.about.facts.focus, 'Laravel · Vue · MySQL · QA', true],
+                  [t.about.facts.shipped, t.about.facts.shippedV.replace('{n}', PROJECTS.length), false],
+                  [t.about.facts.years, t.about.facts.yearsV.replace('{n}', PROFILE.years), false],
+                  [t.about.facts.langs, t.about.facts.langsV, false],
+                  [t.about.facts.works, t.about.facts.worksV, false],
+                  [t.about.facts.based, PROFILE.location[lang], false],
+                ].map(([k, v, lat]) => (
+                  <div key={k} className="ab-row">
+                    <dt>{k}</dt>
+                    <dd className={lat ? 'lat' : undefined}>{v}</dd>
                   </div>
-                  <div className="flex-1 rounded-xl border p-2.5" style={{ borderColor: 'var(--line)', background: 'var(--card-2)' }} dir="ltr">
-                    <span className="lat text-[10px] font-bold" style={{ color: 'var(--ink-3)' }}>EN · LTR</span>
-                    <div className="dir-demo"><i className="a" style={{ width: '70%' }} /><i style={{ width: '100%' }} /><i style={{ width: '55%' }} /></div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="tile rise sm:col-span-2" style={{ '--i': 2 }}>
-                <p className="tile-k">{t.about.pipeline}</p>
-                <div className="pipe" aria-hidden="true">
-                  <div className="node"><span className="icon-tile" style={{ width: 40, height: 40, borderRadius: 12 }}><Icon name="database" size={17} /></span><span>{t.about.db}</span></div>
-                  <div className="wire" />
-                  <div className="node"><span className="icon-tile" style={{ width: 40, height: 40, borderRadius: 12 }}><Icon name="code" size={17} /></span><span>{t.about.api}</span></div>
-                  <div className="wire" />
-                  <div className="node"><span className="icon-tile" style={{ width: 40, height: 40, borderRadius: 12 }}><Icon name="layout" size={17} /></span><span>{t.about.ui}</span></div>
-                </div>
-                <p className="mt-4 text-[13.5px] leading-[1.7]" style={{ color: 'var(--ink-2)' }}>{t.about.pipelineB}</p>
-              </div>
-
-            </div>
+                ))}
+              </dl>
+              <a href={PROFILE.links.github} target="_blank" rel="noopener noreferrer" className="ab-code">
+                {t.about.code} <span aria-hidden="true">↗</span>
+              </a>
+            </aside>
           </div>
         </section>
 
