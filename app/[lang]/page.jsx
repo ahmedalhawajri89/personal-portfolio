@@ -123,11 +123,15 @@ export default async function Home({ params }) {
               </div>
             </div>
 
-            {/* Four figures on one baseline: two-word labels, no wrapping, hairlines between. */}
-            <ul className="mt-12 grid grid-cols-2 border-t pt-8 sm:grid-cols-4" style={{ borderColor: 'var(--line)' }}>
-              {stats.map(([n, l], i) => (
-                <li key={l} className="flex flex-col items-start gap-1.5 py-2 ps-5 first:ps-0 sm:[&:nth-child(n+2)]:border-s"
-                    style={{ borderColor: 'var(--line)', marginInlineEnd: i < 3 ? 20 : 0 }}>
+            {/* Four figures on one baseline: two-word labels, no wrapping, hairlines between.
+                The indent and the hairline belong to the one-row layout only. On a
+                phone the grid is two columns, the third figure opens a new row, and
+                an indent meant for "after a hairline" pushed it 20px off the one
+                above it. Below sm the columns are spaced by gap and start flush. */}
+            <ul className="mt-12 grid grid-cols-2 gap-x-6 border-t pt-8 sm:grid-cols-4 sm:gap-x-0" style={{ borderColor: 'var(--line)' }}>
+              {stats.map(([n, l]) => (
+                <li key={l} className="flex flex-col items-start gap-1.5 py-2 sm:me-5 sm:ps-5 sm:first:ps-0 sm:last:me-0 sm:[&:nth-child(n+2)]:border-s"
+                    style={{ borderColor: 'var(--line)' }}>
                   <span className="lat text-[30px] font-extrabold leading-none tracking-tight" style={{ color: 'var(--ink)' }}>{n}</span>
                   <span className="whitespace-nowrap text-[13px] font-bold" style={{ color: 'var(--ink-3)' }}>{l}</span>
                 </li>
