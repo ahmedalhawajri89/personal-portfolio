@@ -202,6 +202,15 @@ html[lang="en"] body{font-family:'Manrope',system-ui,sans-serif}
 @keyframes spin-border{to{--angle:1turn}}
 @supports not (background:conic-gradient(from var(--angle),red,blue)){
   .gradient-border::before{background:var(--accent-solid);animation:none;opacity:.45}}
+/* Both endless animations run only while they are on screen. The spinning
+   border animates a custom property, which can never be composited -- the
+   shape is a rounded rectangle, so rotating the layer instead would spin the
+   shape itself. So it is paused, not rewritten: `.in-view` is toggled by an
+   observer in <Reveal>, and scoped under `.js` so a visitor without script
+   still sees it move. Before this, the contact card's border repainted every
+   frame from the moment the page loaded, eleven screens below the reader. */
+.js .gradient-border:not(.in-view)::before,
+.js .pipe:not(.in-view) .wire::after{animation-play-state:paused}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;
@@ -661,12 +670,21 @@ a:hover .tint,button:hover .tint{opacity:1}
 .pipe .node{display:grid;place-items:center;gap:6px;text-align:center}
 .pipe .node span{font-size:11px;font-weight:700;color:var(--ink-2);white-space:nowrap}
 .pipe .wire{position:relative;height:2px;min-width:40px;margin-bottom:22px;background:var(--line-2);border-radius:2px;overflow:hidden}
-.pipe .wire::after{content:'';position:absolute;top:0;bottom:0;width:38%;border-radius:2px;
+/* The dot travels on `transform`, not `inset-inline-start`. Animating an inset
+   re-ran layout on every frame, forever, which Lighthouse listed as a
+   non-composited animation; a translate runs on the compositor and costs the
+   main thread nothing. Same path as before, measured in the dot's own width
+   (it is 38% of the wire): -40% of the wire is -105%, 100% of it is 263%.
+   RTL gets its own keyframes rather than a variable inside them, so the
+   compositor never has to resolve anything at runtime. */
+.pipe .wire::after{content:'';position:absolute;top:0;bottom:0;inset-inline-start:0;width:38%;border-radius:2px;
   background:linear-gradient(90deg,transparent,var(--accent-solid),transparent);animation:wire 2.2s linear infinite}
 .pipe .wire:nth-of-type(4)::after{animation-delay:1.1s}
-@keyframes wire{from{inset-inline-start:-40%}to{inset-inline-start:100%}}
-[dir="rtl"] .pipe .wire::after{background:linear-gradient(270deg,transparent,var(--accent-solid),transparent)}
-@media (prefers-reduced-motion:reduce){.pipe .wire::after{animation:none;inset-inline-start:31%}}
+@keyframes wire{from{transform:translateX(-105%)}to{transform:translateX(263%)}}
+@keyframes wire-rtl{from{transform:translateX(105%)}to{transform:translateX(-263%)}}
+[dir="rtl"] .pipe .wire::after{animation-name:wire-rtl;background:linear-gradient(270deg,transparent,var(--accent-solid),transparent)}
+@media (prefers-reduced-motion:reduce){.pipe .wire::after{animation:none;transform:translateX(82%)}
+  [dir="rtl"] .pipe .wire::after{transform:translateX(-82%)}}
 
 /* Code tile */
 .code{margin:12px 0 0;padding:14px 16px;border-radius:14px;direction:ltr;text-align:left;overflow:auto;
