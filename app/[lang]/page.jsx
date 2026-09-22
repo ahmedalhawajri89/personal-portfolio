@@ -3,7 +3,7 @@ import { LANGS, T } from '../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../content/projects';
 import { SERVICES, SKILLS, CAPABILITIES, PROCESS, TIMELINE, TESTIMONIALS, HERO_TESTS } from '../../content/site';
 import { shotsOf, coverOf, pagesOf } from '../../lib/shots';
-import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, ContactForm, BackToTop, TimelineScroll, TestRunner, SchemaTrace, CaseFiles } from '../../components/Chrome';
+import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, ContactForm, BackToTop, TimelineScroll, TestRunner, SchemaTrace, CaseFiles, ServiceStack } from '../../components/Chrome';
 import Marquee from '../../components/Marquee';
 import Icon from '../../components/Icons';
 import { CvButton } from '../../components/CvPanel';
@@ -321,28 +321,26 @@ export default async function Home({ params }) {
             names itself — and each one cites the project that already does it.
             A service with a case study behind it is a claim somebody can check. */}
         <section id="services" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <SectionHead eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} center />
-          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {SERVICES.map((sv, i) => {
-              const proof = sv.proof ? PROJECTS.find((x) => x.slug === sv.proof) : null;
-              return (
-                <li key={sv.icon + i} className="rise" style={{ '--i': i % 3 }}>
-                  <div className="card hover-lift flex h-full flex-col p-6">
-                    <span className="icon-tile"><Icon name={sv.icon} size={20} /></span>
-                    <h3 className="mt-5 text-[18px] font-extrabold leading-snug">{sv[lang].h}</h3>
-                    <p className="mt-2.5 text-[15px] leading-[1.8]" style={{ color: 'var(--ink-2)' }}>{sv[lang].b}</p>
-                    {proof && (
-                      <a href={`/${lang}/work/${proof.slug}/`}
-                         className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[13.5px] font-bold hover:underline"
-                         style={{ color: 'var(--accent-ink)' }}>
-                        {t.services.proof} {proof[lang].name} <Icon name={arrow} size={14} />
-                      </a>
-                    )}
-                  </div>
-                </li>
-              );
+          <SectionHead eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} />
+          {/* One panel per service, stacked: what it is on one side, and on the
+              other the screen of the project that already does it -- or, where
+              no project here does, a drawing of the work, never a borrowed
+              screenshot. On a wide screen each panel pins and the next slides
+              over it. */}
+          <ServiceStack
+            lang={lang}
+            tests={HERO_TESTS.map((x) => ({ file: `${x.project}/tests/${x.file}`, rule: x[lang] }))}
+            items={SERVICES.map((sv) => {
+              const pr = PROJECTS.find((x) => x.slug === sv.proof);
+              const shot = pr && sv.shot ? coverOf({ shots: pr.shots, cover: sv.shot }, lang) : null;
+              return {
+                h: sv[lang].h, b: sv[lang].b, visual: sv.visual || null, note: sv.note || null,
+                href: pr ? `/${lang}/work/${pr.slug}/` : null,
+                name: pr ? pr[lang].name : null,
+                shot: shot ? { thumb: `/shots/${pr.shots}/${shot.thumb}`, file: `/shots/${pr.shots}/${shot.file}`, path: shot.path, tw: shot.tw, w: shot.w } : null,
+              };
             })}
-          </ul>
+          />
         </section>
 
         {/* ------------------------------------------------------- process */}

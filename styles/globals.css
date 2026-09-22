@@ -1028,3 +1028,75 @@ a:hover .tint,button:hover .tint{opacity:1}
 @keyframes logo-hop{0%,100%{transform:scale(1) translateY(0)}45%{transform:scale(1.15) translateY(-22%)}}
 @media (prefers-reduced-motion:reduce){.logo-a{animation:none;stroke-dashoffset:0;opacity:1}.logo-dot{animation:none;transform:none}
   .tb-brand:hover .logo-a,.tb-brand:hover .logo-dot{animation:none}}
+
+/* ------------------------------------------------------------ services: stacked panels */
+.svs{margin:0;padding:0;list-style:none;display:grid;gap:20px}
+.svs-card{position:relative}
+.svs-in{position:relative;display:grid;gap:22px;padding:18px;background:var(--card);border:1px solid var(--line-2);border-radius:var(--r-card);
+  box-shadow:var(--shadow);transform-origin:50% 0;transform:scale(calc(1 - var(--sink, 0) * .05));will-change:transform}
+/* the shade that settles over a covered panel */
+.svs-in::after{content:'';position:absolute;inset:0;border-radius:inherit;background:var(--bg);opacity:calc(var(--sink, 0) * .55);pointer-events:none}
+.svs-text{display:flex;flex-direction:column;gap:12px;min-width:0}
+.svs-n{margin:0;font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;color:var(--ink-3)}
+.svs-n b{font-weight:500;color:var(--accent-ink)}
+.svs-h{margin:0;font-size:clamp(26px,3.2vw,40px);font-weight:800;line-height:1.1;letter-spacing:-.025em;color:var(--ink);text-wrap:balance}
+[dir="rtl"] .svs-h{letter-spacing:0;line-height:1.3}
+.svs-b{margin:0;max-width:44ch;font-size:16px;line-height:1.75;color:var(--ink-2)}
+.svs-proof{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;min-height:44px;margin:4px 0 0;padding:0 16px;
+  border:1px solid var(--line-2);border-radius:var(--r-ctl);font-size:14.5px;font-weight:800;color:var(--ink);text-decoration:none;
+  transition:background .2s,border-color .2s,color .2s}
+.svs-proof small{font-size:12.5px;font-weight:700;color:var(--ink-3)}
+a.svs-proof:hover{background:var(--accent-solid);border-color:var(--accent-solid);color:var(--on-accent)}
+a.svs-proof:hover small{color:inherit;opacity:.75}
+.svs-proof.is-note{border-style:dashed;font-weight:700;font-size:13.5px}
+.svs-vis{min-width:0;order:-1}
+.svs-frame{overflow:hidden;border:1px solid var(--line);border-radius:var(--r-ctl);background:var(--card-2)}
+.svs-frame img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;object-position:top;transition:transform .8s cubic-bezier(.22,1,.36,1)}
+.svs-card:hover .svs-frame img{transform:scale(1.025)}
+
+/* drawn visuals, for the services no screenshot can honestly show */
+.svs-art{aspect-ratio:16/10.4;border:1px solid var(--line);border-radius:var(--r-ctl);background:var(--card-2);overflow:hidden;
+  font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;color:var(--ink-2);direction:ltr;text-align:left}
+.svs-art p{margin:0;white-space:pre}
+.svs-figma{display:grid;grid-template-columns:1fr 1.15fr}
+.svs-pane{position:relative;display:flex;flex-direction:column;gap:12px;padding:16px;min-width:0}
+.svs-pane small{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.svs-pane.is-code{background:var(--card);border-left:1px solid var(--line)}
+.svs-mock{position:relative;display:grid;gap:10px;align-content:start;width:min(100%,190px);margin:auto;padding:14px;background:var(--card);
+  border:1px solid var(--line-2);border-radius:8px;outline:1.5px dashed var(--accent);outline-offset:6px}
+.svs-mock i{display:block;border-radius:3px;background:var(--line-2)}
+.svs-mock-img{aspect-ratio:4/3}
+.svs-mock-l{height:8px}
+.svs-mock-l.is-short{width:60%}
+.svs-mock-btn{height:22px;width:46%;background:var(--ink)!important}
+.svs-red{position:absolute;font-size:10px;font-weight:500;color:var(--on-accent);background:var(--accent-ink);padding:1px 5px;border-radius:3px}
+.svs-red.is-pad{top:-26px;left:50%;translate:-50% 0}
+.svs-red.is-gap{top:48%;right:-30px}
+.svs-pane code{display:grid;gap:6px;font-size:12px;line-height:1.5;overflow:hidden}
+.svs-pane code span{white-space:pre;overflow:hidden;text-overflow:ellipsis}
+.svs-pane code em{font-style:normal;color:var(--ink)}
+.svs-pane code q{quotes:none;color:var(--accent-ink)}
+.svs-term,.svs-diff{display:flex;flex-direction:column;justify-content:center;gap:10px;padding:22px 24px}
+.svs-cmd{color:var(--ink);margin-bottom:6px!important}
+.svs-pass{display:flex;gap:10px;overflow:hidden;text-overflow:ellipsis}
+.svs-pass span:first-child{color:var(--ok);font-weight:500}
+.svs-hunk{color:var(--ink-3)}
+.svs-diff p{padding:3px 8px;border-radius:3px;overflow:hidden;text-overflow:ellipsis}
+.svs-diff .is-del{background:color-mix(in srgb, #D92D20 12%, transparent);color:var(--ink)}
+.svs-diff .is-add{background:color-mix(in srgb, var(--ok) 14%, transparent);color:var(--ink)}
+
+/* on a phone the drawn panels size to their lines rather than to a ratio */
+@media (max-width:1023px){.svs-art{aspect-ratio:auto;min-height:220px;font-size:11.5px}.svs-term,.svs-diff{padding:18px}.svs-pane{padding:14px}}
+@media (min-width:640px){.svs-in{padding:24px}}
+@media (min-width:1024px){
+  .svs-in{grid-template-columns:minmax(0,.9fr) minmax(0,1.25fr);gap:40px;align-items:center;padding:28px 28px 28px 36px}
+  [dir="rtl"] .svs-in{padding:28px 36px 28px 28px}
+  .svs-text{gap:16px;align-self:stretch;justify-content:center}
+  .svs-vis{order:0}
+}
+/* pin and stack only where a panel fits the screen with room to spare */
+@media (min-width:1024px) and (min-height:700px){
+  .svs{gap:48px}
+  .svs-card{position:sticky;top:calc(92px + var(--i) * 14px)}
+}
+@media (prefers-reduced-motion:reduce){.svs-in{transform:none}.svs-in::after{opacity:0}.svs-frame img{transition:none}}

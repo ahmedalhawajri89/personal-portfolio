@@ -1120,3 +1120,118 @@ export function CaseFiles({ lang, tests }) {
     </div>
   );
 }
+
+/* Services as stacked panels. Each panel: the service, what it gets you, the
+   project that proves it, and that project's real screen in a browser frame.
+   From 1024px, with room above and below, each panel pins a little lower than
+   the one before and the next slides over it; the covered one settles back
+   (a slight scale and shade) so the stack reads as depth, not as a pile.
+   The effect is one scroll listener, only while the section is on screen,
+   writing one number per panel. */
+export function ServiceStack({ items, lang, tests }) {
+  const t = T[lang].services;
+  const list = useRef(null);
+  useEffect(() => {
+    const ol = list.current;
+    if (!ol || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cards = [...ol.children];
+    let raf = 0, live = false;
+    const paint = () => {
+      raf = 0;
+      const pinned = matchMedia('(min-width: 1024px) and (min-height: 700px)').matches;
+      for (let i = 0; i < cards.length; i++) {
+        let p = 0;
+        if (pinned && i < cards.length - 1) {
+          const me = cards[i].getBoundingClientRect(), next = cards[i + 1].getBoundingClientRect();
+          p = Math.min(1, Math.max(0, (me.bottom - next.top) / me.height));
+        }
+        cards[i].style.setProperty('--sink', p.toFixed(3));
+      }
+    };
+    const on = () => { if (live && !raf) raf = requestAnimationFrame(paint); };
+    const io = new IntersectionObserver(([e]) => { live = e.isIntersecting; on(); });
+    io.observe(ol);
+    addEventListener('scroll', on, { passive: true });
+    addEventListener('resize', on);
+    return () => { io.disconnect(); removeEventListener('scroll', on); removeEventListener('resize', on); cancelAnimationFrame(raf); };
+  }, []);
+
+  const n = String(items.length).padStart(2, '0');
+  const visual = (it) => {
+    if (it.shot) {
+      return (
+        <div className="svs-frame">
+          <div className="card-bar" aria-hidden="true"><span className="lat">{it.shot.path}</span></div>
+          <img src={it.shot.thumb} srcSet={`${it.shot.thumb} ${it.shot.tw}w, ${it.shot.file} ${it.shot.w}w`}
+               sizes="(min-width: 1024px) 640px, 92vw" alt={it.name} loading="lazy" decoding="async" width="960" height="600" />
+        </div>
+      );
+    }
+    if (it.visual === 'figma') {
+      return (
+        <div className="svs-art svs-figma" aria-hidden="true">
+          <div className="svs-pane">
+            <small className="lat">{t.design}</small>
+            <div className="svs-mock">
+              <i className="svs-mock-img" /><i className="svs-mock-l" /><i className="svs-mock-l is-short" /><i className="svs-mock-btn" />
+              <b className="svs-red is-pad lat">24</b><b className="svs-red is-gap lat">16</b>
+            </div>
+          </div>
+          <div className="svs-pane is-code lat">
+            <small>{t.code}</small>
+            <code>
+              <span><em>{'<article'}</em> class=<q>"p-6 gap-4 rounded-[10px]"</q><em>{'>'}</em></span>
+              <span>{'  '}<em>{'<img'}</em> class=<q>"aspect-[4/3]"</q> <em>{'/>'}</em></span>
+              <span>{'  '}<em>{'<h3'}</em> class=<q>"text-lg font-bold"</q><em>{'>'}</em></span>
+              <span>{'  '}<em>{'<button'}</em> class=<q>"h-10 px-4"</q><em>{'>'}</em></span>
+              <span><em>{'</article>'}</em></span>
+            </code>
+          </div>
+        </div>
+      );
+    }
+    if (it.visual === 'tests') {
+      return (
+        <div className="svs-art svs-term lat" aria-hidden="true">
+          <p className="svs-cmd">$ ./vendor/bin/pest</p>
+          {tests.map((x) => (
+            <p key={x.file} className="svs-pass"><span>✓</span><span>{x.file.replace('.php', '')}</span></p>
+          ))}
+        </div>
+      );
+    }
+    return (
+      <div className="svs-art svs-diff lat" aria-hidden="true">
+        <p className="svs-hunk">@@ -41,3 +41,3 @@</p>
+        <p>{'   '}$qty = $request-&gt;integer('qty');</p>
+        <p className="is-del">-  $product = Product::find($id);</p>
+        <p className="is-add">+  $product = Product::lockForUpdate()-&gt;find($id);</p>
+        <p>{'   '}abort_if($product-&gt;stock &lt; $qty, 409);</p>
+      </div>
+    );
+  };
+
+  return (
+    <ol ref={list} className="svs" style={{ '--count': items.length }}>
+      {items.map((it, i) => (
+        <li key={it.h} className="svs-card" style={{ '--i': i }}>
+          <div className="svs-in">
+            <div className="svs-text">
+              <p className="svs-n lat" aria-hidden="true"><b>{String(i + 1).padStart(2, '0')}</b> / {n}</p>
+              <h3 className="svs-h">{it.h}</h3>
+              <p className="svs-b">{it.b}</p>
+              {it.href ? (
+                <a className="svs-proof" href={it.href}>
+                  <small>{t.proof}</small><span>{it.name}</span><span aria-hidden="true">↗</span>
+                </a>
+              ) : it.note ? (
+                <p className="svs-proof is-note"><small>{t.note}</small><span className="lat">{it.note}</span></p>
+              ) : null}
+            </div>
+            <div className="svs-vis">{visual(it)}</div>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}

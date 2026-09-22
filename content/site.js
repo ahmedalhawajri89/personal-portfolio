@@ -7,35 +7,43 @@
 // `proof` is a project slug, or null where nothing here demonstrates it yet.
 export const SERVICES = [
   {
-    icon: 'store', proof: 'diwan',
+    icon: 'store', proof: 'diwan', shot: 'checkout',
     ar: { h: 'متاجر إلكترونية', b: 'كتالوج ومخزون وسلّة وطلبات بعربية RTL — والمخزون يُحسم في قاعدة البيانات، فلا تُباع آخر قطعة مرّتين.' },
     en: { h: 'E-commerce', b: 'Catalogue, stock, cart and orders, Arabic-first — with stock settled in the database, so the last piece cannot sell twice.' },
   },
   {
-    icon: 'calendar', proof: 'booking',
+    icon: 'calendar', proof: 'booking', shot: 'calendar',
     ar: { h: 'أنظمة حجوزات ومواعيد', b: 'حجز عربي RTL، والتوفّر يُحسب من ساعات العمل ومدّة الخدمة، وكشف التعارض يمنع فوز اثنين بالموعد نفسه.' },
     en: { h: 'Booking systems', b: 'Arabic-first booking, with availability computed from business hours and service duration, and conflict detection that stops two people winning the same slot.' },
   },
   {
-    icon: 'layout', proof: 'takharruj',
+    icon: 'layout', proof: 'takharruj', shot: 'dash',
     ar: { h: 'أنظمة أعمال ولوحات تحكم', b: 'أدوار وصلاحيات وسير عمل وجداول من جهة الخادم تبقى سريعة عند آلاف السجلات.' },
     en: { h: 'Business systems and dashboards', b: 'Roles, permissions, workflows, and server-side tables that stay fast at thousands of rows.' },
   },
   {
-    icon: 'database', proof: 'kafala',
+    icon: 'database', proof: 'kafala', shot: 'adm-payments',
     ar: { h: 'قواعد بيانات وواجهات برمجية', b: 'مخطّط يمنع الخطأ بدل أن يكتشفه، وREST API موثّق تحرسه اختبارات.' },
     en: { h: 'Database design and APIs', b: 'A schema that prevents the mistake rather than detecting it, and a documented REST API held up by tests.' },
+  },
+  {
+    // Figma to code. No project here claims a Figma source, so this one cites
+    // no project: it names the stack it is delivered in instead, and its
+    // picture is drawn, not a screenshot passed off as the result.
+    icon: 'layout', proof: null, visual: 'figma', note: 'Vue 3 · Next.js · Tailwind CSS',
+    ar: { h: 'تحويل تصاميم Figma إلى كود', b: 'تصميمك على Figma يصير واجهة تعمل فعلًا: متجاوبة على كل الشاشات، بالعربية RTL والإنجليزية، سهلة الوصول، ووفيّة للمسافات والخطوط التي اخترتها.' },
+    en: { h: 'Figma to code', b: 'Your Figma design becomes a front end that actually works: responsive at every width, Arabic RTL and English, accessible, and faithful to the spacing and type you chose.' },
   },
   {
     // Testing is demonstrated in the work itself: Pest and PHPUnit suites in
     // four of the five projects, Playwright in two, and the booking system's
     // concurrency test opens two real sessions. A skill, not a job title.
-    icon: 'shield', proof: 'booking',
+    icon: 'shield', proof: 'booking', visual: 'tests',
     ar: { h: 'اختبارات وضمان جودة', b: 'اختبارات آلية لتطبيق Laravel قائم — قواعد العمل والصلاحيات والتزامن — بـPest وPlaywright، حتى لا يعود الخطأ بعد أول تعديل.' },
     en: { h: 'Testing & QA', b: 'Automated tests for an existing Laravel app — business rules, permissions and concurrency — in Pest and Playwright, so a fixed bug stays fixed after the next edit.' },
   },
   {
-    icon: 'code', proof: null,
+    icon: 'code', proof: null, visual: 'diff', note: 'Laravel · PHP',
     ar: { h: 'تطوير مشروع قائم', b: 'إكمال أو إصلاح أو توسيع تطبيق لارافيل موجود — قراءة الكود أولاً، ثم أصغر تغيير يحلّ المشكلة.' },
     en: { h: 'Work on an existing project', b: 'Finishing, fixing or extending a Laravel application that already exists — reading the code first, then the smallest change that solves it.' },
   },
