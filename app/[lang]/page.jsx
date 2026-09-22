@@ -323,21 +323,18 @@ export default async function Home({ params }) {
         <section id="services" className="wrap scroll-mt-24 pt-24 sm:pt-28">
           <SectionHead eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} />
           {/* One panel per service, stacked: what it is on one side, and on the
-              other the screen of the project that already does it -- or, where
-              no project here does, a drawing of the work, never a borrowed
-              screenshot. On a wide screen each panel pins and the next slides
+              other a drawn interface of what the service delivers, and the
+              project that already does it where one does. On a wide screen each panel pins and the next slides
               over it. */}
           <ServiceStack
             lang={lang}
-            tests={HERO_TESTS.map((x) => ({ file: `${x.project}/tests/${x.file}`, rule: x[lang] }))}
+            tests={HERO_TESTS.map((x) => ({ file: x.file.replace('.php', ''), project: x.project }))}
             items={SERVICES.map((sv) => {
               const pr = PROJECTS.find((x) => x.slug === sv.proof);
-              const shot = pr && sv.shot ? coverOf({ shots: pr.shots, cover: sv.shot }, lang) : null;
               return {
                 h: sv[lang].h, b: sv[lang].b, visual: sv.visual || null, note: sv.note || null,
                 href: pr ? `/${lang}/work/${pr.slug}/` : null,
                 name: pr ? pr[lang].name : null,
-                shot: shot ? { thumb: `/shots/${pr.shots}/${shot.thumb}`, file: `/shots/${pr.shots}/${shot.file}`, path: shot.path, tw: shot.tw, w: shot.w } : null,
               };
             })}
           />

@@ -7,22 +7,22 @@
 // `proof` is a project slug, or null where nothing here demonstrates it yet.
 export const SERVICES = [
   {
-    icon: 'store', proof: 'diwan', shot: 'checkout',
+    icon: 'store', proof: 'diwan', visual: 'shop',
     ar: { h: 'متاجر إلكترونية', b: 'كتالوج ومخزون وسلّة وطلبات بعربية RTL — والمخزون يُحسم في قاعدة البيانات، فلا تُباع آخر قطعة مرّتين.' },
     en: { h: 'E-commerce', b: 'Catalogue, stock, cart and orders, Arabic-first — with stock settled in the database, so the last piece cannot sell twice.' },
   },
   {
-    icon: 'calendar', proof: 'booking', shot: 'calendar',
+    icon: 'calendar', proof: 'booking', visual: 'book',
     ar: { h: 'أنظمة حجوزات ومواعيد', b: 'حجز عربي RTL، والتوفّر يُحسب من ساعات العمل ومدّة الخدمة، وكشف التعارض يمنع فوز اثنين بالموعد نفسه.' },
     en: { h: 'Booking systems', b: 'Arabic-first booking, with availability computed from business hours and service duration, and conflict detection that stops two people winning the same slot.' },
   },
   {
-    icon: 'layout', proof: 'takharruj', shot: 'dash',
+    icon: 'layout', proof: 'takharruj', visual: 'dash',
     ar: { h: 'أنظمة أعمال ولوحات تحكم', b: 'أدوار وصلاحيات وسير عمل وجداول من جهة الخادم تبقى سريعة عند آلاف السجلات.' },
     en: { h: 'Business systems and dashboards', b: 'Roles, permissions, workflows, and server-side tables that stay fast at thousands of rows.' },
   },
   {
-    icon: 'database', proof: 'kafala', shot: 'adm-payments',
+    icon: 'database', proof: 'kafala', visual: 'api',
     ar: { h: 'قواعد بيانات وواجهات برمجية', b: 'مخطّط يمنع الخطأ بدل أن يكتشفه، وREST API موثّق تحرسه اختبارات.' },
     en: { h: 'Database design and APIs', b: 'A schema that prevents the mistake rather than detecting it, and a documented REST API held up by tests.' },
   },

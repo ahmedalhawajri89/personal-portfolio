@@ -1157,13 +1157,168 @@ export function ServiceStack({ items, lang, tests }) {
   }, []);
 
   const n = String(items.length).padStart(2, '0');
+  const u = t.ui;
   const visual = (it) => {
-    if (it.shot) {
+    // Drawn interfaces for the first three: each one shows the idea the
+    // service promises -- the last piece held for the buyer, the slot that
+    // cannot be booked twice, the role that decides what a user can do --
+    // rather than a screenshot of one project's pages.
+    if (it.visual === 'shop') {
       return (
-        <div className="svs-frame">
-          <div className="card-bar" aria-hidden="true"><span className="lat">{it.shot.path}</span></div>
-          <img src={it.shot.thumb} srcSet={`${it.shot.thumb} ${it.shot.tw}w, ${it.shot.file} ${it.shot.w}w`}
-               sizes="(min-width: 1024px) 640px, 92vw" alt={it.name} loading="lazy" decoding="async" width="960" height="600" />
+        <div className="svs-art svs-ui svs-shop" aria-hidden="true">
+          <div className="ui-card ui-prod">
+            <div className="ui-img">
+              <svg viewBox="0 0 120 92" width="46%">
+                <ellipse cx="60" cy="86" rx="44" ry="4" className="f-line" />
+                <rect x="30" y="8" width="60" height="44" rx="12" className="f-acc" />
+                <rect x="20" y="44" width="80" height="18" rx="8" className="f-ink" />
+                <rect x="13" y="32" width="15" height="30" rx="7" className="f-ink" />
+                <rect x="92" y="32" width="15" height="30" rx="7" className="f-ink" />
+                <path d="M30 62 L26 82 M90 62 L94 82" className="s-ink" />
+              </svg>
+            </div>
+            <div className="ui-row"><b>{u.item}</b><span className="lat">$240</span></div>
+            <span className="ui-badge is-hot">{u.left}</span>
+            <span className="ui-btn">{u.add}</span>
+          </div>
+          <div className="ui-card ui-float ui-order">
+            <p className="ui-k">{u.order} <span className="lat">#1042</span></p>
+            <div className="ui-line"><i className="ui-thumb" /><span className="ui-grow"><b>{u.item}</b><small className="lat">× 1</small></span><span className="lat">$240</span></div>
+            <div className="ui-line is-skel"><i className="ui-thumb" /><span className="ui-grow"><i /><i /></span></div>
+            <div className="ui-total"><span>{u.total}</span><b className="lat">$240</b></div>
+          </div>
+          <div className="ui-toast"><span className="ui-ok">✓</span>{u.reserved}</div>
+        </div>
+      );
+    }
+    if (it.visual === 'book') {
+      const busy = [[1, 1, 2], [2, 2, 1], [4, 1, 1], [5, 3, 2], [2, 5, 1], [4, 4, 1]]; // [day 1-5, hour row 1-5, span]
+      return (
+        <div className="svs-art svs-ui svs-book" aria-hidden="true">
+          <div className="ui-card ui-cal">
+            <span />
+            {u.days.map((d) => <span key={d} className="ui-day">{d}</span>)}
+            {['09', '10', '11', '12', '13'].map((h, r) => <span key={h} className="ui-hr lat" style={{ gridRow: r + 2 }}>{h}:00</span>)}
+            {busy.map(([c2, r, n]) => <i key={`${c2}-${r}`} className="ui-slot is-busy" style={{ gridColumn: c2 + 1, gridRow: `${r + 1} / span ${n}` }} />)}
+            <i className="ui-slot is-taken" style={{ gridColumn: 4, gridRow: 4 }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+            </i>
+            <i className="ui-slot is-sel lat" style={{ gridColumn: 4, gridRow: 3 }}>10:30</i>
+          </div>
+          <div className="ui-card ui-float ui-confirm">
+            <p className="ui-k">{u.svc}</p>
+            <b className="ui-when">{u.when}</b>
+            <span className="ui-badge is-ok">{u.free}</span>
+            <span className="ui-btn">{u.confirm}</span>
+          </div>
+          <div className="ui-toast is-warn"><span className="ui-lock">!</span>{u.taken}</div>
+        </div>
+      );
+    }
+    if (it.visual === 'dash') {
+      const rows = [[0, '62%'], [1, '48%'], [1, '70%'], [2, '54%'], [2, '40%']];
+      return (
+        <div className="svs-art svs-ui svs-dash" aria-hidden="true">
+          <div className="ui-card ui-table">
+            <div className="ui-tools">
+              <span className="ui-search">⌕ {u.search}</span>
+              {u.roles.map((r, k) => <span key={r} className={`ui-chip${k === 1 ? ' is-on' : ''}`}>{r}</span>)}
+            </div>
+            {rows.map(([k, w], n) => (
+              <div key={n} className={`ui-tr${n === 1 ? ' is-on' : ''}`}>
+                <i className="ui-av" /><span className={`ui-role r${k}`}>{u.roles[k]}</span>
+                <i className="ui-bar" style={{ '--w': w }} /><i className={`ui-dot${n === 4 ? ' is-off' : ''}`} />
+              </div>
+            ))}
+            <p className="ui-pages lat"><i>‹</i><i className="on">1</i><i>2</i><i>3</i><i>›</i></p>
+          </div>
+          <div className="ui-card ui-float ui-perm">
+            <p className="ui-k">{u.role}</p>
+            <b className="ui-when">{u.roles[1]}</b>
+            {u.perms.map((p, k) => (
+              <div key={p} className="ui-perm-row"><span>{p}</span><i className={`ui-sw${k === 2 ? '' : ' is-on'}`} /></div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    if (it.visual === 'api') {
+      return (
+        <div className="svs-art svs-ui svs-api" aria-hidden="true">
+          <div className="ui-card ui-schema">
+            <svg className="ui-links" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <path d="M50 24 H53 V44 H56" /><path d="M50 76 H53 V60 H56" />
+            </svg>
+            {[
+              ['orders', [['PK', 'id'], ['FK', 'user_id'], ['', 'status'], ['', 'total']], 'is-a'],
+              ['products', [['PK', 'id'], ['', 'name'], ['', 'stock ≥ 0']], 'is-b'],
+              ['order_items', [['PK', 'id'], ['FK', 'order_id'], ['FK', 'product_id'], ['', 'qty ≥ 1']], 'is-c'],
+            ].map(([name, cols, pos]) => (
+              <div key={name} className={`ui-tbl lat ${pos}`}>
+                <b>{name}</b>
+                {cols.map(([k, col]) => <span key={col}><em className={k ? `k-${k}` : ''}>{k}</em>{col}</span>)}
+              </div>
+            ))}
+          </div>
+          <div className="ui-card ui-float ui-resp">
+            <p className="ui-k ui-row"><span>{u.resp}</span><span className="ui-badge is-ok lat">200 OK</span></p>
+            <p className="ui-req lat"><b>GET</b> /api/orders/1042</p>
+            <pre className="ui-json lat">{'{\n  "id": 1042,\n  "status": "paid",\n  "qty": 1,\n  "total": 240\n}'}</pre>
+          </div>
+          <div className="ui-toast"><span className="ui-lock">!</span><span>{u.reject}</span></div>
+        </div>
+      );
+    }
+    if (it.visual === 'tests') {
+      return (
+        <div className="svs-art svs-ui svs-qa" aria-hidden="true">
+          <div className="ui-card ui-runner">
+            <div className="ui-tabs lat"><span className="is-on">Pest</span><span>Playwright</span><span className="ui-badge is-ok">{u.passed}</span></div>
+            <div className="ui-prog"><i /></div>
+            {tests.map((x) => (
+              <div key={x.file} className="ui-test lat"><span className="ui-ok">✓</span><span className="ui-tf">{x.file}</span><small>{x.project}</small></div>
+            ))}
+          </div>
+          <div className="ui-card ui-float ui-browser">
+            <div className="ui-bbar"><i /><i /><i /><span className="lat">/book</span></div>
+            <div className="ui-bbody">
+              <i className="ui-sk" style={{ '--w': '70%' }} /><i className="ui-sk" style={{ '--w': '45%' }} />
+              <span className="ui-field" /><span className="ui-field" />
+              <span className="ui-btn is-target">{u.confirm}
+                <svg className="ui-cursor" viewBox="0 0 24 24" width="18" height="18"><path d="M4 2 L4 19 L9 14.5 L12.5 21.5 L15.5 20 L12 13 L18.5 13 Z" /></svg>
+              </span>
+            </div>
+            <span className="ui-badge is-ok">{u.e2e}</span>
+          </div>
+          <div className="ui-toast"><span className="ui-ok">✓</span>{u.green}</div>
+        </div>
+      );
+    }
+    if (it.visual === 'diff') {
+      return (
+        <div className="svs-art svs-ui svs-pr" aria-hidden="true">
+          <div className="ui-card ui-review">
+            <div className="ui-tree lat">
+              <span>app/</span><span className="d1">Actions/</span><span className="d2 is-mod">Checkout.php<em>M</em></span>
+              <span className="d1">Models/</span><span>database/</span><span>tests/</span>
+            </div>
+            <div className="ui-code lat">
+              <p className="ui-hunk">@@ -12,3 +12,4 @@</p>
+              <p>{'  '}$qty = $data['qty'];</p>
+              <p className="is-del">- $item = Product::find($id);</p>
+              <p className="is-add">+ $item = Product::query()</p>
+              <p className="is-add">{'+   '}-&gt;lockForUpdate()</p>
+              <p className="is-add">{'+   '}-&gt;find($id);</p>
+              <p>{'  '}abort_if($item-&gt;stock &lt; $qty, 409);</p>
+            </div>
+          </div>
+          <div className="ui-card ui-float ui-prc">
+            <b className="ui-when">{u.pr}</b>
+            <p className="ui-k"><span className="lat ui-plus">+3</span> <span className="lat ui-minus">−1</span> · {u.changed}</p>
+            <p className="ui-check"><span className="ui-ok">✓</span>{u.checks}</p>
+            <p className="ui-check"><span className="ui-ok">✓</span>{u.approved}</p>
+            <span className="ui-btn">{u.merge}</span>
+          </div>
         </div>
       );
     }
@@ -1190,25 +1345,7 @@ export function ServiceStack({ items, lang, tests }) {
         </div>
       );
     }
-    if (it.visual === 'tests') {
-      return (
-        <div className="svs-art svs-term lat" aria-hidden="true">
-          <p className="svs-cmd">$ ./vendor/bin/pest</p>
-          {tests.map((x) => (
-            <p key={x.file} className="svs-pass"><span>✓</span><span>{x.file.replace('.php', '')}</span></p>
-          ))}
-        </div>
-      );
-    }
-    return (
-      <div className="svs-art svs-diff lat" aria-hidden="true">
-        <p className="svs-hunk">@@ -41,3 +41,3 @@</p>
-        <p>{'   '}$qty = $request-&gt;integer('qty');</p>
-        <p className="is-del">-  $product = Product::find($id);</p>
-        <p className="is-add">+  $product = Product::lockForUpdate()-&gt;find($id);</p>
-        <p>{'   '}abort_if($product-&gt;stock &lt; $qty, 409);</p>
-      </div>
-    );
+    return null;
   };
 
   return (
