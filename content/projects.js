@@ -133,59 +133,60 @@ export const PROJECTS = [
     slug: 'takharruj',
     // The eight screens the case study actually argues about; the rest of
     // the capture set stays available behind the full gallery.
-    tour: ['home', 'dash', 'students', 'groups', 'sup-dash', 'sup-project', 'stu-dash', 'stu-explore'],
+    tour: ['home', 'stu-dash', 'sup-project', 'defenses', 'sup-discussion', 'dash', 'stu-grade', 'login'],
     shots: 'grad',
-    cover: 'students',
+    // The "project journey" home: the whole idea in one picture.
+    cover: 'home',
     year: '2026',
-    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Yajra DataTables', 'Excel', 'Next.js 14'],
+    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Vanilla JS', 'Yajra DataTables', 'PHPUnit'],
     repo: 'https://github.com/ahmedalhawajri89/graduation-project-tracker',
     ar: {
       name: 'تخرُّج',
       kind: 'منصة إدارة مشاريع التخرج',
-      tagline: 'ثلاثة أدوار، لكل دور لوحته وصلاحياته ومساره.',
+      tagline: 'رحلة المشروع من الفكرة حتى الدرجة — لكل دور لوحته، وبالعربية والإنجليزية.',
       summary:
-        'مشاريع التخرج تُدار عادةً على جداول إكسل وسلاسل بريد وورق، فلا يملك أحد جواباً واحداً على «أي مجموعات بلا مشرف» أو «أي مراحل تأخّرت» أو «أين آخر نسخة من ذلك الملف». هذه المنصة تضع ذلك كله في مكان واحد، وتعطي كل دور الجزء الذي يخصّه فقط.',
+        'مشاريع التخرج تُدار عادةً على جداول إكسل وسلاسل بريد وورق، فلا يملك أحد جواباً واحداً على «أي مجموعات بلا مشرف» أو «أي مراحل تأخّرت» أو «متى مناقشة فريقي ومن لجنتها». هذه المنصة تضع ذلك كله في مكان واحد: الطالب يرى فريقه واقفاً عند مرحلته على مسار المشروع، والمشرف يراجع ويقيّم، والإدارة تجدول المناقشات وتتابع الفصل كلّه.',
       points: [
         {
-          h: 'المدير يدير الفصل الدراسي',
-          b: 'يضيف الطلبة والمشرفين والتخصصات والفصول — مع استيراد من إكسل، وهذا يهمّ حين تكون الدفعة الجديدة ٣٠٠ صف. يشكّل المجموعات ويسنِد المشرفين، ويحفظ كتالوج المواضيع المقترحة لكل تخصص. ولوحته مبنية على لقطات إحصائية دورية بدل إعادة حساب كل شيء عند كل فتح.',
+          h: 'ثلاثة أدوار، ولكلٍّ مساحته',
+          b: 'حرّاس مصادقة ومجموعات مسارات منفصلة للطالب والمشرف والإدارة، فلا يرى أحد إلا ما يخصّه — ونقاش الفريق الخاص لا يصل المشرف ولا الإدارة. واللوحات الثلاث بالعربية والإنجليزية، واللغة تتبع المستخدم من الموقع حتى اللوحة.',
         },
         {
-          h: 'المشرف يتابع ما يشرف عليه وحده',
-          b: 'يراجع طلبات المشاريع الواردة، يقبلها أو يرفضها، ثم يتابع مراحل كل مشروع وملفاته والنقاش حوله. يعلّق على شغل الطالب، ويسجّل التقييم النهائي، ويعود لفصول سابقة عبر الأرشيف.',
+          h: 'المناقشات بلجانها ومحاضرها',
+          b: 'مخطِّط أسبوعي يقترح لكل مشروع مكتمل موعداً وقاعة، ولجنة من أكثر من ممتحن برئيس، ويرفع قائد الفريق عرضه التقديمي قبل الموعد. وبعدها محضر مناقشة جاهز للطباعة، ودرجة نهائية تجمع درجات اللجنة مع وزن اختياري لدرجة المشرف.',
         },
         {
-          h: 'الطالب يقترح ويتابع ويسلّم',
-          b: 'يقترح مشروعاً، ينضم لمجموعة، يتابع خط المراحل ومواعيدها، يرفع التسليمات ويردّ على تعليقات المشرف — بملف شخصي وإشعارات خاصة به.',
+          h: 'حيّ بلا إعادة تحميل',
+          b: 'الإشعارات وأرقام الشريط الجانبي تتحدّث وحدها، ورسائل النقاش تصل وتُرسل وتُحذف في مكانها. ورفع الملفات بشريط تقدّم يمكن إلغاؤه، وكل حذف أو قرار يسأل بنافذة تأكيد واحدة بدل confirm() المتصفّح.',
         },
         {
-          h: 'جداول من جهة الخادم، فالقوائم الكبيرة تبقى سريعة',
-          b: 'الترقيم والفرز والبحث كلها في قاعدة البيانات. الجدول في اللقطة يعرض ١٠ من أصل ٥٠٠ سجل، ولا يتغيّر زمن الفتح لو صارت خمسة آلاف.',
+          h: 'نسخة عرض تجرَّب بنقرة',
+          b: 'في وضع العرض: أزرار «جرّب كطالب / مشرف / مسؤول» بلا تسجيل، وحماية تمنع ما يخرّب النسخة للزائر التالي، وإعادة البيانات كل ليلة من لقطة محفوظة مع إزاحة التواريخ لتبقى المواعيد قريبة.',
         },
       ],
     },
     en: {
       name: 'Takharruj',
       kind: 'Graduation project management platform',
-      tagline: 'Three roles, each with its own dashboard, permissions and workflow.',
+      tagline: 'A project’s journey from idea to grade — a dashboard per role, in Arabic and English.',
       summary:
-        'Graduation projects are usually run on spreadsheets, email threads and paper. Nobody has a single answer to "which groups have no supervisor yet" or "which milestones are overdue". This system puts all of that in one place, and gives each role only the part that concerns them.',
+        'Graduation projects are usually run on spreadsheets, email threads and paper. Nobody has a single answer to "which groups have no supervisor yet", "which milestones are overdue" or "when is my team’s defense, and who sits on it". This platform puts all of that in one place: students see their team standing at its current step on the project path, supervisors review and grade, and the department schedules defenses and follows the whole term.',
       points: [
         {
-          h: 'Admin runs the semester',
-          b: 'Adds students, supervisors, specialisations and academic terms — including bulk import from Excel, which matters when a new intake is 300 rows. Forms groups, assigns supervisors, maintains the topic catalogue. The dashboard is backed by periodic stat snapshots rather than recalculating on every page load.',
+          h: 'Three roles, each with its own space',
+          b: 'Separate auth guards and route groups for student, supervisor and admin, so each sees only their part — and a team’s private chat never reaches the supervisor or the admin. All three dashboards work in Arabic and English, and the language follows the user from the site into the dashboard.',
         },
         {
-          h: 'Supervisor tracks only what they supervise',
-          b: 'Reviews incoming project requests, accepts or rejects, then tracks each project: milestones, submitted files, and the discussion around them. Comments on student work, records the final evaluation, and looks back through the archive.',
+          h: 'Defenses with committees and minutes',
+          b: 'A weekly planner suggests a slot and a room for every completed project, committees have several examiners and a chair, and the team leader uploads the presentation beforehand. Afterwards there are printable defense minutes and a final grade combining the committee’s marks with an optional weight for the supervisor’s.',
         },
         {
-          h: 'Student proposes, follows and submits',
-          b: 'Proposes a project, joins a group, follows the milestone timeline and its deadlines, uploads deliverables and replies to supervisor comments — with a profile and notifications of their own.',
+          h: 'Live without a reload',
+          b: 'Notifications and sidebar counts update on their own, and discussion messages arrive, send and delete in place. File uploads show a cancellable progress bar, and every delete or decision asks through one in-app dialog instead of the browser’s confirm().',
         },
         {
-          h: 'Server-side tables, so large lists stay fast',
-          b: 'Pagination, sorting and search all happen in the database. The table in the screenshot shows 10 of 500 records, and the load time would not change at five thousand.',
+          h: 'A demo copy you can try in one click',
+          b: 'In demo mode the sign-in page offers "try as student / supervisor / admin" with no account, a guard blocks anything that would spoil the copy for the next visitor, and the data is restored nightly from a snapshot with dates shifted so deadlines stay current.',
         },
       ],
     },

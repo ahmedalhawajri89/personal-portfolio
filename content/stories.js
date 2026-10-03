@@ -68,31 +68,31 @@ export const STORIES = {
 
   takharruj: {
     ar: {
-      idea: 'منصة تدير مشاريع التخرّج من أول فكرة حتى الدرجة النهائية، بثلاثة أدوار منفصلة: مدير يدير الفصل، ومشرف يراجع ويتابع ويقيّم، وطالب يقترح ويسلّم ويردّ. لكل دور لوحته وصلاحياته ومسار عمله.',
-      problem: 'مشاريع التخرّج تُدار عادةً بجداول إكسل وسلاسل بريد وأوراق. لا أحد يملك جواباً واحداً على "أي المجموعات بلا مشرف؟" أو "أي المراحل تأخّرت؟" أو "أين آخر نسخة من ذلك الملف؟". وحين يكون الدفعة الجديدة ٣٠٠ طالب، فالإدخال اليدوي وحده يستهلك أسبوعاً.',
+      idea: 'منصة تدير مشاريع التخرّج من أول فكرة حتى الدرجة النهائية، بثلاثة أدوار منفصلة: إدارة تنظّم الفصل وتجدول المناقشات، ومشرف يراجع ويتابع ويقيّم، وطالب يقترح ويسلّم ويناقش فريقه. والفكرة نفسها مرسومة: «رحلة المشروع» بشخصيات تمشي على مسار من الفكرة حتى التخرّج، من الصفحة الرئيسية حتى لوحة الطالب.',
+      problem: 'مشاريع التخرّج تُدار عادةً بجداول إكسل وسلاسل بريد وأوراق. لا أحد يملك جواباً واحداً على "أي المجموعات بلا مشرف؟" أو "أي المراحل تأخّرت؟" أو "متى المناقشة ومن في لجنتها؟". وحين تكون الدفعة الجديدة ٣٠٠ طالب، فالإدخال اليدوي وحده يستهلك أسبوعاً، وجدولة عشرات المناقشات على القاعات والممتحنين تُحلّ على ورقة.',
       solution: [
-        { h: 'ثلاث مساحات لا واحدة', b: 'مجموعات مسارات منفصلة لكل دور، وحرّاس مصادقة مستقلون للطالب والمشرف والمدير، فلا يرى أحد إلا الجزء الذي يخصّه.' },
-        { h: 'الاستيراد الجماعي', b: 'الطلاب والمشرفون يُستوردون من ملف Excel بضغطة، والمجموعات تُصدَّر بالطريقة نفسها. ٣٠٠ صف تصبح دقيقة بدل أسبوع.' },
-        { h: 'مسار المشروع كاملاً', b: 'اقتراح، مراجعة، قبول أو رفض، مراحل بمواعيد، ملفات لكل مشروع، تعليقات متبادلة، ثم تقييم نهائي مسجّل على المشروع، وأرشيف للفصول السابقة.' },
+        { h: 'ثلاث مساحات لا واحدة', b: 'حرّاس مصادقة ومسارات مستقلة لكل دور، فلا يرى أحد إلا ما يخصّه. والطالب يفتح على بطاقة مشروعه: فريقه الحقيقي واقف عند مرحلته، والمشرف عند موافقته، واللجنة عند المناقشة.' },
+        { h: 'المسار كاملاً حتى المحضر', b: 'اقتراح وقبول أو رفض، وخطة مراحل يضعها المشرف مرّة لكل مجموعاته، وتسليمات بملاحظات، ثم مناقشة بلجنة ورئيس ومحضر قابل للطباعة، ودرجة تُعتمد فتُقفل ولا تُفتح إلا بسبب مكتوب في سجلّ التدقيق.' },
+        { h: 'حيّ بلا إعادة تحميل', b: 'الإشعارات وأرقام الشريط الجانبي والنقاش تتحدّث وحدها، والرفع بشريط تقدّم يمكن إلغاؤه. والطالب حين تُرصد درجته يرى لحظة تخرّج: فريقه يرمي قبعاته والدرجة تُعدّ.' },
       ],
       extras: [
-        { h: 'جداول من جهة الخادم', b: 'الترقيم والفرز والبحث تجريها قاعدة البيانات عبر Yajra DataTables، فقائمة ٥٠٠ طالب تفتح بالسرعة نفسها التي تفتح بها قائمة ٥٠.' },
-        { h: 'لوحة مدير لا تعيد الحساب', b: 'أرقام لوحة المدير مأخوذة من لقطات إحصائية دورية، لا من إعادة حساب كل شيء عند كل تحميل.' },
-        { h: 'طبقة رموز واحدة', b: 'الموقع العام وشاشة الدخول واللوحات الثلاث تقرأ من ملفَّي رموز موثّقين في DESIGN_SYSTEM.md. تغيير الهوية يعني تعديل ملفين لا أربعين صفحة.' },
+        { h: 'شخصيات من مصدر واحد', b: 'الطالبة والمشرف والمسؤول واللجنة رموز SVG في ملف واحد، تستعملها الصفحة الرئيسية وصفحة الدخول واللوحات والحالات الفارغة والجولة التعريفية — تعديل شخصية يصل كل مكان.' },
+        { h: 'بالعربية والإنجليزية', b: 'كل نصّ في اللوحات مفتاحه عربي وترجمته في ملفات JSON لكل منطقة، واختبار يفشل إن ظهر نصّ بلا ترجمة أو ترجمة فقدت متغيّراً.' },
+        { h: 'محميّة باختبارات', b: '٤٨٠ اختباراً تغطّي الأدوار والصلاحيات والمناقشات والتحديث الحيّ ووضع العرض، تعمل على قاعدة اختبار منفصلة داخل معاملات.' },
       ],
     },
     en: {
-      idea: 'A platform that runs graduation projects from the first idea to the final grade, with three separate roles: an admin who runs the semester, a supervisor who reviews, tracks and grades, and a student who proposes, submits and replies. Each role gets its own dashboard, permissions and workflow.',
-      problem: 'Graduation projects usually live in spreadsheets, email threads and paper. Nobody has one answer to "which groups have no supervisor yet", "which milestones are overdue" or "where is the latest version of that file". And when a new intake is 300 rows, manual entry alone eats a week.',
+      idea: 'A platform that runs graduation projects from the first idea to the final grade, with three separate roles: a department that organises the term and schedules defenses, a supervisor who reviews, tracks and grades, and a student who proposes, submits and talks with the team. The idea is drawn too: a "project journey" of characters walking a path from idea to graduation, from the home page to the student dashboard.',
+      problem: 'Graduation projects usually live in spreadsheets, email threads and paper. Nobody has one answer to "which groups have no supervisor yet", "which milestones are overdue" or "when is the defense, and who is on the committee". When a new intake is 300 rows, manual entry alone eats a week, and fitting dozens of defenses around rooms and examiners is solved on paper.',
       solution: [
-        { h: 'Three spaces, not one', b: 'Separate route groups per role and independent auth guards for student, supervisor and admin, so each person sees only the part that concerns them.' },
-        { h: 'Bulk import', b: 'Students and supervisors come in from an Excel file in one step, and groups go out the same way. 300 rows become a minute instead of a week.' },
-        { h: 'The whole project lifecycle', b: 'Proposal, review, accept or reject, milestones with deadlines, files per project, threaded comments, a final evaluation recorded on the project, and an archive of past semesters.' },
+        { h: 'Three spaces, not one', b: 'Independent auth guards and routes per role, so each person sees only their part. Students open on their project card: their real team stands at its current step, with the supervisor at approval and the committee at the defense.' },
+        { h: 'The whole path, down to the minutes', b: 'Proposal, accept or reject, a stage plan the supervisor sets once for all their groups, submissions with notes, then a defense with a committee, a chair and printable minutes, and a grade that locks on approval and reopens only with a written reason in the audit log.' },
+        { h: 'Live without a reload', b: 'Notifications, sidebar counts and discussions update on their own, and uploads show a cancellable progress bar. When a student’s grade is recorded they get a graduation moment: the team tosses its caps while the grade counts up.' },
       ],
       extras: [
-        { h: 'Server-side tables', b: 'Pagination, sorting and search run in the database through Yajra DataTables, so a list of 500 students opens as fast as a list of 50.' },
-        { h: 'A dashboard that does not recompute', b: 'The admin dashboard reads from periodic stat snapshots rather than recalculating everything on every page load.' },
-        { h: 'One token layer', b: 'The public site, the login screen and all three dashboards read from two documented token files described in DESIGN_SYSTEM.md. Rebranding means editing two files, not forty pages.' },
+        { h: 'Characters from one source', b: 'The student, supervisor, admin and committee are SVG symbols in one file, used by the home page, the sign-in page, the dashboards, the empty states and the welcome tour — change a character once and it changes everywhere.' },
+        { h: 'Arabic and English', b: 'Every dashboard string is keyed by its Arabic text and translated in per-area JSON files, and a test fails if a string appears without a translation or a translation drops a placeholder.' },
+        { h: 'Guarded by tests', b: '480 tests cover roles and permissions, defenses, live updates and demo mode, running on a separate test database inside transactions.' },
       ],
     },
   },

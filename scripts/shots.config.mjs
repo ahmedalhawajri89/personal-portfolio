@@ -9,6 +9,10 @@
 //   mobile  also capture at phone width
 //   as      log in as this role first (see `roles`)
 //   prep    async (page) => {} run after navigation, before the shot
+//   animations  'allow' to photograph a page mid-animation (default: 'disabled')
+//
+// A project may also give init: ({ role }) => {} — an init script run in
+// every page of each role's browser context, before the site's own scripts.
 //
 // Run:  node scripts/shots.mjs            (everything)
 //       node scripts/shots.mjs diwan kafala
@@ -17,8 +21,7 @@
 //   MySQL      D:\xampp\mysql\bin\mysqld.exe --defaults-file=D:\xampp\mysql\bin\my.ini --standalone
 //   kafala     cd kafala\api            && php artisan serve --port 8000
 //   diwan      cd "diwan e-commerce"    && php artisan serve --port 8001
-//   takharruj  cd graduationProjectTraker          && php artisan serve --port 8002
-//              cd graduationProjectTraker\frontend && npx next dev -p 3006
+//   takharruj  cd takharruj             && php artisan serve --port 8002
 //   mawaheb    cd mawaheb               && php artisan serve --port 8004
 //   booking    cd booking               && npx vite --port 5173
 // Playwright is loaded from booking\node_modules, so no install is needed here.
@@ -104,42 +107,97 @@ export const PROJECTS = {
   },
 
   /* ------------------------------------------------------- takharruj */
+  // The Laravel app serves the public site too (the "project journey" home);
+  // the old Next.js frontend is no longer what visitors see.
   grad: {
     base: 'http://127.0.0.1:8002',
-    locales: ['ar'],
+    locales: ['ar', 'en'],
+    // GET /locale/{l} sets the locale cookie for the site and the dashboards.
+    setLocale: async (page, base, l) => { await page.goto(`${base}/locale/${l}`, { waitUntil: 'domcontentloaded' }); },
+    // The welcome tour, the graduation dialog and the walking team are
+    // one-time moments kept in localStorage. Mark them seen, so ordinary
+    // pages are photographed at rest — except for the two roles that exist
+    // to photograph those moments.
+    init: ({ role }) => {
+      const get = Storage.prototype.getItem;
+      Storage.prototype.getItem = function (k) {
+        if (typeof k === 'string') {
+          if (k.startsWith('journey:')) return '99';
+          if (k.startsWith('tour:') && role !== 'fresh') return '1';
+          if (k.startsWith('celebrate:') && role !== 'graduate') return '1';
+        }
+        return get.call(this, k);
+      };
+      // Signing in already lands on the dashboard and plays the graduation
+      // dialog once; the graduate never records it, so the shot sees it too.
+      const set = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (k, v) {
+        if (role === 'graduate' && typeof k === 'string' && k.startsWith('celebrate:')) return;
+        return set.call(this, k, v);
+      };
+    },
     roles: {
       admin: { path: '/login', email: '#identify', password: '#password', user: 'admin@admin.com', pass: 'adminadmin' },
-      supervisor: { path: '/login', email: '#identify', password: '#password', user: 'mohammed.matar.9@supervisor.com', pass: 'adminadmin' },
-      student: { path: '/login', email: '#identify', password: '#password', user: 'reham.siam.54@student.com', pass: 'adminadmin' },
+      // A supervisor with a completed group, a scheduled defense and an active discussion.
+      supervisor: { path: '/login', email: '#identify', password: '#password', user: 'heba.alshawa.205@supervisor.com', pass: 'adminadmin' },
+      // A student mid-project: the rail has the team, the supervisor and the committee on it.
+      student: { path: '/login', email: '#identify', password: '#password', user: 'reham.alkhateeb.238@student.com', pass: 'adminadmin' },
+      // The same student on a first visit, for the welcome tour.
+      fresh: { path: '/login', email: '#identify', password: '#password', user: 'reham.alkhateeb.238@student.com', pass: 'adminadmin' },
+      // A graded student, for the graduation dialog.
+      graduate: { path: '/login', email: '#identify', password: '#password', user: 'amer.alsaqqa.324@student.com', pass: 'adminadmin' },
     },
     groups: {
       site: { ar: 'الموقع التعريفي', en: 'Marketing site' },
-      admin: { ar: 'لوحة المدير', en: 'Admin dashboard' },
-      supervisor: { ar: 'لوحة المشرف', en: 'Supervisor dashboard' },
       student: { ar: 'لوحة الطالب', en: 'Student dashboard' },
+      supervisor: { ar: 'لوحة المشرف', en: 'Supervisor dashboard' },
+      admin: { ar: 'لوحة الإدارة', en: 'Admin dashboard' },
+      moments: { ar: 'لحظات التجربة', en: 'Moments' },
     },
     pages: [
-      { key: 'home', url: 'http://127.0.0.1:3006/', ar: 'الموقع التعريفي', en: 'Marketing site', group: 'site', full: true, mobile: true },
-      { key: 'login', path: '/login', ar: 'تسجيل الدخول', en: 'Sign in', group: 'site', mobile: true },
+      { key: 'home', path: '/', ar: 'رحلة المشروع — الصفحة الرئيسية', en: 'The project journey — home', group: 'site', full: true, mobile: true },
+      // The team walks the path to the supervisor first; photograph it arrived.
+      { key: 'login', path: '/login', ar: 'تسجيل الدخول', en: 'Sign in', group: 'site', mobile: true,
+        prep: async (page) => { await page.waitForTimeout(4600); } },
+
+      { key: 'stu-dash', path: '/student/dashboard', ar: 'مشروعي ومساره', en: 'My project and its path', group: 'student', as: 'student', full: true, mobile: true },
+      { key: 'stu-discussion', path: '/student/discussion?tab=team', ar: 'نقاش الفريق', en: 'Team discussion', group: 'student', as: 'student', mobile: true },
+      { key: 'stu-team', path: '/student/team', ar: 'الفريق والأدوار', en: 'Team and roles', group: 'student', as: 'student' },
+      { key: 'stu-explore', path: '/student/projects/explore', ar: 'مشاريع منجزة', en: 'Past projects', group: 'student', as: 'student' },
+
+      { key: 'sup-dash', path: '/supervisor/dashboard', ar: 'مجموعاتي', en: 'My groups', group: 'supervisor', as: 'supervisor', full: true, mobile: true },
+      { key: 'sup-project', path: '/supervisor/projects/10', ar: 'إدارة مشروع', en: 'Project management', group: 'supervisor', as: 'supervisor', full: true },
+      { key: 'sup-plan', path: '/supervisor/plan', ar: 'خطة المراحل', en: 'Stage plan', group: 'supervisor', as: 'supervisor', full: true },
+      { key: 'sup-discussion', path: '/supervisor/discussion/10', ar: 'النقاش الحيّ', en: 'Live discussion', group: 'supervisor', as: 'supervisor' },
+      { key: 'sup-defenses', path: '/supervisor/defenses', ar: 'مناقشاتي', en: 'My defenses', group: 'supervisor', as: 'supervisor' },
+      { key: 'sup-requests', path: '/supervisor/dashboard/projects/request', ar: 'طلبات الإشراف', en: 'Supervision requests', group: 'supervisor', as: 'supervisor' },
+      { key: 'sup-archive', path: '/supervisor/projects/archive', ar: 'الأرشيف', en: 'Archive', group: 'supervisor', as: 'supervisor' },
+
       { key: 'dash', path: '/admin/dashboard', ar: 'نظرة عامة', en: 'Overview', group: 'admin', as: 'admin', full: true, mobile: true },
+      { key: 'defenses', path: '/admin/defenses?week=2026-10-11', ar: 'مخطِّط المناقشات واللجان', en: 'Defense planner and committees', group: 'admin', as: 'admin', full: true },
       { key: 'students', path: '/admin/students', ar: 'الطلبة', en: 'Students', group: 'admin', as: 'admin', mobile: true },
-      { key: 'sups', path: '/admin/supervisors', ar: 'المشرفون', en: 'Supervisors', group: 'admin', as: 'admin' },
-      { key: 'specialize', path: '/admin/specialize', ar: 'التخصصات', en: 'Specialisations', group: 'admin', as: 'admin' },
-      { key: 'topics', path: '/admin/specialize/projects/1', ar: 'مواضيع التخصص', en: 'Topic catalogue', group: 'admin', as: 'admin' },
-      { key: 'semesters', path: '/admin/semesters', ar: 'الفصول الدراسية', en: 'Semesters', group: 'admin', as: 'admin' },
       { key: 'groups', path: '/admin/groups/index', ar: 'المجموعات', en: 'Groups', group: 'admin', as: 'admin' },
       { key: 'group', path: '/admin/groups/33/show', ar: 'تفاصيل مجموعة', en: 'Group detail', group: 'admin', as: 'admin', full: true },
-      { key: 'admins', path: '/admin/administrators', ar: 'المشرفون الإداريون', en: 'Administrators', group: 'admin', as: 'admin' },
-      { key: 'contacts', path: '/admin/contacts/index', ar: 'رسائل التواصل', en: 'Contact messages', group: 'admin', as: 'admin' },
-      { key: 'profile', path: '/admin/profile', ar: 'الملف الشخصي', en: 'Profile', group: 'admin', as: 'admin' },
-      { key: 'sup-dash', path: '/supervisor/dashboard', ar: 'مشاريعي', en: 'My projects', group: 'supervisor', as: 'supervisor', full: true, mobile: true },
-      { key: 'sup-requests', path: '/supervisor/dashboard/projects/request', ar: 'طلبات الإشراف', en: 'Supervision requests', group: 'supervisor', as: 'supervisor' },
-      { key: 'sup-project', path: '/supervisor/projects/33', ar: 'إدارة مشروع', en: 'Project management', group: 'supervisor', as: 'supervisor', full: true, mobile: true },
-      { key: 'sup-archive', path: '/supervisor/projects/archive', ar: 'الأرشيف', en: 'Archive', group: 'supervisor', as: 'supervisor' },
-      { key: 'stu-dash', path: '/student/dashboard', ar: 'مشروعي', en: 'My project', group: 'student', as: 'student', full: true, mobile: true },
-      { key: 'stu-explore', path: '/student/projects/explore', ar: 'استكشاف المواضيع', en: 'Explore topics', group: 'student', as: 'student' },
-      { key: 'stu-requests', path: '/student/dashboard/projects/request', ar: 'الإشعارات', en: 'Notifications', group: 'student', as: 'student' },
-      { key: 'stu-profile', path: '/student/profile', ar: 'الملف الشخصي', en: 'Profile', group: 'student', as: 'student' },
+      { key: 'audit', path: '/admin/audit', ar: 'سجلّ التدقيق', en: 'Audit log', group: 'admin', as: 'admin' },
+      { key: 'semesters', path: '/admin/semesters', ar: 'الفصول الدراسية', en: 'Semesters', group: 'admin', as: 'admin' },
+      { key: 'specialize', path: '/admin/specialize', ar: 'التخصصات', en: 'Specialisations', group: 'admin', as: 'admin' },
+
+      // One-time moments, caught mid-flight.
+      { key: 'stu-grade', path: '/student/dashboard', ar: 'لحظة التخرّج', en: 'The graduation moment', group: 'moments', as: 'graduate', animations: 'allow', mobile: true,
+        prep: async (page) => { await page.waitForSelector('dialog.celebrate[open]', { timeout: 8000 }); await page.waitForTimeout(400); } },
+      { key: 'stu-tour', path: '/student/dashboard', ar: 'الجولة التعريفية', en: 'The welcome tour', group: 'moments', as: 'fresh',
+        prep: async (page) => {
+          await page.waitForSelector('.tour:not([hidden]) .tour-next', { timeout: 8000 });
+          await page.waitForTimeout(500);
+          await page.click('.tour-next');
+          await page.waitForTimeout(700);
+        } },
+      { key: 'confirm', path: '/supervisor/discussion/10', ar: 'نافذة التأكيد', en: 'Confirmation dialog', group: 'moments', as: 'supervisor',
+        prep: async (page) => {
+          await page.evaluate(() => { const f = document.querySelector('.msg-del'); if (f) f.requestSubmit(f.querySelector('button')); });
+          await page.waitForSelector('dialog.app-dialog[open]', { timeout: 8000 });
+          await page.waitForTimeout(500);
+        } },
     ],
   },
 

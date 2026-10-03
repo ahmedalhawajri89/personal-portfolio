@@ -83,6 +83,7 @@ for (const name of names) {
           // Hide the mouse-driven cursor effects some sites draw.
           Object.defineProperty(navigator, 'webdriver', { get: () => false });
         });
+        if (P.init) await ctx.addInitScript(P.init, { role });
         const page = await ctx.newPage();
         page.setDefaultTimeout(45000);
         page.setDefaultNavigationTimeout(90000);
@@ -106,7 +107,7 @@ for (const name of names) {
             if (pg.prep) await pg.prep(page);
             await settle(page, !!pg.full);
             const full = !!pg.full;
-            const png = await page.screenshot({ fullPage: full, type: 'png', animations: 'disabled' });
+            const png = await page.screenshot({ fullPage: full, type: 'png', animations: pg.animations || 'disabled' });
             const meta = await writeImages(png, join(dir, stem), device);
             entries.push({
               key: pg.key, locale, device, group: pg.group,
