@@ -70,60 +70,60 @@ export const PROJECTS = [
     slug: 'booking',
     // The eight screens the case study actually argues about; the rest of
     // the capture set stays available behind the full gallery.
-    tour: ['home', 'book', 'lookup', 'board', 'calendar', 'bookings', 'analytics', 'customers'],
+    tour: ['home', 'book', 'board', 'guard', 'calendar', 'bookings', 'analytics', 'login'],
     shots: 'booking',
     cover: 'board',
     year: '2026',
-    stack: ['Vue 3.5', 'Vite 6', 'Tailwind 4', 'Pinia', 'Laravel 12', 'MySQL', 'Playwright'],
-    repo: 'https://github.com/ahmedalhawajri89/booking-management-system',
-    demo: 'https://booking-management-system-xi.vercel.app/',
+    stack: ['Vue 3.5', 'Vite 6', 'Tailwind 4', 'Pinia', 'Laravel 12', 'MySQL', 'PHPUnit', 'Vitest', 'Playwright'],
+    repo: 'https://github.com/ahmedalhawajri89/waeda-booking',
+    demo: 'https://waeda-booking.vercel.app/',
     ar: {
-      name: 'نظام الحجوزات',
-      kind: 'حجز مواعيد وكونسول تشغيل',
-      tagline: 'الأوقات المتاحة تُحسب، ولا تُخزَّن — ولا يفوز اثنان بالموعد نفسه.',
+      name: 'وعدة',
+      kind: 'منصة حجز مواعيد للمنشآت الخدمية',
+      tagline: 'العميل يحجز من جواله بلا حساب، والموعد المحجوز لا يبقى فارغاً.',
       summary:
-        'نظام حجز مواعيد عربي أولاً: الزبون يحجز خدمة أونلاين بلا إنشاء حساب، والمنشأة تدير يومها كاملاً من كونسول واحد. مبني كمنتج كامل لا كواجهة عرض — منطق التوفّر وكشف التعارض وسير الحالات كلها حقيقية.',
+        'منصة حجز عربية للعيادات والصالونات ومراكز التدريب والخدمات المنزلية والمطاعم والملاعب. لكل منشأة صفحة حجز باسمها، والعميل يحجز برقم جواله دون إنشاء حساب، والمنشأة تدير يومها من لوحة واحدة. والخسارة الحقيقية لهذه المنشآت ليست قلّة الحجز بل الغياب، فمساعد الحضور يذكّر العميل ويطلب تأكيده ويعرض الموعد الملغى على قائمة الانتظار. مبنية كمنتج يعمل لا كواجهة عرض: الأوقات والتعارض والأسعار وساعات العمل تُحسب بقواعد حقيقية، ويفرضها الخادم، وتغطيها اختبارات.',
       points: [
         {
-          h: 'التوفّر يُحسب ولا يُخزَّن',
-          b: 'الأوقات الحرّة تُولَّد من مدّة الخدمة، ووقت الفاصل بين موعدين، والمورد المحجوز، وساعات العمل لذلك اليوم من الأسبوع. وأوقات اليوم التي مضت تُستبعد تلقائياً.',
+          h: 'الأوقات تُحسب، والقفل داخل المعاملة',
+          b: 'الأوقات الحرّة تُولَّد من مدّة الخدمة وفاصلها، والمختص أو المكان المحجوز، ونافذة يوم العمل التي قد تعبر منتصف الليل، والفترات الخاصة وأوقات الصلاة. والـ API يقفل صف المورد ويفحص التداخل داخل المعاملة التي تكتب الحجز، فمن مشغّلَين يؤكّدان الموعد نفسه في الثانية نفسها يخسر الثاني دائماً، واختبار بجلستين حقيقيتين يثبت ذلك.',
         },
         {
-          h: 'التعارض يُكشف بتداخل فترات نصف مفتوحة',
-          b: 'aStart < bEnd && bStart < aEnd — فموعد ينتهي ١٠:٠٠ وآخر يبدأ ١٠:٠٠ لا يتعارضان، وأي تداخل حقيقي يتعارض. والحجوزات الملغاة تحرّر وقتها فوراً.',
+          h: 'مساعد الحضور يعمل على الغياب مباشرة',
+          b: 'تذكير يطلب الرد بـ ١ للتأكيد أو ٢ للإلغاء أو ٣ للتأجيل، وتقدير لاحتمال الغياب من سجل العميل نفسه مشروح بكلام واضح، وصندوق يتولّى فيه الفريق الردود التي لم يفهمها، وعرض الموعد الملغى على قائمة الانتظار. والردود الحرّة مثل «خليها بكرة بعد المغرب» يقرؤها نموذج لغوي إن وُجد وقوائم كلمات إن لم يوجد، ولا يصل النموذجَ اسمُ العميل ولا جواله.',
         },
         {
-          h: 'والقاعدة مطبَّقة حيث يهمّ فعلاً',
-          b: 'شبكة الأوقات لا تعرض وقتاً محجوزاً، والمتجر يفحص قبل الكتابة، لكن أياً منهما لا يمنع مشغّلَين من تأكيد الموعد نفسه في الثانية نفسها. الـ API يقفل صف المورد قبل فحص التداخل داخل المعاملة التي تكتب الحجز. واختبار بجلستين حقيقيتين يثبت ذلك، لا تعليق في الكود.',
+          h: 'بلا حساب، والجوال يُثبَت على الخادم',
+          b: 'الجوال هو هوية العميل، فرمز التحقق يصدره الخادم ويفحصه هو: خمس محاولات خلال عشر دقائق، ثم رمز يثبت ذلك الرقم لتلك المنشأة تسعين يوماً، فيحجز العائد من الجهاز نفسه بلا رمز. وصفحة إدارة الحجز لا تُفتح إلا برابط سرّي عشوائي يُخزَّن مجزّأً، أو بالرقم كاملاً مع إثباته.',
         },
         {
-          h: 'لوحة اليوم بخط زمن حيّ',
-          b: 'المشغّل يفتح على جدول اليوم مقابل خط «الآن»، وطابور «يحتاج إجراء» يُظهر الحجوزات غير المؤكّدة أو غير المدفوعة. تغيير الحالة والدفع بضغطة واحدة، ولكل تغيير تراجع.',
+          h: 'مبنية للمنطقة',
+          b: 'دوام يبدأ ١٦:٠٠ وينتهي ٠٢:٠٠ فيكون موعد الواحدة ليلاً من مساء اليوم السابق، وساعات رمضان بتقويم أم القرى، وحجب أوقات الصلاة تلقائياً لعشرين مدينة، وفلتر للمختصات والمختصين. وصفحات العميل تحسب على ساعة المنشأة لا ساعة جهاز الزائر.',
         },
       ],
     },
     en: {
-      name: 'Booking System',
-      kind: 'Appointment booking and operator console',
-      tagline: 'Availability is computed, not stored — and two operators cannot win the same slot.',
+      name: 'Waeda',
+      kind: 'Appointment booking for service businesses',
+      tagline: 'Customers book from their phone without an account, and a booked time does not go empty.',
       summary:
-        'An Arabic-first appointment booking system: customers book a service online without creating an account, and the business manages the whole day from one console. Built as a complete product rather than a screen mockup — the availability logic, conflict detection and status workflow are all real.',
+        'An Arabic-first booking platform for clinics, salons, training centres, home services, restaurants and courts. Each business gets its own booking page, customers book with their phone number and no account, and the business runs its day from one console. What actually costs these businesses is not too few bookings but no-shows, so an appointment guard reminds the customer, asks them to confirm, and offers a cancelled slot to the waitlist. Built as a working product rather than a mockup: availability, conflicts, pricing and opening hours are computed by real rules, enforced on the server and covered by tests.',
       points: [
         {
-          h: 'Availability is computed, not stored',
-          b: 'Free slots are generated from the service duration, the buffer between appointments, the resource being booked and the business hours for that weekday. Past times on the current day are excluded automatically.',
+          h: 'Times are computed, and the lock sits in the transaction',
+          b: 'Free times are generated from the service length and buffer, the person or place booked, a business-day window that may cross midnight, special periods and prayer pauses. The API locks the resource row and tests for an overlap inside the transaction that writes the booking, so of two operators confirming the same slot in the same second the second one always loses, and a test with two live connections proves it.',
         },
         {
-          h: 'Conflicts use half-open interval overlap',
-          b: 'aStart < bEnd && bStart < aEnd — so an appointment ending at 10:00 and one starting at 10:00 do not collide, while any real overlap does. Cancelled bookings free their slot immediately.',
+          h: 'An appointment guard that works on no-shows',
+          b: 'A reminder that takes 1 to confirm, 2 to cancel or 3 to move; a no-show risk drawn from the customer’s own history and explained in plain words; an inbox where the team answers what it could not read; and a cancelled slot offered to the waitlist. Free-form replies such as «خليها بكرة بعد المغرب» are read by a language model when one is configured and by word lists otherwise, and the model never sees the customer’s name or phone.',
         },
         {
-          h: 'And the rule is enforced where it counts',
-          b: 'The API locks the resource row before it tests for an overlap, inside the transaction that writes the booking. ConcurrentBookingTest proves it with two live connections rather than asserting it in a comment.',
+          h: 'No account, and the phone is proven on the server',
+          b: 'The phone is the customer’s identity, so the server issues and checks the code: five attempts within ten minutes, then a token that proves that number to that business for 90 days, so a returning guest on the same device books without a code. The manage page opens only with a random secret link stored hashed, or the whole phone number together with its proof.',
         },
         {
-          h: 'A day board with a live now-line',
-          b: "The operator opens on today's schedule against a live now-line, with a needs-attention queue for unconfirmed and unpaid bookings. Status and payment change in one click, with undo.",
+          h: 'Built for the region',
+          b: 'A day can open at 16:00 and close at 02:00, so the 01:00 booking belongs to the evening before; Ramadan hours dated by the Umm al-Qura calendar; prayer pauses computed for 20 cities; a filter for female or male specialists. And the guest pages run on the business’s clock, not the visitor’s device.',
         },
       ],
     },

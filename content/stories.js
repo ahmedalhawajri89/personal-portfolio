@@ -37,31 +37,31 @@ export const STORIES = {
 
   booking: {
     ar: {
-      idea: 'نظام حجز مواعيد عربي أولاً: الزبون يحجز خدمة أونلاين بلا حساب ويستلم رقماً مرجعياً، والمنشأة تدير يومها كاملاً من كونسول واحد بخط زمن حيّ وطابور "يحتاج إجراء".',
-      problem: 'معظم أنظمة الحجز التجريبية تخزّن الوقت كنص وتسمح بالحجز المزدوج. والأسوأ أن اثنين من المشغّلين يستطيعان تأكيد الموعد نفسه في الثانية نفسها، ولا تمنعهما الواجهة ولا فحص "قبل الكتابة"، لأن الفحصين يجريان قبل أن يرى أحدهما كتابة الآخر.',
+      idea: 'منصة حجز مواعيد عربية للمنشآت الخدمية: لكل منشأة صفحة حجز باسمها، والعميل يحجز من جواله بلا حساب، والمنشأة تدير يومها من لوحة تحكم واحدة. وفوقها مساعد حضور، لأن الموعد الذي يُحجز ثم يبقى فارغاً هو ما يكلّف هذه المنشآت فعلاً.',
+      problem: 'الغياب هو الخسارة الحقيقية لعيادة أو صالون، لا قلّة الحجوزات. وتحته ثلاث مشاكل يقع فيها أغلب أنظمة الحجز: مشغّلان يؤكّدان الموعد نفسه في الثانية نفسها ولا يمنعهما فحص «قبل الكتابة»؛ وصفحة حجز تحسب الأوقات بساعة جهاز الزائر، فزائر في دبي يحجز عيادة في الرياض يُعرض عليه العاشرة فتخرج التاسعة بتوقيت الرياض ويُرفض الحجز؛ وصفحة «حجزي» كانت تفتح الحجز برقمه وآخر أربعة أرقام من الجوال، والأرقام متسلسلة والجوال ليس سراً.',
       solution: [
-        { h: 'التوفّر يُحسب لا يُخزَّن', b: 'الأوقات الحرّة تُولَّد من مدّة الخدمة، والفاصل بين المواعيد، والمورد المحجوز، وساعات العمل لذلك اليوم. لا جدول أوقات يُكتب يدوياً ثم يتقادم.' },
-        { h: 'تعارض بفترات نصف مفتوحة', b: 'موعد ينتهي ١٠:٠٠ وآخر يبدأ ١٠:٠٠ لا يتعارضان، وأي تداخل حقيقي يتعارض. الحجوزات الملغاة تحرّر وقتها فوراً.' },
-        { h: 'القفل حيث يهمّ', b: 'الـ API يقفل صف المورد قبل فحص التداخل داخل المعاملة التي تكتب الحجز، فالثاني يخسر دائماً. واختبار بجلستين متزامنتين حقيقيتين يثبت ذلك بدل تعليق في الكود.' },
+        { h: 'القفل حيث يهمّ', b: 'الـ API يقفل صف المورد ويفحص التداخل داخل المعاملة التي تكتب الحجز، فالثاني يخسر دائماً. والتداخل بفترات نصف مفتوحة: موعد ينتهي ١٠:٠٠ وآخر يبدأ ١٠:٠٠ لا يتعارضان. واختبار بجلستين متزامنتين حقيقيتين يثبت ذلك بدل تعليق في الكود.' },
+        { h: 'ساعة المنشأة لا ساعة الزائر', b: 'المنشأة تحمل منطقتها الزمنية، وصفحات العميل تضع تواريخها على تلك الساعة، فالكود نفسه يحسب ويعرض أوقات المنشأة أينما كان الزائر، والأوقات تصل الخادم بصيغة UTC صريحة.' },
+        { h: 'إثبات لا تخمين', b: 'رمز التحقق من الجوال كان يُصنع ويُفحص في المتصفح، فصار يصدره الخادم ويفحصه بحدّ للمحاولات. وإدارة الحجز تحتاج رابطاً سرّياً عشوائياً يُخزَّن مجزّأً، أو الرقم كاملاً مع إثباته، والإلغاء والتأجيل يطلبان الإثبات نفسه.' },
       ],
       extras: [
-        { h: 'نموذج بيانات قابل للقراءة آلياً', b: 'الأوقات بصيغة ISO 8601، والمبالغ بالوحدات الصغرى، والحالات قيم برمجية تُعرض عبر خريطة تسميات واحدة. هذا ما يجعل التقويم والفلاتر والمجاميع ممكنة أصلاً.' },
-        { h: 'طبقة بيانات قابلة للتبديل', b: 'المستودع له تطبيقان: تخزين محلي في المتصفح، وAPI لارافيل. متغيّر بيئة واحد يبدّل بينهما ولا شيء فوق الفاصل يتغيّر، وهو ما يُبقي العرض الحيّ على Vercel يعمل بلا خادم.' },
-        { h: 'حدّ صادق', b: 'القاعدة تحمي كل ما يكتب عبر التطبيق. عميل يملك بيانات قاعدة البيانات ويكتب SQL خاماً يستطيع إدخال تداخل، وهذا مذكور في الكود لا مخفيّ.' },
+        { h: 'مساعد يصمد', b: 'قبل أن يحرّر موعداً لم يُرَدّ عليه يعيد قراءة الصف تحت قفل، ويتراجع إن أكّده العميل في الأثناء. وخطأ منشأة واحدة لا يوقف الجولة عن البقية، والنموذج اللغوي له مهلة ثماني ثوانٍ ثم يرجع لقوائم الكلمات.' },
+        { h: 'السعر يحدده الخادم', b: 'سعر المدة وسعر الذروة المسائي يحسبهما الخادم، وأي سعر يرسله المتصفح يُتجاهل. والقاعدة مكتوبة في المتصفح والخادم معاً وتُختبر بالحالات نفسها، فالعرض التجريبي والخادم الحقيقي يتفقان.' },
+        { h: 'مراجعة كاملة، وكل نتيجة باختبار', b: 'مُرِّر المشروع كله بمراجعة، وكل مشكلة حرجة أو عالية أُثبتت أولاً باختبار يفشل ثم أُصلحت حتى نجح، وبقيت الاختبارات فيه. اليوم ٢١٧ اختبار PHPUnit على MySQL حقيقية، و١٩٧ اختبار Vitest، وجولة Playwright على كل شاشة تفشل عند أي خطأ في الكونسول.' },
       ],
     },
     en: {
-      idea: 'An Arabic-first appointment system: customers book a service online without an account and get a reference code, and the business runs its whole day from one console with a live now-line and a needs-attention queue.',
-      problem: 'Most booking demos store a time as text and let you double-book. Worse, two operators can confirm the same slot in the same second, and neither the slot grid nor a check-before-write stops them, because both checks run before either sees the other\'s write.',
+      idea: 'An Arabic-first booking platform for service businesses: each business has its own booking page, customers book from their phone without an account, and the business runs its day from one console. On top sits an appointment guard, because a time that is booked and then left empty is what really costs these businesses.',
+      problem: 'For a clinic or a salon the real loss is the no-show, not a shortage of bookings. Underneath it sit three problems most booking systems share: two operators confirm the same slot in the same second and a check-before-write stops neither; the booking page computes times on the visitor’s device clock, so a guest in Dubai booking a Riyadh clinic is offered 10:00 that goes out as 09:00 Riyadh and is refused; and the “my booking” page used to open a booking with its reference and the last four digits of a phone, when references are sequential and phones are not secret.',
       solution: [
-        { h: 'Availability is computed, not stored', b: 'Free slots are generated from the service duration, the buffer between appointments, the resource booked and the business hours for that weekday. No hand-written timetable that goes stale.' },
-        { h: 'Half-open interval overlap', b: 'An appointment ending at 10:00 and one starting at 10:00 do not collide; any real overlap does. Cancelled bookings free their slot immediately.' },
-        { h: 'The lock where it counts', b: 'The API locks the resource row before the overlap check, inside the transaction that writes the booking, so the second one always loses. A test with two live concurrent connections proves it instead of a comment.' },
+        { h: 'The lock where it counts', b: 'The API locks the resource row and tests for an overlap inside the transaction that writes the booking, so the second one always loses. Overlap is half-open: a booking ending at 10:00 and one starting at 10:00 do not collide. A test with two live concurrent connections proves it instead of a comment.' },
+        { h: 'The business’s clock, not the visitor’s', b: 'The business carries its time zone, and the guest pages put their dates on that clock, so the same code computes and shows the business’s wall-clock times wherever the guest is, and times reach the server as plain UTC.' },
+        { h: 'Proof, not a guess', b: 'The phone code used to be made and checked in the browser; the server now issues and checks it, with limits on attempts. Managing a booking takes a random secret link stored hashed, or the whole phone together with its proof, and cancel and reschedule ask for the same.' },
       ],
       extras: [
-        { h: 'A machine-readable model', b: 'Times are ISO 8601 instants, money is in minor units, statuses are machine values rendered through one label map. That is what makes the calendar, filters and totals possible at all.' },
-        { h: 'A swappable data layer', b: 'The repository has two implementations: browser localStorage and the Laravel API. One environment variable picks between them and nothing above the seam changes, which is what keeps the live demo on Vercel working without a server.' },
-        { h: 'An honest limit', b: 'The rule holds for anything writing through the application. A client with database credentials writing raw SQL could still insert an overlap, and the code says so rather than glossing it.' },
+        { h: 'A guard that holds', b: 'Before releasing a booking nobody answered, it re-reads the row under a lock and gives up if the customer confirmed in the meantime. One business’s error no longer stops the run for the others, and the language model has an eight-second timeout before falling back to word lists.' },
+        { h: 'The server sets the price', b: 'Length and evening-peak pricing are computed on the server, and whatever price the browser sends is ignored. The rule exists in both the browser and the API and both are tested against the same cases, so the demo and the real backend agree.' },
+        { h: 'A full review, every finding a test', b: 'The whole project went through a review, and every critical or high finding was first proven with a failing test, then fixed until it passed, and the tests stayed. Today: 217 PHPUnit tests on a real MySQL database, 197 Vitest tests, and a Playwright walk through every screen that fails on any console error.' },
       ],
     },
   },

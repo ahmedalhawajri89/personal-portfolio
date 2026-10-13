@@ -5,8 +5,8 @@
 //
 // Desktop is 1440×900 at 2× (crisp on retina), phone is 390×844 at 2×.
 // Full-page captures are capped at 4000 CSS px so a long page stays a
-// sensible image. Playwright comes from the booking project's node_modules,
-// so nothing has to be installed here.
+// sensible image. Playwright comes from the waeda-booking project's
+// node_modules, so nothing has to be installed here.
 
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
@@ -16,7 +16,7 @@ import { join } from 'node:path';
 import { PROJECTS } from './shots.config.mjs';
 
 const require = createRequire(import.meta.url);
-const { chromium } = require('D:/Works Exhibition/01-fullstack/booking/node_modules/playwright');
+const { chromium } = require('D:/Works Exhibition/01-fullstack/waeda-booking/node_modules/playwright');
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const OUT = join(ROOT, 'public', 'shots');
@@ -78,7 +78,11 @@ for (const name of names) {
           locale: locale === 'ar' ? 'ar' : 'en-US',
           colorScheme: 'light',
           reducedMotion: 'no-preference',
+          ...(P.timezoneId && { timezoneId: P.timezoneId }),
         });
+        // A pinned clock ('HH:MM' today) for products whose screens depend on
+        // the time of day: the same now-line whenever the shots are taken.
+        if (P.fixedTime) await ctx.clock.setFixedTime(todayAt(P.fixedTime, P.timezoneId));
         await ctx.addInitScript(() => {
           // Hide the mouse-driven cursor effects some sites draw.
           Object.defineProperty(navigator, 'webdriver', { get: () => false });
@@ -142,6 +146,15 @@ writeFileSync(MANIFEST, JSON.stringify(merged, null, 1));
 console.log(problems.length ? `\nproblems:\n${problems.join('\n')}` : '\nclean');
 
 /* ---------------------------------------------------------------- helpers */
+
+/** Today at 'HH:MM' on the clock of `tz` (the machine's zone when unset). */
+function todayAt(hhmm, tz) {
+  const now = new Date();
+  const day = new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(now);
+  const offset = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'longOffset' })
+    .formatToParts(now).find((x) => x.type === 'timeZoneName').value.replace('GMT', '') || 'Z';
+  return new Date(`${day}T${hhmm}:00${offset}`);
+}
 
 async function login(page, P, role) {
   const r = P.roles[role];

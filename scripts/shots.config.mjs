@@ -23,7 +23,7 @@
 //   diwan      cd "diwan e-commerce"    && php artisan serve --port 8001
 //   takharruj  cd takharruj             && php artisan serve --port 8002
 //   mawaheb    cd mawaheb               && php artisan serve --port 8004
-//   booking    cd booking               && npx vite --port 5173
+//   booking    cd waeda-booking         && npx vite --port 5173
 // Playwright is loaded from booking\node_modules, so no install is needed here.
 
 const PW = 'password';
@@ -81,28 +81,69 @@ export const PROJECTS = {
   },
 
   /* ---------------------------------------------------------- booking */
+  // Waeda on its demo backend (localStorage seed, re-dated to today), with the
+  // clock pinned to 12:40 in the business's zone: the now-line sits mid-day
+  // and the needs-attention queue is full whenever the shots are taken.
   booking: {
     base: 'http://127.0.0.1:5173',
     locales: ['ar'],
+    timezoneId: 'Asia/Riyadh',
+    fixedTime: '12:40',
+    // The console's own dark theme, for one shot.
+    init: ({ role }) => {
+      if (role === 'dark') localStorage.setItem('bookingpro:theme', 'dark');
+    },
     roles: {
-      operator: { path: '/login', email: 'input[type=email]', password: 'input[type=password]', user: 'operator@example.com', pass: PW, waitFor: '**/app**' },
+      operator: { path: '/login', email: 'input[type=email]', password: 'input[type=password]', user: 'admin@waeda.app', pass: 'demo1234', waitFor: '**/app**' },
+      dark: { path: '/login', email: 'input[type=email]', password: 'input[type=password]', user: 'admin@waeda.app', pass: 'demo1234', waitFor: '**/app**' },
     },
     groups: {
-      public: { ar: 'موقع الزبون', en: 'Customer site' },
-      app: { ar: 'كونسول التشغيل', en: 'Operator console' },
+      public: { ar: 'جهة العميل', en: 'Customer side' },
+      app: { ar: 'لوحة التحكم', en: 'Operator console' },
     },
     pages: [
-      { key: 'home', path: '/', ar: 'الصفحة العامة', en: 'Public site', group: 'public', full: true, mobile: true },
-      { key: 'book', path: '/book', ar: 'حجز موعد', en: 'Booking flow', group: 'public', full: true, mobile: true },
-      { key: 'lookup', path: '/booking/BK-2026-0500', ar: 'حجزي بالمرجع', en: 'My booking', group: 'public' },
-      { key: 'login', path: '/login', ar: 'تسجيل الدخول', en: 'Sign in', group: 'public' },
-      { key: 'register', path: '/register', ar: 'إنشاء حساب', en: 'Register', group: 'public' },
+      { key: 'home', path: '/', ar: 'الصفحة الرئيسية: القطاعات والحاسبة والباقات', en: 'Home: sectors, calculator and plans', group: 'public', full: true, mobile: true },
+      // A service, a day and a time chosen, so the whole booking path shows.
+      { key: 'book', path: '/b/alrayhan', ar: 'صفحة حجز المنشأة', en: 'A business booking page', group: 'public', full: true, mobile: true,
+        prep: async (page) => {
+          await page.getByText('تنظيف بشرة عميق').first().click();
+          await page.waitForTimeout(300);
+          await page.locator('[role=radio][data-numeric]:not([disabled])').nth(1).click();
+          await page.waitForTimeout(400);
+        } },
+      // The day settles itself: reminders go out, replies come back, a
+      // cancelled slot is refilled from the waitlist.
+      { key: 'login', path: '/login', ar: 'الدخول: يومك يترتّب أمامك', en: 'Sign in: the day settles itself', group: 'public', animations: 'allow',
+        prep: async (page) => { await page.waitForTimeout(7000); } },
+      // The preview builds the page and takes its first booking.
+      { key: 'register', path: '/register', ar: 'التسجيل: الصفحة تُبنى أمامك', en: 'Sign up: the page builds itself', group: 'public', animations: 'allow',
+        prep: async (page) => { await page.waitForTimeout(9700); } },
+
       { key: 'board', path: '/app', ar: 'لوحة اليوم', en: 'Day board', group: 'app', as: 'operator', mobile: true },
-      { key: 'calendar', path: '/app/calendar', ar: 'التقويم', en: 'Calendar', group: 'app', as: 'operator' },
-      { key: 'analytics', path: '/app/analytics', ar: 'التحليلات', en: 'Analytics', group: 'app', as: 'operator', full: true },
+      { key: 'guard', path: '/app/guard', ar: 'مساعد الحضور', en: 'The appointment guard', group: 'app', as: 'operator', full: true },
+      { key: 'calendar', path: '/app/calendar?view=week', ar: 'التقويم', en: 'Calendar', group: 'app', as: 'operator' },
       { key: 'bookings', path: '/app/bookings', ar: 'الحجوزات', en: 'Bookings', group: 'app', as: 'operator', mobile: true },
       { key: 'customers', path: '/app/customers', ar: 'العملاء', en: 'Customers', group: 'app', as: 'operator' },
-      { key: 'settings', path: '/app/settings', ar: 'الإعدادات', en: 'Settings', group: 'app', as: 'operator', full: true },
+      // Chart.js times its draw-in against the clock, and the clock here is
+      // pinned, so the lines would stay at zero. With reduced motion the app
+      // draws them at once.
+      { key: 'analytics', path: '/app/analytics?range=30', ar: 'التحليلات', en: 'Analytics', group: 'app', as: 'operator', full: true,
+        prep: async (page) => {
+          await page.emulateMedia({ reducedMotion: 'reduce' });
+          await page.reload({ waitUntil: 'networkidle' });
+          await page.waitForTimeout(600);
+        } },
+      // The booking link is shown with the live address, not the dev server's.
+      { key: 'settings', path: '/app/settings', ar: 'الإعدادات', en: 'Settings', group: 'app', as: 'operator', full: true,
+        prep: async (page) => {
+          await page.evaluate(() => {
+            const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+            for (let n = w.nextNode(); n; n = w.nextNode()) {
+              if (n.nodeValue.includes('127.0.0.1:5173')) n.nodeValue = n.nodeValue.replace('127.0.0.1:5173', 'waeda-booking.vercel.app');
+            }
+          });
+        } },
+      { key: 'board-dark', path: '/app', ar: 'لوحة اليوم بالوضع الليلي', en: 'Day board, dark theme', group: 'app', as: 'dark' },
     ],
   },
 
