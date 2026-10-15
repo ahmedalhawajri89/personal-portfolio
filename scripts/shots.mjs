@@ -105,7 +105,8 @@ for (const name of names) {
         for (const pg of pages.filter((x) => (x.as || '') === role)) {
           const suffix = device === 'mobile' ? '-m' : '';
           const stem = `${pg.key}-${locale}${suffix}`;
-          const url = pg.url || P.base + pg.path;
+          // `{l}` in a path is the locale, for sites whose pages live at /ar/… and /en/….
+          const url = (pg.url || P.base + pg.path).replaceAll('{l}', locale);
           try {
             await page.goto(url, { waitUntil: 'networkidle' });
             if (pg.prep) await pg.prep(page);
@@ -117,7 +118,7 @@ for (const name of names) {
               key: pg.key, locale, device, group: pg.group,
               file: `${stem}.webp`, thumb: `${stem}-t.webp`,
               labelAr: pg.ar, labelEn: pg.en,
-              path: pg.url ? new URL(pg.url).pathname : pg.path.replace(/\?.*$/, ''),
+              path: pg.url ? new URL(pg.url).pathname : pg.path.replaceAll('{l}', locale).replace(/\?.*$/, ''),
               w: meta.w, h: meta.h, tw: meta.tw, th: meta.th, full,
             });
             console.log(`  ✓ ${stem}  ${meta.w}×${meta.h}`);

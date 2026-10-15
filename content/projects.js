@@ -6,61 +6,62 @@ export const PROJECTS = [
     slug: 'diwan',
     // The eight screens the case study actually argues about; the rest of
     // the capture set stays available behind the full gallery.
-    tour: ['home', 'catalogue', 'product', 'rooms', 'cart', 'checkout', 'adm-dash', 'adm-orders'],
+    tour: ['product', 'way-in', 'catalogue', 'checkout', 'invoice', 'order', 'adm-dash', 'adm-order'],
     shots: 'diwan',
-    // The product page, not the catalogue: its top already carries the
-    // "fit against your room" panel, which is the idea in one glance.
+    // The product page, not the catalogue: its top already carries both
+    // verdicts — the room and the way in — which is the idea in one glance.
     cover: 'product',
     year: '2026',
-    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Tailwind', 'Pest'],
+    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Tailwind 4', 'Alpine.js', 'Pest', 'Vercel'],
     repo: 'https://github.com/ahmedalhawajri89/diwan-e-commerce',
+    demo: 'https://diwan-xi.vercel.app/',
     ar: {
       name: 'ديوان',
-      kind: 'متجر أثاث عربي',
-      tagline: 'يقيس الزبون غرفته مرّة، فتُجيبه كل قطعة: هل تدخل؟',
+      kind: 'متجر أثاث عربي للسوق السعودي',
+      tagline: 'يقيس الزبون غرفته وطريقها مرّة، فتُجيبه كل قطعة: هل تتّسع، وهل تصل؟',
       summary:
-        'أكثر فئة يفشل فيها الشراء أونلاين هي الأثاث، والسبب بسيط: الكنبة عرضها ٢٤٠ سم والزبون لا يعرف هل ٢٤٠ مناسبة أم لا. الأبعاد مكتوبة في جدول مواصفات لا يتخيّله أحد، فتصل القطعة ولا تدخل من الباب. ديوان ينقل هذا السؤال إلى الواجهة: الزبون يحفظ غرفته بعرضها وطولها، ومن تلك اللحظة كل صفحة منتج تعطيه حكماً على غرفته هو، لا رقماً في جدول.',
+        'أكثر فئة يفشل فيها الشراء أونلاين هي الأثاث، والسبب بسيط: الكنبة عرضها ٢٤٠ سم والزبون لا يعرف هل ٢٤٠ مناسبة أم لا، فتصل القطعة ولا تدخل من الباب. ديوان ينقل هذا السؤال إلى الواجهة: الزبون يحفظ غرفته بعرضها وطولها، وطريقها من باب البيت إلى المصعد أو الدرج إلى درج الفيلا الداخلي، ومن تلك اللحظة تقول له كل قطعة هل تتّسع لغرفته وهل تصل إليها، ولماذا. وهو مبني للسوق السعودي: أسعار بالريال شاملة ضريبة القيمة المضافة، وفاتورة ضريبية مبسّطة برمز ZATCA، وتوصيل حسب المدينة بموعد يُحجز، وإرجاع يُسجَّل سببه. ولوحة التحكم مفتوحة للتجربة بحساب عرض يرى كل شيء ولا يغيّر شيئاً.',
       points: [
         {
-          h: 'حكم «هل تدخل؟» حسابٌ بقواعد، لا تلميح',
-          b: 'القطعة يجب أن تتّسع لأطول جدار، وألّا تأخذ أكثر من نصف الأرضية، وأن يكون أحد أوجهها أقل من ٨٠ سم لتمرّ من الباب. وحين تُكسر أكثر من قاعدة يُقال للزبون أسوأها لا أوّلها. غرفة بلا قياسات جوابها مختلف عن منتج بلا أبعاد، والواجهة تفرّق بينهما.',
+          h: 'حكم «هل تتّسع؟» حسابٌ بقواعد، لا تلميح',
+          b: 'القطعة يجب أن تتّسع لأطول جدار، وألّا تأخذ أكثر من ٦٠٪ من الأرضية، وأن يكون أحد أوجهها أقل من ٨٠ سم لتمرّ من الباب. وحين تُكسر أكثر من قاعدة يُقال للزبون أسوأها لا أوّلها. غرفة بلا قياسات جوابها مختلف عن منتج بلا أبعاد، والواجهة تفرّق بينهما.',
+        },
+        {
+          h: 'طريق القطعة لبيتك يُمشى خطوةً خطوة',
+          b: 'الباب، ثم المصعد ببابه وعربته، أو الدرج ومنعطفه، ثم درج الفيلا الداخلي. والقطعة تُحمل بالمقاس الذي تصل به: مركّبة أو مفكّكة أو في صناديق. والحساب يميل إلى «لن تمر»: هامش ٢ سم من كل جانب، وأسوأ خطوة هي التي تقرّر وتُسمّى، وخطوة لم تُقَس تبقى «لم تُفحص» لا «تمر». وحين يرفضها المصعد وتمرّ من البلكونة يقول: بالرافعة، لا «لا».',
+        },
+        {
+          h: 'جاهز للسوق السعودي دون ادّعاء',
+          b: 'الأسعار شاملة ضريبة القيمة المضافة ١٥٪، والضريبة تُستخرج منها حتى الهللة، وكل طلب يحفظ النسبة التي بيع بها. والفاتورة لا تُسمّى «ضريبية مبسّطة» برمز ZATCA إلا حين يكون للمتجر رقم ضريبي وتتمّ البيعة، وقبل ذلك إيصال يقول السبب. ورسوم التوصيل ومدّة الإرجاع وأيام التوصيل يحدّدها المتجر من لوحته، وما لم يحدّده تقول الواجهة إنه يُتّفق عليه عند التواصل.',
         },
         {
           h: 'المخزون يُحسم في قاعدة البيانات لا في PHP',
           b: 'الشراء يقفل صف المنتج بـ lockForUpdate داخل المعاملة نفسها التي تكتب الطلب، فلا يفوز اثنان بآخر قطعة. وسلّة فيها سطر غير متوفّر تفشل كاملةً: لا يُخصم شيء ولا يبقى طلب ناقص. وإلغاء الطلب يعيد المخزون مرّة واحدة مهما حُفظ الطلب بعدها.',
         },
-        {
-          h: 'سجلّ الطلبات يبقى بعد أن يختفي المنتج',
-          b: 'سطر الطلب يسجّل ما اشتراه أحدهم، والكتالوج يعرض ما يُباع اليوم. كانا مربوطين بـ cascade فكان سحب قطعة قديمة يمحوها من كل طلب سابق. صارت الأعمدة تُفرَّغ بدل أن تُحذف، ولقطة الاسم والصورة محفوظة مع السطر نفسه.',
-        },
-        {
-          h: 'نظام التصميم تحرسه اختبارات لا انضباط شخصي',
-          b: 'قاعدة لا يفحصها أحد هي قاعدة سترجع. فالقواعد مكتوبة كاختبارات على قوالب Blade: لا لون خارج tokens.css، ولا style مضمّن إلا لقيمة تُحسب وقت العرض، ولا استعلام داخل قالب، وكل صورة تمرّ عبر مكوّن واحد.',
-        },
       ],
     },
     en: {
       name: 'Diwan',
-      kind: 'Arabic-first furniture store',
-      tagline: 'The customer measures a room once, and every piece answers: does it fit?',
+      kind: 'Arabic-first furniture store for the Saudi market',
+      tagline: 'The customer measures the room and the way in once, and every piece answers: does it fit, and will it get there?',
       summary:
-        'Furniture is where online shopping fails most often, and the reason is dull: a sofa is 240 cm wide and the buyer has no idea whether 240 cm is fine. Diwan moves that question to the front — a customer saves a room with its width and length, and from then on every product page gives a verdict against that room rather than a number in a table.',
+        'Furniture is where online shopping fails most often, and the reason is dull: a sofa is 240 cm wide and the buyer has no idea whether 240 cm is fine, so the piece arrives and does not clear the door. Diwan moves that question to the front. A customer saves the room with its width and length, and the way to it — the front door, the lift or the stairs, a villa’s own stairs inside — and from then on every piece says whether it fits the room and whether it gets there, and why. It is built for the Saudi market: prices in riyals including VAT, a simplified tax invoice with its ZATCA QR code, delivery by city with a booked day, and returns that record their reason. The admin panel is open to try, through a demo account that sees everything and changes nothing.',
       points: [
         {
           h: 'The fit verdict is arithmetic with a rule set, not a hint',
-          b: 'A piece has to fit the longest wall, take no more than half the floor, and have at least one face under 80 cm so it clears a doorway. When more than one rule is broken the customer is told the worst one, not the first checked. A room with no measurements and a product with no dimensions are different answers, and the interface says so.',
+          b: 'A piece has to fit the longest wall, take no more than 60% of the floor, and have at least one face under 80 cm so it clears a doorway. When more than one rule is broken the customer is told the worst one, not the first checked. A room with no measurements and a product with no dimensions are different answers, and the interface says so.',
+        },
+        {
+          h: 'The way in is walked, step by step',
+          b: 'The front door, then the lift’s door and car, or the stairs and their turn, then a villa’s inner stairs. A piece is carried at the size it arrives: assembled, with parts off, or in boxes. The check errs towards “it will not go”: a 2 cm margin a side, the worst step decides and is named, and a step nobody measured stays unchecked rather than passed. When the lift refuses a piece but the balcony clears it, it says: by hoist, not no.',
+        },
+        {
+          h: 'Ready for Saudi Arabia, without pretending',
+          b: 'Prices include 15% VAT, the tax is found inside them to the halala, and each order keeps the rate it was sold under. An invoice is called a simplified tax invoice, with its ZATCA QR code, only once the shop has a VAT number and the sale has happened; until then it is a receipt that says why. Delivery fees, the return period and delivery days are the shop’s to set from its panel, and until they are set the storefront says they are agreed on contact.',
         },
         {
           h: 'Stock is decided in the database, not in PHP',
           b: 'Checkout locks the product row with lockForUpdate inside the transaction that writes the order, so two customers reaching for the last piece cannot both succeed. A cart with one unavailable line fails whole. Cancelling returns the stock exactly once.',
-        },
-        {
-          h: 'Order history survives the catalogue',
-          b: 'An order line records what somebody bought; the catalogue lists what is for sale today. Retiring a piece used to delete it from every past order. The columns now release instead of cascade, and a name and image snapshot carry the record.',
-        },
-        {
-          h: 'The design system is enforced by tests',
-          b: 'The rules are unit tests over the Blade templates: no colour outside tokens.css, no inline style unless computed at render time, no query inside a template, every photograph through one component.',
         },
       ],
     },

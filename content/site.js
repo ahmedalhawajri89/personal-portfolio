@@ -151,13 +151,13 @@ export const HERO_TESTS = [
     decEn: 'The cap is enforced in the data layer, not by hiding the button.',
   },
   {
-    file: 'DesignSystemTest.php', project: 'diwan',
-    ar: 'لا لون في القوالب خارج ملف الرموز',
-    en: 'No colour in a template outside the token file',
-    probAr: 'قاعدة تصميم لا يفحصها أحد ترجع بعد أول تعديل.',
-    probEn: 'A design rule nobody checks comes back after the first edit.',
-    decAr: 'القواعد مكتوبة كاختبارات على قوالب Blade، لا كاتفاق شفهي.',
-    decEn: 'The rules are written as unit tests over the Blade templates rather than agreed verbally.',
+    file: 'PassageTest.php', project: 'diwan',
+    ar: 'لا يُقال إن القطعة تمرّ وخطوة على طريقها لم تُقَس',
+    en: 'A piece is never said to get in while a step on its way is unmeasured',
+    probAr: 'كنبة تتّسع للغرفة ثم تعلق في المصعد أو عند منعطف الدرج.',
+    probEn: 'A sofa that fits the room sticks in the lift or at the turn of the stairs.',
+    decAr: 'الطريق يُمشى خطوةً خطوة بهامش ٢ سم من كل جانب، وأسوأ خطوة تقرّر، وما لم يُقَس يبقى «لم يُفحص».',
+    decEn: 'The way in is walked step by step with a 2 cm margin a side; the worst step decides, and an unmeasured one stays unchecked.',
   },
 ];
 

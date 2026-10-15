@@ -33,8 +33,11 @@ export const PROJECTS = {
   diwan: {
     base: 'http://127.0.0.1:8001',
     locales: ['ar', 'en'],
-    // GET /locale/{l} switches the session language.
+    // The shop's pages live at /ar/… and /en/… ({l}); GET /locale/{l} sets the
+    // session language that the bag, checkout and panel follow.
     setLocale: async (page, base, l) => { await page.goto(`${base}/locale/${l}`, { waitUntil: 'domcontentloaded' }); },
+    // The local demo shop. The customer has a saved room (420 × 360) and a way
+    // in (a lift, and a balcony for a hoist), so every verdict is answered.
     roles: {
       customer: { path: '/login', email: 'input[name=email]', password: 'input[name=password]', user: 'customer@fu.local', pass: 'customer1234' },
       admin: { path: '/login', email: 'input[name=email]', password: 'input[name=password]', user: 'admin@fu.local', pass: 'admin1234' },
@@ -45,38 +48,57 @@ export const PROJECTS = {
       admin: { ar: 'لوحة الإدارة', en: 'Admin dashboard' },
     },
     pages: [
-      { key: 'home', path: '/', ar: 'الصفحة الرئيسية', en: 'Home', group: 'shop', full: true, mobile: true },
-      { key: 'catalogue', path: '/products', ar: 'المجموعة', en: 'Catalogue', group: 'shop', full: true, mobile: true },
-      { key: 'category', path: '/category/living-room', ar: 'تصنيف: غرفة المعيشة', en: 'Category: living room', group: 'shop', full: true },
-      { key: 'product', path: '/product/classic-bed-rhvk', ar: 'صفحة المنتج', en: 'Product page', group: 'shop', full: true, mobile: true },
-      { key: 'lookbook', path: '/lookbook', ar: 'دفتر الإلهام', en: 'Lookbook', group: 'shop', full: true },
-      { key: 'testimonials', path: '/testimonials', ar: 'آراء العملاء', en: 'Testimonials', group: 'shop', full: true },
-      { key: 'about', path: '/about', ar: 'من نحن', en: 'About', group: 'shop', full: true },
-      { key: 'contact', path: '/contact', ar: 'تواصل', en: 'Contact', group: 'shop' },
-      { key: 'shipping', path: '/shipping', ar: 'سياسة الشحن', en: 'Shipping policy', group: 'shop' },
+      { key: 'home', path: '/{l}', ar: 'الصفحة الرئيسية', en: 'Home', group: 'shop', full: true, mobile: true },
+      { key: 'catalogue', path: '/{l}/products', ar: 'المجموعة، بحكمٍ على غرفة الزبون', en: "Catalogue, judged against the customer's room", group: 'shop', as: 'customer', full: true, mobile: true },
+      { key: 'category', path: '/{l}/category/living-room', ar: 'تصنيف: غرفة المعيشة', en: 'Category: living room', group: 'shop', full: true },
+      { key: 'product', path: '/{l}/product/luxury-sofa', ar: 'صفحة المنتج: هل تتّسع لها الغرفة، وهل تصل إليها', en: 'Product page: does it fit the room, and does it get there', group: 'shop', as: 'customer', full: true, mobile: true },
+      // The way in: door, lift or stairs, a villa's inner stairs, a balcony.
+      { key: 'way-in', path: '/{l}/product/luxury-sofa', ar: 'طريق القطعة لبيتك', en: 'The way in', group: 'shop', as: 'customer', mobile: true,
+        prep: async (page) => {
+          await page.evaluate(() => document.getElementById('routeModal')?.showModal());
+          await page.waitForTimeout(500);
+        } },
+      { key: 'lookbook', path: '/{l}/lookbook', ar: 'دفتر الإلهام', en: 'Lookbook', group: 'shop', full: true },
+      { key: 'about', path: '/{l}/about', ar: 'من نحن', en: 'About', group: 'shop', full: true },
+      { key: 'contact', path: '/{l}/contact', ar: 'تواصل', en: 'Contact', group: 'shop' },
       { key: 'login', path: '/login', ar: 'تسجيل الدخول', en: 'Sign in', group: 'shop', mobile: true },
-      { key: 'register', path: '/register', ar: 'إنشاء حساب', en: 'Register', group: 'shop' },
       // Signed in as a customer: put one piece in the bag so the cart and
       // checkout are photographed with something in them.
-      { key: 'cart', path: '/product/classic-bed-rhvk', ar: 'السلة', en: 'Cart', group: 'account', as: 'customer', mobile: true,
+      { key: 'cart', path: '/{l}/product/modern-sofa', ar: 'السلة', en: 'Cart', group: 'account', as: 'customer', mobile: true,
+        // Only into an empty bag, so running the shots again does not pile up sofas.
         prep: async (page) => {
+          const product = page.url();
+          await page.goto(new URL('/cart', product).href, { waitUntil: 'networkidle' });
+          if (await page.locator('a[href*="/product/"]').count()) return;
+          await page.goto(product, { waitUntil: 'networkidle' });
           await page.click('form[action$="/cart/add"] button[type=submit]').catch(() => {});
           await page.waitForLoadState('networkidle').catch(() => {});
-          await page.goto(page.url().replace(/\/product\/.*$/, '/cart'), { waitUntil: 'networkidle' });
+          await page.goto(new URL('/cart', product).href, { waitUntil: 'networkidle' });
         } },
-      { key: 'checkout', path: '/checkout', ar: 'إتمام الطلب', en: 'Checkout', group: 'account', as: 'customer', full: true, mobile: true },
+      // The city sets the delivery fee; the day is booked from the shop's own delivery days.
+      { key: 'checkout', path: '/checkout', ar: 'إتمام الطلب: المدينة ورسومها وموعد التوصيل', en: 'Checkout: city, fee and delivery day', group: 'account', as: 'customer', full: true, mobile: true,
+        prep: async (page) => {
+          const zone = page.locator('select[name=delivery_zone_id]');
+          if (await zone.count()) await zone.selectOption({ index: 1 }).catch(() => {});
+          await page.waitForTimeout(400);
+        } },
       { key: 'orders', path: '/orders', ar: 'طلباتي', en: 'My orders', group: 'account', as: 'customer' },
+      { key: 'order', path: '/orders/4', ar: 'طلب مُسلَّم، ومنه يُطلب الإرجاع', en: 'A delivered order, where a return is asked for', group: 'account', as: 'customer', full: true },
+      { key: 'invoice', path: '/orders/4/invoice', ar: 'فاتورة ضريبية مبسّطة برمز ZATCA', en: 'Simplified tax invoice with its ZATCA QR', group: 'account', as: 'customer', full: true, mobile: true },
       { key: 'rooms', path: '/wishlist', ar: 'غرفي والمفضّلة', en: 'Rooms & wishlist', group: 'account', as: 'customer', full: true },
-      { key: 'profile', path: '/profile', ar: 'الملف الشخصي', en: 'Profile', group: 'account', as: 'customer' },
       { key: 'adm-dash', path: '/admin/dashboard', ar: 'نظرة عامة', en: 'Overview', group: 'admin', as: 'admin', full: true, mobile: true },
       { key: 'adm-products', path: '/admin/products', ar: 'المنتجات', en: 'Products', group: 'admin', as: 'admin', mobile: true },
-      { key: 'adm-create', path: '/admin/products/create', ar: 'إضافة منتج', en: 'New product', group: 'admin', as: 'admin', full: true },
-      { key: 'adm-cats', path: '/admin/categories', ar: 'التصنيفات', en: 'Categories', group: 'admin', as: 'admin' },
+      { key: 'adm-create', path: '/admin/products/create', ar: 'إضافة منتج: الأبعاد وطريقة الوصول', en: 'New product: dimensions and how it arrives', group: 'admin', as: 'admin', full: true },
       { key: 'adm-orders', path: '/admin/orders', ar: 'الطلبات', en: 'Orders', group: 'admin', as: 'admin' },
+      { key: 'adm-order', path: '/admin/orders/4', ar: 'طلب: سجلّه وطريق القطعة لبيت الزبون', en: "An order: its history and the customer's way in", group: 'admin', as: 'admin', full: true },
+      { key: 'adm-slip', path: '/admin/orders/4/slip', ar: 'ورقة التغليف', en: 'Packing slip', group: 'admin', as: 'admin', full: true },
+      { key: 'adm-returns', path: '/admin/returns', ar: 'الإرجاع وأسبابه', en: 'Returns and their reasons', group: 'admin', as: 'admin' },
+      { key: 'adm-zones', path: '/admin/delivery-zones', ar: 'مدن التوصيل ورسومها', en: 'Delivery cities and fees', group: 'admin', as: 'admin' },
+      { key: 'adm-settings', path: '/admin/settings', ar: 'إعدادات المتجر', en: 'Shop settings', group: 'admin', as: 'admin', full: true },
+      { key: 'adm-activity', path: '/admin/activity', ar: 'سجل النشاط', en: 'Activity log', group: 'admin', as: 'admin' },
+      { key: 'adm-cats', path: '/admin/categories', ar: 'التصنيفات', en: 'Categories', group: 'admin', as: 'admin' },
       { key: 'adm-users', path: '/admin/users', ar: 'المستخدمون', en: 'Users', group: 'admin', as: 'admin' },
       { key: 'adm-reviews', path: '/admin/reviews', ar: 'الآراء', en: 'Reviews', group: 'admin', as: 'admin' },
-      { key: 'adm-news', path: '/admin/newsletters', ar: 'النشرة البريدية', en: 'Newsletter', group: 'admin', as: 'admin' },
-      { key: 'adm-contacts', path: '/admin/contacts', ar: 'رسائل التواصل', en: 'Contact messages', group: 'admin', as: 'admin' },
     ],
   },
 
