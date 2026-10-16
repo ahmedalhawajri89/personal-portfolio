@@ -140,7 +140,9 @@ export const PROJECTS = [
     cover: 'home',
     year: '2026',
     stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Vanilla JS', 'Yajra DataTables', 'PHPUnit'],
-    repo: 'https://github.com/ahmedalhawajri89/graduation-project-tracker',
+    repo: 'https://github.com/ahmedalhawajri89/Takharruj',
+    // Demo mode: one-click sign-in as student, supervisor or admin, reset nightly.
+    demo: 'https://takharruj.vercel.app/',
     ar: {
       name: 'تخرُّج',
       kind: 'منصة إدارة مشاريع التخرج',
