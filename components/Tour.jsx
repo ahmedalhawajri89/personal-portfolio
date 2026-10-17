@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Icon from './Icons';
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -10,8 +10,10 @@ const pad = (n) => String(n).padStart(2, '0');
    full-width screenshots stacked down the page read as an archive; one frame
    and a list reads as the product being shown to you. A proper tablist --
    arrow keys move between screens and the frame is labelled by the tab that
-   opened it. Only the screen on show is in the page; its neighbours are
-   fetched ahead so a step never waits. */
+   opened it. Every screen sits in the frame and only the one on show is
+   visible: the browser fetches each in the size it will actually draw (the
+   full file on a dense screen, not the thumbnail), so a step never lands on
+   an empty frame while the new picture loads. */
 export default function Tour({ items, labels, rtl }) {
   const [i, setI] = useState(0);
   const tabs = useRef([]);
@@ -21,10 +23,6 @@ export default function Tour({ items, labels, rtl }) {
     setI(j);
     if (focus) tabs.current[j]?.focus();
   };
-
-  useEffect(() => {
-    [1, -1].forEach((d) => { const im = new Image(); im.src = items[(i + d + n) % n].thumb; });
-  }, [i, items, n]);
 
   const onKey = (e) => {
     const d = { ArrowDown: 1, ArrowUp: -1, ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1, Home: -i, End: n - 1 - i }[e.key];
@@ -40,10 +38,13 @@ export default function Tour({ items, labels, rtl }) {
         <div className="tour-frame">
           <div className="tour-bar" aria-hidden="true"><i /><i /><i /><span className="lat">{s.path}</span></div>
           <div className="tour-pic">
-            <picture key={s.thumb}>
-              <source media="(min-width:1024px)" srcSet={`${s.thumb} ${s.tw}w, ${s.file} ${s.w}w`} sizes="820px" />
-              <img src={s.thumb} alt={s.alt} width={s.tw} height={s.th} decoding="async" className="tour-img" />
-            </picture>
+            {items.map((x, k) => (
+              <picture key={x.thumb} className={`tour-shot${k === i ? ' is-on' : ''}`} aria-hidden={k !== i}>
+                <source media="(min-width:1024px)" srcSet={`${x.thumb} ${x.tw}w, ${x.file} ${x.w}w`} sizes="820px" />
+                <img src={x.thumb} alt={k === i ? x.alt : ''} width={x.tw} height={x.th} decoding="async"
+                     loading={k === 0 ? 'eager' : 'lazy'} className="tour-img" />
+              </picture>
+            ))}
           </div>
         </div>
         <div className="tour-ctl">
