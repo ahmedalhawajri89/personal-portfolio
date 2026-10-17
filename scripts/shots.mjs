@@ -157,7 +157,19 @@ function todayAt(hhmm, tz) {
   return new Date(`${day}T${hhmm}:00${offset}`);
 }
 
+// Sign-in forms are often rate limited (Takharruj allows five a minute), and a
+// full run signs in a role per locale and device. A refusal waits out the
+// window once before giving up.
 async function login(page, P, role) {
+  try {
+    await loginOnce(page, P, role);
+  } catch {
+    await page.waitForTimeout(65000);
+    await loginOnce(page, P, role);
+  }
+}
+
+async function loginOnce(page, P, role) {
   const r = P.roles[role];
   await page.goto(P.base + r.path, { waitUntil: 'networkidle' });
   await page.fill(r.email, r.user);

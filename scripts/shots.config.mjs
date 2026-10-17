@@ -173,7 +173,7 @@ export const PROJECTS = {
   // The Laravel app serves the public site too (the "project journey" home);
   // the old Next.js frontend is no longer what visitors see.
   grad: {
-    base: 'http://127.0.0.1:8002',
+    base: process.env.GRAD_BASE || 'http://127.0.0.1:8002',
     locales: ['ar', 'en'],
     // GET /locale/{l} sets the locale cookie for the site and the dashboards.
     setLocale: async (page, base, l) => { await page.goto(`${base}/locale/${l}`, { waitUntil: 'domcontentloaded' }); },
@@ -218,7 +218,7 @@ export const PROJECTS = {
       moments: { ar: 'لحظات التجربة', en: 'Moments' },
     },
     pages: [
-      { key: 'home', path: '/', ar: 'رحلة المشروع — الصفحة الرئيسية', en: 'The project journey — home', group: 'site', full: true, mobile: true },
+      { key: 'home', path: '/', ar: 'الصفحة الرئيسية ورحلة المشروع', en: 'Home and the project journey', group: 'site', full: true, mobile: true },
       // The team walks the path to the supervisor first; photograph it arrived.
       { key: 'login', path: '/login', ar: 'تسجيل الدخول', en: 'Sign in', group: 'site', mobile: true,
         prep: async (page) => { await page.waitForTimeout(4600); } },
