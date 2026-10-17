@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from './Icons';
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -12,17 +12,28 @@ const pad = (n) => String(n).padStart(2, '0');
    arrow keys move between screens and the frame is labelled by the tab that
    opened it. Every screen sits in the frame and only the one on show is
    visible: the browser fetches each in the size it will actually draw (the
-   full file on a dense screen, not the thumbnail), so a step never lands on
-   an empty frame while the new picture loads. */
+   full file on a dense screen, not the thumbnail). On a slow line a screen
+   may still be on its way when it is picked: the one before stays up, dimmed,
+   until it arrives, so the frame is never empty. */
 export default function Tour({ items, labels, rtl }) {
   const [i, setI] = useState(0);
+  const [shown, setShown] = useState(0);
+  const [ready, setReady] = useState({});
   const tabs = useRef([]);
+  const pics = useRef([]);
   const n = items.length;
   const go = (k, focus) => {
     const j = (k + n) % n;
     setI(j);
     if (focus) tabs.current[j]?.focus();
   };
+
+  // A picture already in the cache can finish before React listens for it,
+  // so `complete` is read as well as the load event.
+  useEffect(() => {
+    const im = pics.current[i];
+    if (ready[i] || (im?.complete && im.naturalWidth > 0)) setShown(i);
+  }, [i, ready]);
 
   const onKey = (e) => {
     const d = { ArrowDown: 1, ArrowUp: -1, ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1, Home: -i, End: n - 1 - i }[e.key];
@@ -37,11 +48,12 @@ export default function Tour({ items, labels, rtl }) {
       <div className="tour-stage" id="tour-stage" role="tabpanel" aria-labelledby={`tour-tab-${i}`}>
         <div className="tour-frame">
           <div className="tour-bar" aria-hidden="true"><i /><i /><i /><span className="lat">{s.path}</span></div>
-          <div className="tour-pic">
+          <div className={`tour-pic${shown !== i ? ' is-wait' : ''}`}>
             {items.map((x, k) => (
-              <picture key={x.thumb} className={`tour-shot${k === i ? ' is-on' : ''}`} aria-hidden={k !== i}>
+              <picture key={x.thumb} className={`tour-shot${k === shown ? ' is-on' : ''}`} aria-hidden={k !== shown}>
                 <source media="(min-width:1024px)" srcSet={`${x.thumb} ${x.tw}w, ${x.file} ${x.w}w`} sizes="820px" />
-                <img src={x.thumb} alt={k === i ? x.alt : ''} width={x.tw} height={x.th} decoding="async"
+                <img ref={(el) => (pics.current[k] = el)} src={x.thumb} alt={k === shown ? x.alt : ''} width={x.tw} height={x.th} decoding="async"
+                     onLoad={() => setReady((r) => (r[k] ? r : { ...r, [k]: true }))}
                      loading={k === 0 ? 'eager' : 'lazy'} className="tour-img" />
               </picture>
             ))}
