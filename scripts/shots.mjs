@@ -29,7 +29,7 @@ const FULL_W = { desktop: 1600, mobile: 780 };
 const THUMB_W = { desktop: 960, mobile: 480 };
 const THUMB_H = { desktop: 600, mobile: 1040 };
 
-// `node scripts/shots.mjs kafala --only=adm-login,portal` re-captures just
+// `node scripts/shots.mjs lamma --only=adm-login,portal` re-captures just
 // those page keys and merges them into the project's existing manifest.
 const args = process.argv.slice(2);
 const onlyKeys = (args.find((a) => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean);

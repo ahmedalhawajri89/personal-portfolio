@@ -196,28 +196,28 @@ export const PROJECTS = [
   },
 
   {
-    slug: 'kafala',
+    slug: 'lamma',
     // The eight screens the case study actually argues about; the rest of
     // the capture set stays available behind the full gallery.
     tour: ['home', 'orphans', 'orphan', 'transparency', 'checkout', 'portal', 'adm-dash', 'adm-disburse'],
-    shots: 'kafala',
+    shots: 'lamma',
     // The transparency page: "we don't ask you to trust us, we ask you to
     // verify" is the whole platform in a sentence; the home page was a hero.
     cover: 'transparency',
     year: '2026',
     stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Vue 3', 'Sanctum', 'Pest', 'Playwright'],
-    repo: 'https://github.com/ahmedalhawajri89/kafala-orphan-sponsorship',
-    demo: 'https://kafala-orphan-sponsorship.vercel.app/',
+    repo: 'https://github.com/ahmedalhawajri89/Lamma',
+    demo: 'https://lamma-sponsorship.vercel.app/',
     ar: {
-      name: 'كفالة',
+      name: 'لمّة',
       kind: 'منصة كفالة أيتام',
       tagline: 'كل رقم يُنشر مشتقّ من قاعدة البيانات، لا مكتوب في الصفحة.',
       summary:
-        'أغلب مواقع التبرّع تطلب منك أن تثق بها. هذه مبنيّة كي لا تحتاج. لا تتبرّع لجهة مجهولة — تكفل طفلاً باسمه وقصّته وملفّه الموثَّق، ويصلك تقرير مصوَّر كل ثلاثة أشهر، وتقرأ الميزانية المدقّقة التي يقرأها أي شخص آخر. وهذا المبدأ مطبَّق في مخطط قاعدة البيانات لا في نصّ تسويقي.',
+        'أغلب مواقع التبرّع تطلب منك أن تثق بها. هذه مبنيّة كي لا تحتاج. لا تتبرّع لجهة مجهولة، بل تكفل طفلاً باسمه وقصّته وملفّه الموثَّق، ويصلك تقرير مصوَّر كل ثلاثة أشهر، وتقرأ الميزانية المدقّقة التي يقرأها أي شخص آخر. وهذا المبدأ مطبَّق في مخطط قاعدة البيانات لا في نصّ تسويقي.',
       points: [
         {
           h: 'قيد فريد جزئي على محرّك لا يملك واحداً',
-          b: 'الكافل يجب ألّا يكفل الطفل نفسه مرّتين في الوقت نفسه، لكن يجب أن يبقى حرّاً في العودة بعد الإلغاء. القيد الفريد العادي يمنع العودة، وMySQL لا تدعم الفهارس الجزئية — فبُني القيد بعمود مولَّد يخرج فيه الصف الملغى من القيد تلقائياً.',
+          b: 'الكافل يجب ألّا يكفل الطفل نفسه مرّتين في الوقت نفسه، لكن يجب أن يبقى حرّاً في العودة بعد الإلغاء. القيد الفريد العادي يمنع العودة، وMySQL لا تدعم الفهارس الجزئية، فبُني القيد بعمود مولَّد يخرج فيه الصف الملغى من القيد تلقائياً.',
         },
         {
           h: 'مفتاح idempotency فريد على المدفوعات',
@@ -229,12 +229,12 @@ export const PROJECTS = [
         },
         {
           h: 'أربع أعين على الصرف',
-          b: 'من سجّل عملية الصرف لا يستطيع اعتمادها بنفسه، والسياسة تفحص ذلك في الكود لا في الواجهة. والمعتمَد لا يُعدَّل — يُعكَس بقيد مضاد.',
+          b: 'من سجّل عملية الصرف لا يستطيع اعتمادها بنفسه، والسياسة تفحص ذلك في الكود لا في الواجهة. والمعتمَد لا يُعدَّل، بل يُعكَس بقيد مضاد.',
         },
       ],
     },
     en: {
-      name: 'Kafala',
+      name: 'Lamma',
       kind: 'Orphan sponsorship platform',
       tagline: 'Every published number is derived from the database, not typed into the page.',
       summary:
@@ -242,7 +242,7 @@ export const PROJECTS = [
       points: [
         {
           h: 'A partial unique constraint on an engine that has none',
-          b: 'A sponsor must not sponsor the same child twice at the same time, but must be free to come back after cancelling. MySQL has no partial indexes, so the constraint is built with a generated column — cancelled rows drop out of the constraint automatically.',
+          b: 'A sponsor must not sponsor the same child twice at the same time, but must be free to come back after cancelling. MySQL has no partial indexes, so the constraint is built with a generated column, so cancelled rows drop out of the constraint automatically.',
         },
         {
           h: 'idempotency_key is unique on payments',
@@ -254,7 +254,7 @@ export const PROJECTS = [
         },
         {
           h: 'Four eyes on every disbursement',
-          b: 'Whoever recorded a disbursement cannot approve it, and the policy checks that in code, not in the interface. An approved record is never edited — it is reversed with a counter-entry.',
+          b: 'Whoever recorded a disbursement cannot approve it, and the policy checks that in code, not in the interface. An approved record is never edited; it is reversed with a counter-entry.',
         },
       ],
     },

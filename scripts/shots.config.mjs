@@ -265,13 +265,13 @@ export const PROJECTS = {
   },
 
   /* ----------------------------------------------------------- kafala */
-  kafala: {
-    base: 'http://127.0.0.1:8000',
+  lamma: {
+    base: 'https://lamma-sponsorship.vercel.app',
     locales: ['ar'],
     roles: {
       // The public site logs in through the API and redirects to the portal.
-      sponsor: { path: '/login', email: '#email', password: '#password', user: 'sponsor@kafala.org', pass: PW, waitFor: '**/dashboard**' },
-      admin: { path: '/admin/login', email: '#email', password: '#password', user: 'admin@kafala.org', pass: PW, waitFor: '**/admin/dashboard**' },
+      sponsor: { path: '/login', email: '#email', password: '#password', user: 'sponsor@lamma.org', pass: PW, waitFor: '**/dashboard**' },
+      admin: { path: '/admin/login', email: '#email', password: '#password', user: 'admin@lamma.org', pass: PW, waitFor: '**/admin/dashboard**' },
     },
     groups: {
       public: { ar: 'الموقع العام', en: 'Public site' },
@@ -281,15 +281,15 @@ export const PROJECTS = {
     pages: [
       { key: 'home', path: '/', ar: 'الصفحة الرئيسية', en: 'Home', group: 'public', full: true, mobile: true },
       { key: 'orphans', path: '/orphans', ar: 'الأيتام', en: 'Orphans', group: 'public', full: true, mobile: true },
-      { key: 'orphan', path: '/orphan?id=1', ar: 'ملف يتيم', en: 'Orphan profile', group: 'public', full: true, mobile: true },
+      { key: 'orphan', path: '/orphan?id=KFL-1045', ar: 'ملف يتيم', en: 'Orphan profile', group: 'public', full: true, mobile: true },
       { key: 'programs', path: '/programs', ar: 'البرامج', en: 'Programs', group: 'public', full: true },
       { key: 'transparency', path: '/transparency', ar: 'الشفافية', en: 'Transparency', group: 'public', full: true, mobile: true },
-      { key: 'about', path: '/about', ar: 'عن كفالة', en: 'About', group: 'public', full: true },
+      { key: 'about', path: '/about', ar: 'عن لمّة', en: 'About', group: 'public', full: true },
       { key: 'blog', path: '/blog', ar: 'المدوّنة', en: 'Blog', group: 'public', full: true },
-      { key: 'post', path: '/post?slug=قصة-مريم', ar: 'مقال', en: 'Article', group: 'public', full: true },
+      { key: 'post', path: '/post?slug=%D9%83%D9%8A%D9%81-%D9%86%D8%AA%D8%AD%D9%82%D9%82-%D9%85%D9%86-%D9%83%D9%84-%D8%AD%D8%A7%D9%84%D8%A9', ar: 'مقال', en: 'Article', group: 'public', full: true },
       { key: 'faq', path: '/faq', ar: 'الأسئلة الشائعة', en: 'FAQ', group: 'public' },
       { key: 'contact', path: '/contact', ar: 'تواصل', en: 'Contact', group: 'public' },
-      { key: 'checkout', path: '/checkout?id=1', ar: 'بدء كفالة', en: 'Start a sponsorship', group: 'public', full: true, mobile: true },
+      { key: 'checkout', path: '/checkout?id=KFL-1045', ar: 'بدء كفالة', en: 'Start a sponsorship', group: 'public', full: true, mobile: true },
       { key: 'login', path: '/login', ar: 'تسجيل الدخول', en: 'Sign in', group: 'public' },
       { key: 'register', path: '/register', ar: 'إنشاء حساب', en: 'Register', group: 'public' },
       { key: 'notfound', path: '/this-page-does-not-exist', ar: 'صفحة ٤٠٤', en: '404 page', group: 'public' },

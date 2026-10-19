@@ -22,7 +22,7 @@ export const SERVICES = [
     en: { h: 'Business systems and dashboards', b: 'Roles, permissions, workflows, and server-side tables that stay fast at thousands of rows.' },
   },
   {
-    icon: 'database', proof: 'kafala', visual: 'api',
+    icon: 'database', proof: 'lamma', visual: 'api',
     ar: { h: 'قواعد بيانات وواجهات برمجية', b: 'مخطّط يمنع الخطأ بدل أن يكتشفه، وREST API موثّق تحرسه اختبارات.' },
     en: { h: 'Database design and APIs', b: 'A schema that prevents the mistake rather than detecting it, and a documented REST API held up by tests.' },
   },
@@ -68,7 +68,7 @@ export const CAPABILITIES = [
   },
   {
     icon: 'database',
-    // Was the services line repeated. Kafala's first point is the fact that
+    // Was the services line repeated. Lamma's first point is the fact that
     // belongs to this layer and to nothing else on the page.
     ar: { h: 'البيانات', b: 'خمسة مخطّطات من الصفر على MySQL — منها قيد فريد جزئي على محرّك لا يملك واحداً.' },
     en: { h: 'Data', b: 'Five schemas designed from scratch on MySQL — including a partial unique constraint on an engine that has none.' },
@@ -133,7 +133,7 @@ export const HERO_TESTS = [
     decEn: 'The columns release instead of cascading, and a name and image snapshot travel with the line.',
   },
   {
-    file: 'DisbursementRecordTest.php', project: 'kafala',
+    file: 'DisbursementRecordTest.php', project: 'lamma',
     ar: 'من سجّل الصرف لا يستطيع اعتماده',
     en: 'Whoever recorded a disbursement cannot approve it',
     probAr: 'شخص واحد يسجّل عملية صرف ويعتمدها بنفسه.',
@@ -168,7 +168,7 @@ export const PROCESS = {
     { h: 'العربية من أول سطر', b: 'الاتجاه مبني في التخطيط، لا معكوس في النهاية. الأرقام والأيقونات والفلاتر لا تخرج عن مكانها.' },
     { h: 'القواعد في طبقة البيانات', b: 'الصلاحيات والمخزون والتزامن تُحسم في قاعدة البيانات داخل المعاملة نفسها، لا بإخفاء زرّ في الواجهة.' },
     { h: 'اختبار لكل قاعدة تهمّ', b: 'ما لا يفحصه اختبار سينكسر بعد أول تعديل يكتبه أحد بعدي. حتى قواعد نظام التصميم مكتوبة كاختبارات.' },
-    // Kafala: date_of_birth not age. Booking: availability computed not stored.
+    // Lamma: date_of_birth not age. Booking: availability computed not stored.
     { h: 'الحقيقة تُخزَّن، والمشتقّ يُحسب', b: 'تاريخ الميلاد لا العمر، والأوقات المتاحة تُولَّد من القواعد لا تُكتب في جدول. الرقم الذي يُحفظ مرّتين سيختلف يوماً ما.' },
     // Diwan: order lines survive catalogue. Kafala: approved records reversed, never edited.
     { h: 'السجلّ لا يُمحى', b: 'سطر الطلب يبقى بعد حذف المنتج، والقيد المعتمَد لا يُعدَّل بل يُعكَس بقيد مضاد. ما حدث فعلاً يجب أن يبقى قابلاً للقراءة.' },
