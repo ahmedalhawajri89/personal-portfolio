@@ -4,9 +4,6 @@
 export const PROJECTS = [
   {
     slug: 'diwan',
-    // The eight screens the case study actually argues about; the rest of
-    // the capture set stays available behind the full gallery.
-    tour: ['product', 'way-in', 'catalogue', 'checkout', 'invoice', 'order', 'adm-dash', 'adm-order'],
     shots: 'diwan',
     // The product page, not the catalogue: its top already carries both
     // verdicts — the room and the way in — which is the idea in one glance.
@@ -69,9 +66,6 @@ export const PROJECTS = [
 
   {
     slug: 'booking',
-    // The eight screens the case study actually argues about; the rest of
-    // the capture set stays available behind the full gallery.
-    tour: ['home', 'book', 'board', 'guard', 'calendar', 'bookings', 'analytics', 'login'],
     shots: 'booking',
     cover: 'board',
     year: '2026',
@@ -132,9 +126,6 @@ export const PROJECTS = [
 
   {
     slug: 'takharruj',
-    // The eight screens the case study actually argues about; the rest of
-    // the capture set stays available behind the full gallery.
-    tour: ['home', 'stu-dash', 'sup-project', 'defenses', 'sup-discussion', 'dash', 'stu-grade', 'login'],
     shots: 'grad',
     // The "project journey" home: the whole idea in one picture.
     cover: 'home',
@@ -197,15 +188,12 @@ export const PROJECTS = [
 
   {
     slug: 'lamma',
-    // The eight screens the case study actually argues about; the rest of
-    // the capture set stays available behind the full gallery.
-    tour: ['home', 'orphans', 'orphan', 'transparency', 'checkout', 'portal', 'adm-dash', 'adm-disburse'],
     shots: 'lamma',
     // The transparency page: "we don't ask you to trust us, we ask you to
     // verify" is the whole platform in a sentence; the home page was a hero.
     cover: 'transparency',
     year: '2026',
-    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Vue 3', 'Sanctum', 'Pest', 'Playwright'],
+    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Bootstrap 5', 'Vue 3', 'Sanctum', 'Pest', 'Playwright'],
     repo: 'https://github.com/ahmedalhawajri89/Lamma',
     demo: 'https://lamma-sponsorship.vercel.app/',
     ar: {
@@ -213,7 +201,7 @@ export const PROJECTS = [
       kind: 'منصة كفالة أيتام',
       tagline: 'كل رقم يُنشر مشتقّ من قاعدة البيانات، لا مكتوب في الصفحة.',
       summary:
-        'أغلب مواقع التبرّع تطلب منك أن تثق بها. هذه مبنيّة كي لا تحتاج. لا تتبرّع لجهة مجهولة، بل تكفل طفلاً باسمه وقصّته وملفّه الموثَّق، ويصلك تقرير مصوَّر كل ثلاثة أشهر، وتقرأ الميزانية المدقّقة التي يقرأها أي شخص آخر. وهذا المبدأ مطبَّق في مخطط قاعدة البيانات لا في نصّ تسويقي.',
+        'أغلب مواقع التبرّع تطلب منك أن تثق بها. هذه مبنيّة كي لا تحتاج. لا تتبرّع لجهة مجهولة، بل تكفل طفلاً باسمه وقصّته وملفّه الموثَّق، ويصلك تقرير مصوَّر كل ثلاثة أشهر، وتقرأ أرقام الإنفاق نفسها التي يقرؤها أي شخص آخر، محسوبة من قاعدة البيانات. وهذا المبدأ مطبَّق في مخطط قاعدة البيانات لا في نصّ تسويقي.',
       points: [
         {
           h: 'قيد فريد جزئي على محرّك لا يملك واحداً',
@@ -238,7 +226,7 @@ export const PROJECTS = [
       kind: 'Orphan sponsorship platform',
       tagline: 'Every published number is derived from the database, not typed into the page.',
       summary:
-        'Most donation sites ask you to trust them. This one is built so you do not have to. You sponsor a named child with a story and a verified file, you receive a photo report every three months, and you can read the audited budget that anyone else can read too. That principle is enforced in the schema, not written in the marketing copy.',
+        'Most donation sites ask you to trust them. This one is built so you do not have to. You sponsor a named child with a story and a verified file, you receive a photo report every three months, and you can read the same spending figures as anyone else, computed from the database. That principle is enforced in the schema, not written in the marketing copy.',
       points: [
         {
           h: 'A partial unique constraint on an engine that has none',
@@ -262,13 +250,10 @@ export const PROJECTS = [
 
   {
     slug: 'mawaheb',
-    // The eight screens the case study actually argues about; the rest of
-    // the capture set stays available behind the full gallery.
-    tour: ['home', 'discover', 'search', 'profile', 'opp', 'dash', 'portfolio', 'scout-opps'],
     shots: 'mawaheb',
     cover: 'discover',
     year: '2026',
-    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Breeze', 'Socialite', 'PHPUnit'],
+    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Breeze', 'PHPUnit'],
     repo: 'https://github.com/ahmedalhawajri89/mawaheb-platform',
     ar: {
       name: 'مواهب',
@@ -283,11 +268,11 @@ export const PROJECTS = [
         },
         {
           h: 'ثلاثة أنواع حسابات محروسة في طبقة البيانات',
-          b: 'موهبة وكشّاف وعلامة تجارية تُختار عند التسجيل وتُفرَض بالوسطاء والسياسات، لا بإخفاء الأزرار. الحد الأدنى للعمر ١٦ يُتحقّق منه من تاريخ الميلاد على الخادم، ومن هم بين ١٦ و١٧ يمرّون بموافقة وليّ الأمر قبل تفعيل الحساب.',
+          b: 'موهبة وكشّاف وعلامة تجارية تُختار عند التسجيل وتُفرَض بالوسطاء والسياسات، لا بإخفاء الأزرار. الحد الأدنى للعمر ١٦ يُتحقّق منه من تاريخ الميلاد على الخادم، فلا يُفتح حساب لمن هو أصغر.',
         },
         {
           h: 'عدّادات تبقى صادقة',
-          b: 'عدد المتابعين والطلبات والمشاهدات يُزاد داخل المعاملة نفسها التي تكتب الصف المسبّب، لأن عدّاداً ينحرف أسوأ من لا عدّاد. واكتمال الملف معادلة موزونة، لا تخمين.',
+          b: 'عدد الطلبات يُزاد داخل المعاملة نفسها التي تكتب الطلب، والمشاهدة لا تُعدّ إلا حين يُكتب صفّها فعلاً، لأن عدّاداً ينحرف أسوأ من لا عدّاد. واكتمال الملف معادلة موزونة، لا تخمين.',
         },
         {
           h: 'حذف يحذف فعلاً',
@@ -308,11 +293,11 @@ export const PROJECTS = [
         },
         {
           h: 'Three account types, gated in the data layer',
-          b: 'Talent, scout and brand are chosen at registration and enforced by middleware and policies, not by hiding buttons. Minimum age 16 is validated server-side from the birth date; 16–17 must clear guardian consent before the account activates.',
+          b: 'Talent, scout and brand are chosen at registration and enforced by middleware and policies, not by hiding buttons. Minimum age 16 is validated server-side from the birth date, so no younger account can be opened.',
         },
         {
           h: 'Counters that stay honest',
-          b: 'Followers, applications and views are incremented inside the same transaction as the row that caused them, because a counter that drifts is worse than no counter. Profile completeness is a weighted formula, not a guess.',
+          b: 'The application count is incremented inside the same transaction that writes the application, and a view is counted only when its row is actually written, because a counter that drifts is worse than no counter. Profile completeness is a weighted formula, not a guess.',
         },
         {
           h: 'Deletion that actually deletes',

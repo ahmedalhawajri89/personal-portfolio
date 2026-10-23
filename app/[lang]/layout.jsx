@@ -50,7 +50,8 @@ export async function generateMetadata({ params }) {
 // visit — the site is designed light first, and the OS preference is not a
 // statement about this page. Dark is opt-in through the toggle, and once
 // chosen it is remembered. The browser chrome follows the same choice, so a
-// dark-mode OS never frames a light page in a dark bar.
+// dark-mode OS never frames a light page in a dark bar. The first home page
+// of a visit opens like a film, between two letterbox bars (`intro`), once.
 const BOOT = `(function(){try{
 var d=localStorage.getItem('theme')==='dark';
 document.documentElement.setAttribute('data-theme',d?'dark':'light');
@@ -58,6 +59,7 @@ var m=document.querySelector('meta[name=theme-color]');
 if(m)m.setAttribute('content',d?'#0E0E0D':'#F7F6F3');
 document.documentElement.classList.add('js');
 if(location.hash)document.documentElement.classList.add('cv-off');
+if(!location.hash&&['/','/ar','/ar/','/en','/en/'].indexOf(location.pathname)>-1&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('intro')){sessionStorage.setItem('intro','1');document.documentElement.classList.add('intro');}
 }catch(e){}})();`;
 
 export default async function RootLayout({ children, params }) {

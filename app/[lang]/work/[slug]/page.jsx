@@ -2,11 +2,13 @@ import { LANGS, T } from '../../../../lib/i18n';
 import { SITE } from '../../../../lib/site.mjs';
 import { PROJECTS, PROFILE } from '../../../../content/projects';
 import { STORIES } from '../../../../content/stories';
+import { BRIEFS } from '../../../../content/briefs';
 import { HERO_TESTS } from '../../../../content/site';
-import { shotsOf, coverOf, pagesOf, tourOf } from '../../../../lib/shots';
+import { shotsOf, coverOf, pagesOf, shotOf } from '../../../../lib/shots';
 import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, BackToTop } from '../../../../components/Chrome';
 import Gallery from '../../../../components/Gallery';
-import Tour from '../../../../components/Tour';
+import Journey from '../../../../components/Journey';
+import Motion from '../../../../components/Motion';
 import Icon from '../../../../components/Icons';
 
 const LIVE = PROJECTS.filter((p) => shotsOf(p.shots).shots.length > 0);
@@ -36,6 +38,12 @@ export async function generateMetadata({ params }) {
   };
 }
 
+/* A case study, in the order a client asks the questions. What is it and for
+   whom (the glance), what was wrong before it (the context, read slowly), how
+   it is used (the journey through the real screens), how it was built so the
+   promises hold (the solution), and what was handed over (the outcome). The
+   engineering is all still here; it just comes after the reader knows why it
+   matters. */
 export default async function Project({ params }) {
   const { lang, slug } = await params;
   const t = T[lang];
@@ -50,7 +58,8 @@ export default async function Project({ params }) {
   const cover = coverOf(p, lang);
   const pages = pagesOf(p.shots);
   const story = STORIES[p.slug]?.[lang];
-  const tour = tourOf(p, lang);
+  const brief = BRIEFS[p.slug];
+  const b = brief?.[lang];
   // The tests that belong to this project. Derived from the same list the
   // home page indexes, filtered to here — so a case study cannot claim a test
   // the index does not also carry.
@@ -58,12 +67,32 @@ export default async function Project({ params }) {
   const src = (f) => `/shots/${p.shots}/${f}`;
   const nextCover = coverOf(next, lang);
 
+  // A step whose screen has no capture is dropped rather than shown empty.
+  const steps = (brief?.journey || []).map((st) => {
+    const sh = shotOf(p.shots, st.shot, lang);
+    if (!sh) return null;
+    return {
+      h: st[lang].h, b: st[lang].b, path: sh.path,
+      file: src(sh.file), w: sh.w, ih: sh.h,
+      thumb: src(sh.thumb), tw: sh.tw, th: sh.th,
+      alt: `${c.name} — ${ar ? sh.labelAr : sh.labelEn}`,
+    };
+  }).filter(Boolean);
+
+  const outcome = [
+    [pages, d.outcome.pages],
+    [shots.length, d.outcome.shots],
+    brief?.tests ? [brief.tests, d.outcome.tests] : null,
+    [2, d.outcome.langs],
+  ].filter(Boolean);
+
   return (
     <>
       <div className="ambient" aria-hidden="true" />
       <ScrollProgress />
       <SmoothScroll />
       <Reveal />
+      <Motion />
       <Nav lang={lang} path={`/work/${slug}/`} title={c.name} />
 
       <main id="main" className="wrap pb-8 pt-28 sm:pt-32">
@@ -86,18 +115,38 @@ export default async function Project({ params }) {
             </div>
           </div>
           <h1 className="pj-h">{c.name}</h1>
-          <p className="pj-tag">{c.tagline}</p>
+          <p className="pj-tag">{b?.hook || c.tagline}</p>
         </header>
 
+        {/* The cover is the whole page, not its top: on a wide screen it
+            scrolls inside its window as the reader scrolls past. */}
         <div className="pj-plate">
           <div className="pj-frame">
             <div className="pj-bar" aria-hidden="true"><i /><i /><i /><span className="lat">{cover.path}</span></div>
-            <picture>
-              <source media="(min-width:1024px)" srcSet={`${src(cover.thumb)} ${cover.tw}w, ${src(cover.file)} ${cover.w}w`} sizes="1200px" />
-              <img src={src(cover.thumb)} alt={c.name} width={cover.tw} height={cover.th} fetchPriority="high" decoding="async" />
-            </picture>
+            <div className="pj-view" data-m="screen">
+              <picture>
+                <source media="(min-width:1024px)" srcSet={src(cover.file)} />
+                <img src={src(cover.thumb)} alt={c.name} width={cover.tw} height={cover.th} fetchPriority="high" decoding="async" />
+              </picture>
+            </div>
           </div>
         </div>
+
+        {/* ---------------------------------------------------------- glance */}
+        {b && (
+          <dl className="pj-glance">
+            <div>
+              <dt>{d.glance.who}</dt>
+              <dd><ul>{b.who.map((x) => <li key={x}>{x}</li>)}</ul></dd>
+            </div>
+            <div><dt>{d.glance.problem}</dt><dd>{b.problem}</dd></div>
+            <div><dt>{d.glance.does}</dt><dd>{b.does}</dd></div>
+            <div>
+              <dt>{d.glance.delivered}</dt>
+              <dd><ul>{b.delivered.map((x) => <li key={x}>{x}</li>)}</ul></dd>
+            </div>
+          </dl>
+        )}
 
         {/* The facts a client scans for, ruled like a spec sheet. */}
         <dl className="pj-facts">
@@ -110,43 +159,35 @@ export default async function Project({ params }) {
           <div><dt>{d.facts.scope}</dt><dd><span className="lat">{pages}</span> {t.work.pages} · <span className="lat">{shots.length}</span> {t.work.shots}</dd></div>
         </dl>
 
-        {/* ----------------------------------------------------------- brief */}
-        <section className="pj-brief">
-          <p className="pj-lead">{c.summary}</p>
-          {story && (
-            <div className="pj-rows">
-              <div className="pj-row">
-                <p className="pj-k">{d.story.problem}</p>
-                <p className="pj-v is-soft">{story.problem}</p>
-              </div>
-              <div className="pj-row">
-                <p className="pj-k is-acc">{d.story.idea}</p>
-                <p className="pj-v">{story.idea}</p>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {/* ------------------------------------------------------------ tour */}
-        {tour.length > 0 && (
+        {/* --------------------------------------------------------- context */}
+        {/* The problem as the people who had it would tell it, darkening word
+            by word as it is read, then the pains it is made of. */}
+        {b && (
           <section className="pj-sec">
-            <p className="eyebrow w-fit">{d.product.eyebrow}</p>
-            <h2 className="pj-h2">{d.product.h}</h2>
-            <p className="pj-lede">{d.product.lede}</p>
-            <Tour rtl={ar}
-                  labels={{ prev: d.prev, next: d.next, open: d.tourOpen, list: d.tourList }}
-                  items={tour.map((sh) => ({
-                    thumb: src(sh.thumb), file: src(sh.file), tw: sh.tw, th: sh.th, w: sh.w,
-                    path: sh.path, label: ar ? sh.labelAr : sh.labelEn,
-                    alt: `${c.name} — ${ar ? sh.labelAr : sh.labelEn}`,
-                  }))} />
+            <h2 className="pj-h2" data-m="lines">{d.context.h}</h2>
+            <p className="pj-read mt-8" data-m="read">{b.context}</p>
+            <ul className="pj-pains">
+              {b.pains.map((x) => (
+                <li key={x.h}><b>{x.h}</b>{x.b}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* --------------------------------------------------------- journey */}
+        {steps.length > 0 && (
+          <section className="pj-sec">
+            <h2 className="pj-h2" data-m="lines">{d.journey.h}</h2>
+            <p className="pj-lede">{d.journey.lede}</p>
+            <Journey steps={steps} labels={{ open: d.tourOpen }} />
           </section>
         )}
 
         {/* -------------------------------------------------------- solution */}
         {story && (
           <section className="pj-sec">
-            <h2 className="pj-h2">{d.story.solution}</h2>
+            <h2 className="pj-h2" data-m="lines">{d.story.solution}</h2>
+            <p className="pj-lede">{d.built.lede}</p>
             <ol className="pj-steps">
               {story.solution.map((x, i) => (
                 <li key={x.h} className="rise" style={{ '--i': i }}>
@@ -171,13 +212,27 @@ export default async function Project({ params }) {
           </section>
         )}
 
-        {/* -------------------------------------------------------- evidence */}
-        {/* The part that says it still holds: the actual test files, set as
-            the run that proves them. Projects without one skip the block. */}
-        {held.length > 0 && (
-          <section className="pj-sec">
-            <p className="eyebrow w-fit">{d.evidence}</p>
-            <h2 className="pj-h2">{d.evidenceH}</h2>
+        {/* --------------------------------------------------------- outcome */}
+        {/* Figures that can be checked: the pages and captures are counted from
+            the gallery below, the tests from the repository. */}
+        <section className="pj-sec">
+          <h2 className="pj-h2" data-m="lines">{d.outcome.h}</h2>
+          <dl className="pj-out">
+            {outcome.map(([n, l]) => (
+              <div key={l}><dt>{l}</dt><dd className="lat" data-m="count" data-to={n}>{n}</dd></div>
+            ))}
+          </dl>
+          {b && (
+            <ul className="pj-delivered">
+              {b.delivered.map((x) => (
+                <li key={x}><span aria-hidden="true"><Icon name="check" size={12} /></span><span>{x}</span></li>
+              ))}
+            </ul>
+          )}
+
+          {/* The part that says it still holds: the actual test files, set as
+              the run that proves them. Projects without one skip the block. */}
+          {held.length > 0 && (
             <div className="pj-tests">
               <p className="pj-cmd lat">$ ./vendor/bin/pest</p>
               <ul>
@@ -190,12 +245,12 @@ export default async function Project({ params }) {
                 ))}
               </ul>
             </div>
-          </section>
-        )}
+          )}
+        </section>
 
         {/* ------------------------------------------------------- gallery */}
         {/* The complete capture set, folded away as evidence rather than the
-            argument -- the tour above is what the page says. */}
+            argument -- the journey above is what the page says. */}
         <Gallery lang={lang} project={p.shots} data={data} collapsible />
 
         {/* --------------------------------------------------- next project */}

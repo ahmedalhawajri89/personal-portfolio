@@ -1,10 +1,12 @@
-import { Fragment } from 'react';
 import { LANGS, T } from '../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../content/projects';
 import { SERVICES, SKILLS, CAPABILITIES, PROCESS, TIMELINE, TESTIMONIALS, HERO_TESTS } from '../../content/site';
 import { shotsOf, coverOf, pagesOf } from '../../lib/shots';
 import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, ContactForm, BackToTop, TimelineScroll, TestRunner, CaseFiles, ServiceStack } from '../../components/Chrome';
 import Marquee from '../../components/Marquee';
+import Motion from '../../components/Motion';
+import Reel from '../../components/Reel';
+import { BRIEFS } from '../../content/briefs';
 import Icon from '../../components/Icons';
 import { CvButton } from '../../components/CvPanel';
 
@@ -12,11 +14,14 @@ export function generateStaticParams() {
   return LANGS.map((lang) => ({ lang }));
 }
 
-function SectionHead({ eyebrow, h, lede, center }) {
+/* The page is told as a film, and each act opens on a title card: the scene
+   number set large and drifting against the scroll, then the label, the
+   heading rising out from behind a mask, and the lede -- one short sequence
+   per section instead of the whole block fading. */
+function SectionHead({ eyebrow, h, lede, center, scene }) {
   return (
-    <header className={`mb-12 ${center ? 'mx-auto max-w-[62ch] text-center' : 'max-w-[62ch]'}`}>
-      {/* Label, then the heading rising out from behind a mask, then the lede:
-          one short sequence per section instead of the whole block fading. */}
+    <header className={`scene-head mb-12 ${center ? 'mx-auto max-w-[62ch] text-center' : 'max-w-[62ch]'}`}>
+      {scene && <span className="scene-no lat" aria-hidden="true" data-m="drift">{scene}</span>}
       <p className="eyebrow mask-rise">{eyebrow}</p>
       <h2 className="mask-rise d1 mt-4 text-[clamp(27px,4.4vw,44px)] font-extrabold leading-[1.2] tracking-tight">{h}</h2>
       {lede && <p className="mask-rise d2 mt-4 text-[16.5px] leading-[1.85]" style={{ color: 'var(--ink-2)' }}>{lede}</p>}
@@ -107,7 +112,12 @@ export default async function Home({ params }) {
       <SmoothScroll />
       <Reveal />
       <TimelineScroll />
+      <Motion />
       <Nav lang={lang} path="/" home />
+      {/* The opening: the first home page of a visit starts between two
+          letterbox bars that draw back, credit and all (armed by the boot
+          script, once a visit, never for reduced motion). */}
+      <div className="intro-bars" aria-hidden="true"><i><span>{t.hero.presents}</span></i><i /></div>
 
       {/* Every section a reader came for, under one landmark, so a
           screen reader can jump past the bar and the rail in one move. */}
@@ -119,6 +129,7 @@ export default async function Home({ params }) {
             the same pen that writes the logo. Under it the argument in two
             columns: what I do and how to start, and the proof, running. */}
         <section id="home" className="wrap hero relative scroll-mt-24 pb-16 pt-28 sm:pt-32 lg:pb-20">
+          <div className="hero-cam" data-m="pullback">
           <div className="hero-top">
             <p className="inline-flex items-center gap-2.5 rounded-[var(--r-chip)] border px-3.5 py-1.5 text-[13px] font-bold"
                style={{ borderColor: 'var(--line)', background: 'var(--glass)', color: 'var(--ink-2)' }}>
@@ -194,131 +205,39 @@ export default async function Home({ params }) {
               <p className="mt-5 text-center text-[12.5px]" style={{ color: 'var(--ink-3)' }}>{t.hero.runner.caption}</p>
             </div>
           </div>
+          </div>
         </section>
 
         {/* ---------------------------------------------------------- stack */}
         <Marquee items={SKILLS} roles={t.hero.tools.roles} label={t.hero.tools.label} />
 
         {/* ---------------------------------------------------------- work */}
-        {/* Five projects at one size is a contact sheet, not an exhibition: it
-            tells a visitor that nothing here is worth more than anything else.
-            Three layouts instead — a lead with the image full width above it,
-            two features with the image beside the text (mirrored, so the page
-            does not march), and a pair of halves between them. Diwan leads
-            because it is the one whose product idea a non-technical client
-            understands in a sentence. The lead is also the tallest card: a
-            21:9 band across the full column outranks a 4:3 beside text. */}
-        <section id="work" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <SectionHead eyebrow={t.work.eyebrow} h={t.work.h} lede={t.work.lede} />
-          <ol className="grid gap-7 lg:grid-cols-2">
-            {live.map((p, i) => {
+        {/* Scene one, and the one big moment on the page: the five projects as
+            a reel, each frame the problem its owners had and the answer that
+            was built, beside the product itself. Diwan opens it because it is
+            the one whose idea a client grasps in a sentence. */}
+        <section id="work" className="scroll-mt-24 pt-24 sm:pt-28">
+          <div className="wrap">
+            <SectionHead scene="01" eyebrow={t.work.eyebrow} h={t.work.h} lede={t.work.lede} />
+          </div>
+          <Reel
+            rtl={ar}
+            labels={{ problem: t.work.problem, answer: t.work.answer, open: t.work.open }}
+            items={live.map((p) => {
               const c = p[lang];
               const cv = cover(p);
-              const shots = shotsOf(p.shots).shots.length;
-              const pages = pagesOf(p.shots);
-              // The first three carry the argument: a shop whose product idea a
-              // client grasps in a sentence, a booking system whose hardest part
-              // is concurrency, and a platform whose hardest part is roles. The
-              // last two are evidence that the range is not three projects wide,
-              // and they are sized as evidence rather than as headline.
-              const layout = i === 0 ? 'lead' : i < 3 ? 'side' : 'half';
-              const wide = layout !== 'half';
-              const flip = i === 2;                                   // the third mirrors the second
-              const num = String(i + 1).padStart(2, '0');
-              const ratio = layout === 'lead' ? '21 / 9' : layout === 'side' ? '4 / 3' : '16 / 10';
-
-              // The 960px thumbnail and the 1600px capture are the same top crop,
-              // so either can fill the frame. The larger one is offered only from
-              // `lg` up: a phone slot is 390px, where 960 is already 2.5x, and a
-              // plain srcset would hand a 3x phone the 1600px file five times
-              // over — measured at 360KB against 120KB for the same picture.
-              const img = (
-                <picture>
-                  <source media="(min-width:1024px)"
-                          srcSet={`/shots/${p.shots}/${cv.thumb} ${cv.tw}w, /shots/${p.shots}/${cv.file} ${cv.w}w`}
-                          sizes={layout === 'lead' ? '1100px' : '560px'} />
-                  <img
-                    src={`/shots/${p.shots}/${cv.thumb}`}
-                    alt={`${c.name} — ${c.kind}`}
-                    width={cv.tw} height={cv.th}
-                    loading={i === 0 ? 'eager' : 'lazy'} fetchPriority={i === 0 ? 'high' : undefined} decoding="async"
-                    className="block w-full"
-                    style={{ aspectRatio: ratio, objectFit: 'cover', objectPosition: 'top center' }}
-                  />
-                </picture>
-              );
-
-              // A thin browser bar with the address the screen actually lives at:
-              // the live demo where there is one, otherwise the repository. It
-              // says "this is a product that runs" before a word is read.
-              const where = p.demo ? new URL(p.demo).host : p.repo.replace('https://', '');
-              const frame = (extra = '') => (
-                <div className={`m-3 overflow-hidden rounded-[var(--r-ctl)] border ${extra}`} style={{ borderColor: 'var(--line)' }}>
-                  <div className="card-bar" aria-hidden="true"><span className="lat">{where}</span></div>
-                  <div className="zoom relative overflow-hidden">
-                    {img}
-                    <span className="tint" />
-                    <span className="glass lat absolute top-3 px-2 py-0.5 text-[11.5px] font-bold"
-                          style={{ insetInlineStart: 12, borderRadius: 'var(--r-chip)' }}>{num}</span>
-                  </div>
-                </div>
-              );
-
-              const body = (
-                <div className={`flex flex-1 flex-col gap-5 px-6 pb-6 ${layout === 'side' ? 'pt-6 lg:justify-center' : 'pt-2'}${layout === 'lead' ? ' lg:flex-row lg:items-end lg:gap-10' : ''}`}>
-                  <div className={layout === 'lead' ? 'lg:flex-1' : undefined}>
-                    <p className="text-[13px] font-bold" style={{ color: 'var(--accent-ink)' }}>{c.kind}</p>
-                    <h3 className={`mt-1 font-extrabold tracking-tight ${layout === 'lead' ? 'text-[clamp(26px,3.4vw,38px)]' : layout === 'side' ? 'text-[26px]' : 'text-[23px]'}`}>{c.name}</h3>
-                    <p className={`mt-2 leading-[1.8] ${layout === 'half' ? 'text-[15.5px]' : 'max-w-[52ch] text-[16.5px]'}`} style={{ color: 'var(--ink-2)' }}>
-                      {c.tagline}
-                    </p>
-                  </div>
-                  <div className={`flex flex-col gap-3.5${layout === 'lead' ? ' lg:items-end lg:text-end' : ''}`}>
-                    <p className="mono flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[12px]" style={{ color: 'var(--ink-3)' }}>
-                      <span className="lat">{p.year}</span>
-                      <span aria-hidden="true">·</span>
-                      <span><span className="lat">{pages}</span> {t.work.pages}</span>
-                      <span aria-hidden="true">·</span>
-                      <span><span className="lat">{shots}</span> {t.work.shots}</span>
-                    </p>
-                    <ul className="mono flex flex-wrap gap-1.5">
-                      {/* Three is what a client reads; the full stack is on the case study. */}
-                      {p.stack.slice(0, 3).map((x) => (
-                        <li key={x} className="chip px-2.5 py-1 text-[11.5px]">{x}</li>
-                      ))}
-                    </ul>
-                    <p className="arrow-slide inline-flex items-center gap-1.5 text-[14.5px] font-bold"
-                       style={{ color: 'var(--accent-ink)' }}>
-                      {t.work.open} <Icon name={arrow} size={15} />
-                    </p>
-                  </div>
-                </div>
-              );
-
-              return (
-                <Fragment key={p.slug}>
-                {i === 3 && (
-                  <li className="lg:col-span-2 mt-6 flex items-center gap-4" aria-hidden="true">
-                    <span className="text-[13px] font-bold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{t.work.more}</span>
-                    <span className="h-px flex-1" style={{ background: 'var(--line)' }} />
-                  </li>
-                )}
-                <li className={`${wide ? 'lg:col-span-2 ' : ''}${i > 0 ? 'rise ' : ''}min-w-0`} style={{ '--i': i % 2 }}>
-                  <a href={`/${lang}/work/${p.slug}/`} className="card hover-lift group block h-full overflow-hidden">
-                    {layout === 'side' ? (
-                      <div className="grid h-full lg:grid-cols-[1.02fr_.98fr]">
-                        {frame(flip ? 'lg:order-2' : '')}
-                        <div className={`flex ${flip ? 'lg:order-1' : ''}`}>{body}</div>
-                      </div>
-                    ) : (
-                      <div className="flex h-full flex-col">{frame()}{body}</div>
-                    )}
-                  </a>
-                </li>
-                </Fragment>
-              );
+              const b = BRIEFS[p.slug]?.[lang];
+              return {
+                href: `/${lang}/work/${p.slug}/`,
+                name: c.name, kind: c.kind,
+                problem: b?.problem || c.summary,
+                answer: b?.hook || c.tagline,
+                where: p.demo ? new URL(p.demo).host : p.repo.replace('https://', ''),
+                meta: `${p.year} · ${pagesOf(p.shots)} ${t.work.pages} · ${p.stack.slice(0, 3).join(' · ')}`,
+                img: { thumb: `/shots/${p.shots}/${cv.thumb}`, full: `/shots/${p.shots}/${cv.file}`, tw: cv.tw, th: cv.th },
+              };
             })}
-          </ol>
+          />
         </section>
 
         {/* ------------------------------------------------------ services */}
@@ -326,7 +245,7 @@ export default async function Home({ params }) {
             names itself — and each one cites the project that already does it.
             A service with a case study behind it is a claim somebody can check. */}
         <section id="services" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <SectionHead eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} />
+          <SectionHead scene="02" eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} />
           {/* One panel per service, stacked: what it is on one side, and on the
               other a drawn interface of what the service delivers, and the
               project that already does it where one does. On a wide screen each panel pins and the next slides
@@ -347,7 +266,7 @@ export default async function Home({ params }) {
 
         {/* ------------------------------------------------------- process */}
         <section id="process" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <SectionHead eyebrow={t.process.eyebrow} h={t.process.h} />
+          <SectionHead scene="03" eyebrow={t.process.eyebrow} h={t.process.h} />
           {/* Six rules as a bento, each with a small scene that shows the rule
               instead of restating it. Every label in the scenes is either code
               that exists in the projects (lockForUpdate, date_of_birth) or a
@@ -377,7 +296,7 @@ export default async function Home({ params }) {
             what they are. Same six tests, read rather than watched: the rule in
             plain language, the file that holds it, and the project it guards. */}
         <section id="proof" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <SectionHead eyebrow={t.proof.eyebrow} h={t.proof.h} lede={t.proof.lede} />
+          <SectionHead scene="04" eyebrow={t.proof.eyebrow} h={t.proof.h} lede={t.proof.lede} />
           <CaseFiles lang={lang} tests={HERO_TESTS} />
         </section>
 
@@ -388,7 +307,7 @@ export default async function Home({ params }) {
             same fact is a sentence now, and the tools are grouped the way the
             work itself divides. */}
         <section id="skills" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <SectionHead eyebrow={t.skills.eyebrow} h={t.skills.h} lede={t.skills.lede} center />
+          <SectionHead scene="05" eyebrow={t.skills.eyebrow} h={t.skills.h} lede={t.skills.lede} center />
           {/* An evidence matrix: every tool against every project, a mark where
               it was actually used. Read across, a tool's reach; read down, a
               project's stack. It is the same fact the old cards carried in small
@@ -541,6 +460,9 @@ export default async function Home({ params }) {
 
         {/* ------------------------------------------------------- contact */}
         <section id="contact" className="wrap scroll-mt-24 pt-24 sm:pt-28">
+          {/* The closing line, read at reading speed, hands the next scene to
+              the visitor before the form asks them for it. */}
+          <p className="finale" data-m="read">{t.contact.finale}</p>
           {/* One card, two jobs. The left answers "and then what?" -- the thing a
               client is actually unsure about before writing -- in three steps,
               and offers the two direct channels. The full list of channels is

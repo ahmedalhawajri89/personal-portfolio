@@ -82,7 +82,7 @@ export const STORIES = {
       extras: [
         { h: 'شخصيات من مصدر واحد', b: 'الطالبة والمشرف والمسؤول واللجنة رموز SVG في ملف واحد، تستعملها الصفحة الرئيسية وصفحة الدخول واللوحات والحالات الفارغة والجولة التعريفية — تعديل شخصية يصل كل مكان.' },
         { h: 'بالعربية والإنجليزية', b: 'كل نصّ في اللوحات مفتاحه عربي وترجمته في ملفات JSON لكل منطقة، واختبار يفشل إن ظهر نصّ بلا ترجمة أو ترجمة فقدت متغيّراً.' },
-        { h: 'محميّة باختبارات', b: '٤٨٠ اختباراً تغطّي الأدوار والصلاحيات والمناقشات والتحديث الحيّ ووضع العرض، تعمل على قاعدة اختبار منفصلة داخل معاملات.' },
+        { h: 'محميّة باختبارات', b: '٤٨١ اختباراً تغطّي الأدوار والصلاحيات والمناقشات والتحديث الحيّ ووضع العرض، تعمل على قاعدة اختبار منفصلة داخل معاملات.' },
       ],
     },
     en: {
@@ -96,14 +96,14 @@ export const STORIES = {
       extras: [
         { h: 'Characters from one source', b: 'The student, supervisor, admin and committee are SVG symbols in one file, used by the home page, the sign-in page, the dashboards, the empty states and the welcome tour — change a character once and it changes everywhere.' },
         { h: 'Arabic and English', b: 'Every dashboard string is keyed by its Arabic text and translated in per-area JSON files, and a test fails if a string appears without a translation or a translation drops a placeholder.' },
-        { h: 'Guarded by tests', b: '480 tests cover roles and permissions, defenses, live updates and demo mode, running on a separate test database inside transactions.' },
+        { h: 'Guarded by tests', b: '481 tests cover roles and permissions, defenses, live updates and demo mode, running on a separate test database inside transactions.' },
       ],
     },
   },
 
   lamma: {
     ar: {
-      idea: 'منصة كفالة أيتام مبنية حول فكرة واحدة: الشفافية. لا تبرّع مجهول المصير، بل طفل باسمه وقصته وملفه الموثّق، وتقرير مصوّر كل ثلاثة أشهر، وميزانية مدقّقة منشورة للجميع. موقع عام عربي، وخادم Laravel، ولوحة إدارة Vue، وبوابة للكافل، كلها على أصل واحد.',
+      idea: 'منصة كفالة أيتام مبنية حول فكرة واحدة: الشفافية. لا تبرّع مجهول المصير، بل طفل باسمه وقصته وملفه الموثّق، وتقرير مصوّر كل ثلاثة أشهر، وأرقام إنفاق منشورة للجميع. موقع عام بالعربية والإنجليزية، وخادم Laravel، ولوحة إدارة Vue، وبوابة للكافل، كلها على أصل واحد.',
       problem: 'مواقع الخير تكتب أرقامها في الواجهة: "٩٣٪ تصل للطفل" جملة تسويقية لا أحد يستطيع التحقق منها. والمشكلة التقنية تحتها أعمق: كيف تمنع كافلاً من كفالة الطفل نفسه مرّتين مع السماح له بالعودة بعد إلغاء، وكيف تجعل الخصم المزدوج مستحيلاً حين يضغط "ادفع" مرتين أو تعيد البوابة إرسال الإشعار؟',
       solution: [
         { h: 'كل رقم مشتقّ من قاعدة البيانات', b: 'حلقة الإنفاق تُجمَّع من صرف معتمَد، ونسبة الوصول ناتج قسمة، وعدد الزيارات الميدانية عدّ حقيقي. لا رقم مكتوب في الواجهة.' },
@@ -113,11 +113,11 @@ export const STORIES = {
       extras: [
         { h: 'أصل واحد لكل شيء', b: 'الموقع العام ولوحة الإدارة والـ API على النطاق نفسه، فلا CORS ولا كوكيز عابرة، وسياسة أمن المحتوى في أضيق صورة ممكنة. الجلسة بكوكي HttpOnly لا توكن في localStorage.' },
         { h: 'الموقع العام يعمل بلا خادم', b: 'ملف البيانات بذرة وطبقة ترطيب معاً: قيمه المكتوبة تعمل بلا API، ودالّة ترطيب تستبدلها بما في قاعدة البيانات حين يكون الخادم متاحاً. لو سقط الخادم عرض الموقع محتوى صحيحاً لا شاشة فارغة، وهذا مختبَر.' },
-        { h: 'اختبارات على MySQL لا SQLite', b: 'المخطّط يعتمد على عمود مولَّد وفهرس نصّي كامل لا وجود لهما في SQLite، فالاختبار عليها كان سيمرّ بينما ينكسر الإنتاج. و٢٩ اختبار متصفح على API حقيقي كشفت ستّة عيوب فعلية في عبور جلسة Sanctum.' },
+        { h: 'اختبارات على MySQL لا SQLite', b: 'المخطّط يعتمد على عمود مولَّد وفهرس نصّي كامل لا وجود لهما في SQLite، فالاختبار عليها كان سيمرّ بينما ينكسر الإنتاج. و٥٣ اختبار متصفّح Playwright تمشي في الموقع على API حقيقي.' },
       ],
     },
     en: {
-      idea: 'An orphan-sponsorship platform built around one idea: transparency. Not an anonymous donation, but a child with a name, a story and a verified file, a photo report every quarter, and an audited budget published to everyone. An Arabic public site, a Laravel server, a Vue admin panel and a sponsor portal, all on one origin.',
+      idea: 'An orphan-sponsorship platform built around one idea: transparency. Not an anonymous donation, but a child with a name, a story and a verified file, a photo report every quarter, and spending figures published to everyone. A public site in Arabic and English, a Laravel server, a Vue admin panel and a sponsor portal, all on one origin.',
       problem: 'Charity sites write their numbers into the interface: "93% reaches the child" is a marketing line nobody can verify. The technical problem underneath is harder: how do you stop a sponsor sponsoring the same child twice while letting them come back after a cancellation, and how do you make a double charge impossible when someone taps Pay twice or the gateway resends a webhook?',
       solution: [
         { h: 'Every figure derived from the database', b: 'The spending ring is aggregated from approved disbursements, the reach percentage is a division, the number of field visits is a real count. Nothing is typed into the interface.' },
@@ -127,7 +127,7 @@ export const STORIES = {
       extras: [
         { h: 'One origin for everything', b: 'The public site, the admin panel and the API share one domain, so no CORS, no cross-site cookies, and the tightest possible content-security policy. The session is an HttpOnly cookie, not a token in localStorage.' },
         { h: 'A public site that works without a server', b: 'The data file is both seed and hydration layer: its written values work with no API at all, and a hydrate step swaps them for database values when the server is up. If the server falls over, the site shows correct content instead of a blank screen, and that is tested.' },
-        { h: 'Tests on MySQL, not SQLite', b: 'The schema relies on a generated column and a full-text index that SQLite does not have, so a test suite on SQLite would pass while production broke. 29 browser tests against the real API found six real defects in how the Sanctum session crosses to the server.' },
+        { h: 'Tests on MySQL, not SQLite', b: 'The schema relies on a generated column and a full-text index that SQLite does not have, so a test suite on SQLite would pass while production broke. 53 Playwright browser tests walk the site against the real API.' },
       ],
     },
   },
@@ -138,11 +138,11 @@ export const STORIES = {
       problem: 'العالم العربي بلا منصة مبنية لمواهبه. إنستغرام بلا عمق معرض أعمال، ولينكدإن منفصل ثقافياً عن العمل الإبداعي، وBehance وSoundCloud لم تُعرَّب يوماً: تخطيطات معكوسة وبحث لا يفهم العربية ولا سياق ثقافياً.',
       solution: [
         { h: 'Blade يعرض كل شيء، بلا إطار JavaScript', b: 'صفحات الاكتشاف يجب أن تُفهرَس وتفتح بسرعة على الهاتف، وتطبيق الصفحة الواحدة يخسر في الاثنين. فالخادم يعرض HTML، وJavaScript تحسين تدريجي فقط.' },
-        { h: 'ثلاثة أنواع حسابات في طبقة البيانات', b: 'موهبة وكشّاف وعلامة تجارية تُفرَض بالوسطاء والسياسات لا بإخفاء الأزرار. الحد الأدنى ١٦ عاماً يُتحقّق منه من تاريخ الميلاد على الخادم، ومن هم بين ١٦ و١٧ يمرّون بموافقة وليّ الأمر.' },
+        { h: 'ثلاثة أنواع حسابات في طبقة البيانات', b: 'موهبة وكشّاف وعلامة تجارية تُفرَض بالوسطاء والسياسات لا بإخفاء الأزرار. الحد الأدنى ١٦ عاماً يُتحقّق منه من تاريخ الميلاد على الخادم، فلا يُفتح حساب لمن هو أصغر.' },
         { h: 'قواعد تصمد تحت الاستخدام الحقيقي', b: 'الخطة المجانية تحدّ الأعمال المنشورة، والتقديم على الفرصة مرّة واحدة والانسحاب لا يسمح بإعادة التقديم، والفرص تُحفظ مسودّات قبل النشر.' },
       ],
       extras: [
-        { h: 'عدّادات صادقة', b: 'المتابعون والطلبات والمشاهدات تُزاد داخل المعاملة نفسها التي تكتب الصف المسبّب، لأن عدّاداً ينحرف أسوأ من لا عدّاد.' },
+        { h: 'عدّادات صادقة', b: 'عدد الطلبات يُزاد داخل المعاملة نفسها التي تكتب الطلب، والمشاهدة لا تُعدّ إلا حين يُكتب صفّها فعلاً، لأن عدّاداً ينحرف أسوأ من لا عدّاد.' },
         { h: 'حذف يحذف فعلاً', b: 'حذف ناعم، ثم فترة سماح مع إشعار بالبريد، ثم تطهير يزيل الصفوف والوسائط معاً. مسار محو حقيقي لا علامة مخفية.' },
         { h: 'اكتمال الملف معادلة', b: 'الصورة والنبذة فوق حدّ الطول وعدد أدنى من المهارات والأعمال والروابط والغلاف، لكل واحد وزن معرَّف. نسبة الاكتمال حساب لا تخمين. وutf8mb4 ليس خياراً افتراضياً بالصدفة: المحتوى العربي والبحث يحتاجانه.' },
       ],
@@ -152,11 +152,11 @@ export const STORIES = {
       problem: 'The Arab world has no platform built for its own creative talent. Instagram has no portfolio depth, LinkedIn is culturally disconnected from creative work, and Behance and SoundCloud were never localised: mirrored layouts, search that does not understand Arabic, no cultural context.',
       solution: [
         { h: 'Blade renders everything, no JavaScript framework', b: 'Discovery pages have to be crawlable and open fast on a phone, and a single-page app loses on both. The server renders HTML and JavaScript is progressive enhancement only.' },
-        { h: 'Three account types in the data layer', b: 'Talent, scout and brand are enforced by middleware and policies, not by hiding buttons. Minimum age 16 is validated from the birth date on the server, and 16 to 17 year olds clear guardian consent first.' },
+        { h: 'Three account types in the data layer', b: 'Talent, scout and brand are enforced by middleware and policies, not by hiding buttons. Minimum age 16 is validated from the birth date on the server, so no younger account can be opened.' },
         { h: 'Rules that hold under real use', b: 'The free plan caps published items, you apply once per opportunity and withdrawing does not let you re-apply, and opportunities are saved as drafts before they go live.' },
       ],
       extras: [
-        { h: 'Honest counters', b: 'Followers, applications and views are incremented inside the same transaction as the row that caused them, because a counter that drifts is worse than no counter.' },
+        { h: 'Honest counters', b: 'The application count is incremented inside the same transaction that writes the application, and a view is counted only when its row is written, because a counter that drifts is worse than no counter.' },
         { h: 'Deletion that actually deletes', b: 'Soft delete, a grace period with an email notice, then a purge that removes rows and stored media together. A real erasure path, not a hidden flag.' },
         { h: 'Profile completeness is a formula', b: 'Avatar, a bio over a length threshold, a minimum number of skills, portfolio items, social links and a cover each carry a defined weight. The percentage is arithmetic, not a guess. And utf8mb4 is not a default picked by accident: Arabic content and search need it.' },
       ],
