@@ -4,17 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import { T, other } from '../lib/i18n';
 import { PROFILE, PROJECTS } from '../content/projects';
 import Icon from './Icons';
+import { loadMotion, whenIdle } from '../lib/motion';
 
-/* Inertial scrolling for a mouse or trackpad: the page glides to a stop
-   instead of stepping with each notch of the wheel. Off for touch, where the
-   platform already scrolls with momentum and a second layer of easing fights
-   the finger, and off for reduced motion. Anchor links go through Lenis too,
-   which reads each section's scroll-margin, so they land where native ones did. */
-//
-// Loaded on the first wheel or key press, not at startup. Created eagerly it
-// cost the desktop score 15 points (97 -> 82, TBT 330ms): its per-frame loop
-// ran through the window where the page is still becoming interactive. Now it
-// is not in the initial bundle at all, and it arrives the moment it is needed.
+/* Inertial scrolling for a mouse or trackpad, from the one engine every
+   animation on the page shares (lib/motion.js): Lenis driven by GSAP's ticker.
+   It starts when the page is idle, off for touch and for reduced motion, and
+   anchor links go through it too, landing on each section's scroll-margin. */
 export function SmoothScroll() {
   // Off-screen sections skip layout until they near the screen (see
   // globals.css). Any jump must be computed against real heights, so the
@@ -46,37 +41,7 @@ export function SmoothScroll() {
       window.removeEventListener('hashchange', onHash);
     };
   }, []);
-  useEffect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce), (pointer: coarse)').matches) return;
-    let lenis, gone = false;
-    const start = async () => {
-      window.removeEventListener('wheel', start);
-      window.removeEventListener('keydown', start);
-      const { default: Lenis } = await import('lenis');
-      if (gone) return;
-      lenis = new Lenis({
-        autoRaf: true,
-        // Follow-through, not a fixed-length glide. A 1.1s exponential ease made
-        // the page trail the wheel and read as heavy; lerp closes 14% of the
-        // gap each frame, so the page moves with the hand and only settles at
-        // the very end.
-        lerp: 0.14,
-        wheelMultiplier: 1,
-        // Lenis already honours each section's scroll-margin (96px); an extra
-        // offset here doubled it and landed every anchor at 192. Jumps to a
-        // section are a touch quicker than the old glide.
-        anchors: { duration: 0.8 },
-      });
-    };
-    window.addEventListener('wheel', start, { passive: true });
-    window.addEventListener('keydown', start);
-    return () => {
-      gone = true;
-      window.removeEventListener('wheel', start);
-      window.removeEventListener('keydown', start);
-      lenis?.destroy();
-    };
-  }, []);
+  useEffect(() => whenIdle(() => { loadMotion(); }), []);
   return null;
 }
 

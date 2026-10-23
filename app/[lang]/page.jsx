@@ -1,11 +1,14 @@
 import { LANGS, T } from '../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../content/projects';
 import { SERVICES, SKILLS, CAPABILITIES, PROCESS, TIMELINE, TESTIMONIALS, HERO_TESTS } from '../../content/site';
-import { shotsOf, coverOf, pagesOf } from '../../lib/shots';
+import { shotsOf, coverOf, pagesOf, shotOf } from '../../lib/shots';
 import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, ContactForm, BackToTop, TimelineScroll, TestRunner, CaseFiles, ServiceStack } from '../../components/Chrome';
 import Marquee from '../../components/Marquee';
 import Motion from '../../components/Motion';
-import Reel from '../../components/Reel';
+import Intro from '../../components/Intro';
+import Showreel from '../../components/Showreel';
+import Pointer from '../../components/Pointer';
+import Curtain from '../../components/Curtain';
 import { BRIEFS } from '../../content/briefs';
 import Icon from '../../components/Icons';
 import { CvButton } from '../../components/CvPanel';
@@ -14,16 +17,15 @@ export function generateStaticParams() {
   return LANGS.map((lang) => ({ lang }));
 }
 
-/* The page is told as a film, and each act opens on a title card: the scene
-   number set large and drifting against the scroll, then the label, the
-   heading rising out from behind a mask, and the lede -- one short sequence
-   per section instead of the whole block fading. */
-function SectionHead({ eyebrow, h, lede, center, scene }) {
+/* Each section opens the same way: the label, then the heading set large
+   with its lines rising out from behind a mask (data-m="lines", GSAP), then
+   the lede -- one short sequence per section instead of the whole block
+   fading. */
+function SectionHead({ eyebrow, h, lede, center }) {
   return (
-    <header className={`scene-head mb-12 ${center ? 'mx-auto max-w-[62ch] text-center' : 'max-w-[62ch]'}`}>
-      {scene && <span className="scene-no lat" aria-hidden="true" data-m="drift">{scene}</span>}
+    <header className={`sec-head mb-12 ${center ? 'mx-auto max-w-[62ch] text-center' : 'max-w-[62ch]'}`}>
       <p className="eyebrow mask-rise">{eyebrow}</p>
-      <h2 className="mask-rise d1 mt-4 text-[clamp(27px,4.4vw,44px)] font-extrabold leading-[1.2] tracking-tight">{h}</h2>
+      <h2 className="sec-h mt-4" data-m="lines">{h}</h2>
       {lede && <p className="mask-rise d2 mt-4 text-[16.5px] leading-[1.85]" style={{ color: 'var(--ink-2)' }}>{lede}</p>}
     </header>
   );
@@ -114,10 +116,9 @@ export default async function Home({ params }) {
       <TimelineScroll />
       <Motion />
       <Nav lang={lang} path="/" home />
-      {/* The opening: the first home page of a visit starts between two
-          letterbox bars that draw back, credit and all (armed by the boot
-          script, once a visit, never for reduced motion). */}
-      <div className="intro-bars" aria-hidden="true"><i><span>{t.hero.presents}</span></i><i /></div>
+      <Intro name={PROFILE.name[lang]} role={t.hero.roleLine} />
+      <Curtain />
+      <Pointer label={t.work.view} />
 
       {/* Every section a reader came for, under one landmark, so a
           screen reader can jump past the bar and the rail in one move. */}
@@ -169,10 +170,10 @@ export default async function Home({ params }) {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                <a href="#work" className="btn btn-primary">
+                <a href="#work" className="btn btn-primary" data-magnetic>
                   {t.hero.cta1} <Icon name={arrow} size={16} />
                 </a>
-                <a href="#contact" className="btn btn-ghost">{t.hero.cta2}</a>
+                <a href="#contact" className="btn btn-ghost" data-magnetic>{t.hero.cta2}</a>
               </div>
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <CvButton lang={lang} />
@@ -208,36 +209,76 @@ export default async function Home({ params }) {
           </div>
         </section>
 
+        {/* ------------------------------------------------------- showreel */}
+        {/* Two screens from each project, running under the hero: the first
+            sight of the work is the work itself, moving with the scroll. */}
+        <Showreel
+          rtl={ar}
+          label={t.work.reel}
+          items={live.flatMap((p) => {
+            const keys = [p.cover, ...(BRIEFS[p.slug]?.journey || []).map((j) => j.shot).filter((k) => k !== p.cover).slice(0, 1)];
+            return keys.map((k) => shotOf(p.shots, k, lang)).filter(Boolean).map((sh) => ({
+              href: `/${lang}/work/${p.slug}/`, name: p[lang].name,
+              src: `/shots/${p.shots}/${sh.thumb}`, w: sh.tw, h: sh.th,
+              alt: `${p[lang].name}: ${ar ? sh.labelAr : sh.labelEn}`,
+            }));
+          })}
+        />
+
         {/* ---------------------------------------------------------- stack */}
         <Marquee items={SKILLS} roles={t.hero.tools.roles} label={t.hero.tools.label} />
 
         {/* ---------------------------------------------------------- work */}
-        {/* Scene one, and the one big moment on the page: the five projects as
-            a reel, each frame the problem its owners had and the answer that
-            was built, beside the product itself. Diwan opens it because it is
-            the one whose idea a client grasps in a sentence. */}
-        <section id="work" className="scroll-mt-24 pt-24 sm:pt-28">
+        {/* The gallery. One project to a screen: its name set large, then
+            its picture in a frame that opens out to the full width as it
+            comes up the page, then the problem it answers and the answer.
+            Diwan opens it because it is the one whose idea a client grasps
+            in a sentence. A mouse gets a "view" disc over each picture and
+            the page scrolling inside it on hover. */}
+        <section id="work" className="scroll-mt-24 pt-24 sm:pt-32">
           <div className="wrap">
-            <SectionHead scene="01" eyebrow={t.work.eyebrow} h={t.work.h} lede={t.work.lede} />
+            <SectionHead eyebrow={t.work.eyebrow} h={t.work.h} lede={t.work.lede} />
           </div>
-          <Reel
-            rtl={ar}
-            labels={{ problem: t.work.problem, answer: t.work.answer, open: t.work.open }}
-            items={live.map((p) => {
+          <ol className="gx-list">
+            {live.map((p, i) => {
               const c = p[lang];
               const cv = cover(p);
               const b = BRIEFS[p.slug]?.[lang];
-              return {
-                href: `/${lang}/work/${p.slug}/`,
-                name: c.name, kind: c.kind,
-                problem: b?.problem || c.summary,
-                answer: b?.hook || c.tagline,
-                where: p.demo ? new URL(p.demo).host : p.repo.replace('https://', ''),
-                meta: `${p.year} · ${pagesOf(p.shots)} ${t.work.pages} · ${p.stack.slice(0, 3).join(' · ')}`,
-                img: { thumb: `/shots/${p.shots}/${cv.thumb}`, full: `/shots/${p.shots}/${cv.file}`, tw: cv.tw, th: cv.th },
-              };
+              const href = `/${lang}/work/${p.slug}/`;
+              const img = (x) => `/shots/${p.shots}/${x}`;
+              return (
+                <li key={p.slug} className="gx">
+                  <div className="wrap gx-head">
+                    <p className="gx-n lat" aria-hidden="true">{String(i + 1).padStart(2, '0')}<span>/{String(live.length).padStart(2, '0')}</span></p>
+                    <h3 className="gx-name" data-m="lines"><a href={href}>{c.name}</a></h3>
+                    <p className="gx-kind">{c.kind}<span className="lat"> · {p.year}</span></p>
+                  </div>
+                  <a href={href} className="gx-media" data-cursor="view" tabIndex={-1} aria-hidden="true">
+                    <div className="gx-clip" data-m="open">
+                      <div className="gx-peek" data-m="peek" data-full={img(cv.file)}>
+                        <picture>
+                          <source media="(min-width:1024px)" srcSet={`${img(cv.thumb)} ${cv.tw}w, ${img(cv.file)} ${cv.w}w`} sizes="1400px" />
+                          <img src={img(cv.thumb)} alt="" width={cv.tw} height={cv.th} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" className="gx-img" />
+                        </picture>
+                      </div>
+                    </div>
+                  </a>
+                  <div className="wrap gx-body">
+                    <dl className="gx-pa">
+                      <div><dt>{t.work.problem}</dt><dd>{b?.problem || c.summary}</dd></div>
+                      <div><dt>{t.work.answer}</dt><dd>{b?.hook || c.tagline}</dd></div>
+                    </dl>
+                    <div className="gx-side">
+                      <ul className="gx-stack">{p.stack.slice(0, 4).map((x) => <li key={x} className="lat">{x}</li>)}</ul>
+                      <a href={href} className="gx-open" data-magnetic>
+                        {t.work.open} <Icon name={arrow} size={16} />
+                      </a>
+                    </div>
+                  </div>
+                </li>
+              );
             })}
-          />
+          </ol>
         </section>
 
         {/* ------------------------------------------------------ services */}
@@ -245,7 +286,7 @@ export default async function Home({ params }) {
             names itself — and each one cites the project that already does it.
             A service with a case study behind it is a claim somebody can check. */}
         <section id="services" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <SectionHead scene="02" eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} />
+          <SectionHead eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} />
           {/* One panel per service, stacked: what it is on one side, and on the
               other a drawn interface of what the service delivers, and the
               project that already does it where one does. On a wide screen each panel pins and the next slides
@@ -266,7 +307,7 @@ export default async function Home({ params }) {
 
         {/* ------------------------------------------------------- process */}
         <section id="process" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <SectionHead scene="03" eyebrow={t.process.eyebrow} h={t.process.h} />
+          <SectionHead eyebrow={t.process.eyebrow} h={t.process.h} />
           {/* Six rules as a bento, each with a small scene that shows the rule
               instead of restating it. Every label in the scenes is either code
               that exists in the projects (lockForUpdate, date_of_birth) or a
@@ -296,7 +337,7 @@ export default async function Home({ params }) {
             what they are. Same six tests, read rather than watched: the rule in
             plain language, the file that holds it, and the project it guards. */}
         <section id="proof" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <SectionHead scene="04" eyebrow={t.proof.eyebrow} h={t.proof.h} lede={t.proof.lede} />
+          <SectionHead eyebrow={t.proof.eyebrow} h={t.proof.h} lede={t.proof.lede} />
           <CaseFiles lang={lang} tests={HERO_TESTS} />
         </section>
 
@@ -307,7 +348,7 @@ export default async function Home({ params }) {
             same fact is a sentence now, and the tools are grouped the way the
             work itself divides. */}
         <section id="skills" className="wrap scroll-mt-24 pt-24 sm:pt-28">
-          <SectionHead scene="05" eyebrow={t.skills.eyebrow} h={t.skills.h} lede={t.skills.lede} center />
+          <SectionHead eyebrow={t.skills.eyebrow} h={t.skills.h} lede={t.skills.lede} center />
           {/* An evidence matrix: every tool against every project, a mark where
               it was actually used. Read across, a tool's reach; read down, a
               project's stack. It is the same fact the old cards carried in small

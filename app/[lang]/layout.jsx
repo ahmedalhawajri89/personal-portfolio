@@ -51,7 +51,9 @@ export async function generateMetadata({ params }) {
 // statement about this page. Dark is opt-in through the toggle, and once
 // chosen it is remembered. The browser chrome follows the same choice, so a
 // dark-mode OS never frames a light page in a dark bar. The first home page
-// of a visit opens like a film, between two letterbox bars (`intro`), once.
+// of a visit opens behind the intro curtain (`intro`, components/Intro.jsx),
+// once; a page reached through the page curtain opens with it still down
+// (`curtain-in`, components/Curtain.jsx). A curtain page never runs the intro.
 const BOOT = `(function(){try{
 var d=localStorage.getItem('theme')==='dark';
 document.documentElement.setAttribute('data-theme',d?'dark':'light');
@@ -59,7 +61,8 @@ var m=document.querySelector('meta[name=theme-color]');
 if(m)m.setAttribute('content',d?'#0E0E0D':'#F7F6F3');
 document.documentElement.classList.add('js');
 if(location.hash)document.documentElement.classList.add('cv-off');
-if(!location.hash&&['/','/ar','/ar/','/en','/en/'].indexOf(location.pathname)>-1&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('intro')){sessionStorage.setItem('intro','1');document.documentElement.classList.add('intro');}
+if(sessionStorage.getItem('curtain')){sessionStorage.removeItem('curtain');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('curtain-in');}
+if(!location.hash&&!document.documentElement.classList.contains('curtain-in')&&['/','/ar','/ar/','/en','/en/'].indexOf(location.pathname)>-1&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('intro')){sessionStorage.setItem('intro','1');document.documentElement.classList.add('intro');}
 }catch(e){}})();`;
 
 export default async function RootLayout({ children, params }) {

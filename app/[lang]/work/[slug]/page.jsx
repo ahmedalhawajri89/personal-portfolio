@@ -9,6 +9,8 @@ import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, BackToTop } fr
 import Gallery from '../../../../components/Gallery';
 import Journey from '../../../../components/Journey';
 import Motion from '../../../../components/Motion';
+import Curtain from '../../../../components/Curtain';
+import Pointer from '../../../../components/Pointer';
 import Icon from '../../../../components/Icons';
 
 const LIVE = PROJECTS.filter((p) => shotsOf(p.shots).shots.length > 0);
@@ -93,6 +95,8 @@ export default async function Project({ params }) {
       <SmoothScroll />
       <Reveal />
       <Motion />
+      <Curtain />
+      <Pointer label={t.work.view} />
       <Nav lang={lang} path={`/work/${slug}/`} title={c.name} />
 
       <main id="main" className="wrap pb-8 pt-28 sm:pt-32">
@@ -105,7 +109,7 @@ export default async function Project({ params }) {
             <p className="pj-meta"><span className="lat">{p.year}</span> · {c.kind}</p>
             <div className="pj-links">
               {p.demo && (
-                <a href={p.demo} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+                <a href={p.demo} target="_blank" rel="noopener noreferrer" className="btn btn-primary" data-magnetic>
                   {d.demo} <Icon name="external" size={15} />
                 </a>
               )}
@@ -255,7 +259,7 @@ export default async function Project({ params }) {
 
         {/* --------------------------------------------------- next project */}
         <nav className="pj-next-wrap" aria-label={d.next_project}>
-          <a href={`/${lang}/work/${next.slug}/`} className="pj-next">
+          <a href={`/${lang}/work/${next.slug}/`} className="pj-next" data-cursor="view">
             <span className="pj-next-text">
               <span className="pj-next-k">{d.next_project}</span>
               <span className="pj-next-name">{next[lang].name}</span>

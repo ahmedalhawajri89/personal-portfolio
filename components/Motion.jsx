@@ -13,7 +13,7 @@ import { loadMotion, whenIdle, MOTION_OK } from '../lib/motion';
              whole pages; a frame shows the top, and scrolling past it shows
              the rest, the way the visitor would see it in the product.
    pullback -- the opening shot recedes as the first scene arrives.
-   drift  -- a scene number slides against the scroll, behind its heading.
+   open   -- a project's picture opens out to its full width as it arrives.
    count  -- a figure counts up to its value once, when it comes into view.
    peek   -- on a card, hovering with a mouse scrolls the screenshot down to
              show the whole page, and leaving scrolls it back.
@@ -72,14 +72,14 @@ export default function Motion() {
           });
         });
 
-        // A scene number slides against the scroll, slower than the page,
-        // so the title card has depth without moving anything that is read.
-        gsap.utils.toArray('[data-m="drift"]').forEach((el) => {
-          const dir = document.dir === 'rtl' ? 1 : -1;
-          gsap.fromTo(el, { xPercent: -14 * dir, yPercent: 30 }, {
-            xPercent: 14 * dir, yPercent: -30, ease: 'none',
-            scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true },
-          });
+        // A project's picture opens out of a smaller, rounded window to the
+        // full width as it comes up the page, and settles from a slight zoom:
+        // the frame grows toward the reader rather than sliding in.
+        gsap.utils.toArray('[data-m="open"]').forEach((box) => {
+          const img = box.querySelector('img');
+          gsap.timeline({ scrollTrigger: { trigger: box, start: 'top 96%', end: 'top 30%', scrub: 0.6 } })
+            .fromTo(box, { clipPath: 'inset(8% 11% 8% 11% round 18px)' }, { clipPath: 'inset(0% 0% 0% 0% round 10px)', ease: 'none' }, 0)
+            .fromTo(img, { scale: 1.2 }, { scale: 1, ease: 'none' }, 0);
         });
 
         gsap.utils.toArray('[data-m="count"]').forEach((el) => {
