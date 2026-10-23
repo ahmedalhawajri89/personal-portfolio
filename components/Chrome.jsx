@@ -246,12 +246,15 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
   const [active, setActive] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const [away, setAway] = useState(false);
+  const [clock, setClock] = useState('');
 
-  // An editorial bar across the page: the name, the five places a reader
-  // jumps to on purpose, and the tools. It replaces a floating pill that held
-  // seven things -- a breadcrumb among them that only ever said "Home" -- and
-  // the side rail, whose job the bar's own links and indicator now do.
-  // Contact is the call to action on the right, not a sixth link.
+  // At the top of the page the header is an open editorial bar across the
+  // measure: the mark, the name with the role under it, the places a reader
+  // jumps to, and on the far side the hour in Gaza, the language, the theme
+  // and the one action. Once the page moves it gathers itself into a
+  // floating capsule -- the mark, the links and the action -- so it takes
+  // less of the screen the more there is to read under it. Contact is the
+  // call to action, not a sixth link.
   const links = [
     ['work', t.nav.work],
     ['services', t.nav.services],
@@ -261,8 +264,8 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
   ];
   const watched = ['home', 'work', 'services', 'process', 'proof', 'skills', 'about', 'contact'];
 
-  // Reading down, the bar gets out of the way; any upward move brings it back,
-  // and so does a pointer at the top edge. Travel is accumulated per
+  // Reading down, the capsule gets out of the way; any upward move brings it
+  // back, and so does a pointer at the top edge. Travel is accumulated per
   // direction, so a few pixels of scroll anchoring from lazy images never
   // flaps it in and out mid-read.
   useEffect(() => {
@@ -286,6 +289,17 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     return () => { window.removeEventListener('scroll', on); window.removeEventListener('mousemove', peek); };
   }, []);
 
+  // The hour where the work is done, so a client in another zone knows when
+  // a reply is likely. Rendered after mount: the server's clock is not the
+  // reader's, and a time baked into the HTML would be wrong by the visit.
+  useEffect(() => {
+    const fmt = new Intl.DateTimeFormat(ar ? 'ar-u-nu-latn' : 'en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Gaza' });
+    const tick = () => setClock(fmt.format(new Date()));
+    tick();
+    const id = setInterval(tick, 15000);
+    return () => clearInterval(id);
+  }, [ar]);
+
   useEffect(() => {
     if (!home) return;
     const secs = watched.map((id) => document.getElementById(id)).filter(Boolean);
@@ -301,8 +315,9 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [home]);
 
-  // One indicator that slides to the active link, measured from the link
-  // itself so it fits any label in either language.
+  // One lit pill that slides to the active link, measured from the link
+  // itself so it fits any label in either language, and measured again when
+  // the bar changes shape.
   const navRef = useRef(null);
   const [ind, setInd] = useState(null);
   useEffect(() => {
@@ -310,30 +325,37 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     if (!nav) return;
     const place = () => {
       const a = nav.querySelector(`a[data-id="${active}"]`);
-      // the word, not the padded box around it
-      setInd(a ? { x: a.offsetLeft + 12, w: a.offsetWidth - 24 } : null);
+      setInd(a ? { x: a.offsetLeft, w: a.offsetWidth } : null);
     };
     place();
+    const late = setTimeout(place, 520);
     window.addEventListener('resize', place);
-    return () => window.removeEventListener('resize', place);
-  }, [active]);
+    return () => { clearTimeout(late); window.removeEventListener('resize', place); };
+  }, [active, scrolled]);
 
   const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
+  // A label that rolls on hover: the word slides up and its twin rises in
+  // from below. The twin is drawn by CSS from data-t and carries no text of
+  // its own for a screen reader; the link's name is the label once.
+  const roll = (label) => <span className="roll" aria-hidden="true"><span className="roll-in" data-t={label}>{label}</span></span>;
 
   return (
     <div className={`tb${scrolled ? ' is-scrolled' : ''}${away ? ' is-away' : ''}`}>
-      <header className="wrap tb-in">
-        <a href={`/${lang}/`} className="tb-brand">
+      <header className="tb-in">
+        <a href={`/${lang}/`} className="tb-brand" aria-label={PROFILE.name[lang]}>
           <Logo />
-          <span className="tb-name">{PROFILE.name[lang]}</span>
+          <span className="tb-id" aria-hidden="true">
+            <span className="tb-name">{PROFILE.name[lang]}</span>
+            <span className="tb-role lat">Full-Stack · QA</span>
+          </span>
         </a>
 
         {home ? (
           <nav ref={navRef} className="tb-nav" aria-label={t.nav.menu}>
-            {links.map(([id, label]) => (
-              <a key={id} data-id={id} href={link(id)} aria-current={active === id ? 'location' : undefined}>{label}</a>
-            ))}
             {ind && <span className="tb-ind" aria-hidden="true" style={{ transform: `translateX(${ind.x}px)`, width: ind.w }} />}
+            {links.map(([id, label]) => (
+              <a key={id} data-id={id} href={link(id)} aria-label={label} aria-current={active === id ? 'location' : undefined}>{roll(label)}</a>
+            ))}
           </nav>
         ) : (
           <a href={`/${lang}/#work`} className="tb-back">
@@ -342,6 +364,11 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
         )}
 
         <div className="tb-tools">
+          <p className="tb-clock" title={t.hero.status}>
+            <span className="tb-live" aria-hidden="true" />
+            <span>{t.nav.city}</span>
+            <time className="lat" suppressHydrationWarning>{clock || '--:--'}</time>
+          </p>
           {/* Both languages shown, the current one lit; only the link to the
               other one carries a name. */}
           <div className="lang-seg">
@@ -351,33 +378,33 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
             </a>
           </div>
           <ThemeToggle lang={lang} />
-          <a href={link('contact')} className="tb-cta">{t.nav.cta}</a>
+          <a href={link('contact')} className="tb-cta" data-magnetic aria-label={t.nav.cta}>
+            {roll(t.nav.cta)}
+            <span className="tb-cta-dot" aria-hidden="true" />
+          </a>
         </div>
       </header>
     </div>
   );
 }
 
-/* The mark: the favicon, drawn. An A written as one stroke -- up from the
-   left foot, over the apex, down to the right -- and an orange dot where the
-   pen stops, like the full stop at the end of a sentence. On load the stroke
-   writes itself and the dot lands on the last point; on hover it writes again
-   and the dot gives a small hop. The same geometry as /favicon.svg, so the tab
-   and the page carry one mark, and it inverts with the theme through the ink
-   and paper tokens. Still for reduced motion. */
-export function Logo({ size = 30 }) {
+/* The mark. An A drawn as one stroke -- up from the left foot, over the apex,
+   down to the right -- with an orange check mark where its crossbar would
+   be: a letter for the name, and a passing test for the way the work is
+   held up. On load the A writes itself and the check is ticked after it; on
+   hover the check is ticked again. The same geometry as /favicon.svg, so the
+   tab and the page carry one mark, and it inverts with the theme through the
+   ink and paper tokens. Still for reduced motion. */
+export function Logo({ size = 34 }) {
   return (
     <svg className="logo" width={size} height={size} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
       <rect width="64" height="64" rx="14" className="logo-bg" />
-      <path className="logo-a" d="M18 46 L32 17 L46 46" pathLength="1" />
-      <circle className="logo-dot" cx="46" cy="46" r="5" />
+      <path className="logo-a" d="M17 50 L32 14 L47 50" pathLength="1" />
+      <path className="logo-check" d="M21 38 L28 44 L44 27" pathLength="1" />
     </svg>
   );
 }
 
-/* Phone navigation: a thumb-reachable dock at the bottom of the screen. The
-   active section's tab widens to show its name, the rest stay as icons.
-   Hidden on desktop, where the top bar does the job. */
 export function Dock({ lang, home = false }) {
   const t = T[lang];
   const [active, setActive] = useState('home');

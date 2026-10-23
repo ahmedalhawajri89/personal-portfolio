@@ -50,7 +50,7 @@ html:not(.cv-off) body > footer{content-visibility:auto;contain-intrinsic-size:a
 /* Ink and a signal.
 
    The identity comes from the mark that already existed -- the favicon is a
-   near-black square, a warm off-white letter and one orange dot. So the page
+   near-black square, a warm off-white letter and one orange mark. So the page
    is ink on a neutral paper, filled controls are ink, and orange is a signal
    used in small doses: the availability dot, the active item, the hero's
    progress bar. Navy was dropped because every neutral here leaned blue
@@ -917,52 +917,115 @@ a:hover .tint,button:hover .tint{opacity:1}
 @media (max-width:767px){.mx tbody th[scope="row"],.mx thead th:first-child{position:sticky;inset-inline-start:0;background:var(--card);z-index:1}}
 
 /* ------------------------------------------------------------ top bar */
-/* Full width, paper-coloured, no glass. At rest it is 68px with no edge; once
-   the page moves it tightens to 58px and a hairline appears under it. It
-   leaves while you read down and returns on the way up. */
-/* solid, not 94%: at 94% the section passing underneath read through the bar */
-.tb{position:fixed;inset-inline:0;top:0;z-index:50;background:var(--bg);
-  border-bottom:1px solid transparent;transition:transform .35s cubic-bezier(.22,1,.36,1),border-color .3s,background .3s}
-.tb.is-scrolled{border-bottom-color:var(--line)}
-.tb.is-away{transform:translateY(-101%)}
-.tb-in{display:flex;align-items:center;justify-content:space-between;gap:20px;height:68px;transition:height .3s cubic-bezier(.22,1,.36,1)}
-.tb.is-scrolled .tb-in{height:58px}
-.tb-brand{display:inline-flex;align-items:center;gap:10px;min-width:0;text-decoration:none;color:var(--ink)}
-.tb-brand .brand-mark{width:30px;height:30px;font-size:12.5px}
-.tb-name{font-size:15px;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
-.tb-nav{position:relative;display:none;align-items:center;gap:4px}
-.tb-nav a{position:relative;padding:8px 12px;font-size:14px;font-weight:700;color:var(--ink-2);text-decoration:none;transition:color .2s}
+/* Two shapes, one element. At the top of the page an open editorial bar,
+   aligned to the page's measure, with nothing behind it: the mark, the name
+   over the role, the links in the middle, and the hour, the language, the
+   theme and the action on the far side. Once the page moves it gathers into
+   a floating capsule -- narrower, shorter, glass over the page -- and sheds
+   the name, the role and the hour on the way, so what stays is what a
+   reader reaches for mid-page. The capsule leaves while you read down and
+   comes back on the way up, and carries the reading progress along its
+   lower edge. The change is one set of transitions on the same box, so the
+   bar visibly becomes the capsule rather than being swapped for it. */
+.tb{--tb-ease:cubic-bezier(.22,1,.36,1);position:fixed;inset-inline:0;top:0;z-index:50;padding-inline:clamp(8px,2vw,20px);pointer-events:none;
+  transition:transform .55s var(--tb-ease)}
+.tb.is-away{transform:translateY(-140%)}
+.tb-in{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:16px;
+  max-width:1200px;height:84px;margin:0 auto;padding-inline:clamp(10px,2.6vw,26px);pointer-events:auto;
+  border:1px solid transparent;border-radius:28px;background:transparent;
+  transition:max-width .7s var(--tb-ease),height .55s var(--tb-ease),margin .55s var(--tb-ease),padding .55s var(--tb-ease),
+    background-color .4s ease,border-color .4s ease,box-shadow .55s ease}
+.tb.is-scrolled .tb-in{max-width:1000px;height:60px;margin-top:12px;padding-inline:8px;
+  background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);
+  border-color:var(--line-2);box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 18px 40px -22px rgba(20,20,20,.45)}
+/* how far down the page, along the capsule's lower edge (--p from ScrollProgress) */
+.tb-in::after{content:'';position:absolute;inset-inline:26px;bottom:-1px;height:2px;border-radius:2px;background:var(--accent);
+  transform:scaleX(var(--p,0));transform-origin:left;opacity:0;transition:opacity .4s}
+[dir="rtl"] .tb-in::after{transform-origin:right}
+.tb.is-scrolled .tb-in::after{opacity:1}
+
+.tb-brand{display:inline-flex;align-items:center;gap:12px;min-width:0;justify-self:start;text-decoration:none;color:var(--ink)}
+.tb-brand:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:12px}
+.tb-id{display:grid;gap:3px;max-width:260px;overflow:hidden;white-space:nowrap;transition:max-width .6s var(--tb-ease),opacity .35s ease}
+.tb.is-scrolled .tb-id{max-width:0;opacity:0}
+.tb-name{font-size:16px;font-weight:800;line-height:1.1;letter-spacing:-.015em}
+[dir="rtl"] .tb-name{letter-spacing:0;font-size:16.5px}
+.tb-role{font-family:'GeistMono',ui-monospace,monospace;font-size:11.5px;font-weight:500;line-height:1;color:var(--ink-3);text-align:start}
+[dir="rtl"] .tb-role{text-align:right}
+
+.tb-nav{position:relative;display:none;align-items:center;gap:2px}
+.tb-nav a{position:relative;z-index:1;display:inline-flex;align-items:center;height:38px;padding:0 14px;border-radius:999px;
+  font-size:14px;font-weight:700;color:var(--ink-2);text-decoration:none;transition:color .25s}
 .tb-nav a:hover,.tb-nav a[aria-current]{color:var(--ink)}
-.tb-ind{position:absolute;left:0;bottom:-2px;height:2px;background:var(--accent);border-radius:1px;
-  transition:transform .45s cubic-bezier(.22,1,.36,1),width .45s cubic-bezier(.22,1,.36,1)}
-.tb-back{display:none;font-size:14px;font-weight:700;color:var(--ink-2);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tb-nav a:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+/* the lit pill under the section you are in */
+.tb-ind{position:absolute;top:50%;left:0;height:38px;margin-top:-19px;border-radius:999px;background:color-mix(in srgb,var(--ink) 7%,transparent);
+  transition:transform .55s var(--tb-ease),width .55s var(--tb-ease)}
+
+.tb-back{display:none;justify-self:center;font-size:14px;font-weight:700;color:var(--ink-2);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .tb-back:hover{color:var(--ink)}
-.tb-tools{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.tb-cta{display:inline-flex;align-items:center;height:36px;padding:0 14px;font-size:13.5px;font-weight:800;white-space:nowrap;text-decoration:none;
-  color:var(--on-accent);background:var(--accent-solid);border-radius:var(--r-ctl);transition:transform .2s}
-.tb-cta:hover{transform:translateY(-1px)}
+.tb-tools{display:flex;align-items:center;justify-self:end;gap:8px;flex-shrink:0}
+
+/* the hour where the work happens, and a light that says he is taking work */
+.tb-clock{display:none;align-items:center;gap:7px;max-width:160px;margin:0 6px 0 0;overflow:hidden;white-space:nowrap;
+  font-size:13px;font-weight:700;color:var(--ink-3);transition:max-width .6s var(--tb-ease),opacity .35s ease,margin .55s var(--tb-ease)}
+[dir="rtl"] .tb-clock{margin:0 0 0 6px}
+.tb-clock time{font-family:'GeistMono',ui-monospace,monospace;font-weight:500;color:var(--ink)}
+.tb.is-scrolled .tb-clock{max-width:0;opacity:0;margin:0}
+.tb-live{position:relative;width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none}
+.tb-live::after{content:'';position:absolute;inset:0;border-radius:50%;background:var(--ok);animation:tb-live 2.4s ease-out infinite}
+@keyframes tb-live{from{transform:scale(1);opacity:.55}to{transform:scale(2.8);opacity:0}}
+
+/* the action: a filled pill whose label rolls, with the signal dot in it */
+.tb-cta{display:inline-flex;align-items:center;gap:10px;height:44px;padding-inline:18px 8px;border-radius:999px;
+  font-size:14px;font-weight:800;white-space:nowrap;text-decoration:none;color:var(--on-accent);background:var(--accent-solid)}
+.tb-cta:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.tb-cta-dot{width:28px;height:28px;border-radius:50%;background:var(--accent);transition:transform .45s var(--tb-ease)}
+.tb-cta:hover .tb-cta-dot{transform:scale(.55)}
+.tb.is-scrolled .tb-cta{height:44px}
+
+/* a label that rolls: the word goes up, its twin comes up behind it */
+.roll{display:inline-flex;overflow:hidden;vertical-align:top;line-height:1.5}
+.roll-in{position:relative;display:block;transition:transform .55s cubic-bezier(.76,0,.24,1)}
+.roll-in::after{content:attr(data-t);position:absolute;top:100%;inset-inline:0}
+a:hover > .roll .roll-in,a:focus-visible > .roll .roll-in{transform:translateY(-100%)}
+
+/* the bar arrives with the page: brand, links and tools in turn, and waits
+   behind the intro curtain until it lifts */
+.tb-in > *{animation:tb-drop .9s var(--tb-ease) both}
+.tb-in > :nth-child(2){animation-delay:.08s}
+.tb-in > :nth-child(3){animation-delay:.16s}
+@keyframes tb-drop{from{opacity:0;transform:translateY(-16px)}}
+html.intro .tb-in > *,html.intro .logo-a,html.intro .logo-check{animation-play-state:paused}
+
 @media (min-width:768px){.tb-nav{display:flex}.tb-back{display:inline-block}}
-@media (min-width:768px) and (max-width:1023px){.tb-name{display:none}}
-@media (max-width:767px){.tb-in{height:60px}.tb-cta{display:none}}
-@media (prefers-reduced-motion:reduce){.tb,.tb-in,.tb-ind{transition:none}}
+@media (min-width:768px) and (max-width:1023px){.tb-id{display:none}}
+@media (min-width:1280px){.tb-clock{display:inline-flex}}
+@media (max-width:767px){
+  .tb-in{grid-template-columns:minmax(0,1fr) auto;height:66px}
+  .tb.is-scrolled .tb-in{height:56px;margin-top:8px;padding-inline:8px 6px}
+  .tb.is-scrolled .tb-id{max-width:200px;opacity:1}
+  .tb-role{display:none}
+  .tb-cta{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .tb,.tb-in,.tb-id,.tb-clock,.tb-ind,.roll-in,.tb-cta-dot{transition:none}
+  .tb-in > *,.tb-live::after{animation:none}
+}
 
 /* ------------------------------------------------------------ logo */
 .logo{display:block;flex-shrink:0;overflow:visible}
 .logo-bg{fill:var(--ink)}
-.logo-a{fill:none;stroke:var(--bg);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;
-  stroke-dasharray:1;stroke-dashoffset:1;opacity:0;animation:logo-write .9s cubic-bezier(.65,0,.35,1) .15s forwards}
+.logo-a,.logo-check{fill:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
 /* hidden until the pen moves: a round cap on a zero-length line shows as a dot */
-.logo-dot{fill:var(--accent);transform-box:fill-box;transform-origin:center;transform:scale(0);
-  animation:logo-land .45s cubic-bezier(.34,1.56,.64,1) .95s forwards}
+.logo-a{stroke:var(--bg);animation:logo-write .8s cubic-bezier(.65,0,.35,1) .2s forwards}
+.logo-check{stroke:var(--accent);animation:logo-write .5s cubic-bezier(.65,0,.35,1) .95s forwards}
 @keyframes logo-write{0%{opacity:1;stroke-dashoffset:1}100%{opacity:1;stroke-dashoffset:0}}
-@keyframes logo-land{to{transform:scale(1)}}
-/* hover: write again, and the dot hops once it arrives */
-.tb-brand:hover .logo-a{animation:logo-rewrite .7s cubic-bezier(.65,0,.35,1)}
-.tb-brand:hover .logo-dot{animation:logo-hop .5s cubic-bezier(.34,1.56,.64,1) .55s}
-@keyframes logo-rewrite{0%{opacity:1;stroke-dashoffset:1}100%{opacity:1;stroke-dashoffset:0}}
-@keyframes logo-hop{0%,100%{transform:scale(1) translateY(0)}45%{transform:scale(1.15) translateY(-22%)}}
-@media (prefers-reduced-motion:reduce){.logo-a{animation:none;stroke-dashoffset:0;opacity:1}.logo-dot{animation:none;transform:none}
-  .tb-brand:hover .logo-a,.tb-brand:hover .logo-dot{animation:none}}
+/* hover: the check is ticked again */
+.tb-brand:hover .logo-check{animation:logo-tick .55s cubic-bezier(.65,0,.35,1)}
+@keyframes logo-tick{0%{opacity:1;stroke-dashoffset:1}100%{opacity:1;stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.logo-a,.logo-check{animation:none;stroke-dashoffset:0;opacity:1}
+  .tb-brand:hover .logo-check{animation:none}}
 
 /* ------------------------------------------------------------ services: stacked panels */
 .svs{margin:0;padding:0;list-style:none;display:grid;gap:20px}

@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ahmed Al-Hawajiri">
-  <rect width="64" height="64" rx="14" fill="#111111"/>
-  <path d="M18 46 L32 17 L46 46" fill="none" stroke="#f3f1ec" stroke-width="6"
+  <rect width="64" height="64" rx="14" fill="#141414"/>
+  <path d="M17 50 L32 14 L47 50" fill="none" stroke="#F7F6F3" stroke-width="6"
         stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="46" cy="46" r="5" fill="#ff4d00"/>
+  <path d="M21 38 L28 44 L44 27" fill="none" stroke="#FF4D00" stroke-width="6"
+        stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
