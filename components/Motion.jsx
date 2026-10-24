@@ -12,11 +12,10 @@ import { loadMotion, whenIdle, MOTION_OK } from '../lib/motion';
    screen -- a browser frame whose page scrolls with yours. The captures are
              whole pages; a frame shows the top, and scrolling past it shows
              the rest, the way the visitor would see it in the product.
-   pullback -- the opening shot recedes as the first scene arrives.
-   open   -- a project's picture opens out to its full width as it arrives.
+   live   -- a small loop that runs only while it is on screen (.is-live).
+   pop    -- the lit dots in a list come on one after another.
+   drawmark -- the logo, drawn large as it arrives.
    count  -- a figure counts up to its value once, when it comes into view.
-   peek   -- on a card, hovering with a mouse scrolls the screenshot down to
-             show the whole page, and leaving scrolls it back.
 
    Everything waits for the page to be idle, so none of it is in front of the
    first paint, and nothing runs for reduced motion: the markup is already
@@ -25,7 +24,6 @@ import { loadMotion, whenIdle, MOTION_OK } from '../lib/motion';
 export default function Motion() {
   useEffect(() => {
     let mm, gone = false;
-    const off = [];
     const cancel = whenIdle(async () => {
       const { gsap, ScrollTrigger, SplitText } = await loadMotion();
       if (gone) return;
@@ -52,7 +50,7 @@ export default function Motion() {
         });
 
         gsap.utils.toArray('[data-m="screen"]').forEach((box) => {
-          const img = box.querySelector('img');
+          const img = box.querySelector('img, .gx-art');
           if (!img) return;
           // A third of the page at most: enough to show there is a page under
           // the fold, not so much that the frame becomes a scrollbar.
@@ -63,23 +61,27 @@ export default function Motion() {
           });
         });
 
-        // The camera pulling back from the opening shot: the hero sinks a
-        // little and dims as the first scene comes up under it.
-        gsap.utils.toArray('[data-m="pullback"]').forEach((el) => {
-          gsap.to(el, {
-            scale: 0.94, yPercent: -4, opacity: 0.2, transformOrigin: '50% 0%', ease: 'none',
-            scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: true },
-          });
+        // Small loops (the service marks) run only while they are on screen.
+        gsap.utils.toArray('[data-m="live"]').forEach((el) => {
+          ScrollTrigger.create({ trigger: el, start: 'top 95%', end: 'bottom 5%', toggleClass: 'is-live' });
         });
 
-        // A project's picture opens out of a smaller, rounded window to the
-        // full width as it comes up the page, and settles from a slight zoom:
-        // the frame grows toward the reader rather than sliding in.
-        gsap.utils.toArray('[data-m="open"]').forEach((box) => {
-          const img = box.querySelector('img');
-          gsap.timeline({ scrollTrigger: { trigger: box, start: 'top 96%', end: 'top 30%', scrub: 0.6 } })
-            .fromTo(box, { clipPath: 'inset(8% 11% 8% 11% round 18px)' }, { clipPath: 'inset(0% 0% 0% 0% round 10px)', ease: 'none' }, 0)
-            .fromTo(img, { scale: 1.2 }, { scale: 1, ease: 'none' }, 0);
+        // The lit dots in a list come on one after another, the first time
+        // the list is seen.
+        gsap.utils.toArray('[data-m="pop"]').forEach((el) => {
+          const dots = el.querySelectorAll('.on');
+          gsap.from(dots, { scale: 0, duration: 0.5, ease: 'back.out(3)', stagger: 0.035,
+            scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+        });
+
+        // The mark, drawn large as it comes up the page: the A first, the
+        // check last, as in the logo.
+        gsap.utils.toArray('[data-m="drawmark"]').forEach((el) => {
+          const a = el.querySelector('.logo-a'), c = el.querySelector('.logo-check');
+          if (!a || !c) return;
+          gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 80%', once: true } })
+            .fromTo(a, { strokeDashoffset: 1, opacity: 1 }, { strokeDashoffset: 0, duration: 1, ease: 'power2.inOut', immediateRender: false })
+            .fromTo(c, { strokeDashoffset: 1, opacity: 1 }, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.out', immediateRender: false });
         });
 
         gsap.utils.toArray('[data-m="count"]').forEach((el) => {
@@ -87,53 +89,15 @@ export default function Motion() {
           const n = { v: 0 };
           gsap.to(n, {
             v: to, duration: 1.4, ease: 'power3.out',
-            onUpdate: () => { el.textContent = Math.round(n.v); },
+            onUpdate: () => { el.textContent = Math.round(n.v).toLocaleString('en-US'); },
             scrollTrigger: { trigger: el, start: 'top 90%', once: true },
           });
         });
       });
 
-      // Hover is a mouse thing; a phone gets the top of the page and a tap.
-      mm.add(`${MOTION_OK} and (hover: hover) and (pointer: fine)`, () => {
-        gsap.utils.toArray('[data-m="peek"]').forEach((box) => {
-          let full, tween;
-          const enter = () => {
-            if (!full) {
-              full = new Image();
-              full.src = box.dataset.full;
-              full.alt = '';
-              full.className = 'peek-img';
-              box.appendChild(full);
-            }
-            full.decode().then(() => {
-              if (!box.matches(':hover')) return;
-              const dist = Math.max(0, full.offsetHeight - box.offsetHeight);
-              tween?.kill();
-              tween = gsap.timeline()
-                .to(full, { autoAlpha: 1, duration: 0.25 })
-                .to(full, { y: -dist, duration: Math.min(6, dist / 450), ease: 'power1.inOut' }, 0.15);
-            }).catch(() => {});
-          };
-          const leave = () => {
-            if (!full) return;
-            tween?.kill();
-            tween = gsap.timeline()
-              .to(full, { y: 0, duration: 0.6, ease: 'power3.out' })
-              .to(full, { autoAlpha: 0, duration: 0.2 });
-          };
-          box.addEventListener('pointerenter', enter);
-          box.addEventListener('pointerleave', leave);
-          off.push(() => {
-            box.removeEventListener('pointerenter', enter);
-            box.removeEventListener('pointerleave', leave);
-            full?.remove();
-          });
-        });
-        return () => { off.splice(0).forEach((f) => f()); };
-      });
       ScrollTrigger.refresh();
     });
-    return () => { gone = true; cancel(); mm?.revert(); off.splice(0).forEach((f) => f()); };
+    return () => { gone = true; cancel(); mm?.revert(); };
   }, []);
   return null;
 }

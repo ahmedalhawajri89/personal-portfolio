@@ -8,44 +8,44 @@
 export const SERVICES = [
   {
     icon: 'store', proof: 'diwan', visual: 'shop',
-    ar: { h: 'متاجر إلكترونية', b: 'كتالوج ومخزون وسلّة وطلبات بعربية RTL — والمخزون يُحسم في قاعدة البيانات، فلا تُباع آخر قطعة مرّتين.' },
-    en: { h: 'E-commerce', b: 'Catalogue, stock, cart and orders, Arabic-first — with stock settled in the database, so the last piece cannot sell twice.' },
+    ar: { h: 'متاجر إلكترونية', b: 'متجر عربي كامل: كتالوج ومخزون وسلّة وطلبات وفواتير. والمخزون يُحسم في قاعدة البيانات، فلا تُباع آخر قطعة مرّتين.' },
+    en: { h: 'E-commerce', b: 'A complete Arabic store: catalogue, stock, cart, orders and invoices. Stock is settled in the database, so the last piece never sells twice.' },
   },
   {
     icon: 'calendar', proof: 'booking', visual: 'book',
-    ar: { h: 'أنظمة حجوزات ومواعيد', b: 'حجز عربي RTL، والتوفّر يُحسب من ساعات العمل ومدّة الخدمة، وكشف التعارض يمنع فوز اثنين بالموعد نفسه.' },
-    en: { h: 'Booking systems', b: 'Arabic-first booking, with availability computed from business hours and service duration, and conflict detection that stops two people winning the same slot.' },
+    ar: { h: 'أنظمة حجوزات ومواعيد', b: 'حجز من الجوال بلا حساب، وأوقات تُحسب من دوامك الحقيقي، ولا يحجز اثنان الموعد نفسه أبداً.' },
+    en: { h: 'Booking systems', b: 'Booking from a phone with no account, times worked out from your real hours, and two people never get the same slot.' },
   },
   {
     icon: 'layout', proof: 'takharruj', visual: 'dash',
-    ar: { h: 'أنظمة أعمال ولوحات تحكم', b: 'أدوار وصلاحيات وسير عمل وجداول من جهة الخادم تبقى سريعة عند آلاف السجلات.' },
-    en: { h: 'Business systems and dashboards', b: 'Roles, permissions, workflows, and server-side tables that stay fast at thousands of rows.' },
+    ar: { h: 'أنظمة أعمال ولوحات تحكم', b: 'أدوار وصلاحيات وسير عمل، وجداول تبقى سريعة ولو صارت آلاف السجلات.' },
+    en: { h: 'Business systems and dashboards', b: 'Roles, permissions and workflows, with tables that stay fast at thousands of rows.' },
   },
   {
     icon: 'database', proof: 'lamma', visual: 'api',
-    ar: { h: 'قواعد بيانات وواجهات برمجية', b: 'مخطّط يمنع الخطأ بدل أن يكتشفه، وREST API موثّق تحرسه اختبارات.' },
-    en: { h: 'Database design and APIs', b: 'A schema that prevents the mistake rather than detecting it, and a documented REST API held up by tests.' },
+    ar: { h: 'قواعد بيانات وواجهات برمجية', b: 'مخطّط يمنع الخطأ قبل أن يحدث، وAPI موثّق تحرسه اختبارات.' },
+    en: { h: 'Database design and APIs', b: 'A schema that stops the mistake before it happens, and a documented API held up by tests.' },
   },
   {
     // Figma to code. No project here claims a Figma source, so this one cites
     // no project: it names the stack it is delivered in instead, and its
     // picture is drawn, not a screenshot passed off as the result.
     icon: 'layout', proof: null, visual: 'figma', note: 'Vue 3 · Next.js · Tailwind CSS',
-    ar: { h: 'تحويل تصاميم Figma إلى كود', b: 'تصميمك على Figma يصير واجهة تعمل فعلًا: متجاوبة على كل الشاشات، بالعربية RTL والإنجليزية، سهلة الوصول، ووفيّة للمسافات والخطوط التي اخترتها.' },
-    en: { h: 'Figma to code', b: 'Your Figma design becomes a front end that actually works: responsive at every width, Arabic RTL and English, accessible, and faithful to the spacing and type you chose.' },
+    ar: { h: 'تحويل تصاميم Figma إلى كود', b: 'أحوّل تصميمك إلى واجهة تعمل فعلاً: متجاوبة، بالعربية والإنجليزية، ووفيّة للمسافات والخطوط التي اخترتها.' },
+    en: { h: 'Figma to code', b: 'I turn your design into a front end that actually works: responsive, in Arabic and English, true to the spacing and type you chose.' },
   },
   {
     // Testing is demonstrated in the work itself: Pest and PHPUnit suites in
     // four of the five projects, Playwright in two, and the booking system's
     // concurrency test opens two real sessions. A skill, not a job title.
     icon: 'shield', proof: 'booking', visual: 'tests',
-    ar: { h: 'اختبارات وضمان جودة', b: 'اختبارات آلية لتطبيق Laravel قائم — قواعد العمل والصلاحيات والتزامن — بـPest وPlaywright، حتى لا يعود الخطأ بعد أول تعديل.' },
-    en: { h: 'Testing & QA', b: 'Automated tests for an existing Laravel app — business rules, permissions and concurrency — in Pest and Playwright, so a fixed bug stays fixed after the next edit.' },
+    ar: { h: 'اختبارات وضمان جودة', b: 'اختبارات آلية لتطبيق لارافيل قائم، حتى يبقى الخطأ الذي أصلحناه مُصلَحاً بعد التعديل التالي.' },
+    en: { h: 'Testing & QA', b: 'Automated tests for an existing Laravel app, so a bug we fixed stays fixed after the next change.' },
   },
   {
     icon: 'code', proof: null, visual: 'diff', note: 'Laravel · PHP',
-    ar: { h: 'تطوير مشروع قائم', b: 'إكمال أو إصلاح أو توسيع تطبيق لارافيل موجود — قراءة الكود أولاً، ثم أصغر تغيير يحلّ المشكلة.' },
-    en: { h: 'Work on an existing project', b: 'Finishing, fixing or extending a Laravel application that already exists — reading the code first, then the smallest change that solves it.' },
+    ar: { h: 'تطوير مشروع قائم', b: 'أكمل تطبيقاً موجوداً أو أصلحه: أقرأ الكود أولاً، ثم أصغر تغيير يحلّ المشكلة.' },
+    en: { h: 'Work on an existing project', b: 'I finish or fix an app that already exists: I read the code first, then make the smallest change that solves it.' },
   },
 ];
 

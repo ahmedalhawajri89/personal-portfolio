@@ -46,19 +46,19 @@ export async function generateMetadata({ params }) {
 }
 
 // Runs before first paint: no flash of the wrong theme, and the reveal class
-// is only armed when JS is actually alive. Light is the default for a first
-// visit — the site is designed light first, and the OS preference is not a
-// statement about this page. Dark is opt-in through the toggle, and once
+// is only armed when JS is actually alive. Dark is the default for a first
+// visit -- the site is designed dark first, and the OS preference is not a
+// statement about this page. Light is opt-in through the toggle, and once
 // chosen it is remembered. The browser chrome follows the same choice, so a
-// dark-mode OS never frames a light page in a dark bar. The first home page
+// light-mode OS never frames a dark page in a light bar. The first home page
 // of a visit opens behind the intro curtain (`intro`, components/Intro.jsx),
 // once; a page reached through the page curtain opens with it still down
 // (`curtain-in`, components/Curtain.jsx). A curtain page never runs the intro.
 const BOOT = `(function(){try{
-var d=localStorage.getItem('theme')==='dark';
+var d=localStorage.getItem('theme')!=='light';
 document.documentElement.setAttribute('data-theme',d?'dark':'light');
 var m=document.querySelector('meta[name=theme-color]');
-if(m)m.setAttribute('content',d?'#0E0E0D':'#F7F6F3');
+if(m)m.setAttribute('content',d?'#0E0E0C':'#F7F6F3');
 document.documentElement.classList.add('js');
 if(location.hash)document.documentElement.classList.add('cv-off');
 if(sessionStorage.getItem('curtain')){sessionStorage.removeItem('curtain');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('curtain-in');}
@@ -71,13 +71,13 @@ export default async function RootLayout({ children, params }) {
   return (
     <html lang={lang} dir={t.dir} suppressHydrationWarning>
       <head>
-        <meta name="theme-color" content="#F7F6F3" />
+        <meta name="theme-color" content="#0E0E0C" />
         {/* The two cuts every page paints with, for the language it is in.
-            Arabic pages preload Plex Arabic, English pages preload Geist;
+            Arabic pages preload Plex Arabic, English pages preload Instrument Sans;
             preloading both would put the wrong script's 37KB ahead of the
             text actually on screen. Geist Mono is not preloaded: the only
             monospaced text above the fold is the runner, which starts later. */}
-        {(lang === 'ar' ? ['plex-arabic-400', 'plex-arabic-700'] : ['geist-400', 'geist-700']).map((f) => (
+        {(lang === 'ar' ? ['plex-arabic-400', 'plex-arabic-700'] : ['instrument-400', 'instrument-700']).map((f) => (
           <link key={f} rel="preload" as="font" type="font/woff2" href={`/fonts/${f}.woff2`} crossOrigin="anonymous" />
         ))}
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />

@@ -317,8 +317,8 @@ export const PROFILE = {
   location: { ar: 'غزة، فلسطين', en: 'Gaza, Palestine' },
   years: 4,
   lede: {
-    ar: 'أبني التطبيق كاملاً وحدي — من تصميم قاعدة البيانات، إلى الواجهة الخلفية بلارافيل، إلى الواجهة الأمامية — فتتعامل مع شخص واحد من أول المشروع إلى آخره.',
-    en: 'I build the whole application myself — from the database schema, to the Laravel back end, to the front end — so you deal with one person from the first day to the last.',
+    ar: 'من قاعدة البيانات إلى آخر زرّ على الشاشة، أعمل على المشروع كلّه بنفسي. يعني ذلك أنك تتحدث مع الشخص نفسه الذي يكتب الكود، من أول يوم إلى يوم التسليم.',
+    en: 'From the database to the last button on the screen, I work on the whole project myself. You talk to the person writing the code, from the first day to the day it ships.',
   },
   links: {
     github: 'https://github.com/ahmedalhawajri89',

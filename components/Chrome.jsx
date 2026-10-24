@@ -196,21 +196,39 @@ export function ThemeToggle({ lang }) {
     document.documentElement.setAttribute('data-theme', next);
     // Keep the browser chrome in step with the page it frames.
     document.querySelector('meta[name=theme-color]')
-      ?.setAttribute('content', next === 'dark' ? '#0E0E0D' : '#F7F6F3');
+      ?.setAttribute('content', next === 'dark' ? '#0E0E0C' : '#F7F6F3');
     try { localStorage.setItem('theme', next); } catch {}
     setDark(!dark);
   };
-  // Circular reveal from the button via the View Transitions API.
-  const flip = (e) => {
+  // The switch is a reveal, not a fade: the page in its new colours opens
+  // out of the button in a circle until it has covered the screen. The View
+  // Transitions API holds a picture of the old page and of the new one; GSAP
+  // drives the circle's radius on the new picture (--vt-r, read by the
+  // ::view-transition-new rule in globals.css), so the curve of the reveal
+  // is GSAP's and the content inside it is the real page, not a flat colour.
+  // The icon turns over with it. Reduced motion, or a browser without the
+  // API, gets the switch alone.
+  const icon = useRef(null);
+  const flip = async (e) => {
     const root = document.documentElement;
     if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return apply();
     const r = e.currentTarget.getBoundingClientRect();
     const x = r.left + r.width / 2, y = r.top + r.height / 2;
     const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const [{ gsap }] = await Promise.all([import('gsap')]);
     root.style.setProperty('--vt-x', `${x}px`);
     root.style.setProperty('--vt-y', `${y}px`);
-    root.style.setProperty('--vt-r', `${radius}px`);
-    document.startViewTransition(apply);
+    root.style.setProperty('--vt-r', '0px');
+    root.classList.add('vt-theme');
+    const vt = document.startViewTransition(apply);
+    try {
+      await vt.ready;
+      gsap.fromTo(root, { '--vt-r': '0px' }, { '--vt-r': `${radius}px`, duration: 1.1, ease: 'expo.inOut' });
+      if (icon.current) gsap.fromTo(icon.current, { rotate: -180, scale: 0.4 }, { rotate: 0, scale: 1, duration: 0.9, ease: 'back.out(2)' });
+      await vt.finished;
+    } finally {
+      root.classList.remove('vt-theme');
+    }
   };
   const t = T[lang];
   return (
@@ -220,7 +238,7 @@ export function ThemeToggle({ lang }) {
       title={dark ? t.themeLight : t.themeDark}
       className="icon-btn"
     >
-      <Icon name={dark ? 'sun' : 'moon'} size={16} />
+      <span ref={icon} style={{ display: 'grid' }}><Icon name={dark ? 'sun' : 'moon'} size={16} /></span>
     </button>
   );
 }
@@ -246,12 +264,10 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
   const [active, setActive] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const [away, setAway] = useState(false);
-  const [clock, setClock] = useState('');
 
   // At the top of the page the header is an open editorial bar across the
   // measure: the mark, the name with the role under it, the places a reader
-  // jumps to, and on the far side the hour in Gaza, the language, the theme
-  // and the one action. Once the page moves it gathers itself into a
+  // jumps to, and on the far side the language, the theme and the one action. Once the page moves it gathers itself into a
   // floating capsule -- the mark, the links and the action -- so it takes
   // less of the screen the more there is to read under it. Contact is the
   // call to action, not a sixth link.
@@ -288,17 +304,6 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     window.addEventListener('mousemove', peek, { passive: true });
     return () => { window.removeEventListener('scroll', on); window.removeEventListener('mousemove', peek); };
   }, []);
-
-  // The hour where the work is done, so a client in another zone knows when
-  // a reply is likely. Rendered after mount: the server's clock is not the
-  // reader's, and a time baked into the HTML would be wrong by the visit.
-  useEffect(() => {
-    const fmt = new Intl.DateTimeFormat(ar ? 'ar-u-nu-latn' : 'en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Gaza' });
-    const tick = () => setClock(fmt.format(new Date()));
-    tick();
-    const id = setInterval(tick, 15000);
-    return () => clearInterval(id);
-  }, [ar]);
 
   useEffect(() => {
     if (!home) return;
@@ -364,11 +369,6 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
         )}
 
         <div className="tb-tools">
-          <p className="tb-clock" title={t.hero.status}>
-            <span className="tb-live" aria-hidden="true" />
-            <span>{t.nav.city}</span>
-            <time className="lat" suppressHydrationWarning>{clock || '--:--'}</time>
-          </p>
           {/* Both languages shown, the current one lit; only the link to the
               other one carries a name. */}
           <div className="lang-seg">
@@ -721,6 +721,7 @@ export function Footer({ lang, links, home = false }) {
   const t = T[lang];
   const f = t.foot;
   const ar = lang === 'ar';
+  const root = useRef(null);
   const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
   const nav = [['work', t.nav.work], ['services', t.nav.services], ['process', t.nav.process], ['about', t.nav.about], ['contact', t.nav.contact]];
   const [copied, setCopied] = useState(false);
@@ -733,23 +734,84 @@ export function Footer({ lang, links, home = false }) {
     ['GitHub', links.github],
     [ar ? 'خمسات' : 'Khamsat', links.khamsat],
   ] : [];
+  const roll = (label) => <span className="roll" aria-hidden="true"><span className="roll-in" data-t={label}>{label}</span></span>;
+
+  // The name at the foot, in pieces GSAP can move: letters in English, words
+  // in Arabic, where a span between two letters would break the join.
+  const name = PROFILE.name[lang];
+  const units = ar ? name.split(' ') : [...name];
+
+  /* The footer's motion. As the page reaches its end the giant name rises
+     out of the page edge piece by piece, from the middle outwards, tied to
+     the scroll; the columns above it come up from behind. A mouse moving
+     over the name lifts the letters nearest to it, a wave that follows the
+     pointer and settles when it leaves. Off for reduced motion and, for the
+     wave, for touch. */
+  useEffect(() => {
+    let mm, gone = false;
+    const cancel = whenIdle(async () => {
+      const { gsap } = await loadMotion();
+      if (gone || !root.current) return;
+      const el = root.current;
+      const mark = el.querySelector('.foot-mark');
+      const parts = Array.from(mark.querySelectorAll('.fm-u'));
+      mm = gsap.matchMedia();
+      mm.add({ motion: '(prefers-reduced-motion: no-preference)', pointer: '(hover: hover) and (pointer: fine)' }, (ctx) => {
+        const { motion, pointer } = ctx.conditions;
+        if (!motion) return;
+        gsap.fromTo(parts, { yPercent: 105 }, {
+          yPercent: 0, ease: 'none', stagger: { each: 0.04, from: 'center' },
+          scrollTrigger: { trigger: mark, start: 'top bottom', end: 'bottom bottom', scrub: 0.6 },
+        });
+        gsap.from(el.querySelector('.foot-in'), {
+          y: 70, opacity: 0.2, ease: 'none',
+          scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 45%', scrub: true },
+        });
+        if (!pointer) return;
+        const lift = parts.map((u) => gsap.quickTo(u, 'y', { duration: 0.5, ease: 'power3' }));
+        const move = (e) => {
+          const size = parseFloat(getComputedStyle(mark).fontSize) || 120;
+          parts.forEach((u, k) => {
+            const r = u.getBoundingClientRect();
+            const d = Math.abs(e.clientX - (r.left + r.width / 2));
+            lift[k](-Math.max(0, 1 - d / (size * 1.6)) * size * 0.22);
+          });
+        };
+        const rest = () => lift.forEach((q) => q(0));
+        mark.addEventListener('pointermove', move);
+        mark.addEventListener('pointerleave', rest);
+        return () => { mark.removeEventListener('pointermove', move); mark.removeEventListener('pointerleave', rest); };
+      });
+    });
+    return () => { gone = true; cancel(); mm?.revert(); };
+  }, [lang]);
+
   return (
-    <footer className="foot">
-      <div className="wrap">
+    <footer className="foot" ref={root}>
+      <div className="wrap foot-in">
+        {/* The last thing the page says, and the one way to answer it. */}
+        <div className="foot-cta">
+          <p className="foot-ask">{f.ask}</p>
+          {links && (
+            <a href={`mailto:${links.email}`} className="foot-big" data-magnetic aria-label={f.write}>
+              {roll(f.write)}
+              <span className="foot-big-dot" aria-hidden="true"><Icon name={ar ? 'arrowLeft' : 'arrowRight'} size={18} /></span>
+            </a>
+          )}
+        </div>
+
         {/* Four columns a visitor scans in the order they need them: who this
-            is, where to go, how to reach him, and whether he is free. No
-            statement card and no second call to action -- the contact section
-            is directly above, and a footer that shouts again reads as unsure. */}
+            is, where to go, how to reach him, and whether he is free. */}
         <div className="foot-grid">
           <div>
             <p className="foot-name">{PROFILE.name[lang]}</p>
             <p className="foot-role">{t.about.role}</p>
-            <p className="foot-line">{t.hero.h1b}</p>
+            <p className="foot-line">{f.line}</p>
           </div>
           <nav aria-label={f.nav}>
             <p className="foot-h">{f.nav}</p>
             <ul className="foot-list">
-              {nav.map(([id, label]) => <li key={id}><a href={link(id)}>{label}</a></li>)}
+              {nav.map(([id, label]) => <li key={id}><a href={link(id)} aria-label={label}>{roll(label)}</a></li>)}
             </ul>
           </nav>
           <div>
@@ -758,11 +820,11 @@ export function Footer({ lang, links, home = false }) {
               {links && (
                 <li className="foot-mail">
                   <a href={`mailto:${links.email}`} className="lat">{links.email}</a>
-                  <button type="button" onClick={copy} className="foot-copy" aria-live="polite">{copied ? f.copied : f.copy}</button>
+                  <button type="button" onClick={copy} className={`foot-copy${copied ? ' is-done' : ''}`} aria-live="polite">{copied ? f.copied : f.copy}</button>
                 </li>
               )}
               {channels.map(([label, href]) => (
-                <li key={label}><a href={href} target="_blank" rel="noopener noreferrer">{label} <span aria-hidden="true">↗</span></a></li>
+                <li key={label}><a href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>{roll(label)} <span className="foot-arr" aria-hidden="true">↗</span></a></li>
               ))}
             </ul>
           </div>
@@ -777,10 +839,14 @@ export function Footer({ lang, links, home = false }) {
         </div>
       </div>
 
-      {/* The name set as a signature across the full width, its descenders
-          cropped by the page edge. Decorative: the same name is in the first
-          column as text, so screen readers hear it once. */}
-      <p className="foot-mark" aria-hidden="true"><span>{PROFILE.name[lang]}</span></p>
+      {/* The name set as a signature across the full width, rising out of
+          the page edge. Decorative: the same name is in the first column as
+          text, so screen readers hear it once. */}
+      <p className="foot-mark" aria-hidden="true">
+        {units.map((u, k) => (
+          <span key={k} className={`fm-u${u === ' ' ? ' is-space' : ''}`}>{u === ' ' ? ' ' : u}{ar && k < units.length - 1 ? ' ' : ''}</span>
+        ))}
+      </p>
 
       <div className="wrap">
         <div className="foot-base-row">
@@ -789,406 +855,5 @@ export function Footer({ lang, links, home = false }) {
         </div>
       </div>
     </footer>
-  );
-}
-
-/* The hero: a terminal that runs the real tests behind the site's claims.
-   Lines appear one by one, each spins for a beat then passes; the summary
-   lands, holds, and the run starts over. Reduced motion shows the finished run. */
-export function TestRunner({ lang, tests }) {
-  const t = T[lang].hero.runner;
-  const [n, setN] = useState(0);        // how many lines have been started
-  const [done, setDone] = useState(0);  // how many have passed
-  const total = tests.length;
-  const finished = done >= total;
-  // Every row is on the page from the first frame, queued. The old runner
-  // hid rows until they ran, so the first thing a visitor saw was an empty
-  // white box -- it read as a page that had not loaded. Now the motion is a
-  // change of state on rows that are already there.
-  //
-  // It runs once and then holds: a loop that re-rendered every few hundred
-  // milliseconds forever was noise to read past and cost to scroll past. It
-  // waits for the browser to be idle and for the panel to be on screen.
-  const box = useRef(null);
-  const [ready, setReady] = useState(false);
-  const [live, setLive] = useState(false);
-  useEffect(() => {
-    const idle = window.requestIdleCallback
-      ? window.requestIdleCallback(() => setReady(true), { timeout: 2000 })
-      : setTimeout(() => setReady(true), 1200);
-    const io = new IntersectionObserver(([e]) => setLive(e.isIntersecting), { threshold: 0 });
-    if (box.current) io.observe(box.current);
-    return () => {
-      if (window.cancelIdleCallback) window.cancelIdleCallback(idle); else clearTimeout(idle);
-      io.disconnect();
-    };
-  }, []);
-  useEffect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setN(total); setDone(total); return; }
-    if (!ready || !live || finished) return;
-    const id = n === done
-      ? setTimeout(() => setN((x) => x + 1), n === 0 ? 250 : 220)
-      : setTimeout(() => setDone((x) => x + 1), 480);
-    return () => clearTimeout(id);
-  }, [n, done, finished, ready, live, total]);
-  const rerun = () => { setN(0); setDone(0); };
-  // Counted from the tests themselves, not typed: how many projects they span.
-  const projects = new Set(tests.map((x) => x.project)).size;
-  return (
-    <div ref={box} className="runner" aria-label={t.cmd}>
-      <div className="runner-bar">
-        <span className="runner-cmd"><span aria-hidden="true">$ </span>{t.cmd}</span>
-        <button type="button" onClick={rerun} className="runner-rerun" aria-label={t.rerun} title={t.rerun}><Icon name="arrowUp" size={12} /></button>
-      </div>
-      {/* The only orange on the panel: it fills as each rule passes. */}
-      <div className="runner-progress" aria-hidden="true"><i style={{ transform: `scaleX(${done / total})` }} /></div>
-      <ol className="runner-body">
-        {tests.map((x, i) => {
-          const state = i < done ? 'pass' : i < n ? 'run' : 'wait';
-          return (
-            <li key={x.file} className={`runner-line is-${state}`}>
-              <span className="runner-mark" aria-hidden="true">{state === 'pass' ? <Icon name="check" size={11} /> : state === 'run' ? <span className="spin" /> : ''}</span>
-              <span className="runner-text">
-                <span>{lang === 'ar' ? x.ar : x.en}</span>
-                <span className="runner-file">{x.project}/tests/{x.file}</span>
-              </span>
-            </li>
-          );
-        })}
-      </ol>
-      <div className="runner-sum">
-        <span className="runner-status" aria-live="polite">
-          {finished
-            ? <span className="ok">✓ {total} {t.passed}</span>
-            : <span>{n ? t.running : t.queued}</span>}
-          <span className="runner-meta">{total} {t.rules} · {projects} {t.projects}</span>
-        </span>
-        <a href={PROFILE.links.github} target="_blank" rel="noopener noreferrer" className="runner-code">{t.code} <span aria-hidden="true">{lang === 'ar' ? '←' : '→'}</span></a>
-      </div>
-    </div>
-  );
-}
-
-/* Local time in Gaza, ticking. Rendered empty on the server so there is no
-   hydration mismatch, then filled on the client. */
-
-/* Engineering proof as case files. The hero runs the six tests as a list;
-   this is where each one is read in depth, one at a time: the problem in the
-   client's words, the decision in the engineer's, and the test that proves
-   it, with the repository it lives in. A list of cases on one side and the
-   open file on the other -- a proper tablist, so arrow keys move between
-   cases and the panel is labelled by the tab that opened it. */
-export function CaseFiles({ lang, tests }) {
-  const t = T[lang].proof;
-  const ar = lang === 'ar';
-  const L = ar ? 'Ar' : 'En';
-  const [i, setI] = useState(0);
-  const tabs = useRef([]);
-  const proj = (slug) => PROJECTS.find((x) => x.slug === slug);
-  const key = (e) => {
-    const next = { ArrowDown: 1, ArrowUp: -1, ArrowRight: ar ? -1 : 1, ArrowLeft: ar ? 1 : -1 }[e.key];
-    if (next === undefined) return;
-    e.preventDefault();
-    const n = (i + next + tests.length) % tests.length;
-    setI(n); tabs.current[n]?.focus();
-  };
-  const x = tests[i];
-  const pr = proj(x.project);
-  return (
-    <div className="cf">
-      <div className="cf-list" role="tablist" aria-orientation="vertical" aria-label={t.eyebrow} onKeyDown={key}>
-        {tests.map((y, n) => (
-          <button key={y.file} ref={(el) => (tabs.current[n] = el)} type="button" role="tab"
-                  id={`cf-tab-${n}`} aria-controls="cf-panel" aria-selected={n === i} tabIndex={n === i ? 0 : -1}
-                  className={`cf-tab${n === i ? ' is-on' : ''}`} onClick={() => setI(n)}>
-            <span className="cf-n lat">{String(n + 1).padStart(2, '0')}</span>
-            <span className="cf-t">{y[`prob${L}`]}</span>
-            <span className="cf-p">{proj(y.project)?.[lang].name}</span>
-          </button>
-        ))}
-      </div>
-
-      <div id="cf-panel" role="tabpanel" aria-labelledby={`cf-tab-${i}`} className="cf-panel">
-        {/* keyed on the case so each one enters fresh rather than morphing */}
-        <div key={i} className="cf-file">
-          <p className="cf-head lat">CASE {String(i + 1).padStart(2, '0')} · {pr?.[lang].name}</p>
-          <ol className="cf-steps">
-            <li>
-              <span className="cf-dot" aria-hidden="true" />
-              <p className="cf-k">{t.lProblem}</p>
-              <p className="cf-v">{x[`prob${L}`]}</p>
-            </li>
-            <li>
-              <span className="cf-dot" aria-hidden="true" />
-              <p className="cf-k">{t.lDecision}</p>
-              <p className="cf-v">{x[`dec${L}`]}</p>
-            </li>
-            <li className="is-proof">
-              <span className="cf-dot" aria-hidden="true"><Icon name="check" size={11} /></span>
-              <p className="cf-k">{t.lProof}</p>
-              <p className="cf-file-path lat">{x.project}/tests/{x.file}</p>
-              <p className="cf-rule">{ar ? x.ar : x.en}</p>
-              {pr?.repo && (
-                <a className="cf-repo" href={pr.repo} target="_blank" rel="noopener noreferrer">
-                  {t.repo} <span aria-hidden="true">↗</span>
-                </a>
-              )}
-            </li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* Services as stacked panels. Each panel: the service, what it gets you, the
-   project that proves it, and that project's real screen in a browser frame.
-   From 1024px, with room above and below, each panel pins a little lower than
-   the one before and the next slides over it; the covered one settles back
-   (a slight scale and shade) so the stack reads as depth, not as a pile.
-   The effect is one scroll listener, only while the section is on screen,
-   writing one number per panel. */
-export function ServiceStack({ items, lang, tests }) {
-  const t = T[lang].services;
-  const list = useRef(null);
-  useEffect(() => {
-    const ol = list.current;
-    if (!ol || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const cards = [...ol.children];
-    let raf = 0, live = false;
-    const paint = () => {
-      raf = 0;
-      const pinned = matchMedia('(min-width: 1024px) and (min-height: 700px)').matches;
-      for (let i = 0; i < cards.length; i++) {
-        let p = 0;
-        if (pinned && i < cards.length - 1) {
-          const me = cards[i].getBoundingClientRect(), next = cards[i + 1].getBoundingClientRect();
-          p = Math.min(1, Math.max(0, (me.bottom - next.top) / me.height));
-        }
-        cards[i].style.setProperty('--sink', p.toFixed(3));
-      }
-    };
-    const on = () => { if (live && !raf) raf = requestAnimationFrame(paint); };
-    const io = new IntersectionObserver(([e]) => { live = e.isIntersecting; on(); });
-    io.observe(ol);
-    addEventListener('scroll', on, { passive: true });
-    addEventListener('resize', on);
-    return () => { io.disconnect(); removeEventListener('scroll', on); removeEventListener('resize', on); cancelAnimationFrame(raf); };
-  }, []);
-
-  const n = String(items.length).padStart(2, '0');
-  const u = t.ui;
-  const visual = (it) => {
-    // Drawn interfaces for the first three: each one shows the idea the
-    // service promises -- the last piece held for the buyer, the slot that
-    // cannot be booked twice, the role that decides what a user can do --
-    // rather than a screenshot of one project's pages.
-    if (it.visual === 'shop') {
-      return (
-        <div className="svs-art svs-ui svs-shop" aria-hidden="true">
-          <div className="ui-card ui-prod">
-            <div className="ui-img">
-              <svg viewBox="0 0 120 92" width="46%">
-                <ellipse cx="60" cy="86" rx="44" ry="4" className="f-line" />
-                <rect x="30" y="8" width="60" height="44" rx="12" className="f-acc" />
-                <rect x="20" y="44" width="80" height="18" rx="8" className="f-ink" />
-                <rect x="13" y="32" width="15" height="30" rx="7" className="f-ink" />
-                <rect x="92" y="32" width="15" height="30" rx="7" className="f-ink" />
-                <path d="M30 62 L26 82 M90 62 L94 82" className="s-ink" />
-              </svg>
-            </div>
-            <div className="ui-row"><b>{u.item}</b><span className="lat">$240</span></div>
-            <span className="ui-badge is-hot">{u.left}</span>
-            <span className="ui-btn">{u.add}</span>
-          </div>
-          <div className="ui-card ui-float ui-order">
-            <p className="ui-k">{u.order} <span className="lat">#1042</span></p>
-            <div className="ui-line"><i className="ui-thumb" /><span className="ui-grow"><b>{u.item}</b><small className="lat">× 1</small></span><span className="lat">$240</span></div>
-            <div className="ui-line is-skel"><i className="ui-thumb" /><span className="ui-grow"><i /><i /></span></div>
-            <div className="ui-total"><span>{u.total}</span><b className="lat">$240</b></div>
-          </div>
-          <div className="ui-toast"><span className="ui-ok">✓</span>{u.reserved}</div>
-        </div>
-      );
-    }
-    if (it.visual === 'book') {
-      const busy = [[1, 1, 2], [2, 2, 1], [4, 1, 1], [5, 3, 2], [2, 5, 1], [4, 4, 1]]; // [day 1-5, hour row 1-5, span]
-      return (
-        <div className="svs-art svs-ui svs-book" aria-hidden="true">
-          <div className="ui-card ui-cal">
-            <span />
-            {u.days.map((d) => <span key={d} className="ui-day">{d}</span>)}
-            {['09', '10', '11', '12', '13'].map((h, r) => <span key={h} className="ui-hr lat" style={{ gridRow: r + 2 }}>{h}:00</span>)}
-            {busy.map(([c2, r, n]) => <i key={`${c2}-${r}`} className="ui-slot is-busy" style={{ gridColumn: c2 + 1, gridRow: `${r + 1} / span ${n}` }} />)}
-            <i className="ui-slot is-taken" style={{ gridColumn: 4, gridRow: 4 }}>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
-            </i>
-            <i className="ui-slot is-sel lat" style={{ gridColumn: 4, gridRow: 3 }}>10:30</i>
-          </div>
-          <div className="ui-card ui-float ui-confirm">
-            <p className="ui-k">{u.svc}</p>
-            <b className="ui-when">{u.when}</b>
-            <span className="ui-badge is-ok">{u.free}</span>
-            <span className="ui-btn">{u.confirm}</span>
-          </div>
-          <div className="ui-toast is-warn"><span className="ui-lock">!</span>{u.taken}</div>
-        </div>
-      );
-    }
-    if (it.visual === 'dash') {
-      const rows = [[0, '62%'], [1, '48%'], [1, '70%'], [2, '54%'], [2, '40%']];
-      return (
-        <div className="svs-art svs-ui svs-dash" aria-hidden="true">
-          <div className="ui-card ui-table">
-            <div className="ui-tools">
-              <span className="ui-search">⌕ {u.search}</span>
-              {u.roles.map((r, k) => <span key={r} className={`ui-chip${k === 1 ? ' is-on' : ''}`}>{r}</span>)}
-            </div>
-            {rows.map(([k, w], n) => (
-              <div key={n} className={`ui-tr${n === 1 ? ' is-on' : ''}`}>
-                <i className="ui-av" /><span className={`ui-role r${k}`}>{u.roles[k]}</span>
-                <i className="ui-bar" style={{ '--w': w }} /><i className={`ui-dot${n === 4 ? ' is-off' : ''}`} />
-              </div>
-            ))}
-            <p className="ui-pages lat"><i>‹</i><i className="on">1</i><i>2</i><i>3</i><i>›</i></p>
-          </div>
-          <div className="ui-card ui-float ui-perm">
-            <p className="ui-k">{u.role}</p>
-            <b className="ui-when">{u.roles[1]}</b>
-            {u.perms.map((p, k) => (
-              <div key={p} className="ui-perm-row"><span>{p}</span><i className={`ui-sw${k === 2 ? '' : ' is-on'}`} /></div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-    if (it.visual === 'api') {
-      return (
-        <div className="svs-art svs-ui svs-api" aria-hidden="true">
-          <div className="ui-card ui-schema">
-            <svg className="ui-links" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <path d="M50 24 H53 V44 H56" /><path d="M50 76 H53 V60 H56" />
-            </svg>
-            {[
-              ['orders', [['PK', 'id'], ['FK', 'user_id'], ['', 'status'], ['', 'total']], 'is-a'],
-              ['products', [['PK', 'id'], ['', 'name'], ['', 'stock ≥ 0']], 'is-b'],
-              ['order_items', [['PK', 'id'], ['FK', 'order_id'], ['FK', 'product_id'], ['', 'qty ≥ 1']], 'is-c'],
-            ].map(([name, cols, pos]) => (
-              <div key={name} className={`ui-tbl lat ${pos}`}>
-                <b>{name}</b>
-                {cols.map(([k, col]) => <span key={col}><em className={k ? `k-${k}` : ''}>{k}</em>{col}</span>)}
-              </div>
-            ))}
-          </div>
-          <div className="ui-card ui-float ui-resp">
-            <p className="ui-k ui-row"><span>{u.resp}</span><span className="ui-badge is-ok lat">200 OK</span></p>
-            <p className="ui-req lat"><b>GET</b> /api/orders/1042</p>
-            <pre className="ui-json lat">{'{\n  "id": 1042,\n  "status": "paid",\n  "qty": 1,\n  "total": 240\n}'}</pre>
-          </div>
-          <div className="ui-toast"><span className="ui-lock">!</span><span>{u.reject}</span></div>
-        </div>
-      );
-    }
-    if (it.visual === 'tests') {
-      return (
-        <div className="svs-art svs-ui svs-qa" aria-hidden="true">
-          <div className="ui-card ui-runner">
-            <div className="ui-tabs lat"><span className="is-on">Pest</span><span>Playwright</span><span className="ui-badge is-ok">{u.passed}</span></div>
-            <div className="ui-prog"><i /></div>
-            {tests.map((x) => (
-              <div key={x.file} className="ui-test lat"><span className="ui-ok">✓</span><span className="ui-tf">{x.file}</span><small>{x.project}</small></div>
-            ))}
-          </div>
-          <div className="ui-card ui-float ui-browser">
-            <div className="ui-bbar"><i /><i /><i /><span className="lat">/book</span></div>
-            <div className="ui-bbody">
-              <i className="ui-sk" style={{ '--w': '70%' }} /><i className="ui-sk" style={{ '--w': '45%' }} />
-              <span className="ui-field" /><span className="ui-field" />
-              <span className="ui-btn is-target">{u.confirm}
-                <svg className="ui-cursor" viewBox="0 0 24 24" width="18" height="18"><path d="M4 2 L4 19 L9 14.5 L12.5 21.5 L15.5 20 L12 13 L18.5 13 Z" /></svg>
-              </span>
-            </div>
-            <span className="ui-badge is-ok">{u.e2e}</span>
-          </div>
-          <div className="ui-toast"><span className="ui-ok">✓</span>{u.green}</div>
-        </div>
-      );
-    }
-    if (it.visual === 'diff') {
-      return (
-        <div className="svs-art svs-ui svs-pr" aria-hidden="true">
-          <div className="ui-card ui-review">
-            <div className="ui-tree lat">
-              <span>app/</span><span className="d1">Actions/</span><span className="d2 is-mod">Checkout.php<em>M</em></span>
-              <span className="d1">Models/</span><span>database/</span><span>tests/</span>
-            </div>
-            <div className="ui-code lat">
-              <p className="ui-hunk">@@ -12,3 +12,4 @@</p>
-              <p>{'  '}$qty = $data['qty'];</p>
-              <p className="is-del">- $item = Product::find($id);</p>
-              <p className="is-add">+ $item = Product::query()</p>
-              <p className="is-add">{'+   '}-&gt;lockForUpdate()</p>
-              <p className="is-add">{'+   '}-&gt;find($id);</p>
-              <p>{'  '}abort_if($item-&gt;stock &lt; $qty, 409);</p>
-            </div>
-          </div>
-          <div className="ui-card ui-float ui-prc">
-            <b className="ui-when">{u.pr}</b>
-            <p className="ui-k"><span className="lat ui-plus">+3</span> <span className="lat ui-minus">−1</span> · {u.changed}</p>
-            <p className="ui-check"><span className="ui-ok">✓</span>{u.checks}</p>
-            <p className="ui-check"><span className="ui-ok">✓</span>{u.approved}</p>
-            <span className="ui-btn">{u.merge}</span>
-          </div>
-        </div>
-      );
-    }
-    if (it.visual === 'figma') {
-      return (
-        <div className="svs-art svs-figma" aria-hidden="true">
-          <div className="svs-pane">
-            <small className="lat">{t.design}</small>
-            <div className="svs-mock">
-              <i className="svs-mock-img" /><i className="svs-mock-l" /><i className="svs-mock-l is-short" /><i className="svs-mock-btn" />
-              <b className="svs-red is-pad lat">24</b><b className="svs-red is-gap lat">16</b>
-            </div>
-          </div>
-          <div className="svs-pane is-code lat">
-            <small>{t.code}</small>
-            <code>
-              <span><em>{'<article'}</em> class=<q>"p-6 gap-4 rounded-[10px]"</q><em>{'>'}</em></span>
-              <span>{'  '}<em>{'<img'}</em> class=<q>"aspect-[4/3]"</q> <em>{'/>'}</em></span>
-              <span>{'  '}<em>{'<h3'}</em> class=<q>"text-lg font-bold"</q><em>{'>'}</em></span>
-              <span>{'  '}<em>{'<button'}</em> class=<q>"h-10 px-4"</q><em>{'>'}</em></span>
-              <span><em>{'</article>'}</em></span>
-            </code>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  return (
-    <ol ref={list} className="svs" style={{ '--count': items.length }}>
-      {items.map((it, i) => (
-        <li key={it.h} className="svs-card" style={{ '--i': i }}>
-          <div className="svs-in">
-            <div className="svs-text">
-              <p className="svs-n lat" aria-hidden="true"><b>{String(i + 1).padStart(2, '0')}</b> / {n}</p>
-              <h3 className="svs-h">{it.h}</h3>
-              <p className="svs-b">{it.b}</p>
-              {it.href ? (
-                <a className="svs-proof" href={it.href}>
-                  <small>{t.proof}</small><span>{it.name}</span><span aria-hidden="true">↗</span>
-                </a>
-              ) : it.note ? (
-                <p className="svs-proof is-note"><small>{t.note}</small><span className="lat">{it.note}</span></p>
-              ) : null}
-            </div>
-            <div className="svs-vis">{visual(it)}</div>
-          </div>
-        </li>
-      ))}
-    </ol>
   );
 }
