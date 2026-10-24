@@ -252,24 +252,73 @@ a:hover .tint,button:hover .tint{opacity:1}
 
 @keyframes vt-reveal{from{clip-path:circle(0 at var(--vt-x,50%) var(--vt-y,0))}to{clip-path:circle(var(--vt-r,150vmax) at var(--vt-x,50%) var(--vt-y,0))}}
 
-/* ------------------------------------------------------------- cv panel */
-.cvp{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:16px;
-  background:color-mix(in srgb, var(--bg) 78%, transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
-  animation:lb-overlay .3s ease-out both}
-.cvp.is-closing{animation:lb-overlay-out .22s ease-in both}
-.cvp-sheet{display:grid;grid-template-columns:minmax(0,1fr);width:min(1100px,100%);max-height:min(88vh,860px);border-radius:var(--r-card);overflow:hidden;
-  background:var(--card);border:1px solid var(--line-2);box-shadow:var(--shadow);animation:lb-pop .45s cubic-bezier(.22,1,.36,1) both}
-.cvp.is-closing .cvp-sheet{animation:lb-shrink .22s ease-in both}
-@media (min-width:768px){.cvp-sheet{grid-template-columns:340px minmax(0,1fr)}}
-.cvp-side{padding:26px 24px;overflow:auto;background:var(--card-2);border-inline-end:1px solid var(--line)}
-.cvp-doc{flex-direction:column;min-height:0;background:var(--bg-2)}
-/* --ink-3 is tuned against bg/card/card-2; this bar sits on --bg-2, which is
-   lighter than any of them, and the 12px label measured 4.39 there. */
-.cvp-doc-bar{display:flex;align-items:center;gap:12px;height:48px;padding-inline:14px;border-bottom:1px solid var(--line);
-  font-size:12px;color:var(--ink-2)}
-.cvp-doc-bar .dots{display:flex;gap:6px}.cvp-doc-bar .dots i{width:9px;height:9px;border-radius:50%;display:block;background:var(--line-2)}
-.cvp-doc-bar > span:nth-child(2){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cvp-frame{flex:1;width:100%;min-height:520px;border:0;background:#fff}
+/* ------------------------------------------------------------- cv viewer */
+/* The résumé as paper on a desk (components/CvPanel.jsx): the person on one
+   side, the pages on the other. Mounted on <body>, so no section's motion
+   reaches it. */
+.cvx{position:fixed;inset:0;z-index:90;display:grid;padding:clamp(12px,2vw,24px)}
+.cvx-veil{position:absolute;inset:0;background:rgba(8,8,7,.7);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.cvx-sheet{position:relative;display:grid;grid-template-columns:minmax(0,1fr);width:min(1240px,100%);height:100%;margin-inline:auto;overflow:hidden;
+  border:1px solid var(--line-2);border-radius:22px;background:var(--bg);box-shadow:0 40px 120px -40px rgba(0,0,0,.75);outline:none}
+@media (min-width:900px){.cvx-sheet{grid-template-columns:minmax(340px,400px) minmax(0,1fr)}}
+
+.cvx-side{display:flex;flex-direction:column;min-height:0;padding:clamp(22px,3vw,40px);overflow:auto;border-inline-end:1px solid var(--line)}
+.cvx-head{display:flex;align-items:center;gap:12px}
+.cvx-mark{flex:none;width:40px;height:40px}
+.cvx-mark rect{fill:var(--ink)}
+.cvx-mark path{fill:none;stroke-width:5.5;stroke-linecap:round;stroke-linejoin:round}
+.cvx-a{stroke:var(--bg)}
+.cvx-check{stroke:var(--accent)}
+.cvx-k{flex:1;margin:0;font-size:14px;font-weight:800;color:var(--accent)}
+.cvx-x{display:grid;place-items:center;flex:none;width:42px;height:42px;border:1px solid var(--line-2);border-radius:50%;background:none;color:var(--ink);cursor:pointer;
+  transition:transform .4s cubic-bezier(.22,1,.36,1),border-color .3s}
+.cvx-x:hover{transform:rotate(90deg);border-color:var(--ink)}
+.cvx-x:focus-visible,.cvx-copy:focus-visible,.cvx-fact:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+/* Room above and below inside each mask, so an Arabic dot is never cut
+   while the line rises through it. */
+.cvx-mask{display:block;overflow:hidden;padding-block:.12em;margin-block:-.12em}
+.cvx-rise{display:block}
+.cvx-name{margin:clamp(28px,6vh,64px) 0 0;font-size:clamp(30px,2.5vw,34px);font-weight:800;line-height:1.05;letter-spacing:-.03em;color:var(--ink)}
+[dir="rtl"] .cvx-name{letter-spacing:0;line-height:1.35}
+.cvx-role{margin:12px 0 0;font-size:16px;font-weight:700;line-height:1.5;color:var(--ink-2)}
+.cvx-facts{margin:clamp(24px,4vh,40px) 0 0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.cvx-facts li{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+.cvx-fact{display:flex;flex:1;align-items:center;gap:14px;min-width:0;padding:13px 0;font-size:14.5px;color:var(--ink-2);text-decoration:none;transition:color .25s}
+a.cvx-fact:hover{color:var(--ink)}
+.cvx-fact > span:nth-child(2){min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cvx-ico{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:50%;background:var(--card-2);color:var(--ink)}
+.cvx-go{margin-inline-start:auto;color:var(--ink-3);transition:transform .3s cubic-bezier(.22,1,.36,1),color .3s}
+a.cvx-fact:hover .cvx-go{color:var(--accent);transform:translate(2px,-2px)}
+.cvx-copy{display:inline-flex;align-items:center;gap:6px;flex:none;padding:6px 11px;border:1px solid var(--line-2);border-radius:999px;background:none;
+  color:var(--ink-2);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:color .25s,border-color .25s}
+.cvx-copy:hover{color:var(--ink);border-color:var(--ink)}
+.cvx-acts{display:grid;gap:10px;margin-top:auto;padding-top:28px}
+.cvx-acts .btn{justify-content:center;min-height:50px}
+.cvx-meta{margin:12px 0 0;text-align:center;font-size:12.5px;color:var(--ink-3)}
+
+/* The desk: the pages lie on a dotted board, as the covers do, and scroll
+   under a bar that names the file and counts the page in view. */
+.cvx-desk{display:flex;flex-direction:column;min-height:0;background-color:var(--bg-2);
+  background-image:radial-gradient(circle,color-mix(in srgb,var(--ink) 9%,transparent) 1px,transparent 1.2px);background-size:22px 22px}
+.cvx-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;height:52px;padding-inline:20px;border-bottom:1px solid var(--line);
+  background:var(--bg-2);font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;color:var(--ink-2)}
+.cvx-bar > span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cvx-count{flex:none;color:var(--accent-ink)}
+.cvx-paper{display:grid;flex:1;justify-items:center;align-content:start;gap:28px;min-height:0;padding:clamp(20px,3vw,48px);overflow:auto;overscroll-behavior:contain;outline:none}
+.cvx-paper:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+.cvx-page{display:block;width:min(100%,780px);height:auto;border-radius:3px;background:#fff;
+  box-shadow:0 1px 2px rgba(0,0,0,.18),0 30px 60px -28px rgba(0,0,0,.55)}
+
+/* A phone: one column that scrolls as a whole, the person first and the
+   pages under them, the desk's bar held at the top while they pass. */
+@media (max-width:899px){
+  .cvx{padding:0}
+  .cvx-sheet{display:block;overflow:auto;overscroll-behavior:contain;border:0;border-radius:0}
+  .cvx-side{overflow:visible;border-inline-end:0}
+  .cvx-desk{display:block}
+  .cvx-bar{position:sticky;top:0;z-index:2}
+  .cvx-paper{overflow:visible;padding:16px 16px 28px;gap:16px}
+}
 
 /* ------------------------------------------------------ topic chips */
 .chip-add{border-style:dashed;border-color:var(--line-2);color:var(--ink-3);background:transparent;cursor:pointer;font:inherit;font-size:12.5px;font-weight:700}
