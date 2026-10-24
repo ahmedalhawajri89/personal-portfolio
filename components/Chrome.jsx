@@ -85,14 +85,22 @@ export function Reveal() {
   return null;
 }
 
-/* Thin gradient bar at the very top showing how far down the page you are. */
-/* How far down the page we are, published on the root as --p. It used to live
-   on this one bar; the rail reads it too now, and a number that two things
-   depend on belongs above both of them. */
+/* How far down the page we are, as --p, on the elements that draw it (those
+   marked data-progress: the header's line). It used to be set on the root,
+   where every element on the page inherits it, so each scroll frame made the
+   browser restyle the whole document -- measured at about 9 ms a frame, 16 s
+   of a 19 s scroll, and the reason scrolling felt heavy. Set on the header
+   alone, a frame restyles a handful of elements. */
 export function ScrollProgress() {
   useEffect(() => {
     const h = document.documentElement;
-    const on = () => h.style.setProperty('--p', String(h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)));
+    let last = '';
+    const on = () => {
+      const v = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)).toFixed(4);
+      if (v === last) return;
+      last = v;
+      document.querySelectorAll('[data-progress]').forEach((el) => el.style.setProperty('--p', v));
+    };
     on();
     window.addEventListener('scroll', on, { passive: true });
     window.addEventListener('resize', on);
@@ -407,7 +415,7 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     {/* Outside the bar: the bar moves by transform, which would hold a
         fixed overlay inside it. */}
     <LangFx lang={lang} />
-    <div className={`tb${scrolled ? ' is-scrolled' : ''}${away ? ' is-away' : ''}`}>
+    <div className={`tb${scrolled ? ' is-scrolled' : ''}${away ? ' is-away' : ''}`} data-progress>
       <header className="tb-in">
         <a href={`/${lang}/`} className="tb-brand" aria-label={PROFILE.name[lang]}>
           <Logo />
