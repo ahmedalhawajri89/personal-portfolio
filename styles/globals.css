@@ -1136,7 +1136,13 @@ html[data-lfx="rows"] .lfx-bar{margin:0 0 -1px}
 html[data-lfx="slant"] .lfx-bars{inset:-10% -25%;transform:skewX(-14deg)}
 .lfx-word{position:relative;z-index:1;display:grid;justify-items:center;gap:18px}
 .lfx-mask{display:grid;overflow:hidden;padding-block:.14em}
-.lfx-w{grid-area:1 / 1;font-size:clamp(56px,10vw,160px);font-weight:800;line-height:1.1;letter-spacing:-.04em;color:var(--bg);opacity:0}
+/* Both names share one cell, each centred in it on its own: aligned to the
+   start of the line, the Arabic name sat at the left of the cell on the
+   English page and at the right on the Arabic one, and jumped across as the
+   pages changed. Each keeps its own layer for the whole cut, so the moment
+   a tween ends never redraws it a fraction of a pixel away. */
+.lfx-w{grid-area:1 / 1;justify-self:center;text-align:center;white-space:nowrap;font-size:clamp(56px,10vw,160px);font-weight:800;line-height:1.1;
+  letter-spacing:-.04em;color:var(--bg);opacity:0;will-change:transform;backface-visibility:hidden}
 .lfx-w:not(.lat){letter-spacing:0}
 /* Each name in its own face on both pages: the English page's stack has no
    Arabic, which drew the Arabic name in a system font there. */

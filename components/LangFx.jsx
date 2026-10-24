@@ -91,7 +91,7 @@ export default function LangFx({ lang }) {
           },
         })
           .set(el, { visibility: 'visible' })
-          .to(word(lang), { yPercent: -110, duration: 0.5, ease: 'expo.in' }, 0.15)
+          .to(word(lang), { yPercent: -110, duration: 0.5, ease: 'expo.in', force3D: true }, 0.15)
           .to(el.querySelector('.lfx-tag'), { opacity: 0, duration: 0.3 }, 0.15)
           .to(bars(), open[p](rtl), 0.5);
       });
@@ -119,7 +119,7 @@ export default function LangFx({ lang }) {
         g.timeline({ onComplete: () => { location.href = a.href; } })
           .set(el, { visibility: 'visible' })
           .fromTo(bars(), typeof s.from === 'function' ? s.from(rtl) : s.from, { scaleX: 1, scaleY: 1, yPercent: 0, ...s.to })
-          .fromTo(word(to), { yPercent: 110, opacity: 1 }, { yPercent: 0, duration: 0.6, ease: 'expo.out' }, '-=0.3')
+          .fromTo(word(to), { yPercent: 110, opacity: 1 }, { yPercent: 0, duration: 0.6, ease: 'expo.out', force3D: true }, '-=0.3')
           .fromTo(el.querySelector('.lfx-tag'), { opacity: 0 }, { opacity: 1, duration: 0.3 }, '<0.1')
           .to({}, { duration: 0.12 });
       });
