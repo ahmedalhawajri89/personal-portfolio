@@ -861,7 +861,7 @@ a.cvx-fact:hover .cvx-go{color:var(--accent);transform:translate(2px,-2px)}
 .tb.is-scrolled .tb-in{max-width:1000px;height:60px;margin-top:12px;padding-inline:8px;
   background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);
   border-color:var(--line-2);box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 18px 40px -22px rgba(20,20,20,.45)}
-/* how far down the page, along the capsule's lower edge (--p from ScrollProgress) */
+/* how far down the page, along the capsule's lower edge (--p, set on .tb by ScrollProgress) */
 .tb-in::after{content:'';position:absolute;inset-inline:26px;bottom:-1px;height:2px;border-radius:2px;background:var(--accent);
   transform:scaleX(var(--p,0));transform-origin:left;opacity:0;transition:opacity .4s}
 [dir="rtl"] .tb-in::after{transform-origin:right}
@@ -1112,12 +1112,38 @@ html.intro .intro-panel{position:fixed;inset:0;z-index:95;display:flex;flex-dire
 .ip-l{display:inline-block}
 .ip-fill .ip-l:last-child{color:var(--accent)}
 /* ------------------------------------------------------------ page curtain */
-/* An ink panel that rises over the page when a link leaves for another page
-   of the site, and lifts off the next one (components/Curtain.jsx). */
-.curtain{position:fixed;inset:0;z-index:96;display:grid;place-items:center;background:var(--ink);visibility:hidden;pointer-events:none;will-change:transform}
-html.curtain-in .curtain{visibility:visible;animation:curtain-safety 0s 3s forwards}
+/* A title card that rises over the page when a link leaves for another page
+   of the site, in the colour of where it leads, and lifts off the next one
+   (components/Curtain.jsx). Type in the page colour on the hue holds its
+   contrast in both themes: near-black on the bright dark-theme hues, paper
+   on the deeper light-theme ones. */
+.curtain{position:fixed;inset:0;z-index:96;display:grid;place-items:center;padding:24px;background:var(--c,var(--ink));color:var(--bg);
+  visibility:hidden;pointer-events:none;will-change:transform}
+html.curtain-in .curtain{visibility:visible;animation:curtain-safety 0s 3.4s forwards}
 @keyframes curtain-safety{to{visibility:hidden}}
-.curtain-dot{width:14px;height:14px;border-radius:50%;background:var(--accent)}
+.ct-card{display:grid;justify-items:center;gap:10px;width:min(100%,1100px);text-align:center}
+/* Room above and below inside each mask, so an Arabic dot is never cut
+   while the line rises through it. */
+.ct-mask{display:block;overflow:hidden;padding-block:.14em;margin-block:-.14em}
+.ct-up{display:block;will-change:transform}
+.ct-k .ct-up{display:inline-flex;align-items:center;gap:12px;font-size:14px;font-weight:800}
+.ct-k .lat{font-family:'GeistMono',ui-monospace,monospace;font-size:13px;font-weight:500;opacity:.7}
+.ct-k,.ct-name,.ct-kind{margin:0}
+.ct-name{font-size:clamp(56px,10vw,150px);font-weight:800;line-height:1.05;letter-spacing:-.045em}
+[dir="rtl"] .ct-name{letter-spacing:0;line-height:1.3}
+.ct-kind{font-size:clamp(15px,1.4vw,19px);font-weight:700;opacity:.75}
+/* The wait: a short segment gliding along a faint track, and on the page
+   that arrives, the track filling before the curtain lifts. */
+.ct-line{position:relative;display:block;width:min(260px,60%);height:3px;margin-top:22px;overflow:hidden;border-radius:3px;
+  background:color-mix(in srgb,var(--bg) 22%,transparent)}
+.ct-line i{position:absolute;inset:0;border-radius:inherit;background:var(--bg)}
+.ct-seg{width:34%;animation:ct-glide 1.1s cubic-bezier(.65,0,.35,1) infinite}
+[dir="rtl"] .ct-seg{animation-name:ct-glide-r}
+.ct-fill{transform:scaleX(0);transform-origin:left}
+[dir="rtl"] .ct-fill{transform-origin:right}
+@keyframes ct-glide{from{transform:translateX(-110%)}to{transform:translateX(310%)}}
+@keyframes ct-glide-r{from{transform:translateX(110%)}to{transform:translateX(-310%)}}
+@media (prefers-reduced-motion:reduce){.ct-seg{animation:none}}
 
 /* ------------------------------------------------------------ language cut */
 /* Bands of ink that close over the page when the language changes and open
@@ -1582,9 +1608,9 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .cs-rise{animation:cs-rise 1.1s cubic-bezier(.16,1,.3,1) .05s both}
 .cs-name::after{animation:cs-bar 1s cubic-bezier(.76,0,.24,1) .4s both}
 .cs-in{animation:cs-in .9s cubic-bezier(.22,1,.36,1) var(--d,0s) both}
-html.curtain-in .cs-rise{animation-delay:.6s}
-html.curtain-in .cs-name::after{animation-delay:.95s}
-html.curtain-in .cs-in{animation-delay:calc(var(--d,0s) + .55s)}
+html.curtain-in .cs-rise{animation-delay:.95s}
+html.curtain-in .cs-name::after{animation-delay:1.3s}
+html.curtain-in .cs-in{animation-delay:calc(var(--d,0s) + .9s)}
 
 /* ------------------------------------------------------------ the product */
 .cs-screen{padding-top:clamp(12px,2vw,28px)}

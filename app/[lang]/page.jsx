@@ -17,6 +17,7 @@ import Curtain from '../../components/Curtain';
 import { BRIEFS } from '../../content/briefs';
 import Icon from '../../components/Icons';
 import { HUE, LIGHT } from '../../lib/hues';
+import { curtainRoutes } from '../../lib/routes';
 import { CvButton } from '../../components/CvPanel';
 
 export function generateStaticParams() {
@@ -93,7 +94,7 @@ export default async function Home({ params }) {
       <Motion />
       <Nav lang={lang} path="/" home />
       <Intro name={PROFILE.name[lang]} role={t.hero.roleLine} />
-      <Curtain />
+      <Curtain routes={curtainRoutes(lang)} here={`/${lang}/`} />
       <Pointer label={t.work.view} />
       <Scenes chapters={[
         { id: 'work', name: t.work.eyebrow, hue: LIGHT.accent },

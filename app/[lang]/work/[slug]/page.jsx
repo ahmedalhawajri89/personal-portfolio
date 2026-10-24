@@ -6,6 +6,7 @@ import { BRIEFS } from '../../../../content/briefs';
 import { HERO_TESTS } from '../../../../content/site';
 import { shotsOf, coverOf, pagesOf, shotOf } from '../../../../lib/shots';
 import { HUE, LIGHT, PROJECT_LIGHT } from '../../../../lib/hues';
+import { curtainRoutes } from '../../../../lib/routes';
 import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, BackToTop } from '../../../../components/Chrome';
 import Gallery from '../../../../components/Gallery';
 import Journey from '../../../../components/Journey';
@@ -138,7 +139,7 @@ export default async function Project({ params }) {
       <SmoothScroll />
       <Reveal />
       <Motion />
-      <Curtain />
+      <Curtain routes={curtainRoutes(lang)} here={`/${lang}/work/${slug}/`} />
       <Pointer label={t.work.view} />
       <Scenes chapters={chapters} />
       <Nav lang={lang} path={`/work/${slug}/`} title={c.name} />
