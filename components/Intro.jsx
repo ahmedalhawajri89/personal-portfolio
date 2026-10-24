@@ -11,7 +11,8 @@ const WORD = 'PORTFOLIO';
    actually arrives (the fonts, then everything else) -- the loading bar is
    the word itself. When it is full, the check on the mark is ticked, the
    letters leave upwards one after another and the curtain lifts onto the
-   page. Never shorter than a beat, never longer than a few seconds.
+   page, which settles into frame under it. Never shorter than a beat,
+   never longer than a few seconds.
 
    The word is Latin in both languages: it is used as a mark here, like the
    logo, not as a sentence. The boot script decides whether the loader runs
@@ -81,7 +82,11 @@ export default function Intro({ name, role }) {
         .to(el.querySelector('.intro-check'), { drawSVG: '100%', duration: 0.4, ease: 'power2.out' })
         .to(el.querySelectorAll('.ip-l'), { yPercent: -110, duration: 0.6, ease: 'expo.in', stagger: (i) => (i % WORD.length) * 0.035 }, '+=0.1')
         .to(el.querySelectorAll('.ip-line'), { yPercent: -110, duration: 0.5, ease: 'expo.in', stagger: 0.04 }, '<0.1')
-        .to(el, { yPercent: -100, duration: 1, ease: 'expo.inOut' }, '-=0.25');
+        .to(el, { yPercent: -100, duration: 1, ease: 'expo.inOut' }, '-=0.25')
+        // The page under it settles into frame as the curtain goes, like a
+        // camera finding its focus: a touch closer and soft, then exact.
+        .fromTo(document.querySelector('main'), { scale: 1.045, filter: 'blur(8px)', transformOrigin: '50% 0%' },
+          { scale: 1, filter: 'blur(0px)', duration: 1.4, ease: 'expo.out', clearProps: 'transform,filter' }, '<0.25');
     };
 
     return () => { gone = true; tl?.kill(); if (tick && gsapRef) gsapRef.ticker.remove(tick); };

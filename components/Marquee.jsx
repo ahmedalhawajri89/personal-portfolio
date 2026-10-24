@@ -34,7 +34,7 @@ export default function Marquee({ items, roles, label }) {
   return (
     <section className="tk" aria-label={label}>
       <ul className="sr-only">{items.map((x) => <li key={x}>{roles?.[x] ? `${x} — ${roles[x]}` : x}</li>)}</ul>
-      <div className="tk-band" aria-hidden="true">
+      <div className="tk-band" aria-hidden="true" data-m="skew">
         <div className="tk-track">{one('a')}{one('b')}</div>
       </div>
     </section>

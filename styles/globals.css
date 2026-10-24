@@ -1546,3 +1546,36 @@ html.curtain-in .curtain{visibility:visible;animation:curtain-safety 0s 3s forwa
 .tl-repo{justify-self:start;margin-top:6px}
 @media (min-width:1024px){.tl-case{display:flex;align-items:center}.tl-sheet{width:100%}}
 @media (prefers-reduced-motion:reduce){.tl-tab[data-state="run"] .tl-spin{animation:none}.tl-again,.tl-tab::before{transition:none}}
+
+/* ------------------------------------------------------------ the journey */
+/* The stage light (components/Scenes.jsx): one soft round light behind the
+   page whose colour and position each scene sets, eased between scenes. A
+   gradient, not a blur filter: a 80vmax blur repaints every frame it moves. */
+.stage{--lc:#FF5A1F;--lx:70vw;--ly:30vh;position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.stage i{position:absolute;top:0;left:0;width:80vmax;height:80vmax;border-radius:50%;opacity:.13;will-change:transform;
+  background:radial-gradient(closest-side,var(--lc),transparent);transform:translate(calc(var(--lx) - 40vmax),calc(var(--ly) - 40vmax))}
+:root[data-theme="light"] .stage i{opacity:.07}
+
+/* the chapter marker: where in the film the reader is */
+.chap{position:fixed;bottom:22px;inset-inline-start:22px;z-index:40;display:none;align-items:center;gap:12px;padding:8px 16px 8px 12px;
+  border:1px solid var(--line-2);border-radius:999px;background:color-mix(in srgb,var(--bg) 78%,transparent);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);opacity:0;transform:translateY(14px);pointer-events:none;
+  transition:opacity .5s ease,transform .6s cubic-bezier(.22,1,.36,1)}
+[dir="rtl"] .chap{padding:8px 12px 8px 16px}
+@media (min-width:1024px){.chap{display:flex}}
+.chap.is-on{opacity:1;transform:none}
+.chap-n{font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;font-weight:500;color:var(--c,var(--accent));transition:color .5s}
+.chap-n small{font-size:inherit;color:var(--ink-3)}
+.chap-name{display:grid;overflow:hidden;min-width:100px;height:1.6em;font-size:13.5px;font-weight:700;line-height:1.6em;color:var(--ink)}
+.chap-w{grid-area:1 / 1;white-space:nowrap;opacity:0;transform:translateY(100%);transition:transform .6s cubic-bezier(.76,0,.24,1),opacity .35s}
+.chap-w.is-on{opacity:1;transform:none}
+.chap-w.is-past{transform:translateY(-100%)}
+.chap-bar{position:relative;width:72px;height:2px;overflow:hidden;border-radius:2px;background:var(--line-2)}
+.chap-bar i{position:absolute;inset:0;background:var(--c,var(--accent));transform:scaleX(0);transform-origin:left;transition:background-color .5s}
+[dir="rtl"] .chap-bar i{transform-origin:right}
+
+/* a section opens with a line across its top, in its colour (data-m="rule") */
+.sec-rule{display:block;height:1px;margin-bottom:26px;background:var(--c,var(--accent));transform-origin:left}
+[dir="rtl"] .sec-rule{transform-origin:right}
+.sec-head.text-center .sec-rule{transform-origin:center}
+@media (prefers-reduced-motion:reduce){.chap,.chap-w{transition:none}}

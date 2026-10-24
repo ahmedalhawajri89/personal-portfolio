@@ -12,6 +12,9 @@ import { loadMotion, whenIdle, MOTION_OK } from '../lib/motion';
    screen -- a browser frame whose page scrolls with yours. The captures are
              whole pages; a frame shows the top, and scrolling past it shows
              the rest, the way the visitor would see it in the product.
+   rule   -- a line drawn across a section's top as it arrives.
+   band   -- the last scene uncovered by a circle rising from the foot.
+   skew   -- a band of type that leans with the speed of the scroll.
    live   -- a small loop that runs only while it is on screen (.is-live).
    pop    -- the lit dots in a list come on one after another.
    drawmark -- the logo, drawn large as it arrives.
@@ -60,6 +63,39 @@ export default function Motion() {
             scrollTrigger: { trigger: box, start: 'top 60%', end: 'bottom top', scrub: 0.6, invalidateOnRefresh: true },
           });
         });
+
+        // A section opens with a line drawn across its top in its colour.
+        gsap.utils.toArray('[data-m="rule"]').forEach((el) => {
+          gsap.fromTo(el, { scaleX: 0 }, { scaleX: 1, ease: 'none',
+            scrollTrigger: { trigger: el, start: 'top 95%', end: 'top 55%', scrub: 0.6 } });
+        });
+
+        // The last scene opens like a circle rising from the foot of the
+        // screen: the cream band is uncovered from the bottom middle out,
+        // tied to the scroll, and its contents follow it up.
+        gsap.utils.toArray('[data-m="band"]').forEach((el) => {
+          gsap.timeline({ scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 15%', scrub: 0.5 } })
+            .fromTo(el, { clipPath: 'circle(0% at 50% 100%)' }, { clipPath: 'circle(150% at 50% 100%)', ease: 'none' }, 0)
+            .from(el.children, { y: 80, ease: 'none' }, 0);
+        });
+
+        // A band of type leans into the scroll: the quicker the page moves,
+        // the further it leans, and it settles back when the page does.
+        const leaners = gsap.utils.toArray('[data-m="skew"]');
+        if (leaners.length) {
+          const lean = { v: 0 };
+          const set = gsap.quickSetter(leaners, 'skewX', 'deg');
+          const clamp = gsap.utils.clamp(-10, 10);
+          ScrollTrigger.create({
+            onUpdate: (self) => {
+              const s = clamp(self.getVelocity() / -300);
+              if (Math.abs(s) > Math.abs(lean.v)) {
+                lean.v = s;
+                gsap.to(lean, { v: 0, duration: 0.9, ease: 'power3', overwrite: true, onUpdate: () => set(lean.v) });
+              }
+            },
+          });
+        }
 
         // Small loops (the service marks) run only while they are on screen.
         gsap.utils.toArray('[data-m="live"]').forEach((el) => {
