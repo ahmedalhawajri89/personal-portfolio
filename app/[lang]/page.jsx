@@ -16,7 +16,7 @@ import Pointer from '../../components/Pointer';
 import Curtain from '../../components/Curtain';
 import { BRIEFS } from '../../content/briefs';
 import Icon from '../../components/Icons';
-import { HUE, LIGHT, PROJECT_LIGHT } from '../../lib/hues';
+import { HUE, LIGHT } from '../../lib/hues';
 import { CvButton } from '../../components/CvPanel';
 
 export function generateStaticParams() {
@@ -112,7 +112,7 @@ export default async function Home({ params }) {
         {/* The offer, set as large as the screen allows and set moving
             (components/Hero.jsx): it arrives in pieces and scatters again on
             the way down, into the page that explains it. */}
-        <section id="home" className="wrap hero relative scroll-mt-24" data-light={LIGHT.accent} data-lx={ar ? "22vw" : "78vw"} data-ly="16vh">
+        <section id="home" className="wrap hero relative scroll-mt-24">
           <Hero
             rtl={ar}
             status={t.hero.status}
@@ -137,7 +137,7 @@ export default async function Home({ params }) {
         {/* ----------------------------------------------------------- why */}
         {/* Why him, in one paragraph, read at reading speed: the words
             light up as the reader scrolls through them. */}
-        <section id="why" className="wrap why" data-light={LIGHT.accent} data-lx={ar ? "80vw" : "20vw"} data-ly="62vh">
+        <section id="why" className="wrap why">
           <p className="sec-label" style={{ '--c': 'var(--accent)' }}>{t.why.eyebrow}</p>
           <p className="why-text" data-m="read">{t.why.text}</p>
         </section>
@@ -159,8 +159,7 @@ export default async function Home({ params }) {
               const b = BRIEFS[p.slug]?.[lang];
               const href = `/${lang}/work/${p.slug}/`;
               return (
-                <li key={p.slug} className={`pc${i % 2 ? ' is-flip' : ''}`} style={{ '--c': HUE[p.slug] }}
-                    data-light={PROJECT_LIGHT[p.slug]} data-lx={(i % 2 === 0) !== ar ? '28vw' : '72vw'} data-ly="46vh">
+                <li key={p.slug} className={`pc${i % 2 ? ' is-flip' : ''}`} style={{ '--c': HUE[p.slug] }}>
                   <a href={href} className="pc-cover" data-cursor="view" tabIndex={-1} aria-hidden="true">
                     <Cover slug={p.slug} label={`${c.name}: ${c.kind}`} />
                     <span className="pc-n lat">{String(i + 1).padStart(2, '0')}</span>
@@ -183,7 +182,7 @@ export default async function Home({ params }) {
             small moving mark of what it makes and the project that already
             does it. A service with a case study behind it is a claim
             somebody can check. */}
-        <section id="services" className="wrap scroll-mt-24 pt-28 sm:pt-36" data-light={LIGHT.ui} data-lx={ar ? "20vw" : "80vw"} data-ly="70vh">
+        <section id="services" className="wrap scroll-mt-24 pt-28 sm:pt-36">
           <SectionHead eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} hue="var(--h-ui)" />
           <ul className="sv-list">
             {SERVICES.map((sv) => {
@@ -209,7 +208,7 @@ export default async function Home({ params }) {
         </section>
 
         {/* ------------------------------------------------------- process */}
-        <section id="process" className="wrap scroll-mt-24 pt-28 sm:pt-36" data-light={LIGHT.api} data-lx={ar ? "78vw" : "22vw"} data-ly="28vh">
+        <section id="process" className="wrap scroll-mt-24 pt-28 sm:pt-36">
           <SectionHead eyebrow={t.process.eyebrow} h={t.process.h} lede={t.process.lede} hue="var(--h-api)" />
           {/* Six rules as a deck of cards that stack as the reader scrolls,
               each with a scene that shows the rule happening and the
@@ -221,7 +220,7 @@ export default async function Home({ params }) {
         {/* What happens under one button, told by the scroll: the system is
             drawn part by part while each part is explained in plain words
             (components/SystemStory.jsx), and then the tests, by name. */}
-        <section id="proof" className="scroll-mt-24 pt-28 sm:pt-36" data-light={LIGHT.test} data-lx={ar ? "26vw" : "74vw"} data-ly="52vh">
+        <section id="proof" className="scroll-mt-24 pt-28 sm:pt-36">
           <div className="wrap">
             <SectionHead eyebrow={t.proof.eyebrow} h={t.proof.h} lede={t.proof.lede} hue="var(--h-test)" />
           </div>
@@ -252,7 +251,7 @@ export default async function Home({ params }) {
             colour, lit where the tool is actually used: a fact about the
             work, not a rating of the person. Practices that are not a
             package sit under their group's name. */}
-        <section id="skills" className="wrap scroll-mt-24 pt-28 sm:pt-36" data-light={LIGHT.db} data-lx={ar ? "74vw" : "26vw"} data-ly="60vh">
+        <section id="skills" className="wrap scroll-mt-24 pt-28 sm:pt-36">
           <SectionHead eyebrow={t.skills.eyebrow} h={t.skills.h} lede={t.skills.lede} hue="var(--h-db)" />
           <div className="tg">
             {CAPABILITIES.map((cap) => {
@@ -299,7 +298,7 @@ export default async function Home({ params }) {
         {/* Behind the camera: the mark drawn large, the name, the one line he
             works by lit as it is read, how he got here in his own words, and
             four figures the rest of the page already proves. */}
-        <section id="about" className="wrap scroll-mt-24 pt-28 sm:pt-36" data-light={LIGHT.sec} data-lx={ar ? "30vw" : "70vw"} data-ly="32vh">
+        <section id="about" className="wrap scroll-mt-24 pt-28 sm:pt-36">
           <p className="sec-label" style={{ '--c': 'var(--accent)' }}>{t.about.eyebrow}</p>
           <div className="ab2">
             <div className="ab2-mark" data-m="drawmark"><Logo size={168} /></div>

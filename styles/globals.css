@@ -1406,14 +1406,15 @@ html[lang="en"] .pc-say,html[lang="en"] .cs-hook,html[lang="en"] .cs-next-hook{t
 @media (min-width:1024px){.tl-case{display:flex;align-items:center}.tl-sheet{width:100%}}
 @media (prefers-reduced-motion:reduce){.tl-tab[data-state="run"] .tl-spin{animation:none}.tl-again,.tl-tab::before{transition:none}}
 
-/* ------------------------------------------------------------ the journey */
-/* The stage light (components/Scenes.jsx): one soft round light behind the
-   page whose colour and position each scene sets, eased between scenes. A
-   gradient, not a blur filter: a 80vmax blur repaints every frame it moves. */
-.stage{--lc:#FF5A1F;--lx:70vw;--ly:30vh;position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
-.stage i{position:absolute;top:0;left:0;width:80vmax;height:80vmax;border-radius:50%;opacity:.13;will-change:transform;
-  background:radial-gradient(closest-side,var(--lc),transparent);transform:translate(calc(var(--lx) - 40vmax),calc(var(--ly) - 40vmax))}
-:root[data-theme="light"] .stage i{opacity:.07}
+/* ------------------------------------------------------------ the paper */
+/* The paper. Flat ink with a fine grain over it, the way print and film
+   have texture and a screen does not: it gives the near-black a surface
+   without a coloured glow drifting behind it (the colour lives in the
+   content). One static tile of noise, so it costs nothing to scroll. */
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.07;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:180px 180px}
+:root[data-theme="light"] body::after{opacity:.09;filter:invert(1)}
 
 /* the chapter marker: where in the film the reader is */
 .chap{position:fixed;bottom:22px;inset-inline-start:22px;z-index:40;display:none;align-items:center;gap:12px;padding:8px 16px 8px 12px;

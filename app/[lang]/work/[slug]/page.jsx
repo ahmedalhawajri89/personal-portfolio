@@ -72,9 +72,9 @@ function Head({ label, h, lede }) {
    hold; and what was delivered, with the tests that still guard it. It ends
    on the next project as a scene of its own, in that project's colour.
 
-   The stage light behind the page and the chapter marker in the corner are
-   the home page's (components/Scenes.jsx), so moving from the home page into
-   a project is one film, not a change of site. */
+   The chapter marker in the corner is the home page's (components/
+   Scenes.jsx), so moving from the home page into a project is one film,
+   not a change of site. */
 export default async function Project({ params }) {
   const { lang, slug } = await params;
   const t = T[lang];
@@ -101,7 +101,6 @@ export default async function Project({ params }) {
   const more = brief?.tests ? brief.tests - held.length : 0;
   const src = (f) => `/shots/${p.shots}/${f}`;
   const arrow = ar ? 'arrowLeft' : 'arrowRight';
-  const side = (a, z) => (ar ? z : a);
 
   // A step whose screen has no capture is dropped rather than shown empty.
   const steps = (brief?.journey || []).map((st) => {
@@ -146,7 +145,7 @@ export default async function Project({ params }) {
 
       <main id="main" className="cs" style={{ '--c': hue }}>
         {/* ------------------------------------------------------ opening */}
-        <header className="wrap cs-hero" data-light={light} data-lx={side('76vw', '24vw')} data-ly="34vh">
+        <header className="wrap cs-hero">
           <p className="cs-crumb cs-in" style={{ '--d': '0s' }}>
             <span className="lat">{pad(idx + 1)} / {pad(LIVE.length)}</span>
             <i aria-hidden="true" />
@@ -186,7 +185,7 @@ export default async function Project({ params }) {
         {/* The product in its frame, coming up to full size as it is reached
             (data-m="zoom"); on a wide screen the whole page scrolls inside
             the window as the reader scrolls past (data-m="screen"). */}
-        <section className="wrap cs-screen" aria-label={d.screenK} data-light={light} data-lx={side('24vw', '76vw')} data-ly="60vh">
+        <section className="wrap cs-screen" aria-label={d.screenK}>
           <div className="cs-frame" data-m="zoom">
             <div className="cs-bar" aria-hidden="true"><i /><i /><i /><span className="lat">{cover.path}</span></div>
             <div className="cs-view" data-m="screen">
@@ -215,8 +214,7 @@ export default async function Project({ params }) {
         {/* The problem as the people who had it would tell it, lit word by
             word as it is read, then the pains it is made of. */}
         {b && (
-          <section id="context" className="wrap cs-sec scroll-mt-24" style={{ '--c': 'var(--accent)' }}
-                   data-light={LIGHT.accent} data-lx={side('20vw', '80vw')} data-ly="40vh">
+          <section id="context" className="wrap cs-sec scroll-mt-24" style={{ '--c': 'var(--accent)' }}>
             <Head label={d.context.h} />
             <p className="cs-read" data-m="read">{b.context}</p>
             <ul className="cs-pains">
@@ -233,7 +231,7 @@ export default async function Project({ params }) {
 
         {/* ------------------------------------------------------ journey */}
         {steps.length > 0 && (
-          <section id="journey" className="wrap cs-sec scroll-mt-24" data-light={light} data-lx={side('78vw', '22vw')} data-ly="50vh">
+          <section id="journey" className="wrap cs-sec scroll-mt-24">
             <Head label={d.ch.journey} h={d.journey.h} lede={d.journey.lede} />
             <Journey steps={steps} labels={{ open: d.tourOpen }} />
           </section>
@@ -241,8 +239,7 @@ export default async function Project({ params }) {
 
         {/* ----------------------------------------------------- solution */}
         {story && (
-          <section id="solution" className="wrap cs-sec scroll-mt-24" style={{ '--c': 'var(--h-api)' }}
-                   data-light={LIGHT.api} data-lx={side('22vw', '78vw')} data-ly="34vh">
+          <section id="solution" className="wrap cs-sec scroll-mt-24" style={{ '--c': 'var(--h-api)' }}>
             <Head label={d.story.solution} h={d.solutionH} lede={d.built.lede} />
             <ol className="cs-steps">
               {story.solution.map((x, i) => (
@@ -267,8 +264,7 @@ export default async function Project({ params }) {
         )}
 
         {/* ------------------------------------------------------ outcome */}
-        <section id="outcome" className="wrap cs-sec scroll-mt-24" style={{ '--c': 'var(--h-test)' }}
-                 data-light={LIGHT.test} data-lx={side('76vw', '24vw')} data-ly="46vh">
+        <section id="outcome" className="wrap cs-sec scroll-mt-24" style={{ '--c': 'var(--h-test)' }}>
           <Head label={d.outcomeK} h={d.outcome.h} />
           <dl className="cs-figs">
             {outcome.map(([n, l]) => (
@@ -324,7 +320,7 @@ export default async function Project({ params }) {
         {/* ------------------------------------------------- next project */}
         {/* The next project as a scene of its own, in its own colour: its
             cover playing, its name large, the promise it makes. */}
-        <nav className="wrap cs-sec" aria-label={d.next_project} data-light={PROJECT_LIGHT[next.slug]} data-lx="50vw" data-ly="70vh">
+        <nav className="wrap cs-sec" aria-label={d.next_project}>
           <a href={`/${lang}/work/${next.slug}/`} className="cs-next" style={{ '--c': HUE[next.slug] }} data-cursor="view">
             <span className="cs-next-copy">
               <span className="cs-next-k"><span className="lat">{pad(((idx + 1) % LIVE.length) + 1)}</span>{d.next_project}</span>
