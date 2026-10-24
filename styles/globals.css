@@ -21,6 +21,14 @@
 @font-face{font-family:'Instrument';src:url('/fonts/instrument-400.woff2') format('woff2');font-weight:400;font-display:swap;}
 @font-face{font-family:'Instrument';src:url('/fonts/instrument-600.woff2') format('woff2');font-weight:700;font-display:swap;}
 @font-face{font-family:'Instrument';src:url('/fonts/instrument-700.woff2') format('woff2');font-weight:800;font-display:swap;}
+/* The two language names of the language cut (components/LangFx.jsx), the
+   same files under names of their own that wait for the face instead of
+   swapping it in: the name is on screen from the first paint of the page it
+   opens, and a swap there showed as the word jolting from a system face into
+   this one (most of all in Arabic, where the two differ the most). The files
+   are preloaded, so the wait is a frame or two. */
+@font-face{font-family:'PlexArFx';src:url('/fonts/plex-arabic-700.woff2') format('woff2');font-weight:800;font-display:block;}
+@font-face{font-family:'InstrumentFx';src:url('/fonts/instrument-700.woff2') format('woff2');font-weight:800;font-display:block;}
 @font-face{font-family:'GeistMono';src:url('/fonts/geistmono-400.woff2') format('woff2');font-weight:400;font-display:swap;}
 @font-face{font-family:'GeistMono';src:url('/fonts/geistmono-500.woff2') format('woff2');font-weight:500;font-display:swap;}
 
@@ -873,9 +881,12 @@ a.cvx-fact:hover .cvx-go{color:var(--accent);transform:translate(2px,-2px)}
   font-size:14px;font-weight:700;color:var(--ink-2);text-decoration:none;transition:color .25s}
 .tb-nav a:hover,.tb-nav a[aria-current]{color:var(--ink)}
 .tb-nav a:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
-/* the lit pill under the section you are in */
-.tb-ind{position:absolute;top:50%;left:0;height:38px;margin-top:-19px;border-radius:999px;background:color-mix(in srgb,var(--ink) 7%,transparent);
-  transition:transform .55s var(--tb-ease),width .55s var(--tb-ease)}
+/* the lit pill under the section you are in, or the link being pointed at,
+   with a line in the signal colour along its foot. GSAP moves its two
+   edges (Nav in components/Chrome.jsx). */
+.tb-ind{position:absolute;top:50%;left:0;width:0;height:38px;margin-top:-19px;border-radius:999px;visibility:hidden;opacity:0;
+  background:color-mix(in srgb,var(--ink) 7%,transparent);will-change:left,width,transform}
+.tb-ind::after{content:'';position:absolute;inset:auto 14px 5px;height:2px;border-radius:2px;background:var(--accent)}
 
 .tb-back{display:none;justify-self:center;font-size:14px;font-weight:700;color:var(--ink-2);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .tb-back:hover{color:var(--ink)}
@@ -1107,6 +1118,34 @@ html.intro .intro-panel{position:fixed;inset:0;z-index:95;display:flex;flex-dire
 html.curtain-in .curtain{visibility:visible;animation:curtain-safety 0s 3s forwards}
 @keyframes curtain-safety{to{visibility:hidden}}
 .curtain-dot{width:14px;height:14px;border-radius:50%;background:var(--accent)}
+
+/* ------------------------------------------------------------ language cut */
+/* Bands of ink that close over the page when the language changes and open
+   on the other side (components/LangFx.jsx). data-lfx on <html> lays them
+   out for the pattern in play; closed is their resting state, so a page that
+   arrives through them is covered from its first paint. */
+.lfx{position:fixed;inset:0;z-index:97;display:grid;place-items:center;overflow:hidden;visibility:hidden;pointer-events:none}
+html.curtain-in[data-curtain="lines"] .lfx{visibility:visible;animation:curtain-safety 0s 3.2s forwards}
+html[data-curtain="lines"] .curtain{display:none}
+.lfx-bars{position:absolute;inset:0;display:flex}
+/* Each band overlaps the next by a pixel, so no seam of page shows between
+   two that are closed. */
+.lfx-bar{flex:1;margin-inline-end:-1px;background:var(--ink);will-change:transform}
+html[data-lfx="rows"] .lfx-bars{flex-direction:column}
+html[data-lfx="rows"] .lfx-bar{margin:0 0 -1px}
+html[data-lfx="slant"] .lfx-bars{inset:-10% -25%;transform:skewX(-14deg)}
+.lfx-word{position:relative;z-index:1;display:grid;justify-items:center;gap:18px}
+.lfx-mask{display:grid;overflow:hidden;padding-block:.14em}
+.lfx-w{grid-area:1 / 1;font-size:clamp(56px,10vw,160px);font-weight:800;line-height:1.1;letter-spacing:-.04em;color:var(--bg);opacity:0}
+.lfx-w:not(.lat){letter-spacing:0}
+/* Each name in its own face on both pages: the English page's stack has no
+   Arabic, which drew the Arabic name in a system font there. */
+.lfx-w[data-l="ar"]{font-family:'PlexArFx','PlexAr',system-ui,sans-serif}
+.lfx-w[data-l="en"]{font-family:'InstrumentFx','Instrument',system-ui,sans-serif}
+html.curtain-in[data-curtain="lines"] .lfx-w.is-here{opacity:1}
+.lfx-tag{display:inline-flex;align-items:center;gap:10px;font-family:'GeistMono',ui-monospace,monospace;font-size:13px;color:color-mix(in srgb,var(--bg) 60%,transparent);opacity:0}
+html.curtain-in[data-curtain="lines"] .lfx-tag{opacity:1}
+.lfx-tag i{width:6px;height:6px;border-radius:50%;background:var(--accent)}
 
 /* ------------------------------------------------------------ pointer */
 /* The "view" disc beside the cursor over a project's picture. */

@@ -53,7 +53,9 @@ export async function generateMetadata({ params }) {
 // light-mode OS never frames a dark page in a light bar. The first home page
 // of a visit opens behind the intro curtain (`intro`, components/Intro.jsx),
 // once; a page reached through the page curtain opens with it still down
-// (`curtain-in`, components/Curtain.jsx). A curtain page never runs the intro.
+// (`curtain-in`, components/Curtain.jsx), or, after a change of language,
+// with the bands of components/LangFx.jsx still closed (`lines:<pattern>`).
+// A curtain page never runs the intro.
 const BOOT = `(function(){try{
 var d=localStorage.getItem('theme')!=='light';
 document.documentElement.setAttribute('data-theme',d?'dark':'light');
@@ -61,7 +63,7 @@ var m=document.querySelector('meta[name=theme-color]');
 if(m)m.setAttribute('content',d?'#0E0E0C':'#F7F6F3');
 document.documentElement.classList.add('js');
 if(location.hash)document.documentElement.classList.add('cv-off');
-if(sessionStorage.getItem('curtain')){sessionStorage.removeItem('curtain');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('curtain-in');}
+var c=sessionStorage.getItem('curtain');if(c){sessionStorage.removeItem('curtain');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('curtain-in');if(c.indexOf('lines:')===0){document.documentElement.setAttribute('data-curtain','lines');document.documentElement.setAttribute('data-lfx',c.slice(6));}}}
 if(!location.hash&&!document.documentElement.classList.contains('curtain-in')&&['/','/ar','/ar/','/en','/en/'].indexOf(location.pathname)>-1&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('intro')){sessionStorage.setItem('intro','1');document.documentElement.classList.add('intro');}
 }catch(e){}})();`;
 

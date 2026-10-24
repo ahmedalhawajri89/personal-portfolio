@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { T, other } from '../lib/i18n';
 import { PROFILE, PROJECTS } from '../content/projects';
 import Icon from './Icons';
+import LangFx from './LangFx';
 import { loadMotion, whenIdle } from '../lib/motion';
 
 /* Inertial scrolling for a mouse or trackpad, from the one engine every
@@ -320,23 +321,80 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [home]);
 
-  // One lit pill that slides to the active link, measured from the link
-  // itself so it fits any label in either language, and measured again when
-  // the bar changes shape.
+  // One lit pill with a line along its foot, under the section you are in,
+  // and under the link the pointer is on while it is over the bar. It moves
+  // as two edges rather than one box: the edge in the direction of travel
+  // leaves first and fast, the other follows a beat later, so the pill
+  // stretches toward the link it is going to and gathers itself there. It
+  // appears with a small spring where there was none, and presses when a
+  // link is chosen. Measured from the links themselves, so it fits any label
+  // in either language, and measured again when the bar changes shape.
   const navRef = useRef(null);
-  const [ind, setInd] = useState(null);
+  const indRef = useRef(null);
+  const gsapRef = useRef(null);
+  const hovering = useRef(false);
+  const edge = useRef({ l: 0, r: 0, shown: false });
+  useEffect(() => { import('gsap').then((m) => { gsapRef.current = m.gsap; }); }, []);
+
+  const draw = () => {
+    const el = indRef.current, s = edge.current;
+    if (el) { el.style.left = `${s.l}px`; el.style.width = `${s.r - s.l}px`; }
+  };
+  const moveTo = (a) => {
+    const el = indRef.current, gsap = gsapRef.current, s = edge.current;
+    if (!el) return;
+    const motion = gsap && matchMedia('(prefers-reduced-motion: no-preference)').matches;    if (!a) {
+      if (!s.shown) return;
+      s.shown = false;
+      if (motion) gsap.to(el, { autoAlpha: 0, scale: 0.7, duration: 0.35, ease: 'power3.out', overwrite: 'auto' });
+      else el.style.visibility = 'hidden';
+      return;
+    }
+    const l = a.offsetLeft, r = l + a.offsetWidth;
+    if (!motion || !s.shown) {
+      if (gsap) gsap.killTweensOf(s);
+      Object.assign(s, { l, r, shown: true });
+      draw();
+      if (motion) gsap.fromTo(el, { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: 'back.out(2.2)', overwrite: 'auto' });
+      else { el.style.visibility = 'visible'; el.style.opacity = '1'; }
+      return;
+    }
+    const right = l > s.l;
+    const lead = { duration: 0.34, ease: 'power3.out' };
+    const trail = { duration: 0.62, ease: 'power3.inOut', delay: 0.04 };
+    gsap.to(s, { r, ...(right ? lead : trail), overwrite: 'auto', onUpdate: draw });
+    gsap.to(s, { l, ...(right ? trail : lead), overwrite: 'auto', onUpdate: draw });
+  };
+  const linkOf = (id) => navRef.current?.querySelector(`a[data-id="${id}"]`);
+
+  // The section in view, whenever the pointer is not choosing.
+  useEffect(() => { if (!hovering.current) moveTo(linkOf(active)); }, [active]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // The bar changed shape: put the pill back under its link, without travel.
   useEffect(() => {
-    const nav = navRef.current;
-    if (!nav) return;
-    const place = () => {
-      const a = nav.querySelector(`a[data-id="${active}"]`);
-      setInd(a ? { x: a.offsetLeft, w: a.offsetWidth } : null);
+    const fit = () => {
+      const a = linkOf(active), s = edge.current;
+      if (!a || !s.shown) return;
+      gsapRef.current?.killTweensOf(s);
+      Object.assign(s, { l: a.offsetLeft, r: a.offsetLeft + a.offsetWidth });
+      draw();
     };
-    place();
-    const late = setTimeout(place, 520);
-    window.addEventListener('resize', place);
-    return () => { clearTimeout(late); window.removeEventListener('resize', place); };
-  }, [active, scrolled]);
+    const late = setTimeout(fit, 560);
+    window.addEventListener('resize', fit);
+    return () => { clearTimeout(late); window.removeEventListener('resize', fit); };
+  }, [scrolled]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const navOver = (e) => {
+    const a = e.target.closest?.('a[data-id]');
+    if (!a) return;
+    hovering.current = true;
+    moveTo(a);
+  };
+  const navLeave = () => { hovering.current = false; moveTo(linkOf(active)); };
+  const press = () => {
+    const gsap = gsapRef.current;
+    if (gsap && indRef.current) gsap.fromTo(indRef.current, { scaleY: 0.78 }, { scaleY: 1, duration: 0.6, ease: 'elastic.out(1,0.45)' });
+  };
 
   const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
   // A label that rolls on hover: the word slides up and its twin rises in
@@ -345,6 +403,10 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
   const roll = (label) => <span className="roll" aria-hidden="true"><span className="roll-in" data-t={label}>{label}</span></span>;
 
   return (
+    <>
+    {/* Outside the bar: the bar moves by transform, which would hold a
+        fixed overlay inside it. */}
+    <LangFx lang={lang} />
     <div className={`tb${scrolled ? ' is-scrolled' : ''}${away ? ' is-away' : ''}`}>
       <header className="tb-in">
         <a href={`/${lang}/`} className="tb-brand" aria-label={PROFILE.name[lang]}>
@@ -356,10 +418,11 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
         </a>
 
         {home ? (
-          <nav ref={navRef} className="tb-nav" aria-label={t.nav.menu}>
-            {ind && <span className="tb-ind" aria-hidden="true" style={{ transform: `translateX(${ind.x}px)`, width: ind.w }} />}
+          <nav ref={navRef} className="tb-nav" aria-label={t.nav.menu} onMouseOver={navOver} onMouseLeave={navLeave}>
+            <span ref={indRef} className="tb-ind" aria-hidden="true" />
             {links.map(([id, label]) => (
-              <a key={id} data-id={id} href={link(id)} aria-label={label} aria-current={active === id ? 'location' : undefined}>{roll(label)}</a>
+              <a key={id} data-id={id} href={link(id)} aria-label={label} aria-current={active === id ? 'location' : undefined}
+                 onClick={press} onFocus={(e) => moveTo(e.currentTarget)} onBlur={navLeave}>{roll(label)}</a>
             ))}
           </nav>
         ) : (
@@ -385,6 +448,7 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
         </div>
       </header>
     </div>
+    </>
   );
 }
 

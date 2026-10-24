@@ -23,7 +23,9 @@ export default function Curtain() {
     const ok = matchMedia(MOTION_OK).matches;
     const get = () => (gsap ? Promise.resolve(gsap) : import('gsap').then((m) => (gsap = m.gsap)));
 
-    if (html.classList.contains('curtain-in')) {
+    // After a change of language the bands open the page instead
+    // (components/LangFx.jsx); this curtain stays put away.
+    if (html.classList.contains('curtain-in') && html.dataset.curtain !== 'lines') {
       get().then((g) => {
         tl = g.timeline({ onComplete: () => { html.classList.remove('curtain-in'); g.set(el.current, { clearProps: 'all' }); } })
           .fromTo(el.current, { yPercent: 0 }, { yPercent: -100, duration: 0.9, ease: 'expo.inOut', delay: 0.1 });
@@ -33,7 +35,8 @@ export default function Curtain() {
     const onClick = (e) => {
       if (!ok || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const a = e.target.closest?.('a[href]');
-      if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+      // The language link has its own cut (components/LangFx.jsx).
+      if (!a || a.target === '_blank' || a.hasAttribute('download') || a.hasAttribute('hreflang')) return;
       const url = new URL(a.href, location.href);
       if (url.origin !== location.origin || url.pathname === location.pathname) return;
       e.preventDefault();
