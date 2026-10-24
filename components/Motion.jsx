@@ -12,6 +12,7 @@ import { loadMotion, whenIdle, MOTION_OK } from '../lib/motion';
    screen -- a browser frame whose page scrolls with yours. The captures are
              whole pages; a frame shows the top, and scrolling past it shows
              the rest, the way the visitor would see it in the product.
+   zoom   -- a frame that grows to full size as it scrolls into view.
    rule   -- a line drawn across a section's top as it arrives.
    band   -- the last scene uncovered by a circle rising from the foot.
    skew   -- a band of type that leans with the speed of the scroll.
@@ -62,6 +63,14 @@ export default function Motion() {
             ease: 'none',
             scrollTrigger: { trigger: box, start: 'top 60%', end: 'bottom top', scrub: 0.6, invalidateOnRefresh: true },
           });
+        });
+
+        // A frame that comes up to full size as it is reached: a little
+        // smaller and further away while the opening is still on screen,
+        // exact by the time it is the thing being looked at.
+        gsap.utils.toArray('[data-m="zoom"]').forEach((el) => {
+          gsap.fromTo(el, { scale: 0.86, y: 40 }, { scale: 1, y: 0, ease: 'none',
+            scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 22%', scrub: 0.6 } });
         });
 
         // A section opens with a line drawn across its top in its colour.

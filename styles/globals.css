@@ -961,12 +961,6 @@ html[lang="en"] .hd-sum{font-family:'Instrument',system-ui,sans-serif;direction:
   .hx-live::after{animation:none}
 }
 
-/* the case study opening: its name rises, its frame lifts off the plate.
-   Transform only, so the words are readable from the first frame. */
-@keyframes hero-rise{from{transform:translateY(.28em)}to{transform:none}}
-@keyframes hero-lift{from{transform:translate(12px,12px)}to{transform:none}}
-@keyframes hero-lift-r{from{transform:translate(-12px,12px)}to{transform:none}}
-
 /* ------------------------------------------------------------ stack ticker */
 .tk{border-block:1px solid var(--line);overflow:hidden}
 .tk-band{direction:ltr;padding:clamp(18px,2.4vw,30px) 0}
@@ -985,137 +979,11 @@ html[lang="en"] .hd-sum{font-family:'Instrument',system-ui,sans-serif;direction:
 @media (prefers-reduced-motion:reduce){.tk-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center;row-gap:14px;padding-inline:16px}
   .tk-track .tk-item:nth-child(n+10){display:none}}
 
-/* ------------------------------------------------------------ project page */
-.pj-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 24px;padding-bottom:20px;border-bottom:1px solid var(--line)}
-.pj-meta{margin:0;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
-[dir="rtl"] .pj-meta{letter-spacing:0}
-.pj-meta .lat{color:var(--accent-ink)}
-.pj-links{display:flex;flex-wrap:wrap;gap:10px}
-.pj-h{margin:clamp(28px,4vw,48px) 0 0;font-size:clamp(44px,8vw,112px);font-weight:800;line-height:.98;letter-spacing:-.045em;color:var(--ink);
-  animation:hero-rise .8s cubic-bezier(.22,1,.36,1) both}
-[dir="rtl"] .pj-h{letter-spacing:0;line-height:1.2}
-.pj-tag{margin:18px 0 0;max-width:34ch;font-size:clamp(20px,2.4vw,28px);font-weight:700;line-height:1.4;color:var(--ink-3);text-wrap:balance}
-
-.pj-plate{position:relative;margin:clamp(36px,5vw,64px) 12px 12px 0}
-[dir="rtl"] .pj-plate{margin-inline:0 12px}
-.pj-plate::before{content:'';position:absolute;inset:0;transform:translate(12px,12px);border-radius:var(--r-card);background:var(--accent)}
-[dir="rtl"] .pj-plate::before{transform:translate(-12px,12px)}
-.pj-frame{position:relative;overflow:hidden;border:1px solid var(--line-2);border-radius:var(--r-card);background:var(--card);box-shadow:var(--shadow);
-  animation:hero-lift .9s cubic-bezier(.22,1,.36,1) .12s both}
-[dir="rtl"] .pj-frame{animation-name:hero-lift-r}
-/* The cover is a whole page in a 16:9 window. On a wide screen it is drawn
-   at its natural height and scrolls inside the window as the reader scrolls
-   (data-m="screen"); below that the top crop fills the window. */
-.pj-view{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--bg-2)}
-.pj-view img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
-@media (min-width:1024px){.pj-view img{height:auto;object-fit:fill;will-change:transform}}
-.pj-bar,.jr-bar{display:flex;align-items:center;gap:6px;height:34px;padding-inline:14px;background:var(--card-2);border-bottom:1px solid var(--line)}
-.pj-bar i,.jr-bar i{width:9px;height:9px;border-radius:50%;background:var(--line-2)}
-.pj-bar span,.jr-bar span{margin-inline-start:10px;font-family:'GeistMono',ui-monospace,monospace;font-size:12px;color:var(--ink-3);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr}
-
-.pj-facts{display:grid;grid-template-columns:1fr 1fr;margin:clamp(40px,5vw,64px) 0 0;border-top:1px solid var(--line)}
-.pj-facts > div{padding:18px 0;border-bottom:1px solid var(--line)}
-.pj-facts > div:nth-child(odd){padding-inline-end:16px}
-.pj-facts .is-wide{grid-column:1/-1}
-@media (min-width:1024px){
-  .pj-facts{grid-template-columns:.7fr 1.2fr 2fr 1fr}
-  .pj-facts .is-wide{grid-column:auto}
-  .pj-facts > div{padding:20px 20px 20px 0}
-  .pj-facts > div + div{padding-inline-start:20px;border-inline-start:1px solid var(--line)}
-}
-.pj-facts dt{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
-[dir="rtl"] .pj-facts dt{letter-spacing:0}
-.pj-facts dd{margin:8px 0 0;font-size:15.5px;font-weight:700;line-height:1.5;color:var(--ink)}
-.pj-stack{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
-.pj-stack li{padding:3px 8px;border:1px solid var(--line-2);border-radius:var(--r-chip);font-family:'GeistMono',ui-monospace,monospace;font-size:12px;font-weight:500;color:var(--ink-2)}
-
-.pj-k{margin:0;font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
-[dir="rtl"] .pj-k{letter-spacing:0;font-size:13.5px}
-
-.pj-sec{margin-top:clamp(72px,9vw,120px)}
-.pj-h2{margin:14px 0 0;font-size:clamp(28px,3.6vw,44px);font-weight:800;line-height:1.1;letter-spacing:-.03em;color:var(--ink)}
-[dir="rtl"] .pj-h2{letter-spacing:0;line-height:1.3}
-.pj-lede{margin:14px 0 0;max-width:60ch;font-size:16px;line-height:1.8;color:var(--ink-2)}
-
-/* the solution, as numbered rows */
-.pj-steps{margin:32px 0 0;padding:0;list-style:none;border-top:1px solid var(--line)}
-.pj-steps li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:6px 16px;padding:28px 0;border-bottom:1px solid var(--line)}
-.pj-num{grid-row:span 2;font-family:'GeistMono',ui-monospace,monospace;font-size:13px;font-weight:500;color:var(--accent-ink);padding-top:6px}
-.pj-steps h3{margin:0;font-size:clamp(20px,2.2vw,26px);font-weight:800;line-height:1.3;letter-spacing:-.015em;color:var(--ink)}
-[dir="rtl"] .pj-steps h3{letter-spacing:0}
-.pj-steps p{margin:0;max-width:66ch;font-size:16px;line-height:1.85;color:var(--ink-2)}
-@media (min-width:1024px){
-  .pj-steps li{grid-template-columns:64px minmax(0,.8fr) minmax(0,1.2fr);gap:32px;padding:34px 0;align-items:baseline}
-  .pj-num{grid-row:auto;padding-top:0}
-}
-.pj-extras{margin-top:48px}
-.pj-extras ul{display:grid;gap:22px;margin:18px 0 0;padding:0;list-style:none}
-@media (min-width:768px){.pj-extras ul{grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}}
-.pj-extras li{padding-top:16px;border-top:2px solid var(--ink)}
-.pj-extras h3{margin:0;font-size:16.5px;font-weight:800;line-height:1.4;color:var(--ink)}
-.pj-extras p{margin:8px 0 0;font-size:15px;line-height:1.8;color:var(--ink-2)}
-
-/* evidence, as the run that proves it */
-.pj-tests{margin-top:28px;overflow:hidden;border:1px solid var(--line-2);border-radius:var(--r-card);background:var(--card);box-shadow:var(--shadow)}
-.pj-cmd{margin:0;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card-2);font-family:'GeistMono',ui-monospace,monospace;font-size:13px;color:var(--ink);direction:ltr;text-align:left}
-.pj-tests ul{margin:0;padding:0;list-style:none}
-.pj-tests li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:4px 12px;padding:16px 20px;border-bottom:1px solid var(--line)}
-.pj-tests li:last-child{border-bottom:0}
-.pj-ok{grid-row:span 2;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ok);color:var(--card);margin-top:2px}
-.pj-rule{font-size:15.5px;font-weight:700;line-height:1.6;color:var(--ink)}
-.pj-file{font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;color:var(--ink-3);direction:ltr;text-align:start;overflow-wrap:anywhere}
-
-/* next project, as a band */
-.pj-next-wrap{margin-top:clamp(72px,9vw,120px)}
-.pj-next{position:relative;display:grid;align-items:center;gap:20px;padding:clamp(22px,3vw,36px);overflow:hidden;border:1px solid var(--line-2);border-radius:var(--r-card);
-  background:var(--card);color:var(--ink);text-decoration:none;box-shadow:var(--shadow)}
-@media (min-width:1024px){.pj-next{grid-template-columns:minmax(0,1fr) 380px 56px;gap:36px}}
-.pj-next-k{display:block;font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
-[dir="rtl"] .pj-next-k{letter-spacing:0}
-.pj-next-name{display:block;margin-top:10px;font-size:clamp(34px,5vw,64px);font-weight:800;line-height:1;letter-spacing:-.04em}
-[dir="rtl"] .pj-next-name{letter-spacing:0;line-height:1.25}
-.pj-next-kind{display:block;margin-top:10px;font-size:16px;font-weight:700;color:var(--ink-3)}
-.pj-next-pic{display:block;overflow:hidden;border:1px solid var(--line);border-radius:var(--r-ctl)}
-.pj-next-pic img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;object-position:top;transition:transform .8s cubic-bezier(.22,1,.36,1)}
-.pj-next:hover .pj-next-pic img{transform:scale(1.04)}
-.pj-next-go{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--accent-solid);color:var(--on-accent);transition:transform .3s cubic-bezier(.22,1,.36,1)}
-.pj-next:hover .pj-next-go{transform:translateX(6px)}
-[dir="rtl"] .pj-next:hover .pj-next-go{transform:translateX(-6px)}
-@media (max-width:1023px){.pj-next-go{position:absolute;top:20px;inset-inline-end:20px;width:44px;height:44px}}
-
-@media (prefers-reduced-motion:reduce){.pj-h,.pj-frame{animation:none}.pj-next-pic img,.pj-next-go{transition:none}}
-[dir="rtl"] .pj-file{text-align:right}
-
-/* ------------------------------------------------------------ at a glance */
-/* What a client reads first, before any of the story: who it is for, what
-   went wrong before it, what it does about it, and what was handed over.
-   Four rows of a spec sheet, each with its own question as the label. */
-.pj-glance{display:grid;margin:clamp(40px,5vw,64px) 0 0;border-top:2px solid var(--ink)}
-.pj-glance > div{display:grid;gap:8px;padding:22px 0;border-bottom:1px solid var(--line)}
-.pj-glance dt{font-size:13px;font-weight:700;color:var(--accent-ink)}
-.pj-glance dd{margin:0;max-width:62ch;font-size:16.5px;line-height:1.8;color:var(--ink)}
-.pj-glance ul{margin:0;padding:0;list-style:none;display:grid;gap:6px}
-.pj-glance li{position:relative;padding-inline-start:18px}
-.pj-glance li::before{content:'';position:absolute;inset-inline-start:0;top:.8em;width:7px;height:2px;background:var(--accent)}
-@media (min-width:768px){
-  .pj-glance{grid-template-columns:1fr 1fr;column-gap:48px}
-  .pj-glance > div{grid-template-columns:minmax(0,1fr);align-content:start}
-}
-
-/* the problem, read at reading speed (data-m="read") */
-.pj-read{margin:0;max-width:34ch;font-size:clamp(24px,3.2vw,40px);font-weight:800;line-height:1.45;letter-spacing:-.02em;color:var(--ink);text-wrap:pretty}
-[dir="rtl"] .pj-read{letter-spacing:0;line-height:1.7}
-.pj-pains{display:grid;gap:18px;margin:36px 0 0;padding:0;list-style:none}
-@media (min-width:768px){.pj-pains{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px}}
-.pj-pains li{padding-top:14px;border-top:1px solid var(--line-2);font-size:15.5px;line-height:1.8;color:var(--ink-2)}
-.pj-pains b{display:block;margin-bottom:4px;font-size:16px;font-weight:800;color:var(--ink)}
-
 /* ------------------------------------------------------------ journey */
 .jr{margin-top:36px}
 .jr-steps{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
 .jr-step{padding:28px 0;border-bottom:1px solid var(--line)}
-.jr-n{font-family:'GeistMono',ui-monospace,monospace;font-size:13px;font-weight:500;color:var(--accent-ink)}
+.jr-n{font-family:'GeistMono',ui-monospace,monospace;font-size:13px;font-weight:500;color:var(--c,var(--accent-ink))}
 .jr-step h3{margin:8px 0 0;font-size:clamp(21px,2.3vw,28px);font-weight:800;line-height:1.3;letter-spacing:-.015em;color:var(--ink)}
 [dir="rtl"] .jr-step h3{letter-spacing:0}
 .jr-step p{margin:10px 0 0;max-width:44ch;font-size:16.5px;line-height:1.85;color:var(--ink-2)}
@@ -1133,32 +1001,20 @@ html[lang="en"] .hd-sum{font-family:'Instrument',system-ui,sans-serif;direction:
   .jr-shot-m{display:none}
   .jr-stage{display:block;position:sticky;top:max(104px,calc(50vh - 280px))}
 }
-.jr-frame{position:relative;overflow:hidden;border:1px solid var(--line-2);border-radius:var(--r-card);background:var(--card-2);box-shadow:var(--shadow)}
+.jr-frame{position:relative;overflow:hidden;border:1px solid var(--line-2);border-radius:16px;background:var(--card-2);
+  box-shadow:0 70px 120px -80px color-mix(in srgb,var(--c,var(--accent)) 70%,transparent),var(--shadow)}
 .jr-view{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--bg-2)}
 .jr-img{position:absolute;top:0;left:0;display:block;width:100%;height:auto;visibility:hidden;will-change:transform,clip-path}
 .jr-img.is-on{visibility:visible;z-index:2}
 .jr-img.was-on{visibility:visible;z-index:1}
 .jr-progress{position:absolute;inset:auto 0 0 0;z-index:3;height:3px;background:var(--line)}
-.jr-progress i{display:block;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:left}
+.jr-progress i{display:block;height:100%;background:var(--c,var(--accent));transform:scaleX(0);transform-origin:left}
 [dir="rtl"] .jr-progress i{transform-origin:right}
 .jr-count{display:flex;align-items:baseline;gap:14px;margin:16px 0 0;font-size:14.5px;font-weight:700;color:var(--ink)}
-.jr-count .lat{font-family:'GeistMono',ui-monospace,monospace;font-size:13px;font-weight:500;color:var(--accent-ink)}
+.jr-count .lat{font-family:'GeistMono',ui-monospace,monospace;font-size:13px;font-weight:500;color:var(--c,var(--accent-ink))}
 .jr-open{display:inline-flex;gap:6px;margin-top:6px;font-size:14px;font-weight:700;color:var(--ink-3);text-decoration:none}
 .jr-open:hover{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
 @media (prefers-reduced-motion:reduce){.js .jr-step{transition:none}}
-
-/* ------------------------------------------------------------ outcome */
-.pj-out{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:32px 0 0;border-top:1px solid var(--line)}
-@media (min-width:1024px){.pj-out{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.pj-out > div{padding:22px 16px 22px 0;border-bottom:1px solid var(--line)}
-[dir="rtl"] .pj-out > div{padding:22px 0 22px 16px}
-.pj-out dt{order:2;margin-top:6px;font-size:14px;font-weight:700;line-height:1.5;color:var(--ink-2)}
-.pj-out dd{margin:0;font-size:clamp(38px,5vw,64px);font-weight:800;line-height:1;letter-spacing:-.04em;color:var(--ink);font-variant-numeric:tabular-nums}
-.pj-out > div{display:flex;flex-direction:column}
-.pj-delivered{display:grid;gap:12px;margin:28px 0 0;padding:0;list-style:none}
-.pj-delivered li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:12px;font-size:16px;line-height:1.75;color:var(--ink)}
-.pj-delivered li > span:first-child{display:grid;place-items:center;width:20px;height:20px;margin-top:4px;border-radius:50%;background:var(--ok);color:var(--card)}
-
 
 /* ------------------------------------------------------------ the last scene */
 .finale{margin:0 0 clamp(56px,7vw,96px);max-width:28ch;font-size:clamp(28px,4.4vw,56px);font-weight:800;line-height:1.3;letter-spacing:-.03em;color:var(--ink);text-wrap:balance}
@@ -1271,10 +1127,13 @@ html.curtain-in .curtain{visibility:visible;animation:curtain-safety 0s 3s forwa
 .pc-n{position:absolute;top:18px;inset-inline-start:22px;font-family:'GeistMono',ui-monospace,monospace;font-size:13px;font-weight:500;color:var(--c)}
 .pc-label{margin:0;font-size:16px;font-weight:800;color:var(--c)}
 .pc-label .lat{color:var(--ink-3);font-weight:500}
-.pc-say{margin:14px 0 0;font-size:clamp(26px,2.7vw,42px);font-weight:700;line-height:1.2;letter-spacing:-.02em;text-wrap:balance}
+.pc-say{margin:14px 0 0;font-size:clamp(26px,2.7vw,42px);font-weight:700;line-height:1.2;letter-spacing:-.02em}
 [dir="rtl"] .pc-say{letter-spacing:0;line-height:1.45}
 .pc-say a{color:var(--ink);text-decoration:none}
 .pc-say a:hover{color:var(--c)}
+/* A project's promise is a heading, so in English it is set in title case
+   like the hero's lines; the copy itself stays in sentence case. */
+html[lang="en"] .pc-say,html[lang="en"] .cs-hook,html[lang="en"] .cs-next-hook{text-transform:capitalize}
 .pc-q{margin:18px 0 0;max-width:50ch;font-size:16px;line-height:1.8;color:var(--ink-2)}
 .pc-q b{display:block;margin-bottom:4px;font-size:13px;color:var(--ink-3)}
 .pc-stack{display:flex;flex-wrap:wrap;gap:6px;margin:22px 0 26px;padding:0;list-style:none}
@@ -1579,3 +1438,225 @@ html.curtain-in .curtain{visibility:visible;animation:curtain-safety 0s 3s forwa
 [dir="rtl"] .sec-rule{transform-origin:right}
 .sec-head.text-center .sec-rule{transform-origin:center}
 @media (prefers-reduced-motion:reduce){.chap,.chap-w{transition:none}}
+
+/* ================================================================ case study */
+/* A project's page (app/[lang]/work/[slug]/page.jsx) in the dark identity,
+   in the project's own colour: --c is set on <main> to its hue and changed
+   per section where a section speaks for another part of the work (the
+   problem in orange, the build in violet, the tests in lime). */
+
+/* ------------------------------------------------------------ opening */
+.cs-hero{display:flex;flex-direction:column;gap:clamp(26px,3.6vw,44px);min-height:100svh;padding-top:clamp(110px,15vh,150px);padding-bottom:clamp(24px,3vw,36px)}
+.cs-crumb{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0;font-size:14px;font-weight:700;color:var(--ink-3)}
+.cs-crumb .lat:first-child{font-family:'GeistMono',ui-monospace,monospace;font-size:13px;font-weight:500;color:var(--c)}
+.cs-crumb i{width:4px;height:4px;border-radius:50%;background:var(--ink-3);opacity:.6}
+.cs-hgrid{display:grid;flex:1;gap:clamp(32px,4vw,64px);align-items:center}
+@media (min-width:1024px){.cs-hgrid{grid-template-columns:minmax(0,1fr) minmax(0,1.08fr)}}
+.cs-name{margin:0;font-size:clamp(54px,9vw,136px);font-weight:800;line-height:.95;letter-spacing:-.045em;color:var(--ink)}
+[dir="rtl"] .cs-name{letter-spacing:0;line-height:1.25}
+.cs-name::after{content:'';display:block;width:min(200px,42%);height:7px;margin-top:.18em;border-radius:4px;background:var(--c);transform-origin:left}
+[dir="rtl"] .cs-name::after{transform-origin:right}
+/* The mask cuts only below the line, where the name rises from: nothing
+   above it or to either side is clipped, so a long name or an Arabic dot is
+   never cut. */
+.cs-mask{display:block;padding-bottom:.1em;margin-bottom:-.1em;clip-path:inset(-1em -100vw 0 -100vw)}
+.cs-rise{display:block}
+.cs-hook{margin:24px 0 0;max-width:30ch;font-size:clamp(20px,2.1vw,28px);font-weight:700;line-height:1.45;color:var(--ink);text-wrap:balance}
+[dir="rtl"] .cs-hook{line-height:1.75}
+.cs-stack{display:flex;flex-wrap:wrap;gap:6px;margin:24px 0 0;padding:0;list-style:none}
+.cs-stack li{padding:4px 10px;border:1px solid var(--line-2);border-radius:999px;font-family:'GeistMono',ui-monospace,monospace;font-size:12px;color:var(--ink-2)}
+.cs-ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+/* The cover sits on the same lit, dotted board as on the home page. */
+.cs-art,.cs-next-art{position:relative;display:block;overflow:hidden;border:1px solid var(--line-2);border-radius:26px;background-color:var(--card);
+  background-image:radial-gradient(60% 70% at 72% 28%,color-mix(in srgb,var(--c) 16%,transparent),transparent 70%),
+                   radial-gradient(circle,color-mix(in srgb,var(--ink) 8%,transparent) 1px,transparent 1.2px);
+  background-size:auto,24px 24px}
+.cs-art{box-shadow:0 60px 110px -70px color-mix(in srgb,var(--c) 80%,transparent)}
+.cs-cue{display:inline-flex;align-items:center;gap:12px;margin:0;font-size:13px;font-weight:700;color:var(--ink-3)}
+.cs-cue i{position:relative;width:1px;height:34px;overflow:hidden;background:var(--line-2)}
+.cs-cue i::after{content:'';position:absolute;inset:0;background:var(--c);animation:cs-cue 1.8s cubic-bezier(.76,0,.24,1) infinite}
+@keyframes cs-cue{0%{transform:translateY(-100%)}60%,100%{transform:translateY(100%)}}
+
+/* The opening arrives by itself, in CSS, so it is never waiting on script:
+   the name rises through its mask, its bar draws, the rest comes into
+   focus one after another. Arriving from another page, the curtain is
+   still lifting, so everything waits for it to be half way up. */
+@keyframes cs-rise{from{transform:translateY(105%)}to{transform:none}}
+@keyframes cs-in{from{opacity:0;transform:translateY(22px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+@keyframes cs-bar{from{transform:scaleX(0)}to{transform:none}}
+.cs-rise{animation:cs-rise 1.1s cubic-bezier(.16,1,.3,1) .05s both}
+.cs-name::after{animation:cs-bar 1s cubic-bezier(.76,0,.24,1) .4s both}
+.cs-in{animation:cs-in .9s cubic-bezier(.22,1,.36,1) var(--d,0s) both}
+html.curtain-in .cs-rise{animation-delay:.6s}
+html.curtain-in .cs-name::after{animation-delay:.95s}
+html.curtain-in .cs-in{animation-delay:calc(var(--d,0s) + .55s)}
+
+/* ------------------------------------------------------------ the product */
+.cs-screen{padding-top:clamp(12px,2vw,28px)}
+.cs-frame{position:relative;overflow:hidden;border:1px solid var(--line-2);border-radius:18px;background:var(--card-2);transform-origin:50% 0;
+  box-shadow:0 90px 150px -90px color-mix(in srgb,var(--c) 75%,transparent),var(--shadow)}
+.cs-bar,.jr-bar{display:flex;align-items:center;gap:6px;height:36px;padding-inline:14px;background:var(--card-2);border-bottom:1px solid var(--line)}
+.cs-bar i,.jr-bar i{width:9px;height:9px;border-radius:50%;background:var(--line-2)}
+.cs-bar span,.jr-bar span{margin-inline-start:10px;overflow:hidden;font-family:'GeistMono',ui-monospace,monospace;font-size:12px;color:var(--ink-3);
+  white-space:nowrap;text-overflow:ellipsis;direction:ltr}
+/* The cover is a whole page in a 16:9 window. On a wide screen it is drawn
+   at its natural height and scrolls inside the window as the reader scrolls
+   (data-m="screen"); below that the top crop fills the window. */
+.cs-view{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--bg-2)}
+.cs-view img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+@media (min-width:1024px){.cs-view img{height:auto;object-fit:fill;will-change:transform}}
+
+/* ------------------------------------------------------------ sections */
+.cs-sec{padding-top:clamp(100px,12vw,170px)}
+.cs-head{max-width:62ch;margin-bottom:clamp(36px,4.4vw,60px)}
+.cs-h2{margin:16px 0 0;font-size:clamp(32px,4.6vw,64px);font-weight:800;line-height:1.06;letter-spacing:-.03em;color:var(--ink);text-wrap:balance}
+[dir="rtl"] .cs-h2{letter-spacing:0;line-height:1.3}
+.cs-k{margin:clamp(56px,6vw,84px) 0 0;font-size:15px;font-weight:800;color:var(--ink-3)}
+
+/* ------------------------------------------------------------ at a glance */
+/* The four answers as stories (components/Brief.jsx): the questions down one
+   side, each with a thin bar in the project's colour; the open answer set
+   large on the other, on the page itself, with no box around it. */
+.cs-glance-k{margin-bottom:clamp(24px,3vw,40px)}
+.bf{display:grid;gap:30px}
+@media (min-width:1024px){.bf{grid-template-columns:minmax(0,.78fr) minmax(0,1.4fr);gap:clamp(56px,7vw,110px);align-items:start}}
+.bf-qs{display:grid;border-top:1px solid var(--line)}
+.bf-q{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:baseline;gap:18px;width:100%;padding:24px 0 26px;
+  border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink-3);font:inherit;text-align:start;cursor:pointer;transition:color .4s}
+.bf-q:hover{color:var(--ink-2)}
+.bf-q.is-on{color:var(--ink)}
+.bf-q:focus-visible{outline:2px solid var(--c);outline-offset:4px;border-radius:4px}
+.bf-n{font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;font-weight:500;transition:color .4s}
+.bf-q.is-on .bf-n{color:var(--c)}
+.bf-t{font-size:clamp(19px,1.8vw,26px);font-weight:800;line-height:1.3;letter-spacing:-.015em}
+[dir="rtl"] .bf-t{letter-spacing:0;line-height:1.5}
+/* The bar lies on the question's own rule: empty, full while the reader
+   chooses for themselves, filling while the brief plays. */
+.bf-bar{position:absolute;inset:auto 0 -1px 0;height:2px;overflow:hidden}
+.bf-bar i{display:block;height:100%;background:var(--c);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.76,0,.24,1)}
+[dir="rtl"] .bf-bar i{transform-origin:right}
+.bf-q.is-on .bf-bar i{transform:none}
+.bf.is-auto .bf-q.is-on .bf-bar i{transition:none;animation:bf-fill var(--dur,8s) linear both;animation-play-state:paused}
+.bf.is-playing .bf-q.is-on .bf-bar i{animation-play-state:running}
+@keyframes bf-fill{from{transform:scaleX(0)}to{transform:none}}
+
+/* The answers share one cell, so the box keeps the height of the longest
+   and nothing below it moves when another opens. Without script they are
+   simply shown one after another. */
+.js .bf-panels{display:grid}
+.js .bf-a{grid-area:1 / 1;visibility:hidden}
+.js .bf-a.is-on{visibility:visible}
+.bf-a + .bf-a{margin-top:48px}
+.js .bf-a + .bf-a{margin-top:0}
+.bf-aq{display:flex;align-items:center;gap:12px;margin:0 0 18px;font-size:15px;font-weight:800;color:var(--c)}
+.bf-aq .lat{font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;font-weight:500;color:var(--ink-3)}
+.bf-say{margin:0;max-width:26ch;font-size:clamp(26px,3vw,44px);font-weight:700;line-height:1.3;letter-spacing:-.02em;color:var(--ink);text-wrap:pretty}
+[dir="rtl"] .bf-say{max-width:28ch;letter-spacing:0;line-height:1.65}
+.bf-a ul{display:grid;gap:clamp(18px,2vw,28px);margin:0;padding:0;list-style:none}
+.bf-a li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;max-width:40ch;font-size:clamp(19px,1.8vw,26px);font-weight:700;line-height:1.45;color:var(--ink)}
+[dir="rtl"] .bf-a li{line-height:1.7}
+.bf-a li::before{content:'';width:9px;height:9px;margin-top:.55em;border-radius:50%;background:var(--c)}
+/* The answer that opens comes in line by line. */
+.js .bf-a.is-on .bf-aq,.js .bf-a.is-on .bf-say,.js .bf-a.is-on li{animation:bf-in .75s cubic-bezier(.22,1,.36,1) calc(var(--k,0) * 90ms) both}
+@keyframes bf-in{from{opacity:0;transform:translateY(20px);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+
+/* On a phone: four bars in a row above the answer, like stories, and the
+   question written over its answer. */
+@media (max-width:1023px){
+  .bf-qs{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;border-top:0}
+  .bf-q{grid-template-columns:1fr;min-height:44px;padding:0 0 14px;border-bottom:0;align-content:end}
+  .bf-t{display:none}
+  .bf-bar{inset:auto 0 0 0;height:3px;border-radius:3px;background:var(--line-2)}
+  .bf-q.is-past .bf-bar i{transform:none}
+}
+@media (min-width:1024px){.bf-aq{display:none}}
+
+/* ------------------------------------------------------------ before */
+.cs-read{margin:0;max-width:32ch;font-size:clamp(26px,3.6vw,48px);font-weight:700;line-height:1.35;letter-spacing:-.02em;color:var(--ink);text-wrap:pretty}
+[dir="rtl"] .cs-read{max-width:34ch;letter-spacing:0;line-height:1.7}
+.cs-pains{display:grid;gap:14px;margin:clamp(40px,5vw,64px) 0 0;padding:0;list-style:none}
+@media (min-width:768px){.cs-pains{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}}
+.cs-pains li{display:grid;align-content:start;gap:8px;padding:24px;border:1px solid var(--line-2);border-radius:18px;
+  background:color-mix(in srgb,var(--card) 76%,transparent);font-size:15.5px;line-height:1.75;color:var(--ink-2)}
+.cs-x{display:grid;place-items:center;width:32px;height:32px;margin-bottom:8px;border-radius:50%;color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.cs-pains b{font-size:17px;font-weight:800;color:var(--ink)}
+
+/* ------------------------------------------------------------ how it was solved */
+/* Each decision is a row with its number drawn as an outline in the
+   section's colour; the number fills as the row arrives. */
+.cs-steps{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.cs-step{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 22px;padding:clamp(26px,3vw,42px) 0;border-bottom:1px solid var(--line)}
+.cs-num{grid-row:span 2;font-family:'Instrument',system-ui,sans-serif;font-size:clamp(44px,5vw,80px);font-weight:800;line-height:.9;letter-spacing:-.04em;
+  color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--c) 75%,transparent);transition:color .9s ease .3s}
+.cs-step.seen .cs-num{color:var(--c)}
+.cs-step h3{margin:0;font-size:clamp(21px,2.3vw,30px);font-weight:800;line-height:1.3;letter-spacing:-.015em;color:var(--ink);transition:color .3s}
+[dir="rtl"] .cs-step h3{letter-spacing:0;line-height:1.5}
+.cs-step:hover h3{color:var(--c)}
+.cs-step p{margin:0;max-width:66ch;font-size:16.5px;line-height:1.85;color:var(--ink-2)}
+@media (min-width:1024px){
+  .cs-step{grid-template-columns:120px minmax(0,.85fr) minmax(0,1.15fr);gap:40px;align-items:start}
+  .cs-num{grid-row:auto}
+}
+.cs-extras{display:grid;gap:14px;margin:20px 0 0;padding:0;list-style:none}
+@media (min-width:768px){.cs-extras{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}}
+.cs-extras li{padding:26px;border:1px solid var(--line-2);border-radius:18px;background:color-mix(in srgb,var(--card) 76%,transparent);transition:border-color .3s}
+.cs-extras li:hover{border-color:color-mix(in srgb,var(--c) 50%,transparent)}
+.cs-extras h3{margin:0;font-size:17.5px;font-weight:800;line-height:1.45;color:var(--ink)}
+.cs-extras p{margin:10px 0 0;font-size:15.5px;line-height:1.8;color:var(--ink-2)}
+
+/* ------------------------------------------------------------ outcome */
+.cs-figs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0}
+@media (min-width:1024px){.cs-figs{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}}
+.cs-figs > div{display:flex;flex-direction:column;gap:12px;padding:clamp(20px,2.4vw,30px);border:1px solid var(--line-2);border-radius:18px;
+  background:color-mix(in srgb,var(--card) 76%,transparent)}
+.cs-figs dd{margin:0;font-size:clamp(40px,5vw,72px);font-weight:800;line-height:1;letter-spacing:-.04em;color:var(--ink);font-variant-numeric:tabular-nums}
+.cs-figs dt{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;line-height:1.5;color:var(--ink-2)}
+.cs-figs dt::before{content:'';flex:none;width:7px;height:7px;border-radius:50%;background:var(--c)}
+.cs-done{display:grid;gap:28px;margin-top:clamp(36px,4vw,56px)}
+@media (min-width:1024px){.cs-done{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:start}}
+.cs-delivered{display:grid;gap:16px;margin:0;padding:0;list-style:none}
+.cs-delivered li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:14px;font-size:16.5px;line-height:1.75;color:var(--ink)}
+.cs-delivered li > span:first-child{display:grid;place-items:center;width:22px;height:22px;margin-top:3px;border-radius:50%;background:var(--c);color:var(--bg)}
+/* The tests that guard the project, as the run that proves them. */
+.cs-run{overflow:hidden;border:1px solid var(--line-2);border-radius:16px;background:var(--card);box-shadow:var(--shadow)}
+.cs-run-bar{display:flex;align-items:center;gap:14px;height:40px;padding-inline:16px;border-bottom:1px solid var(--line);background:var(--card-2);direction:ltr}
+.cs-run-bar .lat{font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;color:var(--ink-3)}
+.cs-run ul{margin:0;padding:0;list-style:none}
+.cs-run li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.cs-pass{grid-row:span 2;align-self:start;margin-top:2px;padding:3px 7px;border-radius:4px;font-family:'GeistMono',ui-monospace,monospace;font-size:11px;font-weight:500;
+  color:var(--bg);background:var(--c)}
+.cs-rule{font-size:15.5px;font-weight:700;line-height:1.6;color:var(--ink)}
+.cs-file{font-family:'GeistMono',ui-monospace,monospace;font-size:12px;color:var(--ink-3);direction:ltr;text-align:start;overflow-wrap:anywhere}
+[dir="rtl"] .cs-file{text-align:right}
+.cs-more{margin:0;padding:13px 18px;font-size:13.5px;font-weight:700;color:var(--ink-3);background:var(--card-2)}
+
+/* ------------------------------------------------------------ next project */
+/* The next project as a scene in its own colour: the whole card is the link,
+   its cover plays, and the round arrow leans the way the page reads. */
+.cs-next{position:relative;display:grid;gap:28px;align-items:center;padding:clamp(24px,4vw,56px);overflow:hidden;
+  border:1px solid color-mix(in srgb,var(--c) 30%,var(--line-2));border-radius:28px;color:var(--ink);text-decoration:none;
+  background:radial-gradient(80% 90% at 85% 15%,color-mix(in srgb,var(--c) 16%,transparent),transparent 70%),var(--card);transition:border-color .4s}
+[dir="rtl"] .cs-next{background:radial-gradient(80% 90% at 15% 15%,color-mix(in srgb,var(--c) 16%,transparent),transparent 70%),var(--card)}
+@media (min-width:1024px){.cs-next{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:56px}}
+.cs-next:hover{border-color:var(--c)}
+.cs-next:focus-visible{outline:2px solid var(--c);outline-offset:4px}
+.cs-next-copy{display:grid;align-content:center;justify-items:start;gap:14px}
+.cs-next-k{display:inline-flex;align-items:center;gap:12px;font-size:15px;font-weight:800;color:var(--c)}
+.cs-next-k .lat{font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;font-weight:500;color:var(--ink-3)}
+.cs-next-name{font-size:clamp(52px,8vw,120px);font-weight:800;line-height:.95;letter-spacing:-.045em}
+[dir="rtl"] .cs-next-name{letter-spacing:0;line-height:1.25}
+.cs-next-hook{max-width:32ch;font-size:clamp(17px,1.5vw,21px);font-weight:700;line-height:1.55;color:var(--ink-2)}
+[dir="rtl"] .cs-next-hook{line-height:1.8}
+.cs-next-go{display:grid;place-items:center;width:60px;height:60px;margin-top:10px;border-radius:50%;background:var(--c);color:var(--bg);
+  transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.cs-next:hover .cs-next-go{transform:translateX(8px)}
+[dir="rtl"] .cs-next:hover .cs-next-go{transform:translateX(-8px)}
+.cs-next-art{border-radius:20px;transition:transform .8s cubic-bezier(.22,1,.36,1)}
+.cs-next:hover .cs-next-art{transform:scale(1.02)}
+
+@media (prefers-reduced-motion:reduce){
+  .cs-rise,.cs-in,.cs-name::after,.cs-cue i::after{animation:none}
+  .bf-bar i,.bf-q,.bf-n{transition:none}
+  .cs-num{color:var(--c);transition:none}
+  .cs-next-go,.cs-next-art{transition:none}
+}

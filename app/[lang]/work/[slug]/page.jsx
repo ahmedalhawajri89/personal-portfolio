@@ -5,15 +5,20 @@ import { STORIES } from '../../../../content/stories';
 import { BRIEFS } from '../../../../content/briefs';
 import { HERO_TESTS } from '../../../../content/site';
 import { shotsOf, coverOf, pagesOf, shotOf } from '../../../../lib/shots';
+import { HUE, LIGHT, PROJECT_LIGHT } from '../../../../lib/hues';
 import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, BackToTop } from '../../../../components/Chrome';
 import Gallery from '../../../../components/Gallery';
 import Journey from '../../../../components/Journey';
+import Brief from '../../../../components/Brief';
 import Motion from '../../../../components/Motion';
+import Cover from '../../../../components/Cover';
+import Scenes from '../../../../components/Scenes';
 import Curtain from '../../../../components/Curtain';
 import Pointer from '../../../../components/Pointer';
 import Icon from '../../../../components/Icons';
 
 const LIVE = PROJECTS.filter((p) => shotsOf(p.shots).shots.length > 0);
+const pad = (n) => String(n).padStart(2, '0');
 
 export function generateStaticParams() {
   return LANGS.flatMap((lang) => LIVE.map((p) => ({ lang, slug: p.slug })));
@@ -40,12 +45,36 @@ export async function generateMetadata({ params }) {
   };
 }
 
-/* A case study, in the order a client asks the questions. What is it and for
-   whom (the glance), what was wrong before it (the context, read slowly), how
-   it is used (the journey through the real screens), how it was built so the
-   promises hold (the solution), and what was handed over (the outcome). The
-   engineering is all still here; it just comes after the reader knows why it
-   matters. */
+/* Each section of a case study opens the way the home page's do: a label in
+   the section's colour, a line drawn across the top, the heading rising out
+   of its mask. */
+function Head({ label, h, lede }) {
+  return (
+    <header className="cs-head">
+      <span className="sec-rule" data-m="rule" aria-hidden="true" />
+      <p className="sec-label">{label}</p>
+      {h && <h2 className="cs-h2" data-m="lines">{h}</h2>}
+      {lede && <p className="sec-lede">{lede}</p>}
+    </header>
+  );
+}
+
+/* A case study, in the order a client asks the questions, in the project's
+   own colour from the first frame to the last.
+
+   The opening is the project's cover -- the same drawn scene that stands for
+   it on the home page, playing -- beside its name set large and the promise
+   it makes. Then the product itself in its browser frame, which comes up to
+   full size as it is reached; four short answers (for whom, what was wrong,
+   what it does, what was handed over), played one at a time like stories
+   (components/Brief.jsx); what it was like before; the product
+   walked once through its real screens; how it was built so the promises
+   hold; and what was delivered, with the tests that still guard it. It ends
+   on the next project as a scene of its own, in that project's colour.
+
+   The stage light behind the page and the chapter marker in the corner are
+   the home page's (components/Scenes.jsx), so moving from the home page into
+   a project is one film, not a change of site. */
 export default async function Project({ params }) {
   const { lang, slug } = await params;
   const t = T[lang];
@@ -62,12 +91,17 @@ export default async function Project({ params }) {
   const story = STORIES[p.slug]?.[lang];
   const brief = BRIEFS[p.slug];
   const b = brief?.[lang];
+  const nb = BRIEFS[next.slug]?.[lang];
+  const hue = HUE[p.slug];
+  const light = PROJECT_LIGHT[p.slug];
   // The tests that belong to this project. Derived from the same list the
   // home page indexes, filtered to here — so a case study cannot claim a test
   // the index does not also carry.
   const held = HERO_TESTS.filter((x) => x.project === p.slug || x.project === p.shots);
+  const more = brief?.tests ? brief.tests - held.length : 0;
   const src = (f) => `/shots/${p.shots}/${f}`;
-  const nextCover = coverOf(next, lang);
+  const arrow = ar ? 'arrowLeft' : 'arrowRight';
+  const side = (a, z) => (ar ? z : a);
 
   // A step whose screen has no capture is dropped rather than shown empty.
   const steps = (brief?.journey || []).map((st) => {
@@ -81,6 +115,8 @@ export default async function Project({ params }) {
     };
   }).filter(Boolean);
 
+  // Figures that can be checked: the screens and captures are counted from
+  // the gallery below, the tests from the repository.
   const outcome = [
     [pages, d.outcome.pages],
     [shots.length, d.outcome.shots],
@@ -88,187 +124,217 @@ export default async function Project({ params }) {
     [2, d.outcome.langs],
   ].filter(Boolean);
 
+  const chapters = [
+    b && { id: 'glance', name: d.ch.glance, hue: light },
+    b && { id: 'context', name: d.ch.context, hue: LIGHT.accent },
+    steps.length > 0 && { id: 'journey', name: d.ch.journey, hue: light },
+    story && { id: 'solution', name: d.ch.solution, hue: LIGHT.api },
+    { id: 'outcome', name: d.ch.outcome, hue: LIGHT.test },
+    { id: 'gallery', name: d.ch.gallery, hue: light },
+  ].filter(Boolean);
+
   return (
     <>
-      <div className="ambient" aria-hidden="true" />
       <ScrollProgress />
       <SmoothScroll />
       <Reveal />
       <Motion />
       <Curtain />
       <Pointer label={t.work.view} />
+      <Scenes chapters={chapters} />
       <Nav lang={lang} path={`/work/${slug}/`} title={c.name} />
 
-      <main id="main" className="wrap pb-8 pt-28 sm:pt-32">
-        {/* An editorial opening, the same language as the home page: a strip
-            with the year, the kind and the two ways in; the name set large in
-            ink; what it does in one line; then the product itself across the
-            full measure on the accent plate. The back link lives in the bar. */}
-        <header className="pj-head">
-          <div className="pj-top">
-            <p className="pj-meta"><span className="lat">{p.year}</span> · {c.kind}</p>
-            <div className="pj-links">
-              {p.demo && (
-                <a href={p.demo} target="_blank" rel="noopener noreferrer" className="btn btn-primary" data-magnetic>
-                  {d.demo} <Icon name="external" size={15} />
+      <main id="main" className="cs" style={{ '--c': hue }}>
+        {/* ------------------------------------------------------ opening */}
+        <header className="wrap cs-hero" data-light={light} data-lx={side('76vw', '24vw')} data-ly="34vh">
+          <p className="cs-crumb cs-in" style={{ '--d': '0s' }}>
+            <span className="lat">{pad(idx + 1)} / {pad(LIVE.length)}</span>
+            <i aria-hidden="true" />
+            <span>{c.kind}</span>
+            <i aria-hidden="true" />
+            <span className="lat">{p.year}</span>
+          </p>
+
+          <div className="cs-hgrid">
+            <div className="cs-copy">
+              <h1 className="cs-name"><span className="cs-mask"><span className="cs-rise">{c.name}</span></span></h1>
+              <p className="cs-hook cs-in" style={{ '--d': '.18s' }}>{b?.hook || c.tagline}</p>
+              <ul className="cs-stack cs-in" style={{ '--d': '.3s' }}>
+                {p.stack.map((x) => <li key={x} className="lat">{x}</li>)}
+              </ul>
+              <div className="cs-ctas cs-in" style={{ '--d': '.4s' }}>
+                {p.demo && (
+                  <a href={p.demo} target="_blank" rel="noopener noreferrer" className="btn btn-primary" data-magnetic>
+                    {d.demo} <Icon name="external" size={15} />
+                  </a>
+                )}
+                <a href={p.repo} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
+                  <Icon name="github" size={16} /> {d.code}
                 </a>
-              )}
-              <a href={p.repo} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
-                <Icon name="github" size={16} /> {d.code}
-              </a>
+              </div>
+            </div>
+
+            <div className="cs-art cs-in" style={{ '--d': '.12s' }}>
+              <Cover slug={p.slug} label={`${c.name}: ${c.kind}`} />
             </div>
           </div>
-          <h1 className="pj-h">{c.name}</h1>
-          <p className="pj-tag">{b?.hook || c.tagline}</p>
+
+          <p className="cs-cue cs-in" style={{ '--d': '.6s' }} aria-hidden="true"><i />{d.scroll}</p>
         </header>
 
-        {/* The cover is the whole page, not its top: on a wide screen it
-            scrolls inside its window as the reader scrolls past. */}
-        <div className="pj-plate">
-          <div className="pj-frame">
-            <div className="pj-bar" aria-hidden="true"><i /><i /><i /><span className="lat">{cover.path}</span></div>
-            <div className="pj-view" data-m="screen">
+        {/* ------------------------------------------------------- screen */}
+        {/* The product in its frame, coming up to full size as it is reached
+            (data-m="zoom"); on a wide screen the whole page scrolls inside
+            the window as the reader scrolls past (data-m="screen"). */}
+        <section className="wrap cs-screen" aria-label={d.screenK} data-light={light} data-lx={side('24vw', '76vw')} data-ly="60vh">
+          <div className="cs-frame" data-m="zoom">
+            <div className="cs-bar" aria-hidden="true"><i /><i /><i /><span className="lat">{cover.path}</span></div>
+            <div className="cs-view" data-m="screen">
               <picture>
                 <source media="(min-width:1024px)" srcSet={src(cover.file)} />
                 <img src={src(cover.thumb)} alt={c.name} width={cover.tw} height={cover.th} fetchPriority="high" decoding="async" />
               </picture>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* ---------------------------------------------------------- glance */}
+        {/* ------------------------------------------------------- glance */}
         {b && (
-          <dl className="pj-glance">
-            <div>
-              <dt>{d.glance.who}</dt>
-              <dd><ul>{b.who.map((x) => <li key={x}>{x}</li>)}</ul></dd>
-            </div>
-            <div><dt>{d.glance.problem}</dt><dd>{b.problem}</dd></div>
-            <div><dt>{d.glance.does}</dt><dd>{b.does}</dd></div>
-            <div>
-              <dt>{d.glance.delivered}</dt>
-              <dd><ul>{b.delivered.map((x) => <li key={x}>{x}</li>)}</ul></dd>
-            </div>
-          </dl>
+          <section id="glance" className="wrap cs-sec scroll-mt-24" aria-label={d.ch.glance}>
+            <p className="sec-label cs-glance-k">{d.ch.glance}</p>
+            <Brief rtl={ar} label={d.ch.glance} items={[
+              { q: d.glance.who, a: b.who },
+              { q: d.glance.problem, a: b.problem },
+              { q: d.glance.does, a: b.does },
+              { q: d.glance.delivered, a: b.delivered },
+            ]} />
+          </section>
         )}
 
-        {/* The facts a client scans for, ruled like a spec sheet. */}
-        <dl className="pj-facts">
-          <div><dt>{d.facts.year}</dt><dd className="lat">{p.year}</dd></div>
-          <div><dt>{d.facts.type}</dt><dd>{c.kind}</dd></div>
-          <div className="is-wide">
-            <dt>{d.stack}</dt>
-            <dd><ul className="pj-stack">{p.stack.map((s) => <li key={s} className="lat">{s}</li>)}</ul></dd>
-          </div>
-          <div><dt>{d.facts.scope}</dt><dd><span className="lat">{pages}</span> {t.work.pages} · <span className="lat">{shots.length}</span> {t.work.shots}</dd></div>
-        </dl>
-
-        {/* --------------------------------------------------------- context */}
-        {/* The problem as the people who had it would tell it, darkening word
-            by word as it is read, then the pains it is made of. */}
+        {/* ------------------------------------------------------ context */}
+        {/* The problem as the people who had it would tell it, lit word by
+            word as it is read, then the pains it is made of. */}
         {b && (
-          <section className="pj-sec">
-            <h2 className="pj-h2" data-m="lines">{d.context.h}</h2>
-            <p className="pj-read mt-8" data-m="read">{b.context}</p>
-            <ul className="pj-pains">
-              {b.pains.map((x) => (
-                <li key={x.h}><b>{x.h}</b>{x.b}</li>
+          <section id="context" className="wrap cs-sec scroll-mt-24" style={{ '--c': 'var(--accent)' }}
+                   data-light={LIGHT.accent} data-lx={side('20vw', '80vw')} data-ly="40vh">
+            <Head label={d.context.h} />
+            <p className="cs-read" data-m="read">{b.context}</p>
+            <ul className="cs-pains">
+              {b.pains.map((x, i) => (
+                <li key={x.h} className="rise" style={{ '--i': i }}>
+                  <span className="cs-x" aria-hidden="true"><Icon name="x" size={14} /></span>
+                  <b>{x.h}</b>
+                  <span>{x.b}</span>
+                </li>
               ))}
             </ul>
           </section>
         )}
 
-        {/* --------------------------------------------------------- journey */}
+        {/* ------------------------------------------------------ journey */}
         {steps.length > 0 && (
-          <section className="pj-sec">
-            <h2 className="pj-h2" data-m="lines">{d.journey.h}</h2>
-            <p className="pj-lede">{d.journey.lede}</p>
+          <section id="journey" className="wrap cs-sec scroll-mt-24" data-light={light} data-lx={side('78vw', '22vw')} data-ly="50vh">
+            <Head label={d.ch.journey} h={d.journey.h} lede={d.journey.lede} />
             <Journey steps={steps} labels={{ open: d.tourOpen }} />
           </section>
         )}
 
-        {/* -------------------------------------------------------- solution */}
+        {/* ----------------------------------------------------- solution */}
         {story && (
-          <section className="pj-sec">
-            <h2 className="pj-h2" data-m="lines">{d.story.solution}</h2>
-            <p className="pj-lede">{d.built.lede}</p>
-            <ol className="pj-steps">
+          <section id="solution" className="wrap cs-sec scroll-mt-24" style={{ '--c': 'var(--h-api)' }}
+                   data-light={LIGHT.api} data-lx={side('22vw', '78vw')} data-ly="34vh">
+            <Head label={d.story.solution} h={d.solutionH} lede={d.built.lede} />
+            <ol className="cs-steps">
               {story.solution.map((x, i) => (
-                <li key={x.h} className="rise" style={{ '--i': i }}>
-                  <span className="pj-num lat" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <li key={x.h} className="cs-step rise">
+                  <span className="cs-num lat" aria-hidden="true">{pad(i + 1)}</span>
                   <h3>{x.h}</h3>
                   <p>{x.b}</p>
                 </li>
               ))}
             </ol>
 
-            <div className="pj-extras">
-              <p className="pj-k">{d.story.extras}</p>
-              <ul>
-                {story.extras.map((x) => (
-                  <li key={x.h}>
-                    <h3>{x.h}</h3>
-                    <p>{x.b}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <p className="cs-k">{d.story.extras}</p>
+            <ul className="cs-extras">
+              {story.extras.map((x, i) => (
+                <li key={x.h} className="rise" style={{ '--i': i }}>
+                  <h3>{x.h}</h3>
+                  <p>{x.b}</p>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
 
-        {/* --------------------------------------------------------- outcome */}
-        {/* Figures that can be checked: the pages and captures are counted from
-            the gallery below, the tests from the repository. */}
-        <section className="pj-sec">
-          <h2 className="pj-h2" data-m="lines">{d.outcome.h}</h2>
-          <dl className="pj-out">
+        {/* ------------------------------------------------------ outcome */}
+        <section id="outcome" className="wrap cs-sec scroll-mt-24" style={{ '--c': 'var(--h-test)' }}
+                 data-light={LIGHT.test} data-lx={side('76vw', '24vw')} data-ly="46vh">
+          <Head label={d.outcomeK} h={d.outcome.h} />
+          <dl className="cs-figs">
             {outcome.map(([n, l]) => (
-              <div key={l}><dt>{l}</dt><dd className="lat" data-m="count" data-to={n}>{n}</dd></div>
+              <div key={l}>
+                <dd className="lat" data-m="count" data-to={n}>{n.toLocaleString('en-US')}</dd>
+                <dt>{l}</dt>
+              </div>
             ))}
           </dl>
-          {b && (
-            <ul className="pj-delivered">
-              {b.delivered.map((x) => (
-                <li key={x}><span aria-hidden="true"><Icon name="check" size={12} /></span><span>{x}</span></li>
-              ))}
-            </ul>
-          )}
 
-          {/* The part that says it still holds: the actual test files, set as
-              the run that proves them. Projects without one skip the block. */}
-          {held.length > 0 && (
-            <div className="pj-tests">
-              <p className="pj-cmd lat">$ ./vendor/bin/pest</p>
-              <ul>
-                {held.map((x) => (
-                  <li key={x.file}>
-                    <span className="pj-ok" aria-hidden="true"><Icon name="check" size={12} /></span>
-                    <span className="pj-rule">{x[lang]}</span>
-                    <span className="pj-file lat">{p.shots}/tests/{x.file}</span>
+          <div className="cs-done">
+            {b && (
+              <ul className="cs-delivered">
+                {b.delivered.map((x, i) => (
+                  <li key={x} className="rise" style={{ '--i': i }}>
+                    <span aria-hidden="true"><Icon name="check" size={12} /></span><span>{x}</span>
                   </li>
                 ))}
               </ul>
-            </div>
-          )}
+            )}
+
+            {/* The part that says it still holds: the actual test files, set
+                as the run that proves them. Projects without one skip it. */}
+            {held.length > 0 && (
+              <div className="cs-run" aria-label={d.testsH} role="group">
+                <div className="cs-run-bar" aria-hidden="true">
+                  <span className="tl-dots"><i /><i /><i /></span>
+                  <span className="lat">./vendor/bin/pest</span>
+                </div>
+                <ul>
+                  {held.map((x, i) => (
+                    <li key={x.file} className="rise" style={{ '--i': i + 1 }}>
+                      <span className="cs-pass lat">PASS</span>
+                      <span className="cs-rule">{x[lang]}</span>
+                      <span className="cs-file lat">{p.shots}/tests/{x.file}</span>
+                    </li>
+                  ))}
+                </ul>
+                {more > 0 && <p className="cs-more">{d.testsMore.replace('{n}', more.toLocaleString('en-US'))}</p>}
+              </div>
+            )}
+          </div>
         </section>
 
-        {/* ------------------------------------------------------- gallery */}
+        {/* ------------------------------------------------------ gallery */}
         {/* The complete capture set, folded away as evidence rather than the
             argument -- the journey above is what the page says. */}
-        <Gallery lang={lang} project={p.shots} data={data} collapsible />
+        <section className="wrap cs-sec">
+          <Head label={d.ch.gallery} h={d.galleryH} lede={d.galleryLede} />
+          <Gallery lang={lang} project={p.shots} data={data} collapsible />
+        </section>
 
-        {/* --------------------------------------------------- next project */}
-        <nav className="pj-next-wrap" aria-label={d.next_project}>
-          <a href={`/${lang}/work/${next.slug}/`} className="pj-next" data-cursor="view">
-            <span className="pj-next-text">
-              <span className="pj-next-k">{d.next_project}</span>
-              <span className="pj-next-name">{next[lang].name}</span>
-              <span className="pj-next-kind">{next[lang].kind}</span>
+        {/* ------------------------------------------------- next project */}
+        {/* The next project as a scene of its own, in its own colour: its
+            cover playing, its name large, the promise it makes. */}
+        <nav className="wrap cs-sec" aria-label={d.next_project} data-light={PROJECT_LIGHT[next.slug]} data-lx="50vw" data-ly="70vh">
+          <a href={`/${lang}/work/${next.slug}/`} className="cs-next" style={{ '--c': HUE[next.slug] }} data-cursor="view">
+            <span className="cs-next-copy">
+              <span className="cs-next-k"><span className="lat">{pad(((idx + 1) % LIVE.length) + 1)}</span>{d.next_project}</span>
+              <span className="cs-next-name">{next[lang].name}</span>
+              <span className="cs-next-hook">{nb?.hook || next[lang].tagline}</span>
+              <span className="cs-next-go" aria-hidden="true"><Icon name={arrow} size={20} /></span>
             </span>
-            <span className="pj-next-pic" aria-hidden="true">
-              <img src={`/shots/${next.shots}/${nextCover.thumb}`} alt="" width={nextCover.tw} height={nextCover.th} loading="lazy" decoding="async" />
+            <span className="cs-next-art" aria-hidden="true">
+              <Cover slug={next.slug} label="" />
             </span>
-            <span className="pj-next-go" aria-hidden="true"><Icon name={ar ? 'arrowLeft' : 'arrowRight'} size={20} /></span>
           </a>
         </nav>
       </main>

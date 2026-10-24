@@ -16,22 +16,16 @@ import Pointer from '../../components/Pointer';
 import Curtain from '../../components/Curtain';
 import { BRIEFS } from '../../content/briefs';
 import Icon from '../../components/Icons';
+import { HUE, LIGHT, PROJECT_LIGHT } from '../../lib/hues';
 import { CvButton } from '../../components/CvPanel';
 
 export function generateStaticParams() {
   return LANGS.map((lang) => ({ lang }));
 }
 
-// The identity's five hues (globals.css): the data, the server, the
-// interface, the tests, security. Each project wears one, and so does each
-// service and each group of tools, so a colour keeps one meaning per row.
-const HUE = { diwan: 'var(--h-sec)', booking: 'var(--h-ui)', takharruj: 'var(--h-api)', lamma: 'var(--h-db)', mawaheb: 'var(--h-test)' };
+// Services and tool groups take the project hues (lib/hues.js) by meaning.
 const SV_HUE = { shop: 'var(--h-sec)', book: 'var(--h-ui)', dash: 'var(--h-api)', api: 'var(--h-db)', figma: 'var(--accent)', tests: 'var(--h-test)', diff: 'var(--ink-2)' };
 const CAP_HUE = { layers: 'var(--h-api)', layout: 'var(--h-ui)', database: 'var(--h-db)', shield: 'var(--h-test)' };
-// The same hues as plain colours, for the stage light (components/Scenes.jsx),
-// which eases between them and so needs values it can interpolate.
-const LIGHT = { db: '#2FD3A1', api: '#9B8CFF', ui: '#4FB4FF', test: '#B6F25A', sec: '#FFB547', accent: '#FF5A1F' };
-const PROJECT_LIGHT = { diwan: LIGHT.sec, booking: LIGHT.ui, takharruj: LIGHT.api, lamma: LIGHT.db, mawaheb: LIGHT.test };
 
 /* A small moving mark for each service, drawn in its colour: what the
    service makes, in a gesture. They loop only while on screen
