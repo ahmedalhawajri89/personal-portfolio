@@ -26,6 +26,9 @@ const DESKTOP = { width: 1440, height: 900 };
 const MOBILE = { width: 390, height: 844 };
 const MAX_FULL = 4000;            // CSS px
 const FULL_W = { desktop: 1600, mobile: 780 };
+// A page marked `hd` (a project's cover, shown across the case study's full
+// measure) keeps more of its 2x capture, so it stays crisp on a retina screen.
+const HD_W = 2400;
 const THUMB_W = { desktop: 960, mobile: 480 };
 const THUMB_H = { desktop: 600, mobile: 1040 };
 
@@ -113,7 +116,7 @@ for (const name of names) {
             await settle(page, !!pg.full);
             const full = !!pg.full;
             const png = await page.screenshot({ fullPage: full, type: 'png', animations: pg.animations || 'disabled' });
-            const meta = await writeImages(png, join(dir, stem), device);
+            const meta = await writeImages(png, join(dir, stem), device, !!pg.hd);
             entries.push({
               key: pg.key, locale, device, group: pg.group,
               file: `${stem}.webp`, thumb: `${stem}-t.webp`,
@@ -210,12 +213,13 @@ async function settle(page, full) {
   await page.waitForTimeout(900);
 }
 
-async function writeImages(png, stemPath, device) {
+async function writeImages(png, stemPath, device, hd = false) {
   const cap = MAX_FULL * 2;
   let img = sharp(png);
   const m = await img.metadata();
   if (m.height > cap) img = img.extract({ left: 0, top: 0, width: m.width, height: cap });
-  const fullBuf = await img.resize({ width: FULL_W[device] }).webp({ quality: 80, effort: 5 }).toBuffer();
+  const w = hd && device === 'desktop' ? HD_W : FULL_W[device];
+  const fullBuf = await img.resize({ width: w }).webp({ quality: hd ? 82 : 80, effort: 5 }).toBuffer();
   const fm = await sharp(fullBuf).metadata();
   writeFileSync(`${stemPath}.webp`, fullBuf);
 

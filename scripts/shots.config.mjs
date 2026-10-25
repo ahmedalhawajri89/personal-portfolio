@@ -10,6 +10,7 @@
 //   as      log in as this role first (see `roles`)
 //   prep    async (page) => {} run after navigation, before the shot
 //   animations  'allow' to photograph a page mid-animation (default: 'disabled')
+//   hd      keep the desktop capture at 2400px wide instead of 1600 (a cover)
 //
 // A project may also give init: ({ role }) => {} — an init script run in
 // every page of each role's browser context, before the site's own scripts.
@@ -279,7 +280,8 @@ export const PROJECTS = {
       admin: { ar: 'لوحة الإدارة', en: 'Admin dashboard' },
     },
     pages: [
-      { key: 'home', path: '/', ar: 'الصفحة الرئيسية', en: 'Home', group: 'public', full: true, mobile: true },
+      // The cover: the site as a visitor first meets it, captured in high definition.
+      { key: 'home', path: '/', ar: 'الصفحة الرئيسية', en: 'Home', group: 'public', full: true, mobile: true, hd: true },
       { key: 'orphans', path: '/orphans', ar: 'الأيتام', en: 'Orphans', group: 'public', full: true, mobile: true },
       { key: 'orphan', path: '/orphan?id=KFL-1045', ar: 'ملف يتيم', en: 'Orphan profile', group: 'public', full: true, mobile: true },
       { key: 'programs', path: '/programs', ar: 'البرامج', en: 'Programs', group: 'public', full: true },

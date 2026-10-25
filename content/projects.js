@@ -189,9 +189,11 @@ export const PROJECTS = [
   {
     slug: 'lamma',
     shots: 'lamma',
-    // The transparency page: "we don't ask you to trust us, we ask you to
-    // verify" is the whole platform in a sentence; the home page was a hero.
-    cover: 'transparency',
+    // The site as a visitor first meets it, captured in high definition
+    // (hd in scripts/shots.config.mjs). The transparency page used to be the
+    // cover, but it is already a step of the case study's tour, so the page
+    // opened on a screen it then showed again.
+    cover: 'home',
     year: '2026',
     stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Bootstrap 5', 'Vue 3', 'Sanctum', 'Pest', 'Playwright'],
     repo: 'https://github.com/ahmedalhawajri89/Lamma',
