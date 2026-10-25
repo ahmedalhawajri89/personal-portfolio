@@ -1051,6 +1051,10 @@ html[lang="en"] .hd-sum{font-family:'Instrument',system-ui,sans-serif;direction:
 [dir="rtl"] .jr-step .jr-where{text-align:right}
 .jr-shot-m{margin-top:18px;overflow:hidden;border:1px solid var(--line-2);border-radius:var(--r-ctl);background:var(--bg-2);box-shadow:var(--shadow)}
 .jr-shot-m img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;object-position:top}
+/* The page as a phone shows it, in a phone: legible at a phone's width,
+   where a desktop page would be shrunk to a quarter of its size. */
+.jr-shot-m.is-phone{width:min(270px,76%);margin-inline:auto;padding:7px;border:1px solid rgba(255,255,255,.12);border-radius:32px;background:#0F1117}
+.jr-shot-m.is-phone img{aspect-ratio:auto;border-radius:25px;background:var(--bg-2)}
 .jr-stage{display:none}
 @media (min-width:1024px){
   .jr{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:64px;align-items:start}

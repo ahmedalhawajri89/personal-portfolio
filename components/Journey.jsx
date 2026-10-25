@@ -11,8 +11,9 @@ const pad = (n) => String(n).padStart(2, '0');
    scroll past it; each step that reaches the middle of the screen brings its
    page into the frame, wiped up from the bottom, and the page inside scrolls
    while the step is being read -- the captures are whole pages, so the frame
-   shows what lies under the fold too. On a phone each step simply carries
-   its own picture under the text.
+   shows what lies under the fold too, always at its full width, never
+   cropped at the sides. On a phone each step carries its own picture under
+   the text: the page as a phone shows it, where it was captured.
 
    The step that is current is decided by scroll position for everyone; the
    wipe and the scrolling page are motion, and are off for reduced motion,
@@ -90,9 +91,15 @@ export default function Journey({ steps, labels }) {
             <h3>{x.h}</h3>
             <p>{x.b}</p>
             <p className="jr-where lat">{x.path}</p>
-            <div className="jr-shot-m">
-              <img src={x.thumb} alt={x.alt} width={x.tw} height={x.th} loading="lazy" decoding="async" />
-            </div>
+            {x.phone ? (
+              <div className="jr-shot-m is-phone">
+                <img src={x.phone.src} alt={x.alt} width={x.phone.w} height={x.phone.h} loading="lazy" decoding="async" />
+              </div>
+            ) : (
+              <div className="jr-shot-m">
+                <img src={x.thumb} alt={x.alt} width={x.tw} height={x.th} loading="lazy" decoding="async" />
+              </div>
+            )}
           </li>
         ))}
       </ol>

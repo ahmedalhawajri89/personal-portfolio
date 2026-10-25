@@ -104,13 +104,18 @@ export default async function Project({ params }) {
   const arrow = ar ? 'arrowLeft' : 'arrowRight';
 
   // A step whose screen has no capture is dropped rather than shown empty.
+  // On a phone a step shows its page as a phone shows it, where that was
+  // captured: a desktop page shrunk to a phone's width is too small to read.
   const steps = (brief?.journey || []).map((st) => {
     const sh = shotOf(p.shots, st.shot, lang);
     if (!sh) return null;
+    const mob = data.shots.filter((s) => s.key === st.shot && s.device === 'mobile');
+    const m = mob.find((s) => s.locale === lang) || mob[0];
     return {
       h: st[lang].h, b: st[lang].b, path: sh.path,
       file: src(sh.file), w: sh.w, ih: sh.h,
       thumb: src(sh.thumb), tw: sh.tw, th: sh.th,
+      phone: m ? { src: src(m.thumb), w: m.tw, h: m.th } : null,
       alt: `${c.name} — ${ar ? sh.labelAr : sh.labelEn}`,
     };
   }).filter(Boolean);
