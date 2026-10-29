@@ -12,7 +12,7 @@ import { loadMotion, MOTION_OK } from '../lib/motion';
      Waeda      a day of slots fills; the empty one is saved by the reply "1"
      Takharruj  a project walks its road from the idea to the cap
      Lamma      a coin follows its path to a home; the share that arrived fills
-     Mawaheb    a spotlight sweeps the stage until it finds the talent
+     Opsight    the month's bars rise, its trend is drawn, the margin is counted
 
    The markup is each scene's finished frame, so without script or for
    reduced motion the cover is a complete still picture. The loop pauses
@@ -145,31 +145,39 @@ const SCENES = {
     },
   },
 
-  mawaheb: {
+  opsight: {
     art: (
       <>
-        <path className="cv-floor" d="M48 330 H592" />
-        <g className="cv-lamp">
-          <path className="cv-cone" d="M148 70 L60 330 H330 Z" />
-          <path className="cv-fill" d="M128 52 l38 -12 l12 30 l-38 12 z" />
-        </g>
-        <path className="cv-star" d="M222 196 l12 26 l28 3 l-21 19 l6 28 l-25 -14 l-25 14 l6 -28 l-21 -19 l28 -3 z" />
-        <path className="cv-ink" d="M222 290 v26 M206 316 h32" />
-        <g className="cv-glass">
-          <circle className="cv-lens" cx="470" cy="200" r="40" />
-          <path className="cv-ink cv-thick" d="M498 228 l40 40" />
+        <rect className="cv-card" x="72" y="64" width="496" height="272" rx="20" />
+        <path className="cv-line" d="M72 104 H568 M404 124 V312" />
+        <rect className="cv-day" x="96" y="80" width="72" height="8" rx="4" />
+        <rect className="cv-day" x="428" y="80" width="40" height="8" rx="4" />
+        <path className="cv-floor" d="M96 300 H384" />
+        {[60, 92, 74, 120, 104, 150, 176].map((h, i) => (
+          <rect key={i} className="cv-fill-2 cv-bar" x={104 + i * 40} y={300 - h} width="26" height={h} rx="5" />
+        ))}
+        <path className="cv-trend" d="M117 228 L157 196 L197 214 L237 168 L277 184 L317 138 L357 112" />
+        <rect className="cv-day" x="428" y="146" width="96" height="8" rx="4" />
+        <text className="cv-t cv-big cv-num" x="486" y="212" textAnchor="middle">42.4%</text>
+        <g className="cv-delta">
+          <rect className="cv-fill" x="436" y="236" width="100" height="34" rx="17" />
+          <text className="cv-t cv-on" x="486" y="260" textAnchor="middle">▲ 2.9</text>
         </g>
       </>
     ),
-    play: (gsap, $, $$) => gsap.timeline({ repeat: -1, repeatDelay: 1 })
-      .set($('.cv-lamp'), { rotation: 28, svgOrigin: '148 70' })
-      .set($('.cv-star'), { fill: 'transparent', scale: 0.8, transformOrigin: '50% 50%' })
-      .set($('.cv-glass'), { x: 120, opacity: 0 })
-      .to($('.cv-lamp'), { rotation: -14, duration: 1.4, ease: 'sine.inOut' })
-      .to($('.cv-lamp'), { rotation: 0, duration: 0.8, ease: 'power3.out' })
-      .to($('.cv-star'), { fill: 'var(--c)', scale: 1.15, duration: 0.35, ease: 'back.out(3)' })
-      .to($('.cv-star'), { scale: 1, duration: 0.3 })
-      .to($('.cv-glass'), { x: -160, opacity: 1, duration: 1.1, ease: 'power3.out' }, '-=0.2'),
+    play: (gsap, $, $$) => {
+      const num = $('.cv-num');
+      const v = { n: 0 };
+      return gsap.timeline({ repeat: -1, repeatDelay: 1.4 })
+        .set($$('.cv-bar'), { scaleY: 0, transformOrigin: '50% 100%' })
+        .set($('.cv-trend'), { drawSVG: 0 })
+        .set($('.cv-delta'), { scale: 0, transformOrigin: '50% 50%' })
+        .set(v, { n: 0 })
+        .to($$('.cv-bar'), { scaleY: 1, duration: 0.5, ease: 'power3.out', stagger: 0.09 })
+        .to($('.cv-trend'), { drawSVG: '100%', duration: 0.9, ease: 'power2.inOut' }, '-=0.3')
+        .to(v, { n: 42.4, duration: 1.1, ease: 'power2.out', onUpdate: () => { num.textContent = `${v.n.toFixed(1)}%`; } }, '<')
+        .to($('.cv-delta'), { scale: 1, duration: 0.5, ease: 'back.out(2.4)' });
+    },
   },
 };
 

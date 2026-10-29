@@ -17,7 +17,7 @@ export const SERVICES = [
     en: { h: 'Booking systems', b: 'Booking from a phone with no account, times worked out from your real hours, and two people never get the same slot.' },
   },
   {
-    icon: 'layout', proof: 'takharruj', visual: 'dash',
+    icon: 'layout', proof: 'opsight', visual: 'dash',
     ar: { h: 'أنظمة أعمال ولوحات تحكم', b: 'أدوار وصلاحيات وسير عمل، وجداول تبقى سريعة ولو صارت آلاف السجلات.' },
     en: { h: 'Business systems and dashboards', b: 'Roles, permissions and workflows, with tables that stay fast at thousands of rows.' },
   },
@@ -36,7 +36,7 @@ export const SERVICES = [
   },
   {
     // Testing is demonstrated in the work itself: Pest and PHPUnit suites in
-    // four of the five projects, Playwright in two, and the booking system's
+    // all five projects, Playwright in three, and the booking system's
     // concurrency test opens two real sessions. A skill, not a job title.
     icon: 'shield', proof: 'booking', visual: 'tests',
     ar: { h: 'اختبارات وضمان جودة', b: 'اختبارات آلية لتطبيق لارافيل قائم، حتى يبقى الخطأ الذي أصلحناه مُصلَحاً بعد التعديل التالي.' },
@@ -142,13 +142,13 @@ export const HERO_TESTS = [
     decEn: 'The policy checks that in code rather than in the interface, and an approved record is reversed with a counter-entry rather than edited.',
   },
   {
-    file: 'PortfolioManagementTest.php', project: 'mawaheb',
-    ar: 'الخطة المجانية تحدّ عدد الأعمال المنشورة',
-    en: 'The free plan caps published portfolio items',
-    probAr: 'حدّ الخطة المجانية يُتجاوز بالنشر المتكرّر.',
-    probEn: 'The free plan cap is walked past by publishing again.',
-    decAr: 'الحدّ مفروض في طبقة البيانات، لا بإخفاء الزرّ في الواجهة.',
-    decEn: 'The cap is enforced in the data layer, not by hiding the button.',
+    file: 'FieldRedactionTest.php', project: 'opsight',
+    ar: 'الموظف لا يتسلّم تكلفة المنتج، لا في القائمة ولا في صفحته',
+    en: 'Staff never receive a product’s cost, on the list or on its own page',
+    probAr: 'تكلفة مخفية في الشاشة تبقى ظاهرة لمن يفتح أدوات المتصفح.',
+    probEn: 'A cost hidden on screen is still there for anyone who opens the browser’s tools.',
+    decAr: 'الحقل الذي لا يحق للدور أن يراه يُحذف من استجابة الـ API نفسها، لا يُخفى في الواجهة.',
+    decEn: 'A field a role may not see is left out of the API response itself, not hidden in the interface.',
   },
   {
     file: 'PassageTest.php', project: 'diwan',

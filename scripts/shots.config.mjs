@@ -13,7 +13,8 @@
 //   hd      keep the desktop capture at 2400px wide instead of 1600 (a cover)
 //
 // A project may also give init: ({ role }) => {} — an init script run in
-// every page of each role's browser context, before the site's own scripts.
+// every page of each role's browser context, before the site's own scripts —
+// and afterLogin: async (page, base, locale) => {}, run once a role is in.
 //
 // Run:  node scripts/shots.mjs            (everything)
 //       node scripts/shots.mjs diwan kafala
@@ -23,7 +24,6 @@
 //   kafala     cd kafala\api            && php artisan serve --port 8000
 //   diwan      cd "diwan e-commerce"    && php artisan serve --port 8001
 //   takharruj  cd takharruj             && php artisan serve --port 8002
-//   mawaheb    cd mawaheb               && php artisan serve --port 8004
 //   booking    cd waeda-booking         && npx vite --port 5173
 // Playwright is loaded from booking\node_modules, so no install is needed here.
 
@@ -316,48 +316,85 @@ export const PROJECTS = {
     ],
   },
 
-  /* ---------------------------------------------------------- mawaheb */
-  mawaheb: {
-    base: 'http://127.0.0.1:8004',
+  /* ---------------------------------------------------------- opsight */
+  // The public demo. Signed out, the language is a cookie; signed in, it is
+  // the account's own preference, so each role is switched to the locale
+  // being shot. Arabic is shot first, so the English pass leaves the shared
+  // demo accounts in English, as the nightly reset would.
+  opsight: {
+    base: 'https://opsight-demo.vercel.app',
     locales: ['ar', 'en'],
-    // POST /locale with the CSRF token from the page.
     setLocale: async (page, base, l) => {
-      await page.goto(`${base}/`, { waitUntil: 'domcontentloaded' });
-      await page.evaluate(async (l) => {
-        const t = document.querySelector('meta[name=csrf-token]')?.content || '';
-        await fetch('/locale', { method: 'POST', headers: { 'X-CSRF-TOKEN': t, 'Content-Type': 'application/x-www-form-urlencoded' }, body: `locale=${l}`, credentials: 'same-origin' });
+      await page.context().addCookies([{ name: 'opsight_locale', value: l, url: base }]);
+    },
+    afterLogin: async (page, base, l) => {
+      const status = await page.evaluate(async (l) => {
+        const t = decodeURIComponent(document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] || '');
+        const r = await fetch('/api/v1/me/preferences', {
+          method: 'PATCH', credentials: 'include',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-XSRF-TOKEN': t },
+          body: JSON.stringify({ locale: l, numerals: 'latn' }),
+        });
+        return r.status;
       }, l);
+      if (status >= 400) throw new Error(`language not saved (${status})`);
+    },
+    // The focus-mode hint and the install invitation are one-time; mark them seen.
+    init: () => {
+      localStorage.setItem('opsight:seen:focus-mode', 'dismissed');
+      localStorage.setItem('opsight:seen:install', 'dismissed');
     },
     roles: {
-      talent: { path: '/login', email: '#email', password: '#password', user: 'layan-alharbi@demo.mawaheb.test', pass: PW },
-      scout: { path: '/login', email: '#email', password: '#password', user: 'scout@demo.mawaheb.test', pass: PW },
+      owner: { path: '/login', email: '#email', password: '#password', user: 'owner@opsight.test', pass: PW, waitFor: '**/dashboard**' },
+      staff: { path: '/login', email: '#email', password: '#password', user: 'staff@opsight.test', pass: PW, waitFor: '**/dashboard**' },
+      // The second business on the same installation, in Kuwaiti dinars.
+      alnoor: { path: '/login', email: '#email', password: '#password', user: 'owner@alnoor.test', pass: PW, waitFor: '**/dashboard**' },
     },
     groups: {
-      public: { ar: 'الاكتشاف', en: 'Discovery' },
-      talent: { ar: 'لوحة الموهبة', en: 'Talent dashboard' },
-      scout: { ar: 'لوحة الكشّاف', en: 'Scout dashboard' },
+      insight: { ar: 'الأرقام والتحليل', en: 'Figures and analysis' },
+      ops: { ar: 'العمليات اليومية', en: 'Daily operations' },
+      admin: { ar: 'الإدارة والصلاحيات', en: 'Administration and access' },
     },
     pages: [
-      { key: 'home', path: '/', ar: 'الصفحة الرئيسية', en: 'Home', group: 'public', full: true, mobile: true },
-      { key: 'discover', path: '/discover', ar: 'اكتشف المواهب', en: 'Discover', group: 'public', full: true, mobile: true },
-      { key: 'search', path: '/search?q=design', ar: 'البحث', en: 'Search', group: 'public' },
-      { key: 'profile', path: '/t/abdulrahman-salem', ar: 'ملف موهبة', en: 'Talent profile', group: 'public', full: true, mobile: true },
-      { key: 'opps', path: '/opportunities', ar: 'الفرص', en: 'Opportunities', group: 'public', full: true },
-      { key: 'opp', path: '/opportunities/crafts-commission-8', ar: 'تفاصيل فرصة', en: 'Opportunity', group: 'public', full: true },
-      { key: 'pricing', path: '/pricing', ar: 'الباقات', en: 'Pricing', group: 'public', full: true },
-      { key: 'how', path: '/how-it-works', ar: 'كيف يعمل', en: 'How it works', group: 'public', full: true },
-      { key: 'about', path: '/about', ar: 'عن مواهب', en: 'About', group: 'public', full: true },
-      { key: 'contact', path: '/contact', ar: 'تواصل', en: 'Contact', group: 'public' },
-      { key: 'login', path: '/login', ar: 'تسجيل الدخول', en: 'Sign in', group: 'public', mobile: true },
-      { key: 'register', path: '/register', ar: 'إنشاء حساب', en: 'Register', group: 'public' },
-      { key: 'dash', path: '/dashboard', ar: 'لوحة الموهبة', en: 'Dashboard', group: 'talent', as: 'talent', full: true, mobile: true },
-      { key: 'portfolio', path: '/dashboard/portfolio', ar: 'أعمالي', en: 'Portfolio', group: 'talent', as: 'talent', full: true },
-      { key: 'applications', path: '/dashboard/applications', ar: 'طلباتي', en: 'Applications', group: 'talent', as: 'talent' },
-      { key: 'analytics', path: '/dashboard/analytics', ar: 'الإحصاءات', en: 'Analytics', group: 'talent', as: 'talent', full: true },
-      { key: 'notifications', path: '/notifications', ar: 'الإشعارات', en: 'Notifications', group: 'talent', as: 'talent' },
-      { key: 'settings', path: '/settings', ar: 'الإعدادات', en: 'Settings', group: 'talent', as: 'talent', full: true },
-      { key: 'scout-opps', path: '/dashboard/opportunities', ar: 'فرصي', en: 'My opportunities', group: 'scout', as: 'scout' },
-      { key: 'scout-new', path: '/opportunities/create', ar: 'نشر فرصة', en: 'Post an opportunity', group: 'scout', as: 'scout', full: true },
+      { key: 'login', path: '/login', ar: 'الدخول بحساب تجريبي لكل دور', en: 'Sign in with a demo account per role', group: 'insight', mobile: true },
+      // The cover: the owner's dashboard, captured in high definition.
+      { key: 'dashboard', path: '/dashboard', ar: 'لوحة المالك: الأرقام مقارنةً بالفترة السابقة', en: "The owner's dashboard, against the previous period", group: 'insight', as: 'owner', full: true, mobile: true, hd: true },
+      { key: 'analytics', path: '/analytics', ar: 'التحليلات والمقارنات', en: 'Analytics and comparisons', group: 'insight', as: 'owner', full: true, mobile: true },
+      { key: 'staff-dash', path: '/dashboard', ar: 'لوحة الموظف: بلا تكلفة ولا ربح', en: "The staff dashboard: no cost, no profit", group: 'admin', as: 'staff', full: true },
+      // Its orders rather than its dashboard: a dozen orders, all this month, make
+      // every comparison a jump of hundreds of percent. The list shows the point,
+      // dinars and numbering of its own, without the noise.
+      { key: 'alnoor', path: '/orders', ar: 'منشأة ثانية بالدينار الكويتي، بطلباتها وترقيمها، معزولة عن الأولى', en: 'A second business in Kuwaiti dinars, with its own orders and numbering, isolated from the first', group: 'admin', as: 'alnoor' },
+      { key: 'orders', path: '/orders', ar: 'الطلبات', en: 'Orders', group: 'ops', as: 'owner', mobile: true },
+      // The newest order: its lines, payments and history.
+      { key: 'order', path: '/orders', ar: 'طلب: بنوده ومدفوعاته وسجلّه', en: 'An order: its lines, payments and history', group: 'ops', as: 'owner', full: true, mobile: true,
+        prep: async (page) => {
+          await page.locator('a[href^="/orders/"]:not([href="/orders/new"])').first().click();
+          await page.waitForURL(/\/orders\/\d+/);
+          await page.waitForLoadState('networkidle');
+        } },
+      { key: 'new-order', path: '/orders/new', ar: 'طلب جديد', en: 'A new order', group: 'ops', as: 'staff', full: true },
+      { key: 'customers', path: '/customers', ar: 'الزبائن', en: 'Customers', group: 'ops', as: 'owner' },
+      { key: 'customer', path: '/customers', ar: 'ملف زبون', en: 'A customer', group: 'ops', as: 'owner', full: true,
+        prep: async (page) => {
+          await page.locator('a[href^="/customers/"]').first().click();
+          await page.waitForURL(/\/customers\/\d+/);
+          await page.waitForLoadState('networkidle');
+        } },
+      { key: 'products', path: '/products', ar: 'المنتجات بتكلفتها', en: 'Products with their cost', group: 'ops', as: 'owner' },
+      { key: 'inventory', path: '/inventory', ar: 'المخزون', en: 'Inventory', group: 'ops', as: 'owner', mobile: true },
+      { key: 'expenses', path: '/expenses', ar: 'المصاريف', en: 'Expenses', group: 'ops', as: 'owner' },
+      // Ctrl+K: one search across what the role may see.
+      { key: 'search', path: '/dashboard', ar: 'البحث الشامل', en: 'Global search', group: 'ops', as: 'owner',
+        prep: async (page) => {
+          await page.keyboard.press('Control+k');
+          await page.waitForTimeout(400);
+          await page.keyboard.type('desk');
+          await page.waitForTimeout(1500);
+        } },
+      { key: 'activity', path: '/activity', ar: 'سجل النشاط', en: 'Activity log', group: 'admin', as: 'owner' },
+      { key: 'users', path: '/settings/users', ar: 'المستخدمون وأدوارهم', en: 'Users and their roles', group: 'admin', as: 'owner' },
+      { key: 'settings', path: '/settings', ar: 'إعدادات المنشأة', en: 'Business settings', group: 'admin', as: 'owner', full: true },
     ],
   },
 };

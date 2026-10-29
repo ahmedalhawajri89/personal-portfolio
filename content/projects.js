@@ -251,59 +251,63 @@ export const PROJECTS = [
   },
 
   {
-    slug: 'mawaheb',
-    shots: 'mawaheb',
-    cover: 'discover',
+    slug: 'opsight',
+    shots: 'opsight',
+    // The owner's dashboard: every figure against the previous period, the
+    // product's whole idea on one screen. Captured in high definition.
+    cover: 'dashboard',
     year: '2026',
-    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Breeze', 'PHPUnit'],
-    repo: 'https://github.com/ahmedalhawajri89/mawaheb-platform',
+    stack: ['Next.js 16', 'React 19', 'Tailwind 4', 'TanStack Query', 'Recharts', 'Laravel 12', 'PHP 8.2', 'Sanctum', 'MySQL', 'Pest', 'Vitest', 'Playwright'],
+    repo: 'https://github.com/ahmedalhawajri89/opsight',
+    // Demo mode: one-click sign-in for each role, restored from a snapshot nightly.
+    demo: 'https://opsight-demo.vercel.app/',
     ar: {
-      name: 'مواهب',
-      kind: 'منصة اكتشاف المواهب العربية',
-      tagline: 'العربية هي الأصل لا طبقة ترجمة، وبلا أي إطار JavaScript.',
+      name: 'Opsight',
+      kind: 'منصة تشغيل وذكاء أعمال للمنشآت الخليجية',
+      tagline: 'الطلبات والمخزون والمصاريف في مكان واحد، تصير أرقاماً تُقارَن ويُعرف سببها.',
       summary:
-        'موسيقيون وفنانون ومصممون وكتّاب ورياضيون ينشرون معرض أعمال حقيقياً، والكشّافون والعلامات التجارية يجدونهم. المنصات العالمية لم تُبنَ للمحتوى العربي: تخطيطات معكوسة، بحث لا يفهم العربية، ولا سياق ثقافياً. مواهب الرهان المعاكس: الواجهة مبنية من اليمين لليسار من أول سطر، والإنجليزية هي الخيار الإضافي.',
+        'المنشأة الصغيرة والمتوسطة تحفظ طلباتها في مكان، ومخزونها في آخر، ومصاريفها في جدول إكسل، فلا يعرف أحد كم كان هامش الربح الشهر الماضي ولماذا تغيّر. Opsight يسجّل الطلبات والزبائن والمنتجات والمخزون والمصاريف، ويحوّلها إلى مؤشرات ومقارنات وتنبيهات للمالك والمدير. لكل دور من أدوار أربعة ما يخصّه فقط، فالموظف لا يرى تكلفة أبداً، وعدّة منشآت تعمل على نسخة واحدة دون أن ترى إحداها الأخرى، والواجهة بالعربية والإنجليزية وبعملة كل بلد وضريبته. والتنبيهات قواعد محدّدة لا نموذج ذكاء اصطناعي، فكل رقم يمكن تتبّعه إلى الطلبات التي خلفه.',
       points: [
         {
-          h: 'Blade يعرض كل صفحة، ولا إطار JavaScript',
-          b: 'صفحات الاكتشاف يجب أن تُفهرَس وتفتح بسرعة على الهاتف، وتطبيق الصفحة الواحدة يخسر في الاثنين. فالمنتج لارافيل يعرض HTML من الخادم، وJavaScript تحسين تدريجي فقط: الثيم والنوافذ والتمرير اللانهائي ورفع الملفات.',
+          h: 'المال دقيق، والماضي لا يتحرّك',
+          b: 'المبالغ DECIMAL في قاعدة البيانات ونصوص bcmath في PHP، لا أعداد عشرية تقريبية، وبثلاث خانات للدينار. وكل سطر طلب يحفظ السعر والتكلفة اللذين بيع بهما، فتعديل تكلفة منتج اليوم لا يعيد كتابة هامش السنة الماضية.',
         },
         {
-          h: 'ثلاثة أنواع حسابات محروسة في طبقة البيانات',
-          b: 'موهبة وكشّاف وعلامة تجارية تُختار عند التسجيل وتُفرَض بالوسطاء والسياسات، لا بإخفاء الأزرار. الحد الأدنى للعمر ١٦ يُتحقّق منه من تاريخ الميلاد على الخادم، فلا يُفتح حساب لمن هو أصغر.',
+          h: 'أربعة أدوار يفرضها الـ API',
+          b: 'المالك والمدير والمحلّل والموظف قرابة خمسين صلاحية تفحصها السياسات على الخادم. والحقل الذي لا يحق لدور أن يراه، كالتكلفة والهامش وقيمة الزبون، يُحذف من الاستجابة نفسها، لا يُخفى في الواجهة.',
         },
         {
-          h: 'عدّادات تبقى صادقة',
-          b: 'عدد الطلبات يُزاد داخل المعاملة نفسها التي تكتب الطلب، والمشاهدة لا تُعدّ إلا حين يُكتب صفّها فعلاً، لأن عدّاداً ينحرف أسوأ من لا عدّاد. واكتمال الملف معادلة موزونة، لا تخمين.',
+          h: 'منشآت كثيرة، قاعدة واحدة، بلا تسرّب',
+          b: 'كل جدول يحمل المنشأة، ونطاق عام يقيّد كل استعلام بها. وحين لا تكون هناك منشأة في السياق يفشل الاستعلام بدل أن يعيد صفوف الجميع، واختبارات تدخل باسم مالكَين وتتحقّق أن أحدهما لا يجد شيئاً للآخر.',
         },
         {
-          h: 'حذف يحذف فعلاً',
-          b: 'حذف ناعم، ثم فترة سماح مع إشعار بالبريد، ثم تطهير يزيل الصفوف والوسائط المخزّنة معاً. مسار محو حقيقي، لا علامة مخفية.',
+          h: 'مقارنات صادقة مع التقويم',
+          b: 'الفترة التي لم تنتهِ بعد تُعلَّم «غير مكتملة» حين تقارَن بفترة كاملة، ويمكن مقارنة رمضان بالتواريخ الهجرية نفسها من العام الماضي بتقويم أم القرى بدل الميلادية. والفترات تُقطع بتوقيت المنشأة نفسها، وهذا ما أصلح خطأً كان يُسقط يوماً كاملاً بصمت عند تغيير الساعة.',
         },
       ],
     },
     en: {
-      name: 'Mawaheb',
-      kind: 'Arabic talent-discovery platform',
-      tagline: 'Arabic is the default, not a translation layer — and there is no JavaScript framework.',
+      name: 'Opsight',
+      kind: 'Operations and business intelligence for Gulf businesses',
+      tagline: 'Orders, stock and expenses in one place, turned into figures that are compared and explained.',
       summary:
-        'Musicians, artists, designers, writers and athletes publish a real portfolio, and scouts and brands find them. The global platforms were never built for Arabic content: mirrored layouts, search that does not understand the language, no cultural context. Mawaheb is the opposite bet: laid out right-to-left from the first line, with English as the toggle.',
+        'A small or mid-sized business keeps its orders in one place, its stock in another and its expenses in a spreadsheet, so nobody can say what last month’s margin was or why it moved. Opsight records orders, customers, products, inventory and expenses, and turns them into metrics, comparisons and insights for the owner and the manager. Each of four roles sees only its own part, so staff never see a cost; several businesses share one installation without ever seeing each other; and it runs in Arabic and English, in each country’s currency with its VAT. The insights are deterministic rules, not a model, so every figure can be traced back to the orders behind it.',
       points: [
         {
-          h: 'Blade renders every page; no JavaScript framework',
-          b: 'Discovery pages have to be crawlable and open fast on a phone, and a client-side SPA loses on both. So the product is a Laravel monolith rendering server-side HTML, with JavaScript as progressive enhancement only: theme, modals, infinite scroll, upload UX.',
+          h: 'Money is exact, and the past stays put',
+          b: 'Amounts are DECIMAL in the database and bcmath strings in PHP, never floats, to three places for dinars. Every order line keeps the price and cost it was sold at, so changing a product’s cost today cannot rewrite last year’s margin.',
         },
         {
-          h: 'Three account types, gated in the data layer',
-          b: 'Talent, scout and brand are chosen at registration and enforced by middleware and policies, not by hiding buttons. Minimum age 16 is validated server-side from the birth date, so no younger account can be opened.',
+          h: 'Four roles, enforced by the API',
+          b: 'Owner, manager, analyst and staff are some fifty abilities checked by policies on the server. A field a role may not see — a cost, a margin, a customer’s lifetime value — is left out of the response itself, not hidden in the interface.',
         },
         {
-          h: 'Counters that stay honest',
-          b: 'The application count is incremented inside the same transaction that writes the application, and a view is counted only when its row is actually written, because a counter that drifts is worse than no counter. Profile completeness is a weighted formula, not a guess.',
+          h: 'Many businesses, one database, no leaks',
+          b: 'Every owned table carries its business, and a global scope filters every query by it. With no business in context a query fails instead of returning everyone’s rows, and tests sign in as two owners and check neither can find the other’s records.',
         },
         {
-          h: 'Deletion that actually deletes',
-          b: 'Soft delete, a grace period with an email notice, then a purge that removes the rows and the stored media. A real erasure path, not a hidden flag.',
+          h: 'Comparisons that are honest about the calendar',
+          b: 'A period still in progress is marked incomplete when it is compared with a finished one, and Ramadan can be compared with the same Hijri dates last year, by the Umm al-Qura calendar, instead of the same Gregorian ones. Periods are cut in the business’s own time zone, which fixed a bug where a clock change silently dropped a whole day.',
         },
       ],
     },

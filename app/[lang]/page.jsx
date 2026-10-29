@@ -76,7 +76,7 @@ export default async function Home({ params }) {
     : { stored: 'stored', derived: 'derived', approved: 'approved', reversal: 'counter-entry', rows: 'rows', query: 'query time', server: 'server-side' };
   // Where each rule came from: the projects it was learned in.
   const ORIGINS = [
-    ['diwan', 'booking', 'takharruj', 'lamma', 'mawaheb'],
+    ['diwan', 'booking', 'takharruj', 'lamma', 'opsight'],
     ['diwan', 'booking'],
     ['diwan', 'booking', 'takharruj'],
     ['lamma', 'booking'],

@@ -99,6 +99,7 @@ for (const name of names) {
         try {
           if (P.setLocale) await P.setLocale(page, P.base, locale);
           if (role) await login(page, P, role);
+          if (role && P.afterLogin) await P.afterLogin(page, P.base, locale);
         } catch (e) {
           problems.push(`${name} ${locale} ${device} ${role}: setup failed — ${e.message.slice(0, 160)}`);
           await ctx.close();

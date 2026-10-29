@@ -1275,7 +1275,6 @@ html[lang="en"] .pc-say,html[lang="en"] .cs-hook,html[lang="en"] .cs-next-hook{t
 .cv-fill{fill:var(--c)}
 .cv-fill-2{fill:color-mix(in srgb,var(--c) 68%,var(--bg))}
 .cv-ink{fill:none;stroke:var(--ink-3);stroke-width:4;stroke-linecap:round}
-.cv-thick{stroke-width:8}
 .cv-check{fill:none;stroke:var(--accent);stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
 .cv-card{fill:var(--card-2);stroke:var(--line-2);stroke-width:2}
 .cv-line{stroke:var(--line-2);stroke-width:2}
@@ -1289,9 +1288,7 @@ html[lang="en"] .pc-say,html[lang="en"] .cs-hook,html[lang="en"] .cs-next-hook{t
 .cv-house{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 .cv-track{fill:none;stroke:var(--line-2);stroke-width:8}
 .cv-ring{fill:none;stroke:var(--c);stroke-width:8;stroke-linecap:round;stroke-dasharray:292 400}
-.cv-cone{fill:var(--c);fill-opacity:.14}
-.cv-star{fill:var(--c);stroke:var(--c);stroke-width:3;stroke-linejoin:round}
-.cv-lens{fill:color-mix(in srgb,var(--c) 10%,transparent);stroke:var(--ink);stroke-width:5}
+.cv-trend{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
 
 /* ------------------------------------------------------------ services */
 .sv-list{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
