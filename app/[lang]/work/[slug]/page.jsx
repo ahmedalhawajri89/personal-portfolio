@@ -297,7 +297,7 @@ export default async function Project({ params }) {
             {held.length > 0 && (
               <div className="cs-run" aria-label={d.testsH} role="group">
                 <div className="cs-run-bar" aria-hidden="true">
-                  <span className="tl-dots"><i /><i /><i /></span>
+                  <span className="cs-run-dots"><i /><i /><i /></span>
                   <span className="lat">./vendor/bin/pest</span>
                 </div>
                 <ul>

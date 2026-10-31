@@ -8,9 +8,9 @@ import Motion from '../../components/Motion';
 import Intro from '../../components/Intro';
 import Hero from '../../components/Hero';
 import Cover from '../../components/Cover';
-import SystemStory from '../../components/SystemStory';
+import BehindScreen from '../../components/BehindScreen';
 import RuleStack from '../../components/RuleStack';
-import TestLab from '../../components/TestLab';
+import Problems from '../../components/Problems';
 import Scenes from '../../components/Scenes';
 import Pointer from '../../components/Pointer';
 import Curtain from '../../components/Curtain';
@@ -183,13 +183,14 @@ export default async function Home({ params }) {
         {/* What this work actually taught: real situations from the projects,
             each with the decision taken and the test that keeps it solved. */}
         <section id="problems" className="wrap scroll-mt-24 pt-28 sm:pt-36">
-          <SectionHead eyebrow={t.problems.eyebrow} h={t.problems.h} lede={t.problems.lede} hue="var(--h-test)" />
-          <TestLab
+          <Problems
             lang={lang}
             tests={HERO_TESTS}
             projects={Object.fromEntries(PROJECTS.map((pr) => [pr.slug, { name: pr[lang].name, repo: pr.repo, hue: HUE[pr.slug] }]))}
-            labels={{ list: t.problems.list, passed: t.proof.passed, again: t.proof.again, problem: t.proof.lProblem, decision: t.proof.lDecision, repo: t.proof.repo }}
-          />
+            labels={{ solved: t.problems.solved, passed: t.proof.passed, decision: t.problems.decision, repo: t.proof.repo }}
+          >
+            <SectionHead eyebrow={t.problems.eyebrow} h={t.problems.h} lede={t.problems.lede} hue="var(--h-test)" />
+          </Problems>
         </section>
 
         {/* ------------------------------------------------------ services */}
@@ -230,19 +231,20 @@ export default async function Home({ params }) {
         </section>
 
         {/* --------------------------------------------------- behind the screen */}
-        {/* What happens under one button, told by the scroll: the system is
-            drawn part by part while each part is explained in plain words
-            (components/SystemStory.jsx), and then the tests, by name. */}
+        {/* One order, seen from further and further in: a window whose screen
+            lifts away layer by layer (components/BehindScreen.jsx). */}
         <section id="proof" className="scroll-mt-24 pt-28 sm:pt-36">
-          <div className="wrap">
+          <div className="wrap bs-head">
             <SectionHead eyebrow={t.proof.eyebrow} h={t.proof.h} lede={t.proof.lede} hue="var(--h-test)" />
           </div>
-          <SystemStory
+          <BehindScreen
             parts={t.proof.parts}
+            ui={{ item: t.services.ui.item, left: t.services.ui.left, add: t.services.ui.add, reserved: t.services.ui.reserved, lock: t.proof.lock }}
             tests={HERO_TESTS.slice(0, 3).map((x) => x.file.replace('.php', ''))}
             total={totalTests}
             passed={t.hero.passed}
-            diagramLabel={t.hero.diagram}
+            outside={t.proof.outside}
+            jumpLabel={t.proof.jump}
           />
         </section>
 
