@@ -152,7 +152,7 @@ html[lang="en"] body{font-family:'Instrument',system-ui,sans-serif}
   font-variant-numeric:tabular-nums}
 
 /* -------------------------------------------------------------- helpers */
-.wrap{width:100%;max-width:1200px;margin-inline:auto;padding-inline:clamp(18px,4vw,44px)}
+.wrap{width:100%;max-width:1560px;margin-inline:auto;padding-inline:clamp(18px,4vw,56px)}
 .rule{height:1px;background:var(--line);border:0}
 
 /* A section label is text with a dot, not a tinted box. Filled orange on
@@ -854,7 +854,7 @@ a.cvx-fact:hover .cvx-go{color:var(--accent);transform:translate(2px,-2px)}
   transition:transform .55s var(--tb-ease)}
 .tb.is-away{transform:translateY(-140%)}
 .tb-in{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:16px;
-  max-width:1200px;height:84px;margin:0 auto;padding-inline:clamp(10px,2.6vw,26px);pointer-events:auto;
+  max-width:1560px;height:84px;margin:0 auto;padding-inline:clamp(10px,2.6vw,38px);pointer-events:auto;
   border:1px solid transparent;border-radius:28px;background:transparent;
   transition:max-width .7s var(--tb-ease),height .55s var(--tb-ease),margin .55s var(--tb-ease),padding .55s var(--tb-ease),
     background-color .4s ease,border-color .4s ease,box-shadow .55s ease}
@@ -1325,7 +1325,7 @@ html[lang="en"] .pc-say,html[lang="en"] .cs-hook,html[lang="en"] .cs-next-hook{t
 
 /* ------------------------------------------------------------ behind the screen */
 .ss{position:relative}
-.ss-grid{display:grid;gap:40px;width:100%;max-width:1200px;margin:0 auto;padding-inline:clamp(18px,4vw,44px)}
+.ss-grid{display:grid;gap:40px;width:100%;max-width:1560px;margin:0 auto;padding-inline:clamp(18px,4vw,56px)}
 @media (min-width:1024px){
   .ss-pin{display:flex;align-items:center;min-height:100svh}
   .ss-grid{grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);align-items:center;gap:64px}
