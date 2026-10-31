@@ -1292,12 +1292,12 @@ html[lang="en"] .pc-say,html[lang="en"] .cs-hook,html[lang="en"] .cs-next-hook{t
 
 /* ------------------------------------------------------------ services */
 .sv-list{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
-.sv{display:grid;grid-template-columns:64px minmax(0,1fr);gap:18px 24px;padding:clamp(30px,4vw,50px) 0;border-bottom:1px solid var(--line)}
+.sv{display:grid;grid-template-columns:64px minmax(0,1fr);gap:18px 24px;padding:clamp(24px,2.8vw,38px) 0;border-bottom:1px solid var(--line)}
 @media (min-width:1024px){.sv{grid-template-columns:130px minmax(0,1fr);gap:20px 56px;align-items:center}}
 .sv-mark{color:var(--c)}
 .glyph{display:block;width:100%;height:auto;fill:none;stroke:currentColor;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
 .sv-label{margin:0;font-size:15px;font-weight:800;color:var(--c)}
-.sv-say{margin:12px 0 22px;max-width:32ch;font-size:clamp(23px,2.6vw,40px);font-weight:700;line-height:1.24;letter-spacing:-.025em;color:var(--ink);text-wrap:pretty}
+.sv-say{margin:10px 0 18px;max-width:46ch;font-size:clamp(23px,2.3vw,36px);font-weight:700;line-height:1.24;letter-spacing:-.025em;color:var(--ink);text-wrap:pretty}
 [dir="rtl"] .sv-say{letter-spacing:0;line-height:1.55}
 .sv-note{margin:0;font-size:13.5px;color:var(--ink-3)}
 .glyph .g-drop,.glyph .g-blink,.glyph .g-bar,.glyph .g-move{fill:currentColor;stroke:none}
@@ -1413,13 +1413,13 @@ html[lang="en"] .pc-say,html[lang="en"] .cs-hook,html[lang="en"] .cs-next-hook{t
 .rs{display:grid;gap:clamp(24px,3vw,40px);margin:0;padding:0;list-style:none}
 @media (min-width:1024px){
   .rs{gap:0}
-  .rs-item{position:sticky;top:calc(96px + var(--k) * 12px);padding-bottom:clamp(40px,7vh,80px)}
+  .rs-item{position:sticky;top:calc(96px + var(--k) * 12px);padding-bottom:clamp(20px,3.5vh,40px)}
 }
 .rs-card-in{display:grid;gap:28px;padding:clamp(22px,3vw,40px);border:1px solid var(--line-2);border-radius:28px;background-color:var(--card);
   background-image:radial-gradient(70% 90% at 88% 12%,color-mix(in srgb,var(--c) 14%,transparent),transparent 70%);
   box-shadow:0 40px 80px -50px rgba(0,0,0,.7);transform-origin:50% 0;will-change:transform}
 [dir="rtl"] .rs-card-in{background-image:radial-gradient(70% 90% at 12% 12%,color-mix(in srgb,var(--c) 14%,transparent),transparent 70%)}
-@media (min-width:1024px){.rs-card-in{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;gap:56px;min-height:min(560px,70vh)}}
+@media (min-width:1024px){.rs-card-in{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;gap:48px;min-height:min(470px,60vh)}}
 .rs-n{margin:0;font-family:'GeistMono',ui-monospace,monospace;font-size:13px;color:var(--ink-3)}
 .rs-n b{font-weight:500;color:var(--c)}
 .rs-h{margin:16px 0 0;font-size:clamp(28px,3.3vw,50px);font-weight:800;line-height:1.08;letter-spacing:-.03em;color:var(--ink);text-wrap:balance}

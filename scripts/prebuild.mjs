@@ -14,11 +14,11 @@ import { SITE } from '../lib/site.mjs';
 import { PROJECTS } from '../content/projects.js';
 
 const LANGS = ['ar', 'en'];
-const ROOT_LANG = 'en'; // must match scripts/postbuild.mjs
 
+// Both languages, never `/`: on Vercel the root is a noindex stub that sends
+// visitors on to /en/, so listing it would hide the English home page.
 const urls = [
-  '/',
-  ...LANGS.filter((l) => l !== ROOT_LANG).map((l) => `/${l}/`),
+  ...LANGS.map((l) => `/${l}/`),
   ...LANGS.flatMap((l) => PROJECTS.map((p) => `/${l}/work/${p.slug}/`)),
 ];
 

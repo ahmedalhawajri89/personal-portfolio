@@ -78,7 +78,7 @@ export default function SystemStory({ parts, tests, total, passed, diagramLabel 
         // The build, scrubbed by the scroll while the section holds still.
         const build = gsap.timeline({
           scrollTrigger: {
-            trigger: el.querySelector('.ss-pin'), start: 'top top', end: () => `+=${innerHeight * 3.2}`,
+            trigger: el.querySelector('.ss-pin'), start: 'top top', end: () => `+=${innerHeight * 2.2}`,
             pin: true, scrub: 0.6, invalidateOnRefresh: true,
             onUpdate: (self) => {
               const label = build.currentLabel();

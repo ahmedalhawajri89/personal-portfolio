@@ -282,12 +282,13 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
   // call to action, not a sixth link.
   const links = [
     ['work', t.nav.work],
+    ['problems', t.nav.problems],
     ['services', t.nav.services],
     ['process', t.nav.process],
     ['proof', t.nav.proof],
     ['about', t.nav.about],
   ];
-  const watched = ['home', 'work', 'services', 'process', 'proof', 'skills', 'about', 'contact'];
+  const watched = ['home', 'work', 'problems', 'services', 'process', 'proof', 'skills', 'about', 'contact'];
 
   // Reading down, the capsule gets out of the way; any upward move brings it
   // back, and so does a pointer at the top edge. Travel is accumulated per

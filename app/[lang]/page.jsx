@@ -98,6 +98,7 @@ export default async function Home({ params }) {
       <Pointer label={t.work.view} />
       <Scenes chapters={[
         { id: 'work', name: t.work.eyebrow, hue: LIGHT.accent },
+        { id: 'problems', name: t.problems.eyebrow, hue: LIGHT.test },
         { id: 'services', name: t.services.eyebrow, hue: LIGHT.ui },
         { id: 'process', name: t.process.eyebrow, hue: LIGHT.api },
         { id: 'proof', name: t.proof.eyebrow, hue: LIGHT.test },
@@ -178,6 +179,19 @@ export default async function Home({ params }) {
           </ol>
         </section>
 
+        {/* ------------------------------------------------------ problems */}
+        {/* What this work actually taught: real situations from the projects,
+            each with the decision taken and the test that keeps it solved. */}
+        <section id="problems" className="wrap scroll-mt-24 pt-28 sm:pt-36">
+          <SectionHead eyebrow={t.problems.eyebrow} h={t.problems.h} lede={t.problems.lede} hue="var(--h-test)" />
+          <TestLab
+            lang={lang}
+            tests={HERO_TESTS}
+            projects={Object.fromEntries(PROJECTS.map((pr) => [pr.slug, { name: pr[lang].name, repo: pr.repo, hue: HUE[pr.slug] }]))}
+            labels={{ list: t.problems.list, passed: t.proof.passed, again: t.proof.again, problem: t.proof.lProblem, decision: t.proof.lDecision, repo: t.proof.repo }}
+          />
+        </section>
+
         {/* ------------------------------------------------------ services */}
         {/* Named the way a client names the thing they need, each with a
             small moving mark of what it makes and the project that already
@@ -232,18 +246,6 @@ export default async function Home({ params }) {
             passed={t.hero.passed}
             diagramLabel={t.hero.diagram}
           />
-          <div className="wrap pt-20">
-            <p className="sec-label" style={{ '--c': 'var(--h-test)' }}>{t.proof.tests}</p>
-            <h3 className="sec-h tl-h mt-4" data-m="lines">{t.proof.labH}</h3>
-            <div className="mt-10">
-              <TestLab
-                lang={lang}
-                tests={HERO_TESTS}
-                projects={Object.fromEntries(PROJECTS.map((pr) => [pr.slug, { name: pr[lang].name, repo: pr.repo, hue: HUE[pr.slug] }]))}
-                labels={{ list: t.proof.tests, passed: t.proof.passed, again: t.proof.again, problem: t.proof.lProblem, decision: t.proof.lDecision, repo: t.proof.repo }}
-              />
-            </div>
-          </div>
         </section>
 
         {/* ---------------------------------------------------------- tools */}
