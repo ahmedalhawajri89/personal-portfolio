@@ -223,12 +223,10 @@ export default async function Home({ params }) {
         </section>
 
         {/* ------------------------------------------------------- process */}
-        <section id="process" className="wrap scroll-mt-24 pt-28 sm:pt-36">
-          <SectionHead eyebrow={t.process.eyebrow} h={t.process.h} lede={t.process.lede} hue="var(--h-api)" />
-          {/* Six rules as a deck of cards that stack as the reader scrolls,
-              each with a scene that shows the rule happening and the
-              projects it came from (components/RuleStack.jsx). */}
-          <RuleStack rules={PROCESS[lang]} origins={ORIGINS} V={V} fromLabel={t.process.from} />
+        <section id="process" className="rp-sec scroll-mt-24 pt-28 sm:pt-36">
+          {/* Six rules on a stage that holds the screen: each floods in from
+              its number and covers the last (components/RuleStack.jsx). */}
+          <RuleStack eyebrow={t.process.eyebrow} h={t.process.h} lede={t.process.lede} rules={PROCESS[lang]} origins={ORIGINS} V={V} fromLabel={t.process.from} jumpLabel={t.process.eyebrow} />
         </section>
 
         {/* --------------------------------------------------- behind the screen */}

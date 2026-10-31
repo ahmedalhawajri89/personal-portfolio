@@ -3,20 +3,22 @@
 import { useEffect, useRef } from 'react';
 import { loadMotion, MOTION_OK } from '../lib/motion';
 
-const HUES = ['var(--h-ui)', 'var(--h-db)', 'var(--h-test)', 'var(--h-api)', 'var(--h-sec)', 'var(--accent)'];
+// Bright in either theme: each rule floods the whole screen in its colour, so
+// these are plain colours with dark text on them, not the theme's hue tokens.
+const FLOOD = ['#4FB4FF', '#2FD3A1', '#B6F25A', '#A99CFF', '#FFB547', '#FF7A45'];
 const pad = (n) => String(n).padStart(2, '0');
 
-/* How he works: six rules as a deck of cards. On a wide screen each card
-   sticks below the header and the next one slides over it, while the one
-   underneath steps back -- smaller, darker -- so the rule in front is always
-   the one being read. Each card carries a small scene that shows its rule
-   happening instead of restating it, and the projects the rule came from.
+/* How he works, as a stage that holds the screen. The six rules are numbered
+   along the bottom; as the page scrolls, each one floods out of its own number
+   in its own colour and covers the rule before it. Its title rises line by line
+   out of a mask, and the small scene that shows the rule happening starts as it
+   lands. The numbers also jump straight to a rule.
 
-   A scene plays only while its card is the one in front (or, on a phone,
-   while it is on screen). The markup is each scene's finished frame, so for
-   reduced motion or without script every card is a complete still picture.
-   Every label in a scene is code that exists in the projects
-   (lockForUpdate, date_of_birth) or a plain word for what it shows. */
+   Only on a wide screen with motion allowed. On a phone, or for reduced motion,
+   it is a plain list of coloured cards: the markup is each scene's finished
+   frame, so every rule is complete with or without script. Every label in a
+   scene is code that exists in the projects (lockForUpdate, date_of_birth) or a
+   plain word for what it shows. */
 
 // The scenes. Each `art` is the drawing; each `play` returns a looping
 // timeline that starts from the drawing's first state.
@@ -229,77 +231,168 @@ const scene = (k, V) => [
   },
 ][k];
 
-export default function RuleStack({ rules, origins, V, fromLabel }) {
+export default function RuleStack({ eyebrow, h, lede, rules, origins, V, fromLabel, jumpLabel }) {
   const root = useRef(null);
 
   useEffect(() => {
     let mm, gone = false;
     (async () => {
-      const [{ gsap, ScrollTrigger }, { DrawSVGPlugin }, { ScrambleTextPlugin }, { TextPlugin }] = await Promise.all([
+      const [{ gsap, ScrollTrigger, SplitText, lenis }, { DrawSVGPlugin }, { ScrambleTextPlugin }, { TextPlugin }] = await Promise.all([
         loadMotion(), import('gsap/DrawSVGPlugin'), import('gsap/ScrambleTextPlugin'), import('gsap/TextPlugin'),
       ]);
       gsap.registerPlugin(DrawSVGPlugin, ScrambleTextPlugin, TextPlugin);
       if (gone || !root.current) return;
-      const cards = Array.from(root.current.querySelectorAll('.rs-item'));
+      const el = root.current;
+      const panels = Array.from(el.querySelectorAll('.rp-rule'));
+      const plays = panels.map((panel, k) => {
+        const svg = panel.querySelector('.rs-scene');
+        return () => scene(k, V).play(gsap, (x) => svg.querySelector(x), (x) => Array.from(svg.querySelectorAll(x)));
+      });
+
       mm = gsap.matchMedia();
-      mm.add({ motion: MOTION_OK, wide: '(min-width: 1024px)' }, (ctx) => {
-        const { motion, wide } = ctx.conditions;
-        if (!motion) return;
-        const cleanups = cards.map((card, k) => {
-          const svg = card.querySelector('.rs-scene');
-          const $ = (s) => svg.querySelector(s);
-          const $$ = (s) => Array.from(svg.querySelectorAll(s));
-          const tl = scene(k, V).play(gsap, $, $$);
-          tl.pause(0);
-          // Plays while the card is the one being read.
-          const st = ScrollTrigger.create({
-            trigger: card, start: wide ? 'top 70%' : 'top 85%', end: wide ? `bottom ${k === cards.length - 1 ? 'top' : '40%'}` : 'bottom 15%',
-            onToggle: (self) => (self.isActive ? tl.play() : tl.pause()),
-          });
-          // On a wide screen the card underneath steps back as the next one
-          // slides over it.
-          let back = null;
-          if (wide && cards[k + 1]) {
-            back = gsap.to(card.querySelector('.rs-card-in'), {
-              scale: 0.9, filter: 'brightness(0.55)', ease: 'none',
-              scrollTrigger: { trigger: cards[k + 1], start: 'top bottom', end: 'top 15%', scrub: true },
-            });
-          }
-          return () => { st.kill(); tl.kill(); back?.scrollTrigger?.kill(); back?.kill(); };
+
+      // The stage.
+      mm.add(`${MOTION_OK} and (min-width: 1024px)`, () => {
+        const stage = el.querySelector('.rp-stage');
+        const dial = el.querySelector('.rp-dial');
+        const dots = Array.from(el.querySelectorAll('.rp-dot'));
+        const intro = el.querySelector('.rp-intro');
+        const n = panels.length;
+        const timelines = plays.map((make) => make().pause(0));
+        const splits = [];
+
+        const at = (i) => {
+          const d = dots[i].getBoundingClientRect();
+          const s0 = stage.getBoundingClientRect();
+          return `${(d.left + d.width / 2 - s0.left).toFixed(0)}px ${(d.top + d.height / 2 - s0.top).toFixed(0)}px`;
+        };
+        const far = Math.hypot(stage.offsetWidth, stage.offsetHeight) * 1.05;
+
+        const tl = gsap.timeline({ defaults: { ease: 'none' } });
+        panels.forEach((panel, k) => {
+          const title = new SplitText(panel.querySelector('.rp-h'), { type: 'lines', linesClass: 'rp-line', mask: 'lines' });
+          splits.push(title);
+          const start = k + 0.05;
+          const before = k ? panels[k - 1].querySelector('.rp-in') : intro.querySelector('.rp-intro-in');
+          gsap.set(title.lines, { yPercent: 118 });
+          tl.fromTo(panel, { clipPath: `circle(0px at ${at(k)})` }, { clipPath: `circle(${far}px at ${at(k)})`, duration: 0.66, ease: 'power2.inOut' }, start)
+            .to(before, { scale: 0.92, yPercent: -7, duration: 0.66, ease: 'power2.inOut' }, start)
+            .fromTo(panel.querySelector('.rp-num'), { xPercent: k % 2 ? 40 : -40, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, start + 0.2)
+            .to(title.lines, { yPercent: 0, duration: 0.42, stagger: 0.05, ease: 'power3.out' }, start + 0.26)
+            .fromTo([panel.querySelector('.rs-b'), panel.querySelector('.rs-from')], { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 0.34, stagger: 0.05, ease: 'power2.out' }, start + 0.42)
+            .fromTo(panel.querySelector('.rs-stage'), { scale: 0.8, rotation: k % 2 ? 4 : -4, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.5, ease: 'back.out(1.5)' }, start + 0.3);
         });
-        return () => cleanups.forEach((f) => f());
+        tl.to({}, { duration: 0.4 });
+
+        // Which rule is in front drives the numbers and its scene.
+        let on = -1;
+        const land = (i) => {
+          if (i === on) return;
+          on = i;
+          dots.forEach((d, k) => {
+            d.classList.toggle('is-on', k === i);
+            if (k === i) d.setAttribute('aria-current', 'step');
+            else d.removeAttribute('aria-current');
+          });
+          dial.classList.toggle('is-flood', i >= 0);
+          timelines.forEach((t, k) => { if (k === i) t.restart(); else t.pause(); });
+        };
+
+        const st = ScrollTrigger.create({
+          trigger: el,
+          start: 'top top',
+          end: 'bottom bottom',
+          animation: tl,
+          scrub: true,
+          onUpdate: () => {
+            dial.style.setProperty('--done', (tl.progress() * 1.04).toFixed(3));
+            land(Math.min(n - 1, Math.floor(tl.time() - 0.5)));
+          },
+          onToggle: (self) => { if (!self.isActive) timelines.forEach((t) => t.pause()); },
+        });
+
+        const jump = dots.map((d, k) => {
+          const go = () => {
+            const y = st.start + ((k + 1) / tl.duration()) * (st.end - st.start);
+            if (lenis) lenis.scrollTo(y, { duration: 1.2 });
+            else window.scrollTo({ top: y, behavior: 'smooth' });
+          };
+          d.addEventListener('click', go);
+          return () => d.removeEventListener('click', go);
+        });
+
+        return () => {
+          jump.forEach((f) => f());
+          st.kill();
+          tl.kill();
+          timelines.forEach((t) => t.kill());
+          splits.forEach((t) => t.revert());
+        };
+      });
+
+      // The list: each card opens once as it arrives.
+      mm.add(`${MOTION_OK} and (max-width: 1023.98px)`, () => {
+        const made = panels.map((panel, k) => {
+          const t = plays[k]().pause(0);
+          const st = ScrollTrigger.create({
+            trigger: panel,
+            start: 'top 85%',
+            end: 'bottom 15%',
+            onToggle: (self) => (self.isActive ? t.play() : t.pause()),
+          });
+          const open = gsap.from(panel, { clipPath: 'circle(0% at 12% 8%)', duration: 1, ease: 'power3.inOut', scrollTrigger: { trigger: panel, start: 'top 88%', once: true } });
+          return () => { st.kill(); t.kill(); open.scrollTrigger?.kill(); open.kill(); };
+        });
+        return () => made.forEach((f) => f());
       });
     })();
     return () => { gone = true; mm?.revert(); };
   }, [V]);
 
   return (
-    <ol className="rs" ref={root}>
-      {rules.map((r, k) => {
-        const s = scene(k, V);
-        return (
-          <li key={r.h} className="rs-item" style={{ '--c': HUES[k], '--k': k }}>
-            <div className="rs-card-in">
-              <div className="rs-copy">
-                <p className="rs-n lat"><b>{pad(k + 1)}</b> / {pad(rules.length)}</p>
-                <h3 className="rs-h">{r.h}</h3>
-                <p className="rs-b">{r.b}</p>
-                {origins[k]?.length > 0 && (
-                  <p className="rs-from">
-                    <span>{fromLabel}</span>
-                    {origins[k].map((o) => (
-                      <a key={o.href} href={o.href} style={{ '--p': o.hue }}><i aria-hidden="true" />{o.name}</a>
-                    ))}
-                  </p>
-                )}
+    <div className="rp" ref={root} style={{ '--n': rules.length }}>
+      <div className="rp-stage">
+        <header className="rp-intro">
+          <div className="rp-intro-in">
+            <p className="sec-label" style={{ '--c': 'var(--h-api)' }}>{eyebrow}</p>
+            <h2 className="rp-title">{h}</h2>
+            <p className="rp-lede">{lede}</p>
+          </div>
+        </header>
+
+        {rules.map((r, k) => {
+          const s = scene(k, V);
+          return (
+            <article key={r.h} className="rp-rule" style={{ '--flood': FLOOD[k], '--c': FLOOD[k] }}>
+              <div className="rp-in">
+                <div className="rp-copy">
+                  <p className="rp-num lat" aria-hidden="true">{pad(k + 1)}</p>
+                  <h3 className="rp-h">{r.h}</h3>
+                  <p className="rs-b">{r.b}</p>
+                  {origins[k]?.length > 0 && (
+                    <p className="rs-from">
+                      <span>{fromLabel}</span>
+                      {origins[k].map((o) => (
+                        <a key={o.href} href={o.href}><i aria-hidden="true" />{o.name}</a>
+                      ))}
+                    </p>
+                  )}
+                </div>
+                <div className="rs-stage">
+                  <svg className="rs-scene" viewBox="0 0 520 340" aria-hidden="true">{s.art}</svg>
+                </div>
               </div>
-              <div className="rs-stage">
-                <svg className="rs-scene" viewBox="0 0 520 340" aria-hidden="true">{s.art}</svg>
-              </div>
-            </div>
-          </li>
-        );
-      })}
-    </ol>
+            </article>
+          );
+        })}
+
+        <nav className="rp-dial" aria-label={jumpLabel}>
+          <i className="rp-track" aria-hidden="true" />
+          {rules.map((r, k) => (
+            <button key={r.h} type="button" className="rp-dot lat" aria-label={r.h}>{pad(k + 1)}</button>
+          ))}
+        </nav>
+      </div>
+    </div>
   );
 }
