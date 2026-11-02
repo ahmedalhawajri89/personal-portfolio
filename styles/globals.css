@@ -1188,9 +1188,6 @@ html.curtain-in[data-curtain="lines"] .lfx-tag{opacity:1}
 [dir="rtl"] .pc-say{letter-spacing:0;line-height:1.45}
 .pc-say a{display:block;color:var(--ink);text-decoration:none}
 .pc-say a:hover{color:var(--c)}
-/* A project's promise is a heading, so in English it is set in title case
-   like the hero's lines; the copy itself stays in sentence case. */
-html[lang="en"] .pc-say,html[lang="en"] .cs-hook,html[lang="en"] .cs-next-hook{text-transform:capitalize}
 .pc-q{margin:18px 0 0;max-width:50ch;font-size:16px;line-height:1.8;color:var(--ink-2)}
 .pc-q b{display:block;margin-bottom:4px;font-size:13px;color:var(--ink-3)}
 .pc-stack{display:flex;flex-wrap:wrap;gap:6px;margin:22px 0 26px;padding:0;list-style:none}
