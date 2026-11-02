@@ -1,9 +1,8 @@
 import { LANGS, T } from '../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../content/projects';
-import { SERVICES, SKILLS, CAPABILITIES, PROCESS, TIMELINE, TESTIMONIALS, HERO_TESTS } from '../../content/site';
+import { SERVICES, CAPABILITIES, PROCESS, TIMELINE, TESTIMONIALS, HERO_TESTS } from '../../content/site';
 import { shotsOf, pagesOf } from '../../lib/shots';
 import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, ContactForm, BackToTop, TimelineScroll, Logo } from '../../components/Chrome';
-import Marquee from '../../components/Marquee';
 import Motion from '../../components/Motion';
 import Intro from '../../components/Intro';
 import Hero from '../../components/Hero';
@@ -144,9 +143,6 @@ export default async function Home({ params }) {
           <p className="sec-label" style={{ '--c': 'var(--accent)' }}>{t.why.eyebrow}</p>
           <p className="why-text" data-m="read">{t.why.text}</p>
         </section>
-
-        {/* ---------------------------------------------------------- stack */}
-        <Marquee items={SKILLS} roles={t.hero.tools.roles} label={t.hero.tools.label} />
 
         {/* ---------------------------------------------------------- work */}
         {/* The five projects, one row each: the project's own cover -- its

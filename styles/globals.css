@@ -972,24 +972,6 @@ html.intro .tb-in > *,html.intro .logo-a,html.intro .logo-check{animation-play-s
   .hx-live::after{animation:none}
 }
 
-/* ------------------------------------------------------------ stack ticker */
-.tk{border-block:1px solid var(--line);overflow:hidden}
-.tk-band{direction:ltr;padding:clamp(18px,2.4vw,30px) 0}
-.tk-track{display:flex;width:max-content;animation:tk 64s linear infinite}
-[dir="rtl"] .tk-track{animation-direction:reverse}
-.tk:not(.in-view) .tk-track,.tk:hover .tk-track{animation-play-state:paused}
-@keyframes tk{to{transform:translateX(-50%)}}
-.tk-item{display:inline-flex;align-items:center;gap:.32em;padding-inline-end:.7em;font-size:clamp(30px,4.2vw,58px);line-height:1;white-space:nowrap}
-.tk-logo{width:.62em;height:.62em;flex:none;color:var(--ink-3);transition:color .3s}
-.tk-item b{font-weight:800;letter-spacing:-.035em;color:var(--ink);transition:color .3s}
-.tk-item small{align-self:flex-start;margin-top:.15em;font-family:'GeistMono',ui-monospace,monospace;font-size:12px;font-weight:500;
-  letter-spacing:.02em;color:var(--accent-ink)}
-[dir="rtl"] .tk-item small{font-family:inherit;font-size:13px;font-weight:700}
-.tk-dot{flex:none;width:.16em;height:.16em;margin-inline-start:.45em;border-radius:50%;background:var(--accent)}
-.tk-item:hover b,.tk-item:hover .tk-logo{color:var(--accent-ink)}
-@media (prefers-reduced-motion:reduce){.tk-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center;row-gap:14px;padding-inline:16px}
-  .tk-track .tk-item:nth-child(n+10){display:none}}
-
 /* ------------------------------------------------------------ journey */
 .jr{margin-top:36px}
 .jr-steps{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}

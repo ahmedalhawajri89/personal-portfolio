@@ -92,13 +92,6 @@ export const CAPABILITIES = [
   },
 ];
 
-// Nine a client can recognise. The full stacks -- Pinia, Vite, Sanctum,
-// Breeze, Yajra and the rest -- stay on each case study, where they belong
-// to a project rather than to a list.
-export const SKILLS = [
-  'Laravel', 'PHP', 'MySQL', 'Vue 3', 'React', 'Next.js', 'Tailwind CSS', 'REST APIs', 'Pest', 'PHPUnit', 'Vitest', 'Playwright',
-];
-
 // Client quotes. Leave empty and the section is not rendered.
 // Each item: { ar: { quote, name, role }, en: { quote, name, role } }
 export const TESTIMONIALS = [];

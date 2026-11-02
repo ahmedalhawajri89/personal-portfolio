@@ -72,10 +72,10 @@ export function Reveal() {
     );
     els.forEach((el) => !el.classList.contains('seen') && io.observe(el));
 
-    // The two endless animations (the contact card's spinning border and the
+    // The endless animations (the contact card's spinning border and the
     // pipeline's travelling dot) run only while on screen. Unlike `.seen`,
     // this toggles both ways: scroll away and they stop costing anything.
-    const anims = document.querySelectorAll('.gradient-border, .pipe, .bento, .tk');
+    const anims = document.querySelectorAll('.gradient-border, .pipe, .bento');
     const live = new IntersectionObserver((entries) =>
       entries.forEach((e) => e.target.classList.toggle('in-view', e.isIntersecting)));
     anims.forEach((el) => live.observe(el));
