@@ -421,9 +421,9 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     <LangFx lang={lang} />
     <div className={`tb${scrolled ? ' is-scrolled' : ''}${away ? ' is-away' : ''}`} data-progress>
       <header className="tb-in">
-        <a href={`/${lang}/`} className="tb-brand" aria-label={PROFILE.name[lang]}>
+        <a href={`/${lang}/`} className="tb-brand">
           <Logo />
-          <span className="tb-id" aria-hidden="true">
+          <span className="tb-id">
             <span className="tb-name">{PROFILE.name[lang]}</span>
             <span className="tb-role lat">Full-Stack · QA</span>
           </span>
@@ -448,8 +448,8 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
               other one carries a name. */}
           <div className="lang-seg">
             <span className={`lang-on${lang === 'en' ? ' lat' : ''}`} aria-hidden="true">{lang === 'en' ? 'EN' : 'ع'}</span>
-            <a href={`/${o}${path}`} className={`lang-off${o === 'en' ? ' lat' : ''}`} aria-label={o === 'en' ? 'English' : 'العربية'} hrefLang={o}>
-              {o === 'en' ? 'EN' : 'ع'}
+            <a href={`/${o}${path}`} className={`lang-off${o === 'en' ? ' lat' : ''}`} hrefLang={o} lang={o}>
+              <span aria-hidden="true">{o === 'en' ? 'EN' : 'ع'}</span><span className="sr-only">{o === 'en' ? 'English' : 'العربية'}</span>
             </a>
           </div>
           <ThemeToggle lang={lang} />
@@ -610,11 +610,12 @@ export function ContactForm({ lang, to }) {
           _captcha: 'false',                      // FormSubmit
         }),
       });
-      const data = await r.json().catch(() => ({}));
-      // Providers disagree on the success flag: Web3Forms sends `success`,
-      // FormSubmit sends `success: "true"` as a string. A 2xx with no explicit
-      // failure counts as delivered.
-      if (!r.ok || data.success === false || data.success === 'false') throw new Error(data.message || r.statusText);
+      const data = await r.json().catch(() => null);
+      // Providers disagree on the success flag: Web3Forms sends `success:
+      // true`, FormSubmit sends `success: "true"`. Only that counts as sent: a
+      // 200 that is not their JSON (a challenge page, a captive portal) is a
+      // failure, so the visitor is never told a message went that did not.
+      if (!r.ok || !data || (data.success !== true && data.success !== 'true')) throw new Error(data?.message || r.statusText);
       setState('sent');
     } catch {
       setState('failed');
@@ -863,7 +864,7 @@ export function Footer({ lang, links, home = false }) {
           scrollTrigger: { trigger: mark, start: 'top bottom', end: 'bottom bottom', scrub: 0.6 },
         });
         gsap.from(el.querySelector('.foot-in'), {
-          y: 70, opacity: 0.2, ease: 'none',
+          y: 70, ease: 'none',
           scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 45%', scrub: true },
         });
         if (!pointer) return;

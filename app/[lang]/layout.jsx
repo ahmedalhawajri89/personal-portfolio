@@ -55,7 +55,9 @@ export async function generateMetadata({ params }) {
 // once; a page reached through the page curtain opens with it still down
 // (`curtain-in`, components/Curtain.jsx), or, after a change of language,
 // with the bands of components/LangFx.jsx still closed (`lines:<pattern>`).
-// A curtain page never runs the intro.
+// A curtain page never runs the intro, and neither does a phone: there the
+// curtain held the headline back for up to five seconds on a slow device,
+// so a phone opens straight onto the page.
 const BOOT = `(function(){try{
 var d=localStorage.getItem('theme')!=='light';
 document.documentElement.setAttribute('data-theme',d?'dark':'light');
@@ -64,7 +66,7 @@ if(m)m.setAttribute('content',d?'#0E0E0C':'#F7F6F3');
 document.documentElement.classList.add('js');
 if(location.hash)document.documentElement.classList.add('cv-off');
 var c=sessionStorage.getItem('curtain');if(c){sessionStorage.removeItem('curtain');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('curtain-in');if(c.indexOf('lines:')===0){document.documentElement.setAttribute('data-curtain','lines');document.documentElement.setAttribute('data-lfx',c.slice(6));}}}
-if(!location.hash&&!document.documentElement.classList.contains('curtain-in')&&['/','/ar','/ar/','/en','/en/'].indexOf(location.pathname)>-1&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('intro')){sessionStorage.setItem('intro','1');document.documentElement.classList.add('intro');}
+if(!location.hash&&!document.documentElement.classList.contains('curtain-in')&&['/','/ar','/ar/','/en','/en/'].indexOf(location.pathname)>-1&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&matchMedia('(min-width: 768px)').matches&&!sessionStorage.getItem('intro')){sessionStorage.setItem('intro','1');document.documentElement.classList.add('intro');}
 }catch(e){}})();`;
 
 export default async function RootLayout({ children, params }) {

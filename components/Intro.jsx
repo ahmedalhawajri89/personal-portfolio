@@ -16,7 +16,7 @@ const WORD = 'PORTFOLIO';
 
    The word is Latin in both languages: it is used as a mark here, like the
    logo, not as a sentence. The boot script decides whether the loader runs
-   at all (html.intro: once a visit, home page only, never for reduced
+   at all (html.intro: once a visit, home page only, wide screens only, never for reduced
    motion), so the curtain is already over the first paint. If script fails
    after that, a CSS timer takes it away regardless (globals.css,
    .intro-panel). The panel's class must never be `intro` itself: that is the

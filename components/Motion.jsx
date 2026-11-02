@@ -46,7 +46,7 @@ export default function Motion() {
         gsap.utils.toArray('[data-m="read"]').forEach((el) => {
           SplitText.create(el, {
             type: 'words', autoSplit: true, aria: 'none',
-            onSplit: (self) => gsap.fromTo(self.words, { opacity: 0.16 }, {
+            onSplit: (self) => gsap.fromTo(self.words, { opacity: 0.45 }, {
               opacity: 1, ease: 'none', stagger: 0.12,
               scrollTrigger: { trigger: el, start: 'top 78%', end: 'bottom 52%', scrub: 0.4 },
             }),

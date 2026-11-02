@@ -111,8 +111,10 @@ export default function Journey({ steps, labels }) {
             {steps.map((x, k) => (
               <img key={x.h} ref={(el) => (imgs.current[k] = el)}
                    className={`jr-img${k === on.i ? ' is-on' : k === on.prev ? ' was-on' : ''}`}
-                   src={x.file} alt={k === on.i ? x.alt : ''} aria-hidden={k !== on.i}
-                   width={x.w} height={x.ih} loading={k === 0 ? 'eager' : 'lazy'} decoding="async" />
+                   src={x.file} srcSet={x.md ? `${x.md} 960w, ${x.file} ${x.w}w` : undefined}
+                   sizes={x.md ? '(min-width: 1024px) min(52vw, 830px), 100vw' : undefined}
+                   alt={k === on.i ? x.alt : ''} aria-hidden={k !== on.i}
+                   width={x.w} height={x.ih} loading="lazy" decoding="async" />
             ))}
           </div>
           <div className="jr-progress" aria-hidden="true"><i /></div>

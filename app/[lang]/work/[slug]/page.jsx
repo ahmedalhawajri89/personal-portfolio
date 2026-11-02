@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { LANGS, T } from '../../../../lib/i18n';
 import { SITE } from '../../../../lib/site.mjs';
 import { PROJECTS, PROFILE } from '../../../../content/projects';
@@ -114,6 +116,8 @@ export default async function Project({ params }) {
     return {
       h: st[lang].h, b: st[lang].b, path: sh.path,
       file: src(sh.file), w: sh.w, ih: sh.h,
+      // A 960px copy for the tour frame where scripts/shots-md.mjs made one.
+      md: existsSync(join(process.cwd(), 'public', 'shots', p.shots, sh.file.replace(/\.webp$/, '-md.webp'))) ? src(sh.file.replace(/\.webp$/, '-md.webp')) : null,
       thumb: src(sh.thumb), tw: sh.tw, th: sh.th,
       phone: m ? { src: src(m.thumb), w: m.tw, h: m.th } : null,
       alt: `${c.name} — ${ar ? sh.labelAr : sh.labelEn}`,
