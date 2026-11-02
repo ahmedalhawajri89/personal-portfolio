@@ -29,6 +29,7 @@
    are preloaded, so the wait is a frame or two. */
 @font-face{font-family:'PlexArFx';src:url('/fonts/plex-arabic-700.woff2') format('woff2');font-weight:800;font-display:block;}
 @font-face{font-family:'InstrumentFx';src:url('/fonts/instrument-700.woff2') format('woff2');font-weight:800;font-display:block;}
+@font-face{font-family:'Bricolage';src:url('/fonts/bricolage-var.woff2') format('woff2');font-weight:200 800;font-stretch:75% 100%;font-display:swap;}
 @font-face{font-family:'GeistMono';src:url('/fonts/geistmono-400.woff2') format('woff2');font-weight:400;font-display:swap;}
 @font-face{font-family:'GeistMono';src:url('/fonts/geistmono-500.woff2') format('woff2');font-weight:500;font-display:swap;}
 
@@ -1156,6 +1157,14 @@ html.curtain-in[data-curtain="lines"] .lfx-tag{opacity:1}
 /* a bar under the sentence, in the colour of the part that is lit */
 .kh-h::after{content:'';display:block;width:min(260px,36%);height:7px;margin-top:.22em;border-radius:4px;background:var(--hue,var(--accent));transition:background-color .6s ease}
 .kh-u{display:inline-block}
+/* The English headline in Bricolage Grotesque, its two lines set against
+   each other on the font's own axes: the claim heavy and wide, the promise
+   light and narrow. Each letter reads its weight and width from --w and --s,
+   so the motion (components/Hero.jsx) can move them one letter at a time. */
+html[lang="en"] .kh-h{font-family:'Bricolage','Instrument',system-ui,sans-serif;font-weight:800;letter-spacing:-.04em;word-spacing:0;line-height:.94}
+html[lang="en"] .kh-line{--w:800;--s:100}
+html[lang="en"] .kh-line.is-soft{--w:300;--s:80}
+html[lang="en"] .kh-line,html[lang="en"] .kh-u{font-variation-settings:"wght" var(--w),"wdth" var(--s)}
 .kh-foot{display:grid;gap:28px}
 @media (min-width:1024px){.kh-foot{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:end;gap:64px}}
 .kh-parts{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
