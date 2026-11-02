@@ -5,7 +5,7 @@ import { T, other } from '../lib/i18n';
 import { PROFILE, PROJECTS } from '../content/projects';
 import Icon from './Icons';
 import LangFx from './LangFx';
-import { loadMotion, whenIdle } from '../lib/motion';
+import { loadMotion, whenIdle, motionWanted } from '../lib/motion';
 
 /* Inertial scrolling for a mouse or trackpad, from the one engine every
    animation on the page shares (lib/motion.js): Lenis driven by GSAP's ticker.
@@ -42,7 +42,7 @@ export function SmoothScroll() {
       window.removeEventListener('hashchange', onHash);
     };
   }, []);
-  useEffect(() => whenIdle(() => { loadMotion(); }), []);
+  useEffect(() => (motionWanted() ? whenIdle(() => { loadMotion(); }) : undefined), []);
   return null;
 }
 
@@ -849,6 +849,7 @@ export function Footer({ lang, links, home = false }) {
      wave, for touch. */
   useEffect(() => {
     let mm, gone = false;
+    if (!motionWanted()) return;
     const cancel = whenIdle(async () => {
       const { gsap } = await loadMotion();
       if (gone || !root.current) return;

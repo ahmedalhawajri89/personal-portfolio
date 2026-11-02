@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { loadMotion, MOTION_OK, POINTER_OK } from '../lib/motion';
+import { loadMotion, MOTION_OK, POINTER_OK, motionWanted } from '../lib/motion';
 import Icon from './Icons';
 
 const HUES = ['var(--h-db)', 'var(--h-api)', 'var(--h-ui)', 'var(--h-test)', 'var(--h-sec)'];
@@ -23,6 +23,7 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
 
   useEffect(() => {
     let mm, gone = false, splits = [];
+    if (!motionWanted()) return;
     const html = document.documentElement;
     // The entrance plays only while the page is still covered -- by the
     // intro on a first visit, or by the curtain from another page -- so the

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { loadMotion, MOTION_OK } from '../lib/motion';
+import { loadMotion, MOTION_OK, motionWanted } from '../lib/motion';
 import Icon from './Icons';
 
 const HUES = ['var(--h-ui)', 'var(--h-api)', 'var(--h-db)', 'var(--h-test)', 'var(--h-sec)'];
@@ -140,6 +140,7 @@ export default function BehindScreen({ parts, ui, tests, total, passed, outside,
 
   useEffect(() => {
     let mm, gone = false;
+    if (!motionWanted()) return;
     (async () => {
       const { gsap, ScrollTrigger, lenis } = await loadMotion();
       if (gone || !root.current) return;

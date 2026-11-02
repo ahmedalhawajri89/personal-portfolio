@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { loadMotion, whenIdle, MOTION_OK } from '../lib/motion';
+import { loadMotion, whenIdle, MOTION_OK, motionWanted } from '../lib/motion';
 
 /* The page's motion, declared in the markup and run by GSAP. Each effect is
    named by a data-m attribute so a page opts in element by element:
@@ -28,6 +28,7 @@ import { loadMotion, whenIdle, MOTION_OK } from '../lib/motion';
 export default function Motion() {
   useEffect(() => {
     let mm, gone = false;
+    if (!motionWanted()) return;
     const cancel = whenIdle(async () => {
       const { gsap, ScrollTrigger, SplitText } = await loadMotion();
       if (gone) return;

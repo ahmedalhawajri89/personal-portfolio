@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { loadMotion, MOTION_OK } from '../lib/motion';
+import { loadMotion, MOTION_OK, motionWanted } from '../lib/motion';
 
 // Bright in either theme: each rule floods the whole screen in its colour, so
 // these are plain colours with dark text on them, not the theme's hue tokens.
@@ -236,6 +236,7 @@ export default function RuleStack({ eyebrow, h, lede, rules, origins, V, fromLab
 
   useEffect(() => {
     let mm, gone = false;
+    if (!motionWanted()) return;
     (async () => {
       const [{ gsap, ScrollTrigger, SplitText, lenis }, { DrawSVGPlugin }, { ScrambleTextPlugin }, { TextPlugin }] = await Promise.all([
         loadMotion(), import('gsap/DrawSVGPlugin'), import('gsap/ScrambleTextPlugin'), import('gsap/TextPlugin'),

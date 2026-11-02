@@ -26,7 +26,7 @@ export function generateStaticParams() {
 
 // Services and tool groups take the project hues (lib/hues.js) by meaning.
 const SV_HUE = { shop: 'var(--h-sec)', book: 'var(--h-ui)', dash: 'var(--h-api)', api: 'var(--h-db)', figma: 'var(--accent)', tests: 'var(--h-test)', diff: 'var(--ink-2)' };
-const CAP_HUE = { layers: 'var(--h-api)', layout: 'var(--h-ui)', database: 'var(--h-db)', shield: 'var(--h-test)' };
+const CAP_HUE = { backend: 'var(--h-db)', frontend: 'var(--h-ui)', ui: 'var(--h-sec)', testing: 'var(--h-test)' };
 
 /* A small moving mark for each service, drawn in its colour: what the
    service makes, in a gesture. They loop only while on screen
@@ -284,23 +284,23 @@ export default async function Home({ params }) {
           <SectionHead eyebrow={t.skills.eyebrow} h={t.skills.h} lede={t.skills.lede} hue="var(--h-db)" />
           <div className="tg">
             {CAPABILITIES.map((cap) => {
-              const items = lang === 'en' && cap.itemsEn ? cap.itemsEn : cap.items;
               const tools = [], practices = [];
-              items.forEach((label, k) => {
-                const key = head(cap.items[k]);
+              cap.items.forEach((label) => {
+                const key = head(label);
                 // Laravel is PHP: a project listing only `Laravel 12` still uses PHP.
                 const implied = { php: ['laravel'] }[key] || [];
                 const used = PROJECTS.map((pr) => pr.stack.some((st) => head(st) === key || implied.includes(head(st))));
                 (used.some(Boolean) ? tools : practices).push({ label, used });
               });
               return (
-                <section key={cap.icon} className="tg-col" style={{ '--c': CAP_HUE[cap.icon] }}>
+                <section key={cap.key} className="tg-col" style={{ '--c': CAP_HUE[cap.key] }}>
                   <h3 className="tg-h">{cap[lang].h}</h3>
                   <p className="tg-b">{cap[lang].b}</p>
                   <ul className="tg-list" data-m="pop">
                     {tools.map((tl) => (
                       <li key={tl.label}>
                         <span className="tg-name lat">{tl.label}</span>
+                        <span className="tg-count lat" aria-hidden="true">{tl.used.filter(Boolean).length}/{PROJECTS.length}</span>
                         <span className="tg-dots">
                           {tl.used.map((u, n) => (
                             <i key={PROJECTS[n].slug} className={u ? 'on' : ''} style={{ '--p': HUE[PROJECTS[n].slug] }}

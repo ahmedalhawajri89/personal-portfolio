@@ -71,7 +71,7 @@ export const PROJECTS = [
     cover: 'board',
     year: '2026',
     status: 'independent',
-    stack: ['Vue 3.5', 'Vite 6', 'Tailwind 4', 'Pinia', 'Laravel 12', 'MySQL', 'PHPUnit', 'Vitest', 'Playwright'],
+    stack: ['Vue 3.5', 'Vite 6', 'Tailwind 4', 'Pinia', 'Laravel 12', 'MySQL', 'PHPUnit', 'Vitest', 'Playwright', 'PHP 8.2', 'Sanctum', 'REST API', 'Chart.js'],
     repo: 'https://github.com/ahmedalhawajri89/waeda-booking',
     demo: 'https://waeda-booking.vercel.app/',
     ar: {
@@ -136,7 +136,7 @@ export const PROJECTS = [
     // Public repository under a proprietary licence (read and evaluate only),
     // so not labelled open source.
     status: 'public',
-    stack: ['Next.js 16', 'React 19', 'Tailwind 4', 'TanStack Query', 'Recharts', 'Laravel 12', 'PHP 8.2', 'Sanctum', 'MySQL', 'Pest', 'Vitest', 'Playwright'],
+    stack: ['Next.js 16', 'React 19', 'Tailwind 4', 'TanStack Query', 'Recharts', 'Laravel 12', 'PHP 8.2', 'Sanctum', 'MySQL', 'Pest', 'Vitest', 'Playwright', 'REST API', 'Larastan'],
     repo: 'https://github.com/ahmedalhawajri89/opsight',
     // Demo mode: one-click sign-in for each role, restored from a snapshot nightly.
     demo: 'https://opsight-demo.vercel.app/',
@@ -199,7 +199,7 @@ export const PROJECTS = [
     cover: 'home',
     year: '2026',
     status: 'independent',
-    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Vanilla JS', 'Yajra DataTables', 'PHPUnit'],
+    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Vanilla JS', 'Yajra DataTables', 'PHPUnit', 'Laravel Excel', 'Sanctum', 'Next.js 14', 'React 18', 'Tailwind 3'],
     repo: 'https://github.com/ahmedalhawajri89/Takharruj',
     // Demo mode: one-click sign-in as student, supervisor or admin, reset nightly.
     demo: 'https://takharruj.vercel.app/',
@@ -265,7 +265,7 @@ export const PROJECTS = [
     cover: 'home',
     year: '2026',
     status: 'independent',
-    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Bootstrap 5', 'Vue 3', 'Sanctum', 'Pest', 'Playwright'],
+    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Bootstrap 5', 'Vue 3', 'Sanctum', 'Pest', 'Playwright', 'Pinia', 'Tailwind 4', 'Chart.js', 'Vitest', 'Larastan', 'Spatie Permission', 'REST API'],
     repo: 'https://github.com/ahmedalhawajri89/Lamma',
     demo: 'https://lamma-sponsorship.vercel.app/',
     ar: {

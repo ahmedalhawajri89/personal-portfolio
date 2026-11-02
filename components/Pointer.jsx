@@ -20,6 +20,7 @@ export default function Pointer({ label }) {
 
   useEffect(() => {
     let mm, gone = false;
+    if (!matchMedia(POINTER_OK).matches) return;
     const cancel = whenIdle(async () => {
       const { gsap } = await loadMotion();
       if (gone || !el.current) return;

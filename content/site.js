@@ -67,34 +67,28 @@ export const SERVICES = [
 // about the work rather than an opinion about me.
 export const CAPABILITIES = [
   {
-    icon: 'layers',
-    ar: { h: 'الواجهة الخلفية', b: 'منطق العمل والصلاحيات والمعاملات، وواجهات REST.' },
-    en: { h: 'Backend', b: 'Business logic, permissions, transactions and REST APIs.' },
-    items: ['Laravel', 'PHP', 'REST APIs'],
+    key: 'backend',
+    ar: { h: 'الخلفية وقواعد البيانات', b: 'منطق العمل والصلاحيات والمعاملات على الخادم، وقواعد MySQL مصمّمة من الصفر.' },
+    en: { h: 'Backend & database', b: 'Business logic, permissions and transactions on the server, on MySQL schemas designed from scratch.' },
+    items: ['Laravel', 'PHP', 'MySQL', 'REST API'],
   },
   {
-    icon: 'layout',
-    ar: { h: 'الواجهة الأمامية', b: 'لوحات وكونسولات وواجهات عربية.' },
-    en: { h: 'Frontend', b: 'Dashboards, operator consoles and Arabic interfaces.' },
-    items: ['Vue 3', 'Next.js', 'Tailwind CSS'],
+    key: 'frontend',
+    ar: { h: 'تطوير الواجهات', b: 'Vue أو React حسب المشروع: لوحة تحكم بـ Vue، وتطبيق بـ Next.js.' },
+    en: { h: 'Frontend development', b: 'Vue or React, chosen per project: a Vue console, a Next.js app.' },
+    items: ['Vue 3', 'React', 'Next.js'],
   },
   {
-    icon: 'database',
-    // Was the services line repeated. Lamma's first point is the fact that
-    // belongs to this layer and to nothing else on the page.
-    ar: { h: 'البيانات', b: 'خمسة مخطّطات من الصفر على MySQL — منها قيد فريد جزئي على محرّك لا يملك واحداً.' },
-    en: { h: 'Data', b: 'Five schemas designed from scratch on MySQL — including a partial unique constraint on an engine that has none.' },
-    items: ['MySQL', 'تصميم المخطّط', 'المعاملات والأقفال'],
-    itemsEn: ['MySQL', 'Schema design', 'Transactions & locks'],
+    key: 'ui',
+    ar: { h: 'بناء الواجهة', b: 'واجهات متجاوبة بالعربية والإنجليزية، من اليمين لليسار ومن اليسار لليمين.' },
+    en: { h: 'UI development', b: 'Responsive interfaces in Arabic and English, right to left and left to right.' },
+    items: ['Tailwind CSS'],
   },
   {
-    icon: 'shield',
-    // Was the fourth copy of the `اختبار لكل قاعدة تهمّ` line. What is true of
-    // this layer alone: two PHP runners plus a browser one, and the
-    // concurrency test opens two real sessions rather than simulating them.
-    ar: { h: 'الجودة والاختبار (QA)', b: 'اختبارات PHP للقواعد وPlaywright للمتصفّح — واختبار التزامن يفتح جلستين حقيقيتين لا محاكاة.' },
-    en: { h: 'Quality & testing (QA)', b: 'PHP tests for the rules and Playwright for the browser — and the concurrency test opens two real sessions rather than simulating them.' },
-    items: ['Pest', 'PHPUnit', 'Playwright'],
+    key: 'testing',
+    ar: { h: 'الهندسة والاختبار', b: 'اختبارات PHP للقواعد، وVitest لمنطق الواجهة، وPlaywright في المتصفح.' },
+    en: { h: 'Engineering & testing', b: 'PHP tests for the rules, Vitest for the interface logic, Playwright in the browser.' },
+    items: ['Pest', 'PHPUnit', 'Vitest', 'Playwright'],
   },
 ];
 
@@ -102,7 +96,7 @@ export const CAPABILITIES = [
 // Breeze, Yajra and the rest -- stay on each case study, where they belong
 // to a project rather than to a list.
 export const SKILLS = [
-  'Laravel', 'PHP', 'MySQL', 'Vue 3', 'Next.js', 'Tailwind CSS', 'REST APIs', 'Pest', 'Playwright',
+  'Laravel', 'PHP', 'MySQL', 'Vue 3', 'React', 'Next.js', 'Tailwind CSS', 'REST APIs', 'Pest', 'PHPUnit', 'Vitest', 'Playwright',
 ];
 
 // Client quotes. Leave empty and the section is not rendered.

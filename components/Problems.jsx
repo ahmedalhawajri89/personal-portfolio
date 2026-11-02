@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { loadMotion, MOTION_OK } from '../lib/motion';
+import { loadMotion, MOTION_OK, motionWanted } from '../lib/motion';
 import Icon from './Icons';
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -22,6 +22,7 @@ export default function Problems({ lang, tests, projects, labels, children }) {
 
   useEffect(() => {
     let mm;
+    if (!motionWanted()) return;
     let gone = false;
     (async () => {
       const [{ gsap }, { DrawSVGPlugin }] = await Promise.all([loadMotion(), import('gsap/DrawSVGPlugin')]);

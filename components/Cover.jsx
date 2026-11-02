@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { loadMotion, MOTION_OK } from '../lib/motion';
+import { loadMotion, MOTION_OK, motionWanted } from '../lib/motion';
 
 /* A project's cover: its idea as a small scene in its own colour, played on
    a loop while it is on screen. Not a screenshot -- the screenshots are the
@@ -188,6 +188,7 @@ export default function Cover({ slug, label }) {
   useEffect(() => {
     if (!scene) return;
     let mm, gone = false;
+    if (!motionWanted()) return;
     (async () => {
       const [{ gsap, ScrollTrigger }, { DrawSVGPlugin }, { MotionPathPlugin }] = await Promise.all([
         loadMotion(), import('gsap/DrawSVGPlugin'), import('gsap/MotionPathPlugin'),

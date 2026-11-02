@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { T } from '../lib/i18n';
-import { loadMotion, MOTION_OK } from '../lib/motion';
+import { loadMotion, MOTION_OK, motionWanted } from '../lib/motion';
 import Icon from './Icons';
 
 export const CV_FILE = '/cv/Ahmed-Al-Hawajiri-CV.pdf';
@@ -81,7 +81,7 @@ function CvViewer({ lang, onClose }) {
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     let lenis;
-    loadMotion().then((m) => { lenis = m.lenis; lenis?.stop(); });
+    if (motionWanted()) loadMotion().then((m) => { lenis = m.lenis; lenis?.stop(); });
     el.querySelector('.cvx-sheet').focus();
     const onKey = (e) => {
       if (e.key === 'Escape') { e.preventDefault(); close(); return; }

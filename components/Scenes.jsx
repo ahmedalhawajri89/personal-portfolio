@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { loadMotion, whenIdle, MOTION_OK } from '../lib/motion';
+import { loadMotion, whenIdle, MOTION_OK, motionWanted } from '../lib/motion';
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -27,6 +27,7 @@ export default function Scenes({ chapters }) {
 
   useEffect(() => {
     let mm, gone = false;
+    if (!motionWanted()) return;
     const cancel = whenIdle(async () => {
       const { gsap, ScrollTrigger } = await loadMotion();
       if (gone) return;

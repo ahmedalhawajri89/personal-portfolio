@@ -10,7 +10,7 @@ import { T } from '../lib/i18n.js';
 import { PROJECTS, PROFILE } from '../content/projects.js';
 import { BRIEFS } from '../content/briefs.js';
 import { STORIES } from '../content/stories.js';
-import { SERVICES, HERO_TESTS, PROCESS } from '../content/site.js';
+import { SERVICES, HERO_TESTS, PROCESS, CAPABILITIES } from '../content/site.js';
 
 const problems = [];
 const fail = (msg) => problems.push(msg);
@@ -61,6 +61,19 @@ for (const x of HERO_TESTS) {
   for (const k of ['ar', 'en', 'probAr', 'probEn', 'decAr', 'decEn']) filled(x[k], `test ${x.file}.${k}`);
 }
 same(PROCESS.ar, PROCESS.en, 'content/site.js PROCESS');
+
+// Every tool shown on the home page is used by at least one project, counted
+// the way the page counts it: by the stack entry's leading word (Laravel
+// implies PHP).
+const head = (x) => x.toLowerCase().split(/[\s.]/)[0];
+for (const cap of CAPABILITIES) {
+  same(cap.ar, cap.en, `capability ${cap.key}`);
+  for (const item of cap.items) {
+    const key = head(item);
+    const n = PROJECTS.filter((p) => p.stack.some((st) => head(st) === key || (key === 'php' && head(st) === 'laravel'))).length;
+    if (!n) fail(`capability ${cap.key}: "${item}" is not in any project's stack`);
+  }
+}
 for (const k of ['name', 'role', 'location', 'lede']) { filled(PROFILE[k]?.ar, `profile.${k}.ar`); filled(PROFILE[k]?.en, `profile.${k}.en`); }
 
 // No written UTC offset anywhere in the source: the footer reads the time
