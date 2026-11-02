@@ -44,8 +44,8 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
         if (!motion) return;
         const lines = el.querySelectorAll('.kh-line');
         splits = Array.from(lines).map((ln) => SplitText.create(ln, rtl
-          ? { type: 'words', wordsClass: 'kh-u' }
-          : { type: 'words,chars', charsClass: 'kh-u' }));
+          ? { type: 'words', wordsClass: 'kh-u', aria: 'hidden' }
+          : { type: 'words,chars', charsClass: 'kh-u', aria: 'hidden' }));
         const units = splits.flatMap((s) => (rtl ? s.words : s.chars));
         const rand = gsap.utils.random;
         gsap.set(units, { display: 'inline-block', willChange: 'transform' });
@@ -93,7 +93,7 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
         <p className="kh-role lat">Full-Stack · QA · Laravel · Vue</p>
       </div>
 
-      <h1 className="kh-h">
+      <h1 className="kh-h" aria-label={`${line1} ${line2}`}>
         <span className="kh-line">{line1}</span>
         <span className="kh-line is-soft">{line2}</span>
       </h1>

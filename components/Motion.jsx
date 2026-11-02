@@ -35,7 +35,7 @@ export default function Motion() {
       mm.add(MOTION_OK, () => {
         gsap.utils.toArray('[data-m="lines"]').forEach((el) => {
           SplitText.create(el, {
-            type: 'lines', mask: 'lines', autoSplit: true,
+            type: 'lines', mask: 'lines', autoSplit: true, aria: 'none',
             onSplit: (self) => gsap.from(self.lines, {
               yPercent: 105, duration: 1, ease: 'expo.out', stagger: 0.09,
               scrollTrigger: { trigger: el, start: 'top 88%', once: true },
@@ -45,7 +45,7 @@ export default function Motion() {
 
         gsap.utils.toArray('[data-m="read"]').forEach((el) => {
           SplitText.create(el, {
-            type: 'words', autoSplit: true,
+            type: 'words', autoSplit: true, aria: 'none',
             onSplit: (self) => gsap.fromTo(self.words, { opacity: 0.16 }, {
               opacity: 1, ease: 'none', stagger: 0.12,
               scrollTrigger: { trigger: el, start: 'top 78%', end: 'bottom 52%', scrub: 0.4 },

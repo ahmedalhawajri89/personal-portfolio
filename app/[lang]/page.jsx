@@ -170,7 +170,7 @@ export default async function Home({ params }) {
                   <div className="pc-copy">
                     <p className="pc-label">{c.name}<span className="lat"> · {p.year}</span></p>
                     <p className="pc-kind">{c.kind}<span className="pc-status">{t.work.status[p.status]}</span></p>
-                    <h3 className="pc-say" data-m="lines"><a href={href}>{b?.hook || c.tagline}</a></h3>
+                    <h3 className="pc-say"><a href={href} data-m="lines">{b?.hook || c.tagline}</a></h3>
                     <p className="pc-q"><b>{t.work.problem}</b>{b?.problem || c.summary}</p>
                     <ul className="pc-stack">{p.stack.slice(0, 4).map((x) => <li key={x} className="lat">{x}</li>)}</ul>
                     <div className="pc-acts">

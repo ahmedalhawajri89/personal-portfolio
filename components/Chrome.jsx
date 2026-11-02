@@ -794,12 +794,12 @@ export function BackToTop({ lang }) {
   );
 }
 
-/* The time in Gaza and its offset, read from the time-zone database in the
+/* The time in Gaza and its offset, read from the time-zone database (Asia/Gaza) in the
    visitor's browser. Gaza changes its UTC offset with daylight
    saving, so a written offset would be wrong for half the year. Nothing is
    shown until it is known (the page is prebuilt, so the build's clock would
    be stale). */
-const TZ = 'Asia/Hebron';
+const TZ = 'Asia/Gaza';
 export function GazaTime({ label }) {
   const [now, setNow] = useState(null);
   useEffect(() => {

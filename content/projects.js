@@ -133,7 +133,9 @@ export const PROJECTS = [
     // product's whole idea on one screen. Captured in high definition.
     cover: 'dashboard',
     year: '2026',
-    status: 'independent',
+    // Public repository under a proprietary licence (read and evaluate only),
+    // so not labelled open source.
+    status: 'public',
     stack: ['Next.js 16', 'React 19', 'Tailwind 4', 'TanStack Query', 'Recharts', 'Laravel 12', 'PHP 8.2', 'Sanctum', 'MySQL', 'Pest', 'Vitest', 'Playwright'],
     repo: 'https://github.com/ahmedalhawajri89/opsight',
     // Demo mode: one-click sign-in for each role, restored from a snapshot nightly.

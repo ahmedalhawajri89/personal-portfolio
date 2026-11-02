@@ -64,7 +64,7 @@ same(PROCESS.ar, PROCESS.en, 'content/site.js PROCESS');
 for (const k of ['name', 'role', 'location', 'lede']) { filled(PROFILE[k]?.ar, `profile.${k}.ar`); filled(PROFILE[k]?.en, `profile.${k}.en`); }
 
 // No written UTC offset anywhere in the source: the footer reads the time
-// zone (Asia/Hebron) in the browser instead.
+// zone (Asia/Gaza) in the browser instead.
 const walk = (dir) => readdirSync(dir).flatMap((f) => {
   const p = join(dir, f);
   return statSync(p).isDirectory() ? walk(p) : /\.(m?jsx?)$/.test(f) ? [p] : [];
@@ -72,7 +72,7 @@ const walk = (dir) => readdirSync(dir).flatMap((f) => {
 for (const file of ['app', 'components', 'content', 'lib'].flatMap(walk)) {
   const src = readFileSync(file, 'utf8');
   const m = src.match(/(GMT|UTC)\s*[+−-]\s*\d/);
-  if (m) fail(`${file}: fixed offset "${m[0]}"; use the Asia/Hebron time zone`);
+  if (m) fail(`${file}: fixed offset "${m[0]}"; use the Asia/Gaza time zone`);
 }
 
 // Every section the header, footer and dock link to exists on the home page.

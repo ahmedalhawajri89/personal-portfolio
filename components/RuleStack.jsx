@@ -389,7 +389,7 @@ export default function RuleStack({ eyebrow, h, lede, rules, origins, V, fromLab
         <nav className="rp-dial" aria-label={jumpLabel}>
           <i className="rp-track" aria-hidden="true" />
           {rules.map((r, k) => (
-            <button key={r.h} type="button" className="rp-dot lat" aria-label={r.h}>{pad(k + 1)}</button>
+            <button key={r.h} type="button" className="rp-dot lat" aria-label={`${pad(k + 1)} ${r.h}`}>{pad(k + 1)}</button>
           ))}
         </nav>
       </div>

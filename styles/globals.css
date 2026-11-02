@@ -1204,7 +1204,7 @@ html.curtain-in[data-curtain="lines"] .lfx-tag{opacity:1}
 .pc-label .lat{color:var(--ink-3);font-weight:500}
 .pc-say{margin:14px 0 0;font-size:clamp(26px,2.7vw,42px);font-weight:700;line-height:1.2;letter-spacing:-.02em}
 [dir="rtl"] .pc-say{letter-spacing:0;line-height:1.45}
-.pc-say a{color:var(--ink);text-decoration:none}
+.pc-say a{display:block;color:var(--ink);text-decoration:none}
 .pc-say a:hover{color:var(--c)}
 /* A project's promise is a heading, so in English it is set in title case
    like the hero's lines; the copy itself stays in sentence case. */
