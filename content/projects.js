@@ -9,6 +9,7 @@ export const PROJECTS = [
     // verdicts — the room and the way in — which is the idea in one glance.
     cover: 'product',
     year: '2026',
+    status: 'independent',
     stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Tailwind 4', 'Alpine.js', 'Pest', 'Vercel'],
     repo: 'https://github.com/ahmedalhawajri89/diwan-e-commerce',
     demo: 'https://diwan-xi.vercel.app/',
@@ -69,6 +70,7 @@ export const PROJECTS = [
     shots: 'booking',
     cover: 'board',
     year: '2026',
+    status: 'independent',
     stack: ['Vue 3.5', 'Vite 6', 'Tailwind 4', 'Pinia', 'Laravel 12', 'MySQL', 'PHPUnit', 'Vitest', 'Playwright'],
     repo: 'https://github.com/ahmedalhawajri89/waeda-booking',
     demo: 'https://waeda-booking.vercel.app/',
@@ -125,11 +127,76 @@ export const PROJECTS = [
   },
 
   {
+    slug: 'opsight',
+    shots: 'opsight',
+    // The owner's dashboard: every figure against the previous period, the
+    // product's whole idea on one screen. Captured in high definition.
+    cover: 'dashboard',
+    year: '2026',
+    status: 'independent',
+    stack: ['Next.js 16', 'React 19', 'Tailwind 4', 'TanStack Query', 'Recharts', 'Laravel 12', 'PHP 8.2', 'Sanctum', 'MySQL', 'Pest', 'Vitest', 'Playwright'],
+    repo: 'https://github.com/ahmedalhawajri89/opsight',
+    // Demo mode: one-click sign-in for each role, restored from a snapshot nightly.
+    demo: 'https://opsight-demo.vercel.app/',
+    ar: {
+      name: 'Opsight',
+      kind: 'منصة تشغيل وذكاء أعمال للمنشآت الخليجية',
+      tagline: 'الطلبات والمخزون والمصاريف في مكان واحد، تصير أرقاماً تُقارَن ويُعرف سببها.',
+      summary:
+        'المنشأة الصغيرة والمتوسطة تحفظ طلباتها في مكان، ومخزونها في آخر، ومصاريفها في جدول إكسل، فلا يعرف أحد كم كان هامش الربح الشهر الماضي ولماذا تغيّر. Opsight يسجّل الطلبات والزبائن والمنتجات والمخزون والمصاريف، ويحوّلها إلى مؤشرات ومقارنات وتنبيهات للمالك والمدير. لكل دور من أدوار أربعة ما يخصّه فقط، فالموظف لا يرى تكلفة أبداً، وعدّة منشآت تعمل على نسخة واحدة دون أن ترى إحداها الأخرى، والواجهة بالعربية والإنجليزية وبعملة كل بلد وضريبته. والتنبيهات قواعد محدّدة لا نموذج ذكاء اصطناعي، فكل رقم يمكن تتبّعه إلى الطلبات التي خلفه.',
+      points: [
+        {
+          h: 'المال دقيق، والماضي لا يتحرّك',
+          b: 'المبالغ DECIMAL في قاعدة البيانات ونصوص bcmath في PHP، لا أعداد عشرية تقريبية، وبثلاث خانات للدينار. وكل سطر طلب يحفظ السعر والتكلفة اللذين بيع بهما، فتعديل تكلفة منتج اليوم لا يعيد كتابة هامش السنة الماضية.',
+        },
+        {
+          h: 'أربعة أدوار يفرضها الـ API',
+          b: 'المالك والمدير والمحلّل والموظف قرابة خمسين صلاحية تفحصها السياسات على الخادم. والحقل الذي لا يحق لدور أن يراه، كالتكلفة والهامش وقيمة الزبون، يُحذف من الاستجابة نفسها، لا يُخفى في الواجهة.',
+        },
+        {
+          h: 'منشآت كثيرة، قاعدة واحدة، بلا تسرّب',
+          b: 'كل جدول يحمل المنشأة، ونطاق عام يقيّد كل استعلام بها. وحين لا تكون هناك منشأة في السياق يفشل الاستعلام بدل أن يعيد صفوف الجميع، واختبارات تدخل باسم مالكَين وتتحقّق أن أحدهما لا يجد شيئاً للآخر.',
+        },
+        {
+          h: 'مقارنات صادقة مع التقويم',
+          b: 'الفترة التي لم تنتهِ بعد تُعلَّم «غير مكتملة» حين تقارَن بفترة كاملة، ويمكن مقارنة رمضان بالتواريخ الهجرية نفسها من العام الماضي بتقويم أم القرى بدل الميلادية. والفترات تُقطع بتوقيت المنشأة نفسها، وهذا ما أصلح خطأً كان يُسقط يوماً كاملاً بصمت عند تغيير الساعة.',
+        },
+      ],
+    },
+    en: {
+      name: 'Opsight',
+      kind: 'Operations and business intelligence for Gulf businesses',
+      tagline: 'Orders, stock and expenses in one place, turned into figures that are compared and explained.',
+      summary:
+        'A small or mid-sized business keeps its orders in one place, its stock in another and its expenses in a spreadsheet, so nobody can say what last month’s margin was or why it moved. Opsight records orders, customers, products, inventory and expenses, and turns them into metrics, comparisons and insights for the owner and the manager. Each of four roles sees only its own part, so staff never see a cost; several businesses share one installation without ever seeing each other; and it runs in Arabic and English, in each country’s currency with its VAT. The insights are deterministic rules, not a model, so every figure can be traced back to the orders behind it.',
+      points: [
+        {
+          h: 'Money is exact, and the past stays put',
+          b: 'Amounts are DECIMAL in the database and bcmath strings in PHP, never floats, to three places for dinars. Every order line keeps the price and cost it was sold at, so changing a product’s cost today cannot rewrite last year’s margin.',
+        },
+        {
+          h: 'Four roles, enforced by the API',
+          b: 'Owner, manager, analyst and staff are some fifty abilities checked by policies on the server. A field a role may not see — a cost, a margin, a customer’s lifetime value — is left out of the response itself, not hidden in the interface.',
+        },
+        {
+          h: 'Many businesses, one database, no leaks',
+          b: 'Every owned table carries its business, and a global scope filters every query by it. With no business in context a query fails instead of returning everyone’s rows, and tests sign in as two owners and check neither can find the other’s records.',
+        },
+        {
+          h: 'Comparisons that are honest about the calendar',
+          b: 'A period still in progress is marked incomplete when it is compared with a finished one, and Ramadan can be compared with the same Hijri dates last year, by the Umm al-Qura calendar, instead of the same Gregorian ones. Periods are cut in the business’s own time zone, which fixed a bug where a clock change silently dropped a whole day.',
+        },
+      ],
+    },
+  },
+
+  {
     slug: 'takharruj',
     shots: 'grad',
     // The "project journey" home: the whole idea in one picture.
     cover: 'home',
     year: '2026',
+    status: 'independent',
     stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Vanilla JS', 'Yajra DataTables', 'PHPUnit'],
     repo: 'https://github.com/ahmedalhawajri89/Takharruj',
     // Demo mode: one-click sign-in as student, supervisor or admin, reset nightly.
@@ -195,6 +262,7 @@ export const PROJECTS = [
     // opened on a screen it then showed again.
     cover: 'home',
     year: '2026',
+    status: 'independent',
     stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Bootstrap 5', 'Vue 3', 'Sanctum', 'Pest', 'Playwright'],
     repo: 'https://github.com/ahmedalhawajri89/Lamma',
     demo: 'https://lamma-sponsorship.vercel.app/',
@@ -249,69 +317,6 @@ export const PROJECTS = [
       ],
     },
   },
-
-  {
-    slug: 'opsight',
-    shots: 'opsight',
-    // The owner's dashboard: every figure against the previous period, the
-    // product's whole idea on one screen. Captured in high definition.
-    cover: 'dashboard',
-    year: '2026',
-    stack: ['Next.js 16', 'React 19', 'Tailwind 4', 'TanStack Query', 'Recharts', 'Laravel 12', 'PHP 8.2', 'Sanctum', 'MySQL', 'Pest', 'Vitest', 'Playwright'],
-    repo: 'https://github.com/ahmedalhawajri89/opsight',
-    // Demo mode: one-click sign-in for each role, restored from a snapshot nightly.
-    demo: 'https://opsight-demo.vercel.app/',
-    ar: {
-      name: 'Opsight',
-      kind: 'منصة تشغيل وذكاء أعمال للمنشآت الخليجية',
-      tagline: 'الطلبات والمخزون والمصاريف في مكان واحد، تصير أرقاماً تُقارَن ويُعرف سببها.',
-      summary:
-        'المنشأة الصغيرة والمتوسطة تحفظ طلباتها في مكان، ومخزونها في آخر، ومصاريفها في جدول إكسل، فلا يعرف أحد كم كان هامش الربح الشهر الماضي ولماذا تغيّر. Opsight يسجّل الطلبات والزبائن والمنتجات والمخزون والمصاريف، ويحوّلها إلى مؤشرات ومقارنات وتنبيهات للمالك والمدير. لكل دور من أدوار أربعة ما يخصّه فقط، فالموظف لا يرى تكلفة أبداً، وعدّة منشآت تعمل على نسخة واحدة دون أن ترى إحداها الأخرى، والواجهة بالعربية والإنجليزية وبعملة كل بلد وضريبته. والتنبيهات قواعد محدّدة لا نموذج ذكاء اصطناعي، فكل رقم يمكن تتبّعه إلى الطلبات التي خلفه.',
-      points: [
-        {
-          h: 'المال دقيق، والماضي لا يتحرّك',
-          b: 'المبالغ DECIMAL في قاعدة البيانات ونصوص bcmath في PHP، لا أعداد عشرية تقريبية، وبثلاث خانات للدينار. وكل سطر طلب يحفظ السعر والتكلفة اللذين بيع بهما، فتعديل تكلفة منتج اليوم لا يعيد كتابة هامش السنة الماضية.',
-        },
-        {
-          h: 'أربعة أدوار يفرضها الـ API',
-          b: 'المالك والمدير والمحلّل والموظف قرابة خمسين صلاحية تفحصها السياسات على الخادم. والحقل الذي لا يحق لدور أن يراه، كالتكلفة والهامش وقيمة الزبون، يُحذف من الاستجابة نفسها، لا يُخفى في الواجهة.',
-        },
-        {
-          h: 'منشآت كثيرة، قاعدة واحدة، بلا تسرّب',
-          b: 'كل جدول يحمل المنشأة، ونطاق عام يقيّد كل استعلام بها. وحين لا تكون هناك منشأة في السياق يفشل الاستعلام بدل أن يعيد صفوف الجميع، واختبارات تدخل باسم مالكَين وتتحقّق أن أحدهما لا يجد شيئاً للآخر.',
-        },
-        {
-          h: 'مقارنات صادقة مع التقويم',
-          b: 'الفترة التي لم تنتهِ بعد تُعلَّم «غير مكتملة» حين تقارَن بفترة كاملة، ويمكن مقارنة رمضان بالتواريخ الهجرية نفسها من العام الماضي بتقويم أم القرى بدل الميلادية. والفترات تُقطع بتوقيت المنشأة نفسها، وهذا ما أصلح خطأً كان يُسقط يوماً كاملاً بصمت عند تغيير الساعة.',
-        },
-      ],
-    },
-    en: {
-      name: 'Opsight',
-      kind: 'Operations and business intelligence for Gulf businesses',
-      tagline: 'Orders, stock and expenses in one place, turned into figures that are compared and explained.',
-      summary:
-        'A small or mid-sized business keeps its orders in one place, its stock in another and its expenses in a spreadsheet, so nobody can say what last month’s margin was or why it moved. Opsight records orders, customers, products, inventory and expenses, and turns them into metrics, comparisons and insights for the owner and the manager. Each of four roles sees only its own part, so staff never see a cost; several businesses share one installation without ever seeing each other; and it runs in Arabic and English, in each country’s currency with its VAT. The insights are deterministic rules, not a model, so every figure can be traced back to the orders behind it.',
-      points: [
-        {
-          h: 'Money is exact, and the past stays put',
-          b: 'Amounts are DECIMAL in the database and bcmath strings in PHP, never floats, to three places for dinars. Every order line keeps the price and cost it was sold at, so changing a product’s cost today cannot rewrite last year’s margin.',
-        },
-        {
-          h: 'Four roles, enforced by the API',
-          b: 'Owner, manager, analyst and staff are some fifty abilities checked by policies on the server. A field a role may not see — a cost, a margin, a customer’s lifetime value — is left out of the response itself, not hidden in the interface.',
-        },
-        {
-          h: 'Many businesses, one database, no leaks',
-          b: 'Every owned table carries its business, and a global scope filters every query by it. With no business in context a query fails instead of returning everyone’s rows, and tests sign in as two owners and check neither can find the other’s records.',
-        },
-        {
-          h: 'Comparisons that are honest about the calendar',
-          b: 'A period still in progress is marked incomplete when it is compared with a finished one, and Ramadan can be compared with the same Hijri dates last year, by the Umm al-Qura calendar, instead of the same Gregorian ones. Periods are cut in the business’s own time zone, which fixed a bug where a clock change silently dropped a whole day.',
-        },
-      ],
-    },
-  },
 ];
 
 export const PROFILE = {
@@ -323,8 +328,8 @@ export const PROFILE = {
   location: { ar: 'غزة، فلسطين', en: 'Gaza, Palestine' },
   years: 4,
   lede: {
-    ar: 'من قاعدة البيانات إلى آخر زرّ على الشاشة، أعمل على المشروع كلّه بنفسي. يعني ذلك أنك تتحدث مع الشخص نفسه الذي يكتب الكود، من أول يوم إلى يوم التسليم.',
-    en: 'From the database to the last button on the screen, I work on the whole project myself. You talk to the person writing the code, from the first day to the day it ships.',
+    ar: 'أبني متاجر إلكترونية وأنظمة حجز ولوحات تحكم للأعمال، بالعربية والإنجليزية. ومن قاعدة البيانات إلى آخر زرّ، أعمل على المشروع كلّه بنفسي، فتتحدث مع الشخص نفسه الذي يكتب الكود من أول يوم إلى يوم التسليم.',
+    en: 'I build online stores, booking systems and business dashboards, in Arabic and English. From the database to the last button, I work on the whole project myself, so you talk to the person writing the code from the first day to the day it ships.',
   },
   links: {
     github: 'https://github.com/ahmedalhawajri89',

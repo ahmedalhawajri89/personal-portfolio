@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3005",
-    "build": "next build && node scripts/postbuild.mjs",
-    "start": "npx serve out",
-    "prebuild": "node scripts/prebuild.mjs"
+    "check": "node scripts/check-content.mjs",
+    "check:out": "node scripts/check-out.mjs",
+    "prebuild": "node scripts/check-content.mjs && node scripts/prebuild.mjs",
+    "build": "next build && node scripts/postbuild.mjs && node scripts/check-out.mjs",
+    "start": "npx serve out"
   },
   "dependencies": {
     "gsap": "^3.15.0",

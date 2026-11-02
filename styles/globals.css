@@ -1823,3 +1823,52 @@ html.curtain-in .cs-in{animation-delay:calc(var(--d,0s) + .9s)}
   .pb-side .sec-head{margin-bottom:18px}
   .pb-score b{font-size:min(5.4vw,8vh)}
 }
+
+/* ------------------------------------------------------------ refinements */
+/* The project card: what it is and how it was made, under its name. */
+.pc-kind{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:6px 0 0;font-size:14.5px;font-weight:600;color:var(--ink-2)}
+.pc-status{padding:3px 10px;border:1px solid var(--line-2);border-radius:999px;font-size:12.5px;font-weight:700;color:var(--ink-3)}
+.pc-acts{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px}
+.pc-demo{display:inline-flex;align-items:center;gap:7px;min-height:44px;font-size:15px;font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-color:var(--line-2);text-underline-offset:5px}
+.pc-demo:hover{text-decoration-color:var(--c)}
+.pc-demo:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+/* Services: who it is for and what is handed over, then the supporting skills. */
+.sv-facts{display:grid;gap:10px;max-width:62ch;margin:0 0 20px}
+.sv-facts div{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;align-items:baseline}
+.sv-facts dt{font-size:13px;font-weight:800;color:var(--c)}
+.sv-facts dd{margin:0;font-size:15.5px;line-height:1.7;color:var(--ink-2)}
+.sv-more-h{margin:clamp(40px,5vw,64px) 0 18px;font-size:15px;font-weight:800;color:var(--ink-3)}
+.sv-more{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+@media (min-width:768px){.sv-more{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.sv-more li{display:flex;flex-direction:column;gap:8px;padding:20px 22px;border:1px solid var(--line-2);border-top:2px solid var(--c);border-radius:16px;background:var(--card)}
+.sv-more-t{margin:0;font-size:17px;font-weight:800;color:var(--ink)}
+.sv-more p{margin:0;font-size:14.5px;line-height:1.7;color:var(--ink-2)}
+.sv-more-a{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-top:auto;font-size:14px;font-weight:700;color:var(--ink);text-decoration:none}
+.sv-more-a:hover{color:var(--c)}
+
+/* How working together goes: five stages in their real order. */
+.wf{display:grid;gap:0;margin:0;padding:0;list-style:none;border-top:1px solid var(--line-2);counter-reset:none}
+.wf-step{display:grid;grid-template-columns:52px minmax(0,1fr);gap:4px 18px;padding:22px 0;border-bottom:1px solid var(--line-2)}
+.wf-n{grid-row:span 2;font-family:'GeistMono',ui-monospace,monospace;font-size:14px;font-weight:500;color:var(--accent);padding-top:5px}
+.wf-h{margin:0;font-size:clamp(19px,1.7vw,24px);font-weight:800;color:var(--ink)}
+.wf-b{margin:0;max-width:60ch;font-size:15.5px;line-height:1.75;color:var(--ink-2)}
+@media (min-width:1024px){
+  .wf{grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;border-top:0}
+  .wf-step{grid-template-columns:1fr;align-content:start;gap:10px;padding:22px 0 0;border-bottom:0;border-top:2px solid var(--line-2)}
+  .wf-step:first-child{border-top-color:var(--accent)}
+  .wf-n{grid-row:auto;padding:0}
+}
+.wf-cta{margin-top:clamp(28px,4vw,44px)}
+
+/* Required fields are marked before anyone gets an error. */
+.freq{color:var(--bad)}
+.freq-note{margin:0;font-size:12.5px;color:var(--ink-3)}
+.freq-note span{color:var(--bad)}
+
+/* Touch targets: the language switch and the way back keep their size but
+   take a 44px hit area. */
+.lang-on,.lang-off{position:relative}
+.lang-off::after{content:'';position:absolute;inset:-9px -6px}
+.tb-back{padding-block:12px}
+.jr-open{display:inline-flex;align-items:center;min-height:44px}

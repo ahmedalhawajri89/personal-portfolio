@@ -98,11 +98,12 @@ export default async function Home({ params }) {
       <Pointer label={t.work.view} />
       <Scenes chapters={[
         { id: 'work', name: t.work.eyebrow, hue: LIGHT.accent },
-        { id: 'problems', name: t.problems.eyebrow, hue: LIGHT.test },
         { id: 'services', name: t.services.eyebrow, hue: LIGHT.ui },
-        { id: 'process', name: t.process.eyebrow, hue: LIGHT.api },
+        { id: 'problems', name: t.problems.eyebrow, hue: LIGHT.test },
         { id: 'proof', name: t.proof.eyebrow, hue: LIGHT.test },
+        { id: 'rules', name: t.rules.eyebrow, hue: LIGHT.api },
         { id: 'skills', name: t.skills.eyebrow, hue: LIGHT.db },
+        { id: 'process', name: t.process.eyebrow, hue: LIGHT.accent },
         { id: 'about', name: t.about.eyebrow, hue: LIGHT.sec },
         { id: 'contact', name: t.contact.eyebrow, hue: LIGHT.accent },
       ]} />
@@ -168,15 +169,70 @@ export default async function Home({ params }) {
                   </a>
                   <div className="pc-copy">
                     <p className="pc-label">{c.name}<span className="lat"> · {p.year}</span></p>
+                    <p className="pc-kind">{c.kind}<span className="pc-status">{t.work.status[p.status]}</span></p>
                     <h3 className="pc-say" data-m="lines"><a href={href}>{b?.hook || c.tagline}</a></h3>
                     <p className="pc-q"><b>{t.work.problem}</b>{b?.problem || c.summary}</p>
                     <ul className="pc-stack">{p.stack.slice(0, 4).map((x) => <li key={x} className="lat">{x}</li>)}</ul>
-                    <a href={href} className="pill" data-magnetic>{t.work.open} <Icon name={arrow} size={15} /></a>
+                    <div className="pc-acts">
+                      <a href={href} className="pill" data-magnetic>{t.work.open} <Icon name={arrow} size={15} /></a>
+                      {p.demo && <a href={p.demo} className="pc-demo" target="_blank" rel="noopener noreferrer">{t.work.demo} <Icon name="external" size={14} /></a>}
+                    </div>
                   </div>
                 </li>
               );
             })}
           </ol>
+        </section>
+
+        {/* ------------------------------------------------------ services */}
+        {/* Named the way a client names the thing they need, each with a
+            small moving mark of what it makes and the project that already
+            does it. A service with a case study behind it is a claim
+            somebody can check. */}
+        <section id="services" className="wrap scroll-mt-24 pt-28 sm:pt-36">
+          <SectionHead eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} hue="var(--h-ui)" />
+          <ul className="sv-list">
+            {SERVICES.filter((sv) => sv.tier === 'core').map((sv) => {
+              const pr = PROJECTS.find((x) => x.slug === sv.proof);
+              return (
+                <li key={sv.en.h} className="sv" style={{ '--c': SV_HUE[sv.visual] || 'var(--accent)' }}>
+                  <div className="sv-mark" data-m="live"><Glyph kind={sv.visual} /></div>
+                  <div className="sv-copy">
+                    <h3 className="sv-label">{sv[lang].h}</h3>
+                    <p className="sv-say" data-m="lines">{sv[lang].b}</p>
+                    <dl className="sv-facts">
+                      <div><dt>{t.services.for}</dt><dd>{sv.for[lang]}</dd></div>
+                      <div><dt>{t.services.get}</dt><dd>{sv.get[lang]}</dd></div>
+                    </dl>
+                    {pr ? (
+                      <a href={`/${lang}/work/${pr.slug}/`} className="pill" style={{ '--c': HUE[pr.slug] }}>
+                        <i className="pill-dot" aria-hidden="true" />{t.services.proof} {pr[lang].name} <Icon name={arrow} size={14} />
+                      </a>
+                    ) : sv.note ? (
+                      <p className="sv-note"><span>{t.services.note}</span> <span className="lat">{sv.note}</span></p>
+                    ) : null}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+          <h3 className="sv-more-h">{t.services.more}</h3>
+          <ul className="sv-more">
+            {SERVICES.filter((sv) => sv.tier !== 'core').map((sv) => {
+              const pr = PROJECTS.find((x) => x.slug === sv.proof);
+              return (
+                <li key={sv.en.h} style={{ '--c': SV_HUE[sv.visual] || 'var(--accent)' }}>
+                  <h4 className="sv-more-t">{sv[lang].h}</h4>
+                  <p>{sv[lang].b}</p>
+                  {pr ? (
+                    <a href={`/${lang}/work/${pr.slug}/`} className="sv-more-a"><i className="pill-dot" aria-hidden="true" style={{ '--c': HUE[pr.slug] }} />{t.services.proof} {pr[lang].name}</a>
+                  ) : sv.note ? (
+                    <p className="sv-note"><span>{t.services.note}</span> <span className="lat">{sv.note}</span></p>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
         </section>
 
         {/* ------------------------------------------------------ problems */}
@@ -191,43 +247,6 @@ export default async function Home({ params }) {
           >
             <SectionHead eyebrow={t.problems.eyebrow} h={t.problems.h} lede={t.problems.lede} hue="var(--h-test)" />
           </Problems>
-        </section>
-
-        {/* ------------------------------------------------------ services */}
-        {/* Named the way a client names the thing they need, each with a
-            small moving mark of what it makes and the project that already
-            does it. A service with a case study behind it is a claim
-            somebody can check. */}
-        <section id="services" className="wrap scroll-mt-24 pt-28 sm:pt-36">
-          <SectionHead eyebrow={t.services.eyebrow} h={t.services.h} lede={t.services.lede} hue="var(--h-ui)" />
-          <ul className="sv-list">
-            {SERVICES.map((sv) => {
-              const pr = PROJECTS.find((x) => x.slug === sv.proof);
-              return (
-                <li key={sv.en.h} className="sv" style={{ '--c': SV_HUE[sv.visual] || 'var(--accent)' }}>
-                  <div className="sv-mark" data-m="live"><Glyph kind={sv.visual} /></div>
-                  <div className="sv-copy">
-                    <h3 className="sv-label">{sv[lang].h}</h3>
-                    <p className="sv-say" data-m="lines">{sv[lang].b}</p>
-                    {pr ? (
-                      <a href={`/${lang}/work/${pr.slug}/`} className="pill" style={{ '--c': HUE[pr.slug] }}>
-                        <i className="pill-dot" aria-hidden="true" />{t.services.proof} {pr[lang].name} <Icon name={arrow} size={14} />
-                      </a>
-                    ) : sv.note ? (
-                      <p className="sv-note"><span>{t.services.note}</span> <span className="lat">{sv.note}</span></p>
-                    ) : null}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-
-        {/* ------------------------------------------------------- process */}
-        <section id="process" className="rp-sec scroll-mt-24 pt-28 sm:pt-36">
-          {/* Six rules on a stage that holds the screen: each floods in from
-              its number and covers the last (components/RuleStack.jsx). */}
-          <RuleStack eyebrow={t.process.eyebrow} h={t.process.h} lede={t.process.lede} rules={PROCESS[lang]} origins={ORIGINS} V={V} fromLabel={t.process.from} jumpLabel={t.process.eyebrow} />
         </section>
 
         {/* --------------------------------------------------- behind the screen */}
@@ -246,6 +265,13 @@ export default async function Home({ params }) {
             outside={t.proof.outside}
             jumpLabel={t.proof.jump}
           />
+        </section>
+
+        {/* --------------------------------------------------------- rules */}
+        <section id="rules" className="rp-sec scroll-mt-24 pt-28 sm:pt-36">
+          {/* Six rules on a stage that holds the screen: each floods in from
+              its number and covers the last (components/RuleStack.jsx). */}
+          <RuleStack eyebrow={t.rules.eyebrow} h={t.rules.h} lede={t.rules.lede} rules={PROCESS[lang]} origins={ORIGINS} V={V} fromLabel={t.rules.from} jumpLabel={t.rules.eyebrow} />
         </section>
 
         {/* ---------------------------------------------------------- tools */}
@@ -295,6 +321,24 @@ export default async function Home({ params }) {
               <a key={pr.slug} href={`/${lang}/work/${pr.slug}/`} style={{ '--p': HUE[pr.slug] }}><i aria-hidden="true" />{pr[lang].name}</a>
             ))}
           </p>
+        </section>
+
+        {/* ------------------------------------------------------- process */}
+        {/* What happens after a client writes, stage by stage: the order is
+            the real one, so the stages are numbered. The engineering rules
+            above are how the work is done; this is how working together goes. */}
+        <section id="process" className="wrap scroll-mt-24 pt-28 sm:pt-36">
+          <SectionHead eyebrow={t.process.eyebrow} h={t.process.h} lede={t.process.lede} hue="var(--accent)" />
+          <ol className="wf">
+            {t.process.steps.map((st, i) => (
+              <li key={st.h} className="wf-step">
+                <span className="wf-n lat" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <h3 className="wf-h">{st.h}</h3>
+                <p className="wf-b">{st.b}</p>
+              </li>
+            ))}
+          </ol>
+          <a href="#contact" className="pill wf-cta">{t.hero.cta2} <Icon name={arrow} size={15} /></a>
         </section>
 
         {/* --------------------------------------------------------- about */}

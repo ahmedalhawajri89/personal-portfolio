@@ -280,15 +280,17 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
   // floating capsule -- the mark, the links and the action -- so it takes
   // less of the screen the more there is to read under it. Contact is the
   // call to action, not a sixth link.
+  // Five stops: the work, what he offers, the engineering proof (problems,
+  // the layers behind the screen, the rules and the tools all light
+  // "Engineering"), how working together goes, and him.
   const links = [
     ['work', t.nav.work],
-    ['problems', t.nav.problems],
     ['services', t.nav.services],
+    ['problems', t.nav.proof],
     ['process', t.nav.process],
-    ['proof', t.nav.proof],
     ['about', t.nav.about],
   ];
-  const watched = ['home', 'work', 'problems', 'services', 'process', 'proof', 'skills', 'about', 'contact'];
+  const watched = ['home', 'work', 'services', 'problems', 'proof', 'rules', 'skills', 'process', 'about', 'contact'];
 
   // Reading down, the capsule gets out of the way; any upward move brings it
   // back, and so does a pointer at the top edge. Travel is accumulated per
@@ -321,7 +323,8 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     const io = new IntersectionObserver(
       (entries) => {
         const v = entries.filter((e) => e.isIntersecting).sort((x, y) => y.intersectionRatio - x.intersectionRatio)[0];
-        if (v) setActive(v.target.id);
+        // The engineering sections all answer to one link.
+        if (v) setActive({ proof: 'problems', rules: 'problems', skills: 'problems' }[v.target.id] || v.target.id);
       },
       { rootMargin: '-40% 0px -50% 0px', threshold: [0, 0.2, 0.5] }
     );
@@ -660,16 +663,17 @@ export function ContactForm({ lang, to }) {
   const busy = state === 'sending';
   return (
     <form onSubmit={submit} noValidate className={`flex h-full flex-col gap-3${shake ? ' shake' : ''}`} aria-busy={busy}>
+      <p className="freq-note"><span aria-hidden="true">* </span>{f.required}</p>
       <div className="grid gap-3 sm:grid-cols-2">
         {[['name', 'text', f.name, 'name', undefined], ['email', 'email', f.email, 'email', 'ltr']].map(([k, type, label, ac, dir]) => {
           const bad = !!show(k);
           const ok = touched[k] && !errors[k] && v[k];
           return (
             <div key={k}>
-              <label className="flabel" htmlFor={`f-${k}`}>{label}</label>
+              <label className="flabel" htmlFor={`f-${k}`}>{label}<span className="freq" aria-hidden="true"> *</span></label>
               <div className="fwrap" dir={dir}>
                 <input id={`f-${k}`} name={k} className="field" type={type} value={v[k]} onChange={set(k)} onBlur={blur(k)}
-                       autoComplete={ac} dir={dir} disabled={busy}
+                       autoComplete={ac} dir={dir} disabled={busy} required aria-required="true"
                        aria-invalid={bad || undefined} aria-describedby={bad ? `err-${k}` : undefined} />
                 {(bad || ok) && <span className={`fmark ${bad ? 'bad' : 'ok'}`} aria-hidden="true"><Icon name={bad ? 'x' : 'check'} size={12} /></span>}
               </div>
@@ -723,9 +727,9 @@ export function ContactForm({ lang, to }) {
       {/* A fixed, honest size: it used to stretch to the height of the column
           beside it, and a box that large reads as homework. */}
       <div className="flex flex-col">
-        <label className="flabel" htmlFor="f-msg">{f.msg}</label>
+        <label className="flabel" htmlFor="f-msg">{f.msg}<span className="freq" aria-hidden="true"> *</span></label>
         <textarea id="f-msg" name="msg" rows={6} className="field min-h-[150px] resize-y" value={v.msg} onChange={set('msg')} onBlur={blur('msg')}
-                  disabled={busy} aria-invalid={!!show('msg') || undefined} aria-describedby="msg-hint" />
+                  disabled={busy} required aria-required="true" aria-invalid={!!show('msg') || undefined} aria-describedby="msg-hint" />
         {show('msg')
           ? <p id="msg-hint" className="ferr" role="alert"><Icon name="alert" size={13} className="mt-0.5 shrink-0" />{errors.msg} <span className="lat">({f.moreChars.replace('{n}', left)})</span></p>
           : <p id="msg-hint" className={`fhint${left === 0 ? ' ok' : ''}`}>
@@ -748,7 +752,7 @@ export function ContactForm({ lang, to }) {
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-[12.5px]" style={{ color: anyShown ? '#E11D48' : 'var(--ink-3)' }}>
+        <p className="text-[12.5px]" style={{ color: anyShown ? 'var(--bad)' : 'var(--ink-3)' }}>
           {anyShown ? f.fix : (ENDPOINT ? f.secure : f.hint)}
         </p>
         <button type="submit" className="btn btn-primary" disabled={busy} style={busy ? { opacity: .7 } : undefined}>
@@ -790,13 +794,35 @@ export function BackToTop({ lang }) {
   );
 }
 
+/* The time in Gaza and its offset, read from the time-zone database in the
+   visitor's browser. Gaza changes its UTC offset with daylight
+   saving, so a written offset would be wrong for half the year. Nothing is
+   shown until it is known (the page is prebuilt, so the build's clock would
+   be stale). */
+const TZ = 'Asia/Hebron';
+export function GazaTime({ label }) {
+  const [now, setNow] = useState(null);
+  useEffect(() => {
+    const read = () => {
+      const parts = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false, timeZoneName: 'shortOffset' }).formatToParts(new Date());
+      const get = (k) => parts.find((x) => x.type === k)?.value || '';
+      setNow(`${get('hour')}:${get('minute')} · ${get('timeZoneName')}`);
+    };
+    read();
+    const id = setInterval(read, 30000);
+    return () => clearInterval(id);
+  }, []);
+  if (!now) return null;
+  return <li><span className="sr-only">{label}: </span><span className="lat">{now}</span></li>;
+}
+
 export function Footer({ lang, links, home = false }) {
   const t = T[lang];
   const f = t.foot;
   const ar = lang === 'ar';
   const root = useRef(null);
   const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
-  const nav = [['work', t.nav.work], ['services', t.nav.services], ['process', t.nav.process], ['about', t.nav.about], ['contact', t.nav.contact]];
+  const nav = [['work', t.nav.work], ['services', t.nav.services], ['problems', t.nav.proof], ['process', t.nav.process], ['about', t.nav.about], ['contact', t.nav.contact]];
   const [copied, setCopied] = useState(false);
   const copy = async () => {
     try { await navigator.clipboard.writeText(links.email); setCopied(true); setTimeout(() => setCopied(false), 1800); }
@@ -906,7 +932,7 @@ export function Footer({ lang, links, home = false }) {
             <ul className="foot-list foot-status">
               <li><span className="foot-dot" aria-hidden="true" />{t.hero.status}</li>
               <li>{PROFILE.location[lang]}</li>
-              <li><span className="lat">GMT+3</span></li>
+              <GazaTime label={f.time} />
             </ul>
           </div>
         </div>

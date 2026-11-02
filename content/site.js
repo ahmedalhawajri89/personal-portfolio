@@ -10,16 +10,25 @@ export const SERVICES = [
     icon: 'store', proof: 'diwan', visual: 'shop',
     ar: { h: 'متاجر إلكترونية', b: 'متجر عربي كامل: كتالوج ومخزون وسلّة وطلبات وفواتير. والمخزون يُحسم في قاعدة البيانات، فلا تُباع آخر قطعة مرّتين.' },
     en: { h: 'E-commerce', b: 'A complete Arabic store: catalogue, stock, cart, orders and invoices. Stock is settled in the database, so the last piece never sells twice.' },
+    tier: 'core',
+    for: { ar: 'متجر يبيع أونلاين، وخاصة بالعربية.', en: 'A shop that sells online, especially in Arabic.' },
+    get: { ar: 'واجهة متجر وسلّة ودفع، ومخزون وطلبات وفواتير، ولوحة تحكم.', en: 'A storefront, cart and checkout, stock, orders and invoices, and an admin panel.' },
   },
   {
     icon: 'calendar', proof: 'booking', visual: 'book',
     ar: { h: 'أنظمة حجوزات ومواعيد', b: 'حجز من الجوال بلا حساب، وأوقات تُحسب من دوامك الحقيقي، ولا يحجز اثنان الموعد نفسه أبداً.' },
     en: { h: 'Booking systems', b: 'Booking from a phone with no account, times worked out from your real hours, and two people never get the same slot.' },
+    tier: 'core',
+    for: { ar: 'عيادات وصالونات ومراكز تدريب، وكل عمل يقوم على المواعيد.', en: 'Clinics, salons, training centres: any business that runs on appointments.' },
+    get: { ar: 'صفحة حجز لعملائك، ولوحة يدير منها فريقك اليوم، وأوقات تُحسب من دوامك الحقيقي.', en: 'A booking page for your customers, a console for your team, and times worked out from your real hours.' },
   },
   {
     icon: 'layout', proof: 'opsight', visual: 'dash',
     ar: { h: 'أنظمة أعمال ولوحات تحكم', b: 'أدوار وصلاحيات وسير عمل، وجداول تبقى سريعة ولو صارت آلاف السجلات.' },
     en: { h: 'Business systems and dashboards', b: 'Roles, permissions and workflows, with tables that stay fast at thousands of rows.' },
+    tier: 'core',
+    for: { ar: 'منشأة يعمل فيها أكثر من دور على البيانات نفسها.', en: 'A business where several roles work on the same data.' },
+    get: { ar: 'أدوار وصلاحيات يفحصها الخادم، وسير عمل، وجداول تبقى سريعة مع آلاف السجلات.', en: 'Roles and permissions checked on the server, workflows, and tables that stay fast at thousands of rows.' },
   },
   {
     icon: 'database', proof: 'lamma', visual: 'api',
@@ -46,6 +55,9 @@ export const SERVICES = [
     icon: 'code', proof: null, visual: 'diff', note: 'Laravel · PHP',
     ar: { h: 'تطوير مشروع قائم', b: 'أكمل تطبيقاً موجوداً أو أصلحه: أقرأ الكود أولاً، ثم أصغر تغيير يحلّ المشكلة.' },
     en: { h: 'Work on an existing project', b: 'I finish or fix an app that already exists: I read the code first, then make the smallest change that solves it.' },
+    tier: 'core',
+    for: { ar: 'تطبيق موجود يحتاج إكمالاً أو إصلاحاً أو ميزة جديدة.', en: 'An application that already exists and needs finishing, fixing or a new feature.' },
+    get: { ar: 'تغيير صغير ومقروء يحلّ المشكلة، واختبار يُبقيها محلولة.', en: 'A small, readable change that solves it, and a test that keeps it solved.' },
   },
 ];
 

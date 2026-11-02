@@ -46,16 +46,18 @@ export default function Gallery({ lang, project, data, collapsible = false }) {
   useEffect(() => { if (group !== 'all' && !countIn(group)) setGroup('all'); }, [device, loc]); // eslint-disable-line
 
   // Close plays a short exit animation before the overlay unmounts.
+  // Focus goes back to the thumbnail that opened the lightbox.
+  const opener = useRef(null);
   const close = useCallback(() => {
     setClosing(true);
-    setTimeout(() => { setOpen(-1); setClosing(false); }, 220);
+    setTimeout(() => { setOpen(-1); setClosing(false); opener.current?.focus?.(); }, 220);
   }, []);
   const step = useCallback((d) => {
     setDir(d);
     setOpen((i) => (i < 0 ? i : (i + d + list.length) % list.length));
   }, [list.length]);
   const jump = (i) => { setDir(i > open ? 1 : -1); setOpen(i); };
-  const show = (i) => { setDir(0); setOpen(i); };
+  const show = (i) => { opener.current = document.activeElement; setDir(0); setOpen(i); };
 
   /* lightbox: keys, body scroll lock, preload neighbours, strip follows */
   const overlayRef = useRef(null);
