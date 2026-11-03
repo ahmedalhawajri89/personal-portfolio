@@ -310,18 +310,31 @@ export default async function Home({ params }) {
         {/* What happens after a client writes, stage by stage: the order is
             the real one, so the stages are numbered. The engineering rules
             above are how the work is done; this is how working together goes. */}
+        {/* A route: the heading holds still on one side while the five
+            stages pass on the other, along a line that fills as they are
+            read; each stage's number thickens and lights as it is reached. */}
         <section id="process" className="wrap scroll-mt-24 pt-28 sm:pt-36">
-          <SectionHead eyebrow={t.process.eyebrow} h={t.process.h} lede={t.process.lede} hue="var(--accent)" />
-          <ol className="wf">
-            {t.process.steps.map((st, i) => (
-              <li key={st.h} className="wf-step">
-                <span className="wf-n lat" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="wf-h">{st.h}</h3>
-                <p className="wf-b">{st.b}</p>
-              </li>
-            ))}
-          </ol>
-          <a href="#contact" className="pill wf-cta">{t.hero.cta2} <Icon name={arrow} size={15} /></a>
+          <div className="rt">
+            <div className="rt-head">
+              <SectionHead eyebrow={t.process.eyebrow} h={t.process.h} lede={t.process.lede} hue="var(--accent)" />
+              <a href="#contact" className="pill wf-cta">{t.hero.cta2} <Icon name={arrow} size={15} /></a>
+            </div>
+            <div className="rt-list" data-m="route">
+              <span className="rt-rail" aria-hidden="true"><span className="rt-fill" /></span>
+              <ol className="rt-ol">
+              {t.process.steps.map((st, i) => (
+                <li key={st.h} className="rt-step">
+                  <span className="rt-dot" aria-hidden="true" />
+                  <span className="rt-n lat" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <div className="rt-copy">
+                    <h3 className="rt-h">{st.h}</h3>
+                    <p className="rt-b">{st.b}</p>
+                  </div>
+                </li>
+              ))}
+              </ol>
+            </div>
+          </div>
         </section>
 
         {/* --------------------------------------------------------- about */}

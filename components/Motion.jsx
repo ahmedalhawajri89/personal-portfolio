@@ -130,6 +130,22 @@ export default function Motion() {
             .fromTo(c, { strokeDashoffset: 1, opacity: 1 }, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.out', immediateRender: false });
         });
 
+        // How I work: the line fills with the reading, and each stage is
+        // reached (its number thickens, its dot lights) as it crosses the
+        // middle of the screen; the one in the middle is the current one.
+        gsap.utils.toArray('[data-m="route"]').forEach((el) => {
+          const fill = el.querySelector('.rt-fill'), steps = el.querySelectorAll('.rt-step');
+          if (!fill || !steps.length) return;
+          el.classList.add('is-live');
+          gsap.fromTo(fill, { scaleY: 0 }, { scaleY: 1, ease: 'none',
+            scrollTrigger: { trigger: el, start: 'top 55%', end: 'bottom 55%', scrub: 0.4 } });
+          steps.forEach((st) => {
+            ScrollTrigger.create({ trigger: st, start: 'top 55%', end: 'bottom 55%',
+              onToggle: (s) => st.classList.toggle('is-now', s.isActive),
+              onEnter: () => st.classList.add('is-reached'), onLeaveBack: () => st.classList.remove('is-reached') });
+          });
+        });
+
         // His face: the frame opens upward and the photo settles into it.
         gsap.utils.toArray('[data-m="face"]').forEach((el) => {
           const frame = el.querySelector('.ab2-photo'), img = frame?.querySelector('img');

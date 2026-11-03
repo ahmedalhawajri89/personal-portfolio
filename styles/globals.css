@@ -1925,17 +1925,38 @@ html.curtain-in .cs-in{animation-delay:calc(var(--d,0s) + .9s)}
 @media (prefers-reduced-motion:reduce){.as-read{animation:none}.as-w{transition:none}}
 
 /* How working together goes: five stages in their real order. */
-.wf{display:grid;gap:0;margin:0;padding:0;list-style:none;border-top:1px solid var(--line-2);counter-reset:none}
-.wf-step{display:grid;grid-template-columns:52px minmax(0,1fr);gap:4px 18px;padding:22px 0;border-bottom:1px solid var(--line-2)}
-.wf-n{grid-row:span 2;font-family:'GeistMono',ui-monospace,monospace;font-size:14px;font-weight:500;color:var(--accent);padding-top:5px}
-.wf-h{margin:0;font-size:clamp(19px,1.7vw,24px);font-weight:800;color:var(--ink)}
-.wf-b{margin:0;max-width:60ch;font-size:15.5px;line-height:1.75;color:var(--ink-2)}
+/* How I work, as a route. The heading holds still beside the stages on a
+   wide screen; the stages run down a line that fills as they are read. Each
+   number is set in the variable headline face: thin and quiet until its
+   stage is reached, then heavy and in the accent. Without motion (phones,
+   reduced motion, no script) every stage is shown reached. */
+.rt{display:grid;gap:clamp(36px,5vw,64px)}
 @media (min-width:1024px){
-  .wf{grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;border-top:0}
-  .wf-step{grid-template-columns:1fr;align-content:start;gap:10px;padding:22px 0 0;border-bottom:0;border-top:2px solid var(--line-2)}
-  .wf-step:first-child{border-top-color:var(--accent)}
-  .wf-n{grid-row:auto;padding:0}
+  .rt{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(48px,6vw,96px);align-items:start}
+  .rt-head{position:sticky;top:120px}
 }
+.rt-list{position:relative}
+.rt-ol{display:grid;margin:0;padding:0;list-style:none}
+.rt-rail{position:absolute;inset-inline-start:10px;top:14px;bottom:14px;width:2px;border-radius:2px;background:var(--line-2);overflow:hidden}
+.rt-fill{position:absolute;inset:0;border-radius:inherit;background:var(--accent);transform-origin:top;transform:scaleY(1)}
+.rt-step{--w:800;position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px clamp(18px,2.4vw,32px);align-items:start;
+  padding:0 0 clamp(36px,4.6vw,60px);padding-inline-start:44px}
+.rt-step:last-child{padding-bottom:0}
+.rt-dot{position:absolute;inset-inline-start:3px;top:12px;width:16px;height:16px;border-radius:50%;border:2px solid var(--accent);background:var(--accent);
+  box-shadow:0 0 0 6px var(--bg);transition:background-color .4s ease,border-color .4s ease,transform .5s cubic-bezier(.22,1,.36,1)}
+.rt-n{min-width:2.1ch;font-family:'Bricolage',system-ui,sans-serif;font-size:clamp(44px,4.6vw,72px);line-height:.86;letter-spacing:-.04em;
+  font-variation-settings:"wght" var(--w),"wdth" 100;color:var(--accent);transition:font-variation-settings .7s cubic-bezier(.22,1,.36,1),color .5s ease}
+.rt-h{margin:0;font-size:clamp(21px,2vw,28px);font-weight:800;line-height:1.25;letter-spacing:-.015em;color:var(--ink);transition:color .5s ease}
+[dir="rtl"] .rt-h{letter-spacing:0;line-height:1.45}
+.rt-b{margin:10px 0 0;max-width:52ch;font-size:clamp(15.5px,1.15vw,17px);line-height:1.8;color:var(--ink-2);transition:opacity .5s ease}
+/* with motion: unreached stages wait thin and grey, the current one lifts */
+.rt-list.is-live .rt-step{--w:220}
+.rt-list.is-live .rt-step:not(.is-reached) .rt-n{color:var(--ink-3)}
+.rt-list.is-live .rt-step:not(.is-reached) .rt-h{color:var(--ink-3)}
+.rt-list.is-live .rt-step:not(.is-reached) .rt-b{opacity:.45}
+.rt-list.is-live .rt-step:not(.is-reached) .rt-dot{background:var(--bg);border-color:var(--line-2)}
+.rt-list.is-live .rt-step.is-reached{--w:800}
+.rt-list.is-live .rt-step.is-now .rt-dot{transform:scale(1.35)}
 .wf-cta{margin-top:clamp(28px,4vw,44px)}
 
 /* Required fields are marked before anyone gets an error. */
