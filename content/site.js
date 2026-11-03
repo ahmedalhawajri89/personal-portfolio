@@ -32,8 +32,8 @@ export const SERVICES = [
   },
   {
     icon: 'database', proof: 'lamma', visual: 'api',
-    ar: { h: 'قواعد بيانات وواجهات برمجية', b: 'مخطّط يمنع الخطأ قبل أن يحدث، وAPI موثّق تحرسه اختبارات.' },
-    en: { h: 'Database design and APIs', b: 'A schema that stops the mistake before it happens, and a documented API held up by tests.' },
+    ar: { h: 'قواعد بيانات وواجهات برمجية', phrase: 'قواعد بيانات وواجهات برمجية', b: 'مخطّط يمنع الخطأ قبل أن يحدث، وAPI موثّق تحرسه اختبارات.' },
+    en: { h: 'Database design and APIs', phrase: 'database design and APIs', b: 'A schema that stops the mistake before it happens, and a documented API held up by tests.' },
   },
   {
     // Figma to code. No project here claims a Figma source, so this one cites
@@ -48,8 +48,8 @@ export const SERVICES = [
     // all five projects, Playwright in three, and the booking system's
     // concurrency test opens two real sessions. A skill, not a job title.
     icon: 'shield', proof: 'booking', visual: 'tests',
-    ar: { h: 'اختبارات وضمان جودة', b: 'اختبارات آلية لتطبيق لارافيل قائم، حتى يبقى الخطأ الذي أصلحناه مُصلَحاً بعد التعديل التالي.' },
-    en: { h: 'Testing & QA', b: 'Automated tests for an existing Laravel app, so a bug we fixed stays fixed after the next change.' },
+    ar: { h: 'اختبارات وضمان جودة', phrase: 'اختبارات وضمان جودة', b: 'اختبارات آلية لتطبيق لارافيل قائم، حتى يبقى الخطأ الذي أصلحناه مُصلَحاً بعد التعديل التالي.' },
+    en: { h: 'Testing & QA', phrase: 'testing & QA', b: 'Automated tests for an existing Laravel app, so a bug we fixed stays fixed after the next change.' },
   },
   {
     icon: 'code', proof: null, visual: 'diff', note: 'Laravel · PHP',

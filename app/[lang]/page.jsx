@@ -10,6 +10,7 @@ import Cover from '../../components/Cover';
 import BehindScreen from '../../components/BehindScreen';
 import RuleStack from '../../components/RuleStack';
 import Problems from '../../components/Problems';
+import AlsoSentence from '../../components/AlsoSentence';
 import Scenes from '../../components/Scenes';
 import Pointer from '../../components/Pointer';
 import Curtain from '../../components/Curtain';
@@ -205,23 +206,18 @@ export default async function Home({ params }) {
               );
             })}
           </ul>
-          <h3 className="sv-more-h">{t.services.more}</h3>
-          <ul className="sv-more">
-            {SERVICES.filter((sv) => sv.tier !== 'core').map((sv) => {
+          <h3 className="sr-only">{t.services.more}</h3>
+          <AlsoSentence
+            lead={t.services.alsoLead} and={t.services.alsoAnd} arrow={arrow} rtl={ar}
+            items={SERVICES.filter((sv) => sv.tier !== 'core').map((sv) => {
               const pr = PROJECTS.find((x) => x.slug === sv.proof);
-              return (
-                <li key={sv.en.h} style={{ '--c': SV_HUE[sv.visual] || 'var(--accent)' }}>
-                  <h4 className="sv-more-t">{sv[lang].h}</h4>
-                  <p>{sv[lang].b}</p>
-                  {pr ? (
-                    <a href={`/${lang}/work/${pr.slug}/`} className="sv-more-a"><i className="pill-dot" aria-hidden="true" style={{ '--c': HUE[pr.slug] }} />{t.services.proof} {pr[lang].name}</a>
-                  ) : sv.note ? (
-                    <p className="sv-note"><span>{t.services.note}</span> <span className="lat">{sv.note}</span></p>
-                  ) : null}
-                </li>
-              );
+              return {
+                key: sv.visual, phrase: sv[lang].phrase || sv[lang].h, b: sv[lang].b, hue: SV_HUE[sv.visual] || 'var(--accent)',
+                proof: pr ? { href: `/${lang}/work/${pr.slug}/`, label: `${t.services.proof} ${pr[lang].name}`, hue: HUE[pr.slug] } : null,
+                note: !pr && sv.note ? { label: t.services.note, text: sv.note } : null,
+              };
             })}
-          </ul>
+          />
         </section>
 
         {/* ------------------------------------------------------ problems */}

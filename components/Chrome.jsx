@@ -369,6 +369,27 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     if (motionWanted()) Promise.all([import('gsap'), import('gsap/Flip')]).then(([{ gsap }, { Flip }]) => { gsap.registerPlugin(Flip); flipRef.current = Flip; });
   }, []);
 
+  // The capsule's edge catches the accent colour near the pointer: the light
+  // sits at the nearest point and fades out over ~180px. Desktop only.
+  useEffect(() => {
+    if (!scrolled || !motionWanted() || !matchMedia('(pointer: fine)').matches) return;
+    const el = inRef.current;
+    if (!el) return;
+    let raf = 0, ev = null;
+    const paint = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      const x = Math.min(Math.max(ev.clientX, r.left), r.right), y = Math.min(Math.max(ev.clientY, r.top), r.bottom);
+      const d = Math.hypot(ev.clientX - x, ev.clientY - y);
+      el.style.setProperty('--mx', `${x - r.left}px`);
+      el.style.setProperty('--my', `${y - r.top}px`);
+      el.style.setProperty('--ga', Math.max(0, 1 - d / 220).toFixed(3));
+    };
+    const move = (e) => { ev = e; if (!raf) raf = requestAnimationFrame(paint); };
+    window.addEventListener('pointermove', move, { passive: true });
+    return () => { window.removeEventListener('pointermove', move); cancelAnimationFrame(raf); el.style.setProperty('--ga', '0'); };
+  }, [scrolled]);
+
   // Play the change of shape from where it was.
   useLayoutEffect(() => {
     const state = pending.current, F = flipRef.current;

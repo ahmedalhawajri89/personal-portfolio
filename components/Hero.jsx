@@ -158,12 +158,9 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
         <span className="kh-line is-soft">{line2}</span>
       </h1>
 
+      {/* One column under the headline: what he builds, the two actions,
+          then the five layers the headline's bar walks through. */}
       <div className="kh-foot">
-        <ul className="kh-parts kh-reveal" aria-label={parts.join('، ')}>
-          {parts.map((p, k) => (
-            <li key={p} className={k === lit ? 'is-on' : ''} style={{ '--c': HUES[k] }}><i aria-hidden="true" />{p}</li>
-          ))}
-        </ul>
         <div className="kh-copy kh-reveal">
           <p className="kh-lede">{lede}</p>
           <div className="hx-ctas">
@@ -172,6 +169,11 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
             {children}
           </div>
         </div>
+        <ul className="kh-parts kh-reveal" aria-label={parts.join('، ')}>
+          {parts.map((p, k) => (
+            <li key={p} className={k === lit ? 'is-on' : ''} style={{ '--c': HUES[k] }}><i aria-hidden="true" />{p}</li>
+          ))}
+        </ul>
       </div>
 
       {stats?.length > 0 && <ul className="hx-stats kh-reveal">

@@ -329,7 +329,7 @@ export const PROFILE = {
   },
   location: { ar: 'غزة، فلسطين', en: 'Gaza, Palestine' },
   lede: {
-    ar: 'أبني أنظمة حجز ومتاجر إلكترونية ولوحات تحكم بالعربية والإنجليزية، بـ Laravel وMySQL في الخلفية وVue 3 في الواجهة.',
+    ar: 'أبني أنظمة حجز ومتاجر إلكترونية ولوحات تحكم بالعربية والإنجليزية، بـ Laravel وMySQL في الخلفية وVue 3 في الواجهة.',
     en: 'I build booking systems, online stores and admin dashboards in Arabic and English, with Laravel and MySQL on the back end and Vue 3 on the front.',
   },
   links: {

@@ -878,6 +878,16 @@ html[lang="ar"] .fm-u{--w:900}
 .tb-in{transition:background-color .4s ease,border-color .4s ease,box-shadow .55s ease}
 .tb.is-scrolled .tb-in{display:flex;align-items:center;gap:4px;width:fit-content;max-width:calc(100vw - 24px);height:56px;padding-inline:6px;border-radius:999px;overflow:hidden}
 .tb.is-scrolled .tb-in::after{display:none}
+/* The capsule's edge: a hairline that is bright along the top and fades
+   towards the bottom, like light on glass, and that catches the accent
+   colour where the pointer comes near it (--mx, --my, --ga set by Nav). */
+.tb.is-scrolled .tb-in{border-color:transparent}
+.tb-in::before{content:'';position:absolute;inset:0;padding:1.5px;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .4s ease;
+  background:
+    radial-gradient(260px circle at var(--mx,50%) var(--my,0%),color-mix(in srgb,var(--accent) calc(var(--ga,0) * 100%),transparent),transparent 62%),
+    linear-gradient(180deg,color-mix(in srgb,var(--ink) 30%,transparent),color-mix(in srgb,var(--ink) 7%,transparent) 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.tb.is-scrolled .tb-in::before{opacity:1}
 .tb.is-scrolled .tb-brand{padding-inline:2px 10px}
 .tb.is-scrolled .tb-nav{margin-inline:4px}
 .tb-extra{display:inline-flex;align-items:center;gap:8px}
@@ -1173,7 +1183,7 @@ html.curtain-in[data-curtain="lines"] .lfx-tag{opacity:1}
 /* ------------------------------------------------------------ kinetic hero */
 .hero{padding-top:clamp(110px,15vh,160px);padding-bottom:clamp(28px,4vw,44px)}
 .kh{display:flex;flex-direction:column;gap:clamp(28px,4vw,48px);min-height:calc(100svh - 150px)}
-.kh-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.kh-top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px}
 .kh-role{margin:0;font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;color:var(--ink-3)}
 .kh-h{margin:auto 0 0;font-size:clamp(48px,8.4vw,146px);font-weight:800;line-height:.98;letter-spacing:-.03em;word-spacing:.06em;color:var(--ink)}
 [dir="rtl"] .kh-h{letter-spacing:0;line-height:1.22;font-size:clamp(44px,7.6vw,128px)}
@@ -1198,22 +1208,34 @@ html[lang="ar"] .kh-line{--w:900}
 html[lang="ar"] .kh-line.is-soft{--w:400}
 html[lang="ar"] .kh-line,html[lang="ar"] .kh-u{font-variation-settings:"wght" var(--w)}
 .kh-foot{display:grid;gap:28px}
-@media (min-width:1024px){.kh-foot{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:end;gap:64px}}
+@media (min-width:1024px){.kh-foot{gap:clamp(22px,3.4svh,36px)}}
 .kh-parts{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
 .kh-parts li{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line-2);border-radius:999px;
   font-size:13.5px;font-weight:700;color:var(--ink-3);transition:color .4s,border-color .4s,background-color .4s}
 .kh-parts i{width:9px;height:9px;border-radius:50%;background:var(--c)}
 .kh-parts li.is-on{color:var(--ink);border-color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent)}
-.kh-lede{max-width:48ch;margin:0;font-size:clamp(16px,1.3vw,18.5px);line-height:1.8;color:var(--ink-2)}
+.kh-lede{max-width:58ch;margin:0;font-size:clamp(16px,1.3vw,18.5px);line-height:1.8;color:var(--ink-2)}
 .kh .hx-ctas{margin-top:22px}
 /* On a laptop or desktop the whole opening fits the first screen: the
    headline is sized by the height as well as the width, so a wide, short
    window no longer pushes the summary and the actions below the fold. */
 @media (min-width:1024px){
   .hero{display:flex;flex-direction:column;min-height:100svh;padding-top:clamp(92px,12svh,150px);padding-bottom:clamp(20px,3.4svh,40px)}
-  .kh{flex:1;min-height:0;gap:clamp(18px,3.2svh,44px)}
-  .kh-h{font-size:clamp(48px,min(8.4vw,13svh),146px)}
-  [dir="rtl"] .kh-h{font-size:clamp(44px,min(7.6vw,12svh),128px)}
+  .kh{flex:1;min-height:0;justify-content:center;gap:clamp(18px,3.2svh,40px)}
+  .kh-h{margin-top:0}
+  /* The supporting type steps up with the headline, so the opening reads as
+     one scale rather than a giant line over small print. */
+  .kh .hx-status{gap:10px;padding:8px 16px;font-size:15px}
+  .kh .hx-live{width:9px;height:9px}
+  .kh-role{font-size:14.5px}
+  .kh-lede{max-width:52ch;font-size:clamp(18px,1.45vw,22px);line-height:1.7;color:var(--ink-2)}
+  .kh .hx-ctas{gap:14px}
+  .kh .hx-ctas .btn{padding:16px 28px;font-size:16.5px}
+  .kh-parts{gap:10px}
+  .kh-parts li{gap:9px;padding:10px 18px;font-size:15px}
+  .kh-parts i{width:10px;height:10px}
+  .kh-h{font-size:clamp(48px,min(8.8vw,14svh),156px)}
+  [dir="rtl"] .kh-h{font-size:clamp(44px,min(7.9vw,12.8svh),136px)}
 }
 
 /* ------------------------------------------------------------ why */
@@ -1880,14 +1902,27 @@ html.curtain-in .cs-in{animation-delay:calc(var(--d,0s) + .9s)}
 .sv-facts div{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;align-items:baseline}
 .sv-facts dt{font-size:13px;font-weight:800;color:var(--c)}
 .sv-facts dd{margin:0;font-size:15.5px;line-height:1.7;color:var(--ink-2)}
-.sv-more-h{margin:clamp(40px,5vw,64px) 0 18px;font-size:15px;font-weight:800;color:var(--ink-3)}
-.sv-more{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-@media (min-width:768px){.sv-more{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.sv-more li{display:flex;flex-direction:column;gap:8px;padding:20px 22px;border:1px solid var(--line-2);border-top:2px solid var(--c);border-radius:16px;background:var(--card)}
-.sv-more-t{margin:0;font-size:17px;font-weight:800;color:var(--ink)}
-.sv-more p{margin:0;font-size:14.5px;line-height:1.7;color:var(--ink-2)}
-.sv-more-a{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-top:auto;font-size:14px;font-weight:700;color:var(--ink);text-decoration:none}
-.sv-more-a:hover{color:var(--c)}
+/* "Also", said as one sentence in large type. Each service is a phrase
+   marked as if by a highlighter in its own colour; the one pointed at or
+   chosen is marked fully, and the line under the sentence says what it is
+   and where it was built. */
+.as{margin-top:clamp(64px,8vw,112px)}
+.as-say{margin:0;max-width:24em;font-size:clamp(28px,3.7vw,56px);font-weight:800;line-height:1.22;letter-spacing:-.03em;color:var(--ink)}
+[dir="rtl"] .as-say{letter-spacing:0;line-height:1.5}
+.as-lead{font-weight:400;color:var(--ink-3)}
+.as-w{display:inline;padding:0 .06em;border:0;margin:0;font:inherit;letter-spacing:inherit;color:inherit;cursor:pointer;text-align:inherit;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone;border-radius:.12em;
+  background:linear-gradient(color-mix(in srgb,var(--c) 30%,transparent),color-mix(in srgb,var(--c) 30%,transparent)) 0 88%/100% .16em no-repeat;
+  transition:background-size .45s cubic-bezier(.22,1,.36,1),color .3s}
+.as-w:hover,.as-w.is-on{background-size:100% 100%;background-position:0 0}
+.as-w.is-on{background-image:linear-gradient(color-mix(in srgb,var(--c) 26%,transparent),color-mix(in srgb,var(--c) 26%,transparent))}
+.as-w:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.as-read{display:grid;gap:18px;justify-items:start;max-width:62ch;margin-top:clamp(24px,3vw,36px);padding-inline-start:20px;border-inline-start:3px solid var(--c);
+  animation:as-in .45s cubic-bezier(.22,1,.36,1) both}
+.as-read[hidden]{display:none}
+.as-read > p{margin:0;font-size:clamp(16px,1.3vw,19px);line-height:1.75;color:var(--ink-2)}
+@keyframes as-in{from{opacity:0;transform:translateY(8px)}}
+@media (prefers-reduced-motion:reduce){.as-read{animation:none}.as-w{transition:none}}
 
 /* How working together goes: five stages in their real order. */
 .wf{display:grid;gap:0;margin:0;padding:0;list-style:none;border-top:1px solid var(--line-2);counter-reset:none}
