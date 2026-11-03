@@ -1234,7 +1234,7 @@ html[lang="ar"] .kh-line,html[lang="ar"] .kh-u{font-variation-settings:"wght" va
   .kh-parts{gap:10px}
   .kh-parts li{gap:9px;padding:10px 18px;font-size:15px}
   .kh-parts i{width:10px;height:10px}
-  .kh-h{font-size:clamp(48px,min(8.8vw,14svh),156px)}
+  .kh-h{font-size:clamp(48px,min(8vw,14svh),128px)}
   [dir="rtl"] .kh-h{font-size:clamp(44px,min(7.9vw,12.8svh),136px)}
 }
 
@@ -1256,6 +1256,10 @@ html[lang="ar"] .kh-line,html[lang="ar"] .kh-u{font-variation-settings:"wght" va
 .pc-n{position:absolute;top:18px;inset-inline-start:22px;font-family:'GeistMono',ui-monospace,monospace;font-size:13px;font-weight:500;color:var(--c)}
 .pc-label{margin:0;font-size:16px;font-weight:800;color:var(--c)}
 .pc-label .lat{color:var(--ink-3);font-weight:500}
+/* the year kept apart from the name in either direction: its own box, a dot between */
+.pc-yr{display:inline-flex;align-items:center;gap:8px;margin-inline-start:8px}
+.pc-yr i{font-style:normal}
+[dir="rtl"] .pc-yr{direction:rtl}
 .pc-say{margin:14px 0 0;font-size:clamp(26px,2.7vw,42px);font-weight:700;line-height:1.2;letter-spacing:-.02em}
 [dir="rtl"] .pc-say{letter-spacing:0;line-height:1.45}
 .pc-say a{display:block;color:var(--ink);text-decoration:none}

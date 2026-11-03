@@ -158,7 +158,7 @@ export default async function Home({ params }) {
                     <span className="pc-n lat">{String(i + 1).padStart(2, '0')}</span>
                   </a>
                   <div className="pc-copy">
-                    <p className="pc-label">{c.name}<span className="lat"> · {p.year}</span></p>
+                    <p className="pc-label">{c.name}<span className="pc-yr lat"><i aria-hidden="true">·</i>{p.year}</span></p>
                     <p className="pc-kind">{c.kind}<span className="pc-status">{t.work.status[p.status]}</span></p>
                     <h3 className="pc-say"><a href={href} data-m="lines">{b?.hook || c.tagline}</a></h3>
                     <p className="pc-q"><b>{t.work.problem}</b>{b?.problem || c.summary}</p>

@@ -75,9 +75,12 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
         const shapes = units.map((u) => ({ u, ...AXES[u.closest('.is-soft') ? 'light' : 'heavy'] }));
         // Words keep the width they were set at, measured once the face has
         // loaded, so a letter changing shape cannot push the next word along.
+        // The width is kept in em, so it follows the headline when the
+        // window changes size (the headline is sized by width and height).
         const lockWords = () => splits.forEach((s) => s.words.forEach((w) => {
           w.style.width = '';
-          w.style.width = `${w.getBoundingClientRect().width}px`;
+          const fs = parseFloat(getComputedStyle(w).fontSize) || 1;
+          w.style.width = `${(w.getBoundingClientRect().width / fs).toFixed(4)}em`;
           w.style.whiteSpace = 'nowrap';
         }));
         const wave = () => {
