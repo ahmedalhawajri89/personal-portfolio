@@ -15,8 +15,8 @@ export async function generateMetadata({ params }) {
   const { lang } = await params;
   const ar = lang === 'ar';
   const title = ar
-    ? 'أحمد الحواجري — مطوّر ويب Full-Stack وجودة واختبارات'
-    : 'Ahmed Al-Hawajiri — Full-Stack Web Developer & QA';
+    ? 'أحمد الحواجري · مطوّر Laravel وPHP'
+    : 'Ahmed Al-Hawajiri · Laravel & PHP Developer';
   const description = ar
     ? 'مطوّر ويب Full-Stack من غزة. أبني تطبيقات كاملة بلارافيل وPHP وVue — من مخطط قاعدة البيانات إلى الواجهة — وأحرس قواعدها باختبارات آلية.'
     : 'Full-stack web developer from Gaza. Complete applications in Laravel, PHP and Vue — from the database schema to the interface — with the rules held by automated tests.';
@@ -93,7 +93,7 @@ export default async function RootLayout({ children, params }) {
               '@type': 'Person',
               name: 'Ahmed Al-Hawajiri',
               alternateName: 'أحمد الحواجري',
-              jobTitle: 'Full-Stack Web Developer & QA',
+              jobTitle: 'Laravel & PHP Developer',
               url: SITE,
               address: { '@type': 'PostalAddress', addressLocality: 'Gaza', addressCountry: 'PS' },
               knowsLanguage: ['ar', 'en'],

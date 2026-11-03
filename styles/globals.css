@@ -920,7 +920,7 @@ html[lang="ar"] .fm-u{--w:900}
 .tb-name{font-size:16px;font-weight:800;line-height:1.1;letter-spacing:-.015em}
 [dir="rtl"] .tb-name{letter-spacing:0;font-size:16.5px}
 .tb-role{font-family:'GeistMono',ui-monospace,monospace;font-size:11.5px;font-weight:500;line-height:1;color:var(--ink-3);text-align:start}
-[dir="rtl"] .tb-role{text-align:right}
+[dir="rtl"] .tb-role{text-align:right;font-family:inherit;font-size:12px;font-weight:600;line-height:1.4}
 
 .tb-nav{position:relative;display:none;justify-self:center;align-items:center;gap:2px}
 .tb-nav a{position:relative;z-index:1;display:inline-flex;align-items:center;height:38px;padding:0 14px;border-radius:999px;
@@ -1231,6 +1231,15 @@ html[lang="ar"] .kh-line,html[lang="ar"] .kh-u{font-variation-settings:"wght" va
 .kh-parts li.is-on{color:var(--ink);border-color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent)}
 .kh-lede{max-width:48ch;margin:0;font-size:clamp(16px,1.3vw,18.5px);line-height:1.8;color:var(--ink-2)}
 .kh .hx-ctas{margin-top:22px}
+/* On a laptop or desktop the whole opening fits the first screen: the
+   headline is sized by the height as well as the width, so a wide, short
+   window no longer pushes the summary and the actions below the fold. */
+@media (min-width:1024px){
+  .hero{display:flex;flex-direction:column;min-height:100svh;padding-top:clamp(92px,12svh,150px);padding-bottom:clamp(20px,3.4svh,40px)}
+  .kh{flex:1;min-height:0;gap:clamp(18px,3.2svh,44px)}
+  .kh-h{font-size:clamp(48px,min(8.4vw,13svh),146px)}
+  [dir="rtl"] .kh-h{font-size:clamp(44px,min(7.6vw,12svh),128px)}
+}
 
 /* ------------------------------------------------------------ why */
 .why{padding-block:clamp(110px,15vw,200px) clamp(70px,9vw,120px)}
@@ -1459,7 +1468,7 @@ html[lang="ar"] .bs-code .bs-note,html[lang="ar"] .bs-db .bs-note{align-self:fle
 .ab2-prose{display:grid;gap:16px;max-width:62ch;margin:30px 0 30px}
 .ab2-prose p{margin:0;font-size:17px;line-height:1.9;color:var(--ink-2)}
 .ab2-figs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:clamp(56px,7vw,96px) 0 0;padding:0;list-style:none;border-top:1px solid var(--line)}
-@media (min-width:768px){.ab2-figs{grid-template-columns:repeat(4,minmax(0,1fr))}.ab2-figs li + li{padding-inline-start:24px;border-inline-start:1px solid var(--line)}}
+@media (min-width:768px){.ab2-figs{grid-template-columns:repeat(3,minmax(0,1fr))}.ab2-figs li + li{padding-inline-start:24px;border-inline-start:1px solid var(--line)}}
 .ab2-figs li{display:flex;flex-direction:column;gap:8px;padding:26px 0}
 .ab2-figs span{font-size:clamp(40px,5vw,72px);font-weight:800;line-height:1;letter-spacing:-.04em;color:var(--c);font-variant-numeric:tabular-nums}
 .ab2-figs b{font-weight:inherit}

@@ -484,7 +484,7 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
           </span>
           <span className="tb-id">
             <span className="tb-name">{PROFILE.name[lang]}</span>
-            <span className="tb-role lat">Full-Stack · QA</span>
+            <span className={`tb-role${lang === 'ar' ? '' : ' lat'}`}>{t.about.role}</span>
           </span>
           {home && now && (
             <span className="tb-now" aria-hidden="true">

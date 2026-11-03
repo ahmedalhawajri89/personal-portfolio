@@ -200,7 +200,7 @@ export const PROJECTS = [
     year: '2026',
     status: 'independent',
     stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Vanilla JS', 'Yajra DataTables', 'PHPUnit', 'Laravel Excel', 'Sanctum', 'Next.js 14', 'React 18', 'Tailwind 3'],
-    repo: 'https://github.com/ahmedalhawajri89/Takharruj',
+    repo: 'https://github.com/ahmedalhawajri89/takharruj',
     // Demo mode: one-click sign-in as student, supervisor or admin, reset nightly.
     demo: 'https://takharruj.vercel.app/',
     ar: {
@@ -324,13 +324,13 @@ export const PROJECTS = [
 export const PROFILE = {
   name: { ar: 'أحمد الحواجري', en: 'Ahmed Al-Hawajiri' },
   role: {
-    ar: 'مطوّر Full-Stack وجودة واختبارات — لارافيل وفيو، عربي أولاً',
-    en: 'Full-stack developer & QA — Laravel & Vue, Arabic-first',
+    ar: 'مطوّر Laravel وPHP',
+    en: 'Laravel & PHP Developer',
   },
   location: { ar: 'غزة، فلسطين', en: 'Gaza, Palestine' },
   lede: {
-    ar: 'أبني متاجر إلكترونية وأنظمة حجز ولوحات تحكم للأعمال، بالعربية والإنجليزية. ومن قاعدة البيانات إلى آخر زرّ، أعمل على المشروع كلّه بنفسي، فتتحدث مع الشخص نفسه الذي يكتب الكود من أول يوم إلى يوم التسليم.',
-    en: 'I build online stores, booking systems and business dashboards, in Arabic and English. From the database to the last button, I work on the whole project myself, so you talk to the person writing the code from the first day to the day it ships.',
+    ar: 'أبني أنظمة حجز ومتاجر إلكترونية ولوحات تحكم بالعربية والإنجليزية، بـ Laravel وMySQL في الخلفية وVue 3 في الواجهة.',
+    en: 'I build booking systems, online stores and admin dashboards in Arabic and English, with Laravel and MySQL on the back end and Vue 3 on the front.',
   },
   links: {
     github: 'https://github.com/ahmedalhawajri89',

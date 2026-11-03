@@ -150,7 +150,7 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
           <span className="hx-live" aria-hidden="true" />
           {status}<span aria-hidden="true">·</span><span className="hx-place">{place}</span>
         </p>
-        <p className="kh-role lat">Full-Stack · QA · Laravel · Vue</p>
+        <p className="kh-role lat">Laravel · PHP · MySQL · Vue 3</p>
       </div>
 
       <h1 className="kh-h" aria-label={`${line1} ${line2}`}>

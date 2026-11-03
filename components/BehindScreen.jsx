@@ -42,11 +42,13 @@ const plays = [
   // The suite runs and the count climbs to the real total.
   (gsap, $, $$) => {
     const sum = $('.bs-sum b');
+    const tl = gsap.timeline()
+      .fromTo($$('.bs-test'), { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.35, stagger: 0.28 }, 0)
+      .fromTo($$('.bs-tick'), { scale: 0 }, { scale: 1, duration: 0.3, stagger: 0.28, ease: 'back.out(3)' }, 0.2);
+    if (!sum) return tl;
     const total = Number(sum.dataset.n);
     const n = { v: 0 };
-    return gsap.timeline()
-      .fromTo($$('.bs-test'), { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.35, stagger: 0.28 }, 0)
-      .fromTo($$('.bs-tick'), { scale: 0 }, { scale: 1, duration: 0.3, stagger: 0.28, ease: 'back.out(3)' }, 0.2)
+    return tl
       .fromTo($('.bs-sum'), { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.9)
       .fromTo(n, { v: 0 }, { v: total, duration: 1, ease: 'power2.out', onUpdate: () => { sum.textContent = Math.round(n.v).toLocaleString('en-US'); } }, 0.9);
   },
@@ -116,7 +118,7 @@ function Pane({ k, ui, tests, total, passed, outside }) {
           </li>
         ))}
       </ul>
-      <p className="bs-sum"><b data-n={total}>{total.toLocaleString('en-US')}</b> {passed}</p>
+      {total > 0 && <p className="bs-sum"><b data-n={total}>{total.toLocaleString('en-US')}</b> {passed}</p>}
     </div>
   );
   return (

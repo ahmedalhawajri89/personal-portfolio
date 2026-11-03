@@ -64,7 +64,6 @@ export default async function Home({ params }) {
   const arrow = ar ? 'arrowLeft' : 'arrowRight';
   const live = PROJECTS.filter((p) => shotsOf(p.shots).shots.length > 0);
   const totalPages = live.reduce((n, p) => n + pagesOf(p.shots), 0);
-  const totalTests = live.reduce((n, p) => n + (BRIEFS[p.slug]?.tests || 0), 0);
   // A tool matches a project's stack on its leading word, so `Vue 3` finds
   // `Vue 3.5` and `Tailwind CSS` finds `Tailwind 4`. Used by the tools.
   const head = (x) => x.toLowerCase().split(/[\s.]/)[0];
@@ -250,8 +249,6 @@ export default async function Home({ params }) {
             parts={t.proof.parts}
             ui={{ item: t.services.ui.item, left: t.services.ui.left, add: t.services.ui.add, reserved: t.services.ui.reserved, lock: t.proof.lock }}
             tests={HERO_TESTS.slice(0, 3).map((x) => x.file.replace('.php', ''))}
-            total={totalTests}
-            passed={t.hero.passed}
             outside={t.proof.outside}
             jumpLabel={t.proof.jump}
           />
@@ -360,12 +357,11 @@ export default async function Home({ params }) {
           </div>
           <ul className="ab2-figs">
             {/* Figures a reader can check: the projects and their screens are
-                counted from content/, the tests from the repositories. The
-                experience is said in words, not a number of years. */}
+                counted from content/. The experience is said in words, not a
+                number of years. */}
             {[
               [t.about.figs.yearsV, t.about.figs.years, 'var(--h-sec)'],
               [PROJECTS.length, t.about.figs.projects, 'var(--h-ui)'],
-              [totalTests, t.about.figs.tests, 'var(--h-test)'],
               [totalPages, t.about.figs.shots, 'var(--h-api)'],
             ].map(([n, l, c]) => (
               <li key={l} style={{ '--c': c }}>
