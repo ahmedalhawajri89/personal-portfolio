@@ -871,6 +871,42 @@ html[lang="ar"] .fm-u{--w:900}
 .tb.is-scrolled .tb-in{max-width:1180px;height:60px;margin-top:12px;padding-inline:8px;
   background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);
   border-color:var(--line-2);box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 18px 40px -22px rgba(20,20,20,.45)}
+/* The capsule. Once the page moves the bar gathers into one small pill in
+   the middle -- the mark ringed by the reading progress, the section you are
+   in, a sign that it opens, the action -- and opens to the links, the
+   language and the theme when a pointer or the keyboard comes to it. GSAP
+   Flip plays each change of shape (Nav in components/Chrome.jsx), so the
+   size transitions are left to it. */
+.tb-in{transition:background-color .4s ease,border-color .4s ease,box-shadow .55s ease}
+.tb.is-scrolled .tb-in{display:flex;align-items:center;gap:4px;width:fit-content;max-width:calc(100vw - 24px);height:56px;padding-inline:6px;border-radius:999px;overflow:hidden}
+.tb.is-scrolled .tb-in::after{display:none}
+.tb.is-scrolled .tb-brand{padding-inline:2px 10px}
+.tb.is-scrolled .tb-nav{margin-inline:4px}
+.tb-extra{display:inline-flex;align-items:center;gap:8px}
+.tb-more{display:none;align-items:center;justify-content:center;gap:3px;width:36px;height:36px;margin-inline-end:2px;border:0;border-radius:50%;
+  background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink);cursor:pointer}
+.tb-more i{width:4px;height:4px;border-radius:50%;background:currentColor}
+.tb-more:hover{background:color-mix(in srgb,var(--ink) 12%,transparent)}
+.tb-more:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+@media (min-width:768px){
+  .tb.is-scrolled:not(.is-open) .tb-nav,.tb.is-scrolled:not(.is-open) .tb-extra{display:none}
+  .tb.is-scrolled:not(.is-open) .tb-more{display:inline-flex}
+  /* Open, the lit link says where you are; the name beside the mark would repeat it. */
+  .tb.is-open .tb-now{display:none}
+}
+.tb-logo{position:relative;display:grid;place-items:center;flex:none}
+.tb-ring{position:absolute;inset:-5px;width:calc(100% + 10px);height:calc(100% + 10px);transform:rotate(-90deg);opacity:0;transition:opacity .4s ease;pointer-events:none}
+[dir="rtl"] .tb-ring{transform:rotate(-90deg) scaleY(-1)}
+.tb-ring circle{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:calc(100 - var(--p,0) * 100)}
+.tb.is-scrolled .tb-ring{opacity:1}
+.tb-now{display:inline-flex;overflow:hidden;max-width:0;opacity:0;white-space:nowrap;transition:max-width .6s var(--tb-ease),opacity .35s ease}
+.tb.is-scrolled .tb-now{max-width:220px;opacity:1}
+.tb-now-in{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:var(--ink);animation:tb-now .5s var(--tb-ease) both}
+.tb-now-in i{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+@keyframes tb-now{from{transform:translateY(110%);opacity:0}}
+/* On a phone the mark keeps the name beside it; there is no room for both. */
+@media (max-width:767px){.tb-now{display:none}.tb.is-scrolled .tb-brand{min-width:0;overflow:hidden}}
+@media (prefers-reduced-motion:reduce){.tb-now-in{animation:none}}
 /* how far down the page, along the capsule's lower edge (--p, set on .tb by ScrollProgress) */
 .tb-in::after{content:'';position:absolute;inset-inline:26px;bottom:-1px;height:2px;border-radius:2px;background:var(--accent);
   transform:scaleX(var(--p,0));transform-origin:left;opacity:0;transition:opacity .4s}
@@ -929,7 +965,7 @@ html.intro .tb-in > *,html.intro .logo-a,html.intro .logo-check{animation-play-s
 @media (min-width:1024px) and (max-width:1240px){.tb-id{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.tb-nav a{padding:0 10px;font-size:13.5px}}
 @media (max-width:767px){
   .tb-in{grid-template-columns:minmax(0,1fr) auto;height:66px}
-  .tb.is-scrolled .tb-in{height:56px;margin-top:8px;padding-inline:8px 6px}
+  .tb.is-scrolled .tb-in{height:56px;margin-top:8px;padding-inline:0}
   .tb.is-scrolled .tb-id{max-width:200px;opacity:1}
   .tb-role{display:none}
   .tb-cta{display:none}
@@ -1419,6 +1455,9 @@ html[lang="ar"] .bs-code .bs-note,html[lang="ar"] .bs-db .bs-note{align-self:fle
 .ab2-figs li{display:flex;flex-direction:column;gap:8px;padding:26px 0}
 .ab2-figs span{font-size:clamp(40px,5vw,72px);font-weight:800;line-height:1;letter-spacing:-.04em;color:var(--c);font-variant-numeric:tabular-nums}
 .ab2-figs b{font-weight:inherit}
+/* the experience, said in words: the same weight as the figures, a size that fits a phrase */
+.ab2-figs span.is-words{font-size:clamp(28px,3.3vw,48px);letter-spacing:-.025em;line-height:1.1}
+[dir="rtl"] .ab2-figs span.is-words{letter-spacing:0;line-height:1.3}
 .ab2-figs small{font-size:14px;font-weight:700;color:var(--ink-3)}
 
 /* ------------------------------------------------------------ the cream band */
@@ -1891,3 +1930,5 @@ html.curtain-in .cs-in{animation-delay:calc(var(--d,0s) + .9s)}
   .js .mask-rise{clip-path:none;transform:none;transition:none}
   .cs-rise,.cs-in{animation:none}
 }
+/* The narrowest phones keep the mark alone once the bar is islands. */
+@media (max-width:400px){.tb.is-scrolled .tb-id{max-width:0;opacity:0}.tb.is-scrolled .tb-brand{padding-inline:6px}}
