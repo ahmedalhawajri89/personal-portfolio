@@ -125,12 +125,6 @@ export default async function Home({ params }) {
             cta1={t.hero.cta1}
             cta2={t.hero.cta2}
             parts={t.hero.steps}
-            stats={[
-              { n: PROFILE.years, suffix: '+', l: t.stats.years },
-              { n: PROJECTS.length, l: t.stats.projects },
-              { n: totalPages, l: t.stats.shots },
-              { n: 2, l: t.stats.langs },
-            ]}
           >
             <CvButton lang={lang} variant="ghost" compact />
           </Hero>
@@ -359,14 +353,19 @@ export default async function Home({ params }) {
             </div>
           </div>
           <ul className="ab2-figs">
+            {/* Figures a reader can check: the projects and their screens are
+                counted from content/, the tests from the repositories. The
+                experience is said in words, not a number of years. */}
             {[
-              [PROFILE.years, '+', t.about.figs.years, 'var(--h-sec)'],
-              [PROJECTS.length, '', t.about.figs.projects, 'var(--h-ui)'],
-              [totalTests, '', t.about.figs.tests, 'var(--h-test)'],
-              [2, '', t.about.figs.langs, 'var(--h-api)'],
-            ].map(([n, suf, l, c]) => (
+              [t.about.figs.yearsV, t.about.figs.years, 'var(--h-sec)'],
+              [PROJECTS.length, t.about.figs.projects, 'var(--h-ui)'],
+              [totalTests, t.about.figs.tests, 'var(--h-test)'],
+              [totalPages, t.about.figs.shots, 'var(--h-api)'],
+            ].map(([n, l, c]) => (
               <li key={l} style={{ '--c': c }}>
-                <span className="lat"><b data-m="count" data-to={n}>{n.toLocaleString('en-US')}</b>{suf}</span>
+                {typeof n === 'number'
+                  ? <span className="lat"><b data-m="count" data-to={n}>{n.toLocaleString('en-US')}</b></span>
+                  : <span className="is-words">{n}</span>}
                 <small>{l}</small>
               </li>
             ))}

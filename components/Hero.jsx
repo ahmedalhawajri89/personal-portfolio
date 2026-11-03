@@ -174,14 +174,14 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
         </div>
       </div>
 
-      <ul className="hx-stats kh-reveal">
+      {stats?.length > 0 && <ul className="hx-stats kh-reveal">
         {stats.map((s) => (
           <li key={s.l}>
             <span className="lat">{s.n}{s.suffix || ''}</span>
             <small>{s.l}</small>
           </li>
         ))}
-      </ul>
+      </ul>}
     </div>
   );
 }

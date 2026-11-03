@@ -328,7 +328,6 @@ export const PROFILE = {
     en: 'Full-stack developer & QA — Laravel & Vue, Arabic-first',
   },
   location: { ar: 'غزة، فلسطين', en: 'Gaza, Palestine' },
-  years: 4,
   lede: {
     ar: 'أبني متاجر إلكترونية وأنظمة حجز ولوحات تحكم للأعمال، بالعربية والإنجليزية. ومن قاعدة البيانات إلى آخر زرّ، أعمل على المشروع كلّه بنفسي، فتتحدث مع الشخص نفسه الذي يكتب الكود من أول يوم إلى يوم التسليم.',
     en: 'I build online stores, booking systems and business dashboards, in Arabic and English. From the database to the last button, I work on the whole project myself, so you talk to the person writing the code from the first day to the day it ships.',
