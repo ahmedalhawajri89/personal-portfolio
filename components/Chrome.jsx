@@ -273,16 +273,12 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
   const [active, setActive] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const [away, setAway] = useState(false);
-  // Once the page moves the bar becomes a small capsule -- the mark ringed by
-  // the reading progress, the section you are in, the action -- that opens to
-  // the full set of links when a pointer or the keyboard comes to it. Each
-  // change of shape is played by GSAP Flip from the shape it had, so the bar
-  // visibly gathers and opens rather than jumping (where motion is loaded).
-  const [open, setOpen] = useState(false);
+  // Once the page moves the bar gathers into one capsule with every link in
+  // it. The change of shape is played by GSAP Flip from the shape it had, so
+  // the bar visibly gathers rather than jumping (where motion is loaded).
   const inRef = useRef(null);
   const flipRef = useRef(null);
   const pending = useRef(null);
-  const shut = useRef(0);
   const scrolledNow = useRef(false);
   const reshape = (change) => {
     const F = flipRef.current;
@@ -319,7 +315,7 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
       const next = y > 24;
       if (next !== scrolledNow.current) {
         scrolledNow.current = next;
-        reshape(() => { setScrolled(next); if (!next) setOpen(false); });
+        reshape(() => setScrolled(next));
       }
       const d = y - last;
       if (d) {
@@ -373,29 +369,13 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     if (motionWanted()) Promise.all([import('gsap'), import('gsap/Flip')]).then(([{ gsap }, { Flip }]) => { gsap.registerPlugin(Flip); flipRef.current = Flip; });
   }, []);
 
-  // Play the change of shape from where it was, then bring the opened links
-  // in one after another.
+  // Play the change of shape from where it was.
   useLayoutEffect(() => {
-    const state = pending.current, F = flipRef.current, gsap = gsapRef.current;
+    const state = pending.current, F = flipRef.current;
     pending.current = null;
-    if (!state || !F || !gsap || !inRef.current) return;
+    if (!state || !F || !inRef.current) return;
     F.from(state, { duration: 0.6, ease: 'expo.out', scale: false, simple: true });
-    if (scrolled && open) {
-      gsap.fromTo(inRef.current.querySelectorAll('.tb-nav a, .tb-extra > *'), { y: 10, autoAlpha: 0 },
-        { y: 0, autoAlpha: 1, duration: 0.42, ease: 'power3.out', stagger: 0.04, delay: 0.12, clearProps: 'transform,opacity,visibility' });
-    }
-  }, [scrolled, open]);
-
-  // Opening and closing: a pointer arriving opens it at once, leaving closes
-  // it after a beat (so a pass across it does not flicker); the keyboard
-  // opens it on focus and closes it when focus leaves it.
-  const fine = () => matchMedia('(min-width: 768px)').matches;
-  const want = (v) => {
-    clearTimeout(shut.current);
-    if (!scrolledNow.current || !fine()) return;
-    const go = () => setOpen((was) => { if (was === v) return was; reshape(() => {}); return v; });
-    if (v) go(); else shut.current = setTimeout(go, 260);
-  };
+  }, [scrolled]);
 
   const draw = () => {
     const el = indRef.current, s = edge.current;
@@ -443,7 +423,7 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     const late = setTimeout(fit, 560);
     window.addEventListener('resize', fit);
     return () => { clearTimeout(late); window.removeEventListener('resize', fit); };
-  }, [scrolled, open]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [scrolled]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const navOver = (e) => {
     const a = e.target.closest?.('a[data-id]');
@@ -458,10 +438,6 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
   };
 
   const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
-  // The section you are in, named beside the mark once the bar has become
-  // islands; the engineering sections answer to one name, as in the links.
-  const NOW = { work: t.nav.work, services: t.nav.services, problems: t.nav.proof, proof: t.nav.proof, rules: t.nav.proof, skills: t.nav.proof, process: t.nav.process, about: t.nav.about, contact: t.nav.contact };
-  const now = home ? NOW[active] : '';
   // A label that rolls on hover: the word slides up and its twin rises in
   // from below. The twin is drawn by CSS from data-t and carries no text of
   // its own for a screen reader; the link's name is the label once.
@@ -472,25 +448,14 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     {/* Outside the bar: the bar moves by transform, which would hold a
         fixed overlay inside it. */}
     <LangFx lang={lang} />
-    <div className={`tb${scrolled ? ' is-scrolled' : ''}${scrolled && open ? ' is-open' : ''}${away && !open ? ' is-away' : ''}`} data-progress>
-      <header className="tb-in" ref={inRef}
-              onPointerEnter={(e) => e.pointerType === 'mouse' && want(true)} onPointerLeave={(e) => e.pointerType === 'mouse' && want(false)}
-              onFocus={() => want(true)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) want(false); }}>
+    <div className={`tb${scrolled ? ' is-scrolled' : ''}${away ? ' is-away' : ''}`} data-progress>
+      <header className="tb-in" ref={inRef}>
         <a href={`/${lang}/`} className="tb-brand">
-          <span className="tb-logo">
-            <Logo />
-            {/* How far down the page, as a ring round the mark (--p). */}
-            <svg className="tb-ring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" pathLength="100" /></svg>
-          </span>
+          <span className="tb-logo"><Logo /></span>
           <span className="tb-id">
             <span className="tb-name">{PROFILE.name[lang]}</span>
             <span className={`tb-role${lang === 'ar' ? '' : ' lat'}`}>{t.about.role}</span>
           </span>
-          {home && now && (
-            <span className="tb-now" aria-hidden="true">
-              <span key={now || 'top'} className="tb-now-in"><i />{now}</span>
-            </span>
-          )}
         </a>
 
         {home ? (
@@ -519,10 +484,6 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
           </div>
           <ThemeToggle lang={lang} />
           </span>
-          {/* Shown only while the capsule is closed: says it opens, and opens
-              it for a touch screen wide enough to have the links. */}
-          <button type="button" className="tb-more" aria-label={t.nav.menu} aria-expanded={open}
-                  onClick={() => reshape(() => setOpen((v) => !v))}><i /><i /><i /></button>
           <a href={link('contact')} className="tb-cta" data-magnetic aria-label={t.nav.cta}>
             {roll(t.nav.cta)}
             <span className="tb-cta-dot" aria-hidden="true" />
