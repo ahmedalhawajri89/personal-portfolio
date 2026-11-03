@@ -332,13 +332,19 @@ export default async function Home({ params }) {
         </section>
 
         {/* --------------------------------------------------------- about */}
-        {/* Behind the camera: the mark drawn large, the name, the one line he
-            works by lit as it is read, how he got here in his own words, and
-            four figures the rest of the page already proves. */}
+        {/* Behind the camera: his face, with the mark drawn on it as a seal,
+            the name, the one line he works by lit as it is read, how he got
+            here in his own words, and four figures the rest of the page
+            already proves. */}
         <section id="about" className="wrap scroll-mt-24 pt-28 sm:pt-36">
           <p className="sec-label" style={{ '--c': 'var(--accent)' }}>{t.about.eyebrow}</p>
           <div className="ab2">
-            <div className="ab2-mark" data-m="drawmark"><Logo size={168} /></div>
+            <figure className="ab2-face" data-m="face">
+              <span className="ab2-photo">
+                <img src="/ahmed.webp" width={400} height={400} alt={t.about.h} loading="lazy" decoding="async" />
+              </span>
+              <span className="ab2-seal" data-m="drawmark" aria-hidden="true"><Logo size={40} /></span>
+            </figure>
             <div className="ab2-copy">
               <h2 className="ab2-name" data-m="lines">{t.about.h}</h2>
               <p className="ab2-role">{t.about.role} · {PROFILE.location[lang]}</p>

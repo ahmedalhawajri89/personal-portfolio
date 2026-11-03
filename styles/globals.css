@@ -1441,7 +1441,15 @@ html[lang="ar"] .bs-code .bs-note,html[lang="ar"] .bs-db .bs-note{align-self:fle
 /* ------------------------------------------------------------ behind the camera */
 .ab2{display:grid;gap:36px;margin-top:30px}
 @media (min-width:1024px){.ab2{grid-template-columns:220px minmax(0,1fr);gap:72px;align-items:start}}
-.ab2-mark .logo{width:clamp(110px,13vw,180px);height:auto}
+/* his face: a portrait in a soft frame, the mark set on its corner as a seal */
+.ab2-face{position:relative;width:clamp(180px,46vw,240px);margin:0}
+@media (min-width:1024px){.ab2-face{width:100%}}
+.ab2-photo{display:block;overflow:hidden;aspect-ratio:1;border-radius:28px;border:1px solid var(--line-2);background:#30353c;
+  box-shadow:0 30px 60px -38px rgba(15,20,30,.55)}
+.ab2-photo img{display:block;width:100%;height:100%;object-fit:cover}
+.ab2-seal{position:absolute;inset-inline-end:-14px;bottom:-14px;display:grid;place-items:center;width:64px;height:64px;border-radius:50%;
+  background:var(--bg);border:1px solid var(--line-2);box-shadow:0 12px 26px -16px rgba(15,20,30,.5)}
+.ab2-seal .logo{width:38px;height:auto}
 .ab2-name{margin:0;font-size:clamp(44px,6.4vw,100px);font-weight:800;line-height:1.02;letter-spacing:-.035em;color:var(--ink)}
 [dir="rtl"] .ab2-name{letter-spacing:0;line-height:1.25}
 .ab2-role{margin:12px 0 0;font-size:15px;font-weight:700;color:var(--ink-3)}

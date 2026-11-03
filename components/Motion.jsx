@@ -130,6 +130,16 @@ export default function Motion() {
             .fromTo(c, { strokeDashoffset: 1, opacity: 1 }, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.out', immediateRender: false });
         });
 
+        // His face: the frame opens upward and the photo settles into it.
+        gsap.utils.toArray('[data-m="face"]').forEach((el) => {
+          const frame = el.querySelector('.ab2-photo'), img = frame?.querySelector('img');
+          if (!frame || !img) return;
+          gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 82%', once: true } })
+            .fromTo(frame, { clipPath: 'inset(100% 0% 0% 0% round 28px)' },
+              { clipPath: 'inset(0% 0% 0% 0% round 28px)', duration: 1.1, ease: 'expo.out', clearProps: 'clipPath' })
+            .fromTo(img, { scale: 1.18 }, { scale: 1, duration: 1.4, ease: 'expo.out', clearProps: 'transform' }, 0);
+        });
+
         gsap.utils.toArray('[data-m="count"]').forEach((el) => {
           const to = Number(el.dataset.to || el.textContent);
           const n = { v: 0 };
