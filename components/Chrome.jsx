@@ -369,34 +369,23 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     if (motionWanted()) Promise.all([import('gsap'), import('gsap/Flip')]).then(([{ gsap }, { Flip }]) => { gsap.registerPlugin(Flip); flipRef.current = Flip; });
   }, []);
 
-  // The capsule's edge catches the accent colour near the pointer: the light
-  // sits at the nearest point and fades out over ~180px. Desktop only.
-  useEffect(() => {
-    if (!scrolled || !motionWanted() || !matchMedia('(pointer: fine)').matches) return;
-    const el = inRef.current;
-    if (!el) return;
-    let raf = 0, ev = null;
-    const paint = () => {
-      raf = 0;
-      const r = el.getBoundingClientRect();
-      const x = Math.min(Math.max(ev.clientX, r.left), r.right), y = Math.min(Math.max(ev.clientY, r.top), r.bottom);
-      const d = Math.hypot(ev.clientX - x, ev.clientY - y);
-      el.style.setProperty('--mx', `${x - r.left}px`);
-      el.style.setProperty('--my', `${y - r.top}px`);
-      el.style.setProperty('--ga', Math.max(0, 1 - d / 220).toFixed(3));
-    };
-    const move = (e) => { ev = e; if (!raf) raf = requestAnimationFrame(paint); };
-    window.addEventListener('pointermove', move, { passive: true });
-    return () => { window.removeEventListener('pointermove', move); cancelAnimationFrame(raf); el.style.setProperty('--ga', '0'); };
-  }, [scrolled]);
-
   // Play the change of shape from where it was.
   useLayoutEffect(() => {
     const state = pending.current, F = flipRef.current;
     pending.current = null;
     if (!state || !F || !inRef.current) return;
-    F.from(state, { duration: 0.6, ease: 'expo.out', scale: false, simple: true });
-  }, [scrolled]);
+    const gsap = gsapRef.current, el = inRef.current;
+    const items = el.querySelectorAll('.tb-brand, .tb-nav a, .tb-extra > *, .tb-cta');
+    // Back at the top the bar is played from the shape it had. Gathering,
+    // the capsule drops in from above out of a blur, a thread of the accent
+    // draws itself along its lower edge from the middle, and the links come
+    // in one after another.
+    if (!scrolled || !gsap) { F.from(state, { duration: 0.6, ease: 'expo.out', scale: false, simple: true }); return; }
+    gsap.timeline({ defaults: { ease: 'expo.out' } })
+      .fromTo(el, { y: -26, autoAlpha: 0, filter: 'blur(10px)' }, { y: 0, autoAlpha: 1, filter: 'blur(0px)', duration: 0.7, clearProps: 'transform,opacity,visibility,filter' })
+      .fromTo(el.querySelector('.tb-thread'), { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: 'power3.inOut' }, 0.15)
+      .fromTo(items, { y: 10, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: 'power3.out', stagger: 0.04, clearProps: 'transform,opacity,visibility' }, 0.18);
+  }, [scrolled]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const draw = () => {
     const el = indRef.current, s = edge.current;
@@ -471,6 +460,7 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
     <LangFx lang={lang} />
     <div className={`tb${scrolled ? ' is-scrolled' : ''}${away ? ' is-away' : ''}`} data-progress>
       <header className="tb-in" ref={inRef}>
+        <span className="tb-thread" aria-hidden="true" />
         <a href={`/${lang}/`} className="tb-brand">
           <span className="tb-logo"><Logo /></span>
           <span className="tb-id">
