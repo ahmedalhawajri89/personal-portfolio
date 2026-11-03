@@ -1041,15 +1041,20 @@ html.intro .intro-panel{position:fixed;inset:0;z-index:95;display:flex;flex-dire
 .ip-role{font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;font-weight:500;color:var(--ink-3)}
 .ip-count{font-family:'GeistMono',ui-monospace,monospace;font-size:clamp(28px,3.4vw,46px);font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
 .ip-count b{font-weight:500}
-/* the word: an outline with its ink laid exactly over it, the ink clipped
-   from the end so it fills from the first letter */
-.ip-word{position:relative;direction:ltr;align-self:center;font-family:'Instrument',system-ui,sans-serif;
-  font-size:clamp(64px,16.5vw,300px);font-weight:800;line-height:.9;letter-spacing:-.04em;white-space:nowrap}
-.ip-ghost,.ip-fill{display:flex;overflow:hidden;padding-bottom:.04em}
-.ip-ghost{color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--ink) 35%,transparent)}
-.ip-fill{position:absolute;inset:0;color:var(--ink);clip-path:inset(0 0 0 0)}
-.ip-l{display:inline-block}
-.ip-fill .ip-l:last-child{color:var(--accent)}
+/* the words: stacked in one place, each piece rising out of its own mask,
+   its weight read from --w so it can fill as it arrives */
+.ip-stage{position:relative;display:grid;place-items:center;align-self:stretch;
+  font-size:clamp(72px,15vw,260px);line-height:1.1;color:var(--ink);white-space:nowrap}
+.ip-w{grid-area:1 / 1;display:flex;overflow:hidden;padding-block:.08em}
+html[lang="en"] .ip-w{font-family:'Bricolage','Instrument',system-ui,sans-serif;letter-spacing:-.045em}
+html[lang="ar"] .ip-w{font-family:'Kufam','PlexAr',system-ui,sans-serif;direction:rtl;line-height:1.35}
+.ip-p{display:inline-block;--w:800;font-weight:800;font-variation-settings:"wght" var(--w)}
+html[lang="ar"] .ip-p{--w:900;font-weight:900}
+.ip-step{font-family:'GeistMono',ui-monospace,monospace;font-size:13px;font-weight:500;color:var(--ink-3)}
+.ip-step b{color:var(--ink);font-weight:500}
+.ip-bar{max-width:1400px;height:2px;margin:14px auto 0;background:var(--line-2);overflow:hidden}
+.ip-bar i{display:block;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:0 50%}
+[dir="rtl"] .ip-bar i{transform-origin:100% 50%}
 /* ------------------------------------------------------------ page curtain */
 /* A title card that rises over the page when a link leaves for another page
    of the site, in the colour of where it leads, and lifts off the next one

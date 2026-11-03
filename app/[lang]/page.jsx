@@ -92,7 +92,7 @@ export default async function Home({ params }) {
       <TimelineScroll />
       <Motion />
       <Nav lang={lang} path="/" home />
-      <Intro name={PROFILE.name[lang]} role={t.hero.roleLine} />
+      <Intro name={PROFILE.name[lang]} role={t.hero.roleLine} words={t.intro.words} rtl={ar} />
       <Curtain routes={curtainRoutes(lang)} here={`/${lang}/`} />
       <Pointer label={t.work.view} />
       <Scenes chapters={[
