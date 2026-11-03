@@ -14,12 +14,15 @@ const HUES = ['var(--h-db)', 'var(--h-api)', 'var(--h-ui)', 'var(--h-test)', 'va
    if the sentence were being taken apart to show what it is made of, which
    is what the page does next.
 
-   In English the face is variable (Bricolage Grotesque): the claim is set
-   heavy and wide, the promise light and narrow, and the motion plays on
-   those two axes. Once the page is in view a wave runs through the letters,
-   each taking the other line's shape and coming back; after that, letters
-   near the pointer take it again, like a lens following the mouse. Each word
-   keeps the width it was set at, so nothing after it moves.
+   The face is variable in both languages -- Bricolage Grotesque in English
+   (weight and width), Readex Pro in Arabic (weight and horizontal
+   expansion): the claim is set heavy, the promise light, and the motion
+   plays on those two axes. Once the page is in view a wave runs through the
+   headline, each piece taking part of the other line's shape and coming
+   back; after that, pieces near the pointer take it again, like a lens
+   following the mouse. The pieces are letters in English and whole words in
+   Arabic, whose letters must stay joined. Each word keeps the width it was
+   set at, so nothing after it moves.
 
    Under it the five parts of the work in their colours; one is lit at a
    time, and the line under the headline takes its colour. Without script,
@@ -58,15 +61,19 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
         const rand = gsap.utils.random;
         gsap.set(units, { display: 'inline-block', willChange: 'transform' });
 
-        // English only: each letter rests in its line's shape and is pulled
-        // part of the way towards the other line's -- the heavy line thins,
-        // the light one fills and narrows -- far enough to read as a change,
-        // not so far that a word outgrows the width it was set at.
-        const AXES = {
+        // Each piece rests in its line's shape and is pulled part of the way
+        // towards the other line's -- the heavy line thins, the light one
+        // fills -- far enough to read as a change, not so far that a word
+        // outgrows the width it was set at. --s is width in English and
+        // horizontal expansion (HEXP) in Arabic.
+        const AXES = rtl ? {
+          heavy: { rest: { w: 700, s: 40 }, pull: { w: 420, s: 25 } },
+          light: { rest: { w: 220, s: 0 }, pull: { w: 380, s: 0 } },
+        } : {
           heavy: { rest: { w: 800, s: 100 }, pull: { w: 380, s: 92 } },
           light: { rest: { w: 300, s: 80 }, pull: { w: 640, s: 75 } },
         };
-        const shapes = rtl ? [] : units.map((u) => ({ u, ...AXES[u.closest('.is-soft') ? 'light' : 'heavy'] }));
+        const shapes = units.map((u) => ({ u, ...AXES[u.closest('.is-soft') ? 'light' : 'heavy'] }));
         // Words keep the width they were set at, measured once the face has
         // loaded, so a letter changing shape cannot push the next word along.
         const lockWords = () => splits.forEach((s) => s.words.forEach((w) => {
@@ -79,7 +86,7 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
           gsap.timeline()
             .to(shapes.map((x) => x.u), {
               '--w': (i) => shapes[i].pull.w, '--s': (i) => shapes[i].pull.s,
-              duration: 0.45, ease: 'sine.inOut', stagger: { each: 0.028, from: 'start' },
+              duration: rtl ? 0.6 : 0.45, ease: 'sine.inOut', stagger: { each: rtl ? 0.12 : 0.028, from: 'start' },
               yoyo: true, repeat: 1,
             });
         };
@@ -92,13 +99,11 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
             gsap.to(el.querySelectorAll('.kh-reveal'), { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.1, delay: rtl ? 0.7 : 0.9 });
           });
         }
-        if (!rtl) {
-          document.fonts.load("800 1em 'Bricolage'").then(() => {
-            if (gone) return;
-            lockWords();
-            if (!covered()) gsap.delayedCall(0.35, wave);
-          });
-        }
+        (rtl ? document.fonts.load("700 1em 'Readex'", 'أبني') : document.fonts.load("800 1em 'Bricolage'")).then(() => {
+          if (gone) return;
+          lockWords();
+          if (!covered()) gsap.delayedCall(0.35, wave);
+        });
 
         // Scrolling away takes the sentence apart.
         gsap.timeline({ scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: 0.8 } })
@@ -106,7 +111,7 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
           .to(el.querySelectorAll('.kh-reveal'), { y: -40, opacity: 0, ease: 'none' }, 0);
 
         let off = () => {};
-        if (pointer && !rtl) {
+        if (pointer) {
           // The lens. Letter centres are read when the pointer arrives, not on
           // every move; each letter eases towards its share of the pull.
           const h = el.querySelector('.kh-h');
@@ -117,7 +122,7 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
           let centres = [];
           const read = () => { centres = shapes.map(({ u }) => { const r = u.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }); };
           const move = (e) => {
-            const reach = parseFloat(getComputedStyle(h).fontSize) * 1.3;
+            const reach = parseFloat(getComputedStyle(h).fontSize) * (rtl ? 1.8 : 1.3);
             shapes.forEach((x, k) => {
               const [cx, cy] = centres[k] || [0, 0];
               const f = Math.max(0, 1 - Math.hypot(e.clientX - cx, (e.clientY - cy) * 1.6) / reach);
@@ -130,16 +135,6 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
           h.addEventListener('pointermove', move);
           h.addEventListener('pointerleave', rest);
           off = () => { h.removeEventListener('pointerenter', read); h.removeEventListener('pointermove', move); h.removeEventListener('pointerleave', rest); };
-        } else if (pointer) {
-          // Arabic keeps its words' nudge: the face has no axes to play on.
-          const jump = (e) => {
-            const u = e.currentTarget;
-            gsap.timeline()
-              .to(u, { y: -22, rotation: rand(-14, 14), duration: 0.22, ease: 'power2.out', overwrite: 'auto' })
-              .to(u, { y: 0, rotation: 0, duration: 0.7, ease: 'elastic.out(1, 0.4)' });
-          };
-          units.forEach((u) => u.addEventListener('pointerenter', jump));
-          off = () => units.forEach((u) => u.removeEventListener('pointerenter', jump));
         }
 
         const timer = setInterval(() => setLit((k) => (k + 1) % HUES.length), 1800);

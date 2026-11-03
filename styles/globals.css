@@ -29,6 +29,7 @@
    are preloaded, so the wait is a frame or two. */
 @font-face{font-family:'PlexArFx';src:url('/fonts/plex-arabic-700.woff2') format('woff2');font-weight:800;font-display:block;}
 @font-face{font-family:'InstrumentFx';src:url('/fonts/instrument-700.woff2') format('woff2');font-weight:800;font-display:block;}
+@font-face{font-family:'Readex';src:url('/fonts/readex-ar-var.woff2') format('woff2');font-weight:160 700;font-display:swap;}
 @font-face{font-family:'Bricolage';src:url('/fonts/bricolage-var.woff2') format('woff2');font-weight:200 800;font-stretch:75% 100%;font-display:swap;}
 @font-face{font-family:'GeistMono';src:url('/fonts/geistmono-400.woff2') format('woff2');font-weight:400;font-display:swap;}
 @font-face{font-family:'GeistMono';src:url('/fonts/geistmono-500.woff2') format('woff2');font-weight:500;font-display:swap;}
@@ -1165,6 +1166,13 @@ html[lang="en"] .kh-h{font-family:'Bricolage','Instrument',system-ui,sans-serif;
 html[lang="en"] .kh-line{--w:800;--s:100}
 html[lang="en"] .kh-line.is-soft{--w:300;--s:80}
 html[lang="en"] .kh-line,html[lang="en"] .kh-u{font-variation-settings:"wght" var(--w),"wdth" var(--s)}
+/* The Arabic headline in Readex Pro, the same contrast on its weight and
+   horizontal-expansion axes; its pieces are whole words, so letters stay
+   joined. Licence: public/fonts/OFL-readex-pro.txt. */
+html[lang="ar"] .kh-h{font-family:'Readex','PlexAr',system-ui,sans-serif;font-weight:700;line-height:1.42}
+html[lang="ar"] .kh-line{--w:700;--s:40}
+html[lang="ar"] .kh-line.is-soft{--w:220;--s:0}
+html[lang="ar"] .kh-line,html[lang="ar"] .kh-u{font-variation-settings:"wght" var(--w),"HEXP" var(--s)}
 .kh-foot{display:grid;gap:28px}
 @media (min-width:1024px){.kh-foot{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:end;gap:64px}}
 .kh-parts{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}

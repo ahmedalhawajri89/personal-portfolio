@@ -81,7 +81,7 @@ export default async function RootLayout({ children, params }) {
             preloading both would put the wrong script's 37KB ahead of the
             text actually on screen. Geist Mono is not preloaded: the only
             monospaced text above the fold is the runner, which starts later. */}
-        {(lang === 'ar' ? ['plex-arabic-400', 'plex-arabic-700'] : ['bricolage-var', 'instrument-400', 'instrument-700']).map((f) => (
+        {(lang === 'ar' ? ['readex-ar-var', 'plex-arabic-400', 'plex-arabic-700'] : ['bricolage-var', 'instrument-400', 'instrument-700']).map((f) => (
           <link key={f} rel="preload" as="font" type="font/woff2" href={`/fonts/${f}.woff2`} crossOrigin="anonymous" />
         ))}
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />
