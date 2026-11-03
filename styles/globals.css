@@ -356,7 +356,7 @@ a.cvx-fact:hover .cvx-go{color:var(--accent);transform:translate(2px,-2px)}
 /* --------------------------------------------------------------- footer */
 /* Plain paper under a hairline: no glass, no glow, no grid. The weight of
    the footer is the name set large at the bottom, cropped by the edge. */
-.foot{padding-top:clamp(72px,9vw,128px);overflow:hidden}
+.foot{position:relative;padding-top:clamp(72px,9vw,128px);overflow:hidden}
 /* the footer's call to action: the last sentence the page says, set large,
    and one button that answers it */
 .foot-cta{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:28px 40px;
@@ -392,10 +392,18 @@ a.cvx-fact:hover .cvx-go{color:var(--accent);transform:translate(2px,-2px)}
 /* The signature. Sized to the viewport so it spans the width without ever
    overflowing it. Not cropped: cutting the baseline took the tail off the j
    ("Hawaiiri") and the lower strokes off the Arabic -- a name has to read. */
-.foot-mark{margin:clamp(56px,8vw,110px) 0 0;padding-inline:clamp(12px,2vw,24px);line-height:1;white-space:nowrap;overflow:hidden;text-align:center;
+.foot-mark{margin:calc(clamp(56px,8vw,110px) - .3em) 0 0;padding-top:.3em;padding-inline:clamp(12px,2vw,24px);line-height:1;white-space:nowrap;overflow:hidden;text-align:center;
   font-size:clamp(40px,10.4vw,168px);font-weight:800;letter-spacing:-.035em;color:var(--ink);cursor:default}
 /* each piece of the name rises out of the page edge on its own (Footer) */
-.fm-u{display:inline-block;padding-bottom:.1em;will-change:transform}
+.fm-u{display:inline-block;padding-bottom:.1em;will-change:transform;text-align:center}
+/* The name in the headline faces, its weight read from --w so it can breathe. */
+html[lang="en"] .foot-mark{font-family:'Bricolage','Instrument',system-ui,sans-serif;letter-spacing:-.045em}
+html[lang="ar"] .foot-mark{font-family:'Kufam','PlexAr',system-ui,sans-serif;font-weight:900}
+.fm-u{--w:800;font-variation-settings:"wght" var(--w)}
+html[lang="ar"] .fm-u{--w:900}
+/* Small icons thrown off by the pointer (Footer). */
+.fm-sparks{position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none}
+.fm-spark{position:absolute;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;will-change:transform,opacity}
 [dir="rtl"] .fm-u{padding-bottom:.3em}
 [dir="rtl"] .foot-mark{line-height:1.35}
 [dir="rtl"] .foot-mark{letter-spacing:0;font-size:clamp(44px,12vw,184px)}

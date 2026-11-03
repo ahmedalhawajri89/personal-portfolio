@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { T, other } from '../lib/i18n';
 import { PROFILE, PROJECTS } from '../content/projects';
-import Icon from './Icons';
+import Icon, { P as ICON_PATHS } from './Icons';
 import LangFx from './LangFx';
 import { loadMotion, whenIdle, motionWanted } from '../lib/motion';
 
@@ -843,15 +843,20 @@ export function Footer({ lang, links, home = false }) {
 
   /* The footer's motion. As the page reaches its end the giant name rises
      out of the page edge piece by piece, from the middle outwards, tied to
-     the scroll; the columns above it come up from behind. A mouse moving
-     over the name lifts the letters nearest to it, a wave that follows the
-     pointer and settles when it leaves. Off for reduced motion and, for the
-     wave, for touch. */
+     the scroll; the columns above it come up from behind. The name is set in
+     the headline faces (Bricolage, Kufam) and breathes on their weight axis:
+     a wave from the middle outwards when it comes into view, again every few
+     seconds while it stays. A mouse over it lifts and thins the pieces
+     nearest to it, and throws off small icons of the work -- a table, code, a
+     screen, a shield, a tick -- in the site's colours, which rise, turn and
+     fade. Each piece keeps the width it was set at, so the name never
+     shifts. Off on a phone, for reduced motion and, for the pointer, for
+     touch. */
   useEffect(() => {
     let mm, gone = false;
     if (!motionWanted()) return;
     const cancel = whenIdle(async () => {
-      const { gsap } = await loadMotion();
+      const { gsap, ScrollTrigger } = await loadMotion();
       if (gone || !root.current) return;
       const el = root.current;
       const mark = el.querySelector('.foot-mark');
@@ -868,20 +873,72 @@ export function Footer({ lang, links, home = false }) {
           y: 70, ease: 'none',
           scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 45%', scrub: true },
         });
-        if (!pointer) return;
+
+        // Weight, on the face's own axis: full at rest, thinner when touched.
+        const FULL = ar ? 900 : 800, THIN = ar ? 480 : 320;
+        const lock = () => parts.forEach((u) => { u.style.width = ''; u.style.width = `${u.getBoundingClientRect().width}px`; });
+        const breathe = () => gsap.to(parts, {
+          '--w': THIN, duration: 0.5, ease: 'sine.inOut', yoyo: true, repeat: 1,
+          stagger: { each: ar ? 0.12 : 0.045, from: 'center' }, overwrite: 'auto',
+        });
+        let again;
+        const loop = () => { breathe(); again = gsap.delayedCall(6, loop); };
+        document.fonts.load(`${FULL} 1em '${ar ? 'Kufam' : 'Bricolage'}'`, name).then(() => { if (!gone) lock(); });
+        const seen = ScrollTrigger.create({
+          trigger: mark, start: 'top 85%', end: 'bottom top',
+          onToggle: (self) => { again?.kill(); if (self.isActive) loop(); },
+        });
+
+        if (!pointer) return () => { seen.kill(); again?.kill(); };
         const lift = parts.map((u) => gsap.quickTo(u, 'y', { duration: 0.5, ease: 'power3' }));
+        const thin = parts.map((u) => gsap.quickTo(u, '--w', { duration: 0.5, ease: 'power3' }));
+
+        // The sparks: one small icon every few frames of movement, from where
+        // the pointer is, at most a handful alive at once.
+        const layer = el.querySelector('.fm-sparks');
+        const KINDS = ['database', 'code', 'layout', 'shield', 'check', 'layers'];
+        const HUES = ['var(--h-db)', 'var(--h-api)', 'var(--h-ui)', 'var(--h-test)', 'var(--h-sec)', 'var(--accent)'];
+        const rand = gsap.utils.random;
+        let last = 0, lx = 0, ly = 0, alive = 0;
+        const spark = (x, y) => {
+          if (alive > 14) return;
+          const box = layer.getBoundingClientRect();
+          const kind = KINDS[Math.floor(Math.random() * KINDS.length)];
+          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          svg.setAttribute('viewBox', '0 0 24 24');
+          svg.setAttribute('class', 'fm-spark');
+          svg.innerHTML = `<path d="${ICON_PATHS[kind]}"/>`;
+          const s = rand(22, 36);
+          svg.style.cssText = `left:${x - box.left - s / 2}px;top:${y - box.top - s / 2}px;width:${s}px;height:${s}px;color:${HUES[Math.floor(Math.random() * HUES.length)]}`;
+          layer.append(svg);
+          alive += 1;
+          gsap.timeline({ onComplete: () => { svg.remove(); alive -= 1; } })
+            .fromTo(svg, { scale: 0.3, autoAlpha: 0, rotation: rand(-30, 30) }, { scale: 1, autoAlpha: 1, duration: 0.25, ease: 'back.out(3)' })
+            .to(svg, { y: rand(-140, -70), x: rand(-60, 60), rotation: `+=${rand(-90, 90)}`, duration: 1.1, ease: 'power2.out' }, 0.05)
+            .to(svg, { autoAlpha: 0, scale: 0.6, duration: 0.45, ease: 'power1.in' }, 0.7);
+        };
+
         const move = (e) => {
           const size = parseFloat(getComputedStyle(mark).fontSize) || 120;
           parts.forEach((u, k) => {
             const r = u.getBoundingClientRect();
-            const d = Math.abs(e.clientX - (r.left + r.width / 2));
-            lift[k](-Math.max(0, 1 - d / (size * 1.6)) * size * 0.22);
+            const f = Math.max(0, 1 - Math.abs(e.clientX - (r.left + r.width / 2)) / (size * 1.6));
+            lift[k](-f * size * 0.22);
+            thin[k](FULL - (FULL - THIN) * f);
           });
+          const now = performance.now();
+          if (now - last > 90 && Math.hypot(e.clientX - lx, e.clientY - ly) > 24) {
+            last = now; lx = e.clientX; ly = e.clientY;
+            spark(e.clientX, e.clientY);
+          }
         };
-        const rest = () => lift.forEach((q) => q(0));
+        const rest = () => { lift.forEach((q) => q(0)); thin.forEach((q) => q(FULL)); };
         mark.addEventListener('pointermove', move);
         mark.addEventListener('pointerleave', rest);
-        return () => { mark.removeEventListener('pointermove', move); mark.removeEventListener('pointerleave', rest); };
+        return () => {
+          mark.removeEventListener('pointermove', move); mark.removeEventListener('pointerleave', rest);
+          seen.kill(); again?.kill(); layer.replaceChildren();
+        };
       });
     });
     return () => { gone = true; cancel(); mm?.revert(); };
@@ -943,6 +1000,7 @@ export function Footer({ lang, links, home = false }) {
       {/* The name set as a signature across the full width, rising out of
           the page edge. Decorative: the same name is in the first column as
           text, so screen readers hear it once. */}
+      <div className="fm-sparks" aria-hidden="true" />
       <p className="foot-mark" aria-hidden="true">
         {units.map((u, k) => (
           <span key={k} className={`fm-u${u === ' ' ? ' is-space' : ''}`}>{u === ' ' ? ' ' : u}{ar && k < units.length - 1 ? ' ' : ''}</span>
