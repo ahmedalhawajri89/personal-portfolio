@@ -15,9 +15,8 @@ const HUES = ['var(--h-db)', 'var(--h-api)', 'var(--h-ui)', 'var(--h-test)', 'va
    is what the page does next.
 
    The face is variable in both languages -- Bricolage Grotesque in English
-   (weight and width), Readex Pro in Arabic (weight and horizontal
-   expansion): the claim is set heavy, the promise light, and the motion
-   plays on those two axes. Once the page is in view a wave runs through the
+   (weight and width), Kufam in Arabic (weight): the claim is set heavy, the
+   promise light, and the motion plays on those axes. Once the page is in view a wave runs through the
    headline, each piece taking part of the other line's shape and coming
    back; after that, pieces near the pointer take it again, like a lens
    following the mouse. The pieces are letters in English and whole words in
@@ -64,11 +63,11 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
         // Each piece rests in its line's shape and is pulled part of the way
         // towards the other line's -- the heavy line thins, the light one
         // fills -- far enough to read as a change, not so far that a word
-        // outgrows the width it was set at. --s is width in English and
-        // horizontal expansion (HEXP) in Arabic.
+        // outgrows the width it was set at. --s is width in English; the
+        // Arabic face has weight alone.
         const AXES = rtl ? {
-          heavy: { rest: { w: 700, s: 40 }, pull: { w: 420, s: 25 } },
-          light: { rest: { w: 220, s: 0 }, pull: { w: 380, s: 0 } },
+          heavy: { rest: { w: 900, s: 0 }, pull: { w: 520, s: 0 } },
+          light: { rest: { w: 400, s: 0 }, pull: { w: 560, s: 0 } },
         } : {
           heavy: { rest: { w: 800, s: 100 }, pull: { w: 380, s: 92 } },
           light: { rest: { w: 300, s: 80 }, pull: { w: 640, s: 75 } },
@@ -99,7 +98,7 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
             gsap.to(el.querySelectorAll('.kh-reveal'), { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.1, delay: rtl ? 0.7 : 0.9 });
           });
         }
-        (rtl ? document.fonts.load("700 1em 'Readex'", 'أبني') : document.fonts.load("800 1em 'Bricolage'")).then(() => {
+        (rtl ? document.fonts.load("900 1em 'Kufam'", 'أبني') : document.fonts.load("800 1em 'Bricolage'")).then(() => {
           if (gone) return;
           lockWords();
           if (!covered()) gsap.delayedCall(0.35, wave);
