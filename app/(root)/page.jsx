@@ -1,4 +1,9 @@
-// What `/` serves.
+// What `/` serves when nothing redirects it first.
+//
+// On Vercel, vercel.json sends `/` to /en/ at the edge, so a visitor never
+// sees this page: it used to flash its two language links before the meta
+// refresh moved on. It stays as the fallback for any host that ignores
+// vercel.json.
 //
 // The old comment here said this page is overwritten in production by
 // scripts/postbuild.mjs copying out/ar/* over the root. That is true for
