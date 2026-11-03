@@ -18,8 +18,8 @@ export async function generateMetadata({ params }) {
     ? 'أحمد الحواجري · مطوّر Laravel وPHP'
     : 'Ahmed Al-Hawajiri · Laravel & PHP Developer';
   const description = ar
-    ? 'مطوّر ويب Full-Stack من غزة. أبني تطبيقات كاملة بلارافيل وPHP وVue — من مخطط قاعدة البيانات إلى الواجهة — وأحرس قواعدها باختبارات آلية.'
-    : 'Full-stack web developer from Gaza. Complete applications in Laravel, PHP and Vue — from the database schema to the interface — with the rules held by automated tests.';
+    ? 'مطوّر Laravel وPHP من غزة. أبني أنظمة حجز ومتاجر إلكترونية ولوحات تحكم بالعربية والإنجليزية، بـ Laravel وMySQL وVue 3، مع اختبارات آلية للقواعد المهمة.'
+    : 'Laravel & PHP developer from Gaza. I build booking systems, online stores and admin dashboards in Arabic and English, with Laravel, MySQL and Vue 3, and automated tests for the rules that matter.';
   return {
     metadataBase: new URL(SITE),
     title,

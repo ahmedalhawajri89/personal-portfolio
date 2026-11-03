@@ -71,7 +71,7 @@ export const PROJECTS = [
     cover: 'board',
     year: '2026',
     status: 'independent',
-    stack: ['Vue 3.5', 'Vite 6', 'Tailwind 4', 'Pinia', 'Laravel 12', 'MySQL', 'PHPUnit', 'Vitest', 'Playwright', 'PHP 8.2', 'Sanctum', 'REST API', 'Chart.js'],
+    stack: ['Laravel 12', 'MySQL', 'Vue 3.5', 'Vite 6', 'Tailwind 4', 'Pinia', 'PHPUnit', 'Vitest', 'Playwright', 'PHP 8.2', 'Sanctum', 'REST API', 'Chart.js'],
     repo: 'https://github.com/ahmedalhawajri89/waeda-booking',
     demo: 'https://waeda-booking.vercel.app/',
     ar: {
