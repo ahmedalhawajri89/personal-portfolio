@@ -146,6 +146,14 @@ export default function Motion() {
           });
         });
 
+        // The tool map: the dots arrive in a wave across the grid, from the
+        // first project and the first tool outwards.
+        gsap.utils.toArray('[data-m="matrix"]').forEach((el) => {
+          gsap.fromTo(el.querySelectorAll('.tm-r td:not(.tm-n) i'), { scale: 0 }, { scale: 1, duration: 0.5, ease: 'back.out(3)',
+            stagger: { amount: 0.9, grid: 'auto', from: 'start' }, clearProps: 'transform',
+            scrollTrigger: { trigger: el, start: 'top 80%', once: true } });
+        });
+
         // His face: the frame opens upward and the photo settles into it.
         gsap.utils.toArray('[data-m="face"]').forEach((el) => {
           const frame = el.querySelector('.ab2-photo'), img = frame?.querySelector('img');

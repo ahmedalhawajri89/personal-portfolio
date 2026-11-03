@@ -1428,25 +1428,48 @@ html[lang="ar"] .bs-code .bs-note,html[lang="ar"] .bs-db .bs-note{align-self:fle
 }
 
 /* ------------------------------------------------------------ tools */
-.tg{display:grid;gap:44px 48px}
-@media (min-width:768px){.tg{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (min-width:1200px){.tg{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.tg-col{padding-top:18px;border-top:2px solid var(--c)}
-.tg-h{margin:0;font-size:17px;font-weight:800;color:var(--c)}
-.tg-b{margin:8px 0 0;min-height:3.4em;font-size:14px;line-height:1.7;color:var(--ink-3)}
-.tg-list{display:grid;gap:14px;margin:20px 0 0;padding:0;list-style:none}
-.tg-list li{display:flex;align-items:center;gap:12px}
-.tg-list li .tg-name{flex:1;min-width:0}
-.tg-count{font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;color:var(--ink-3)}
-.tg-name{font-size:clamp(20px,1.7vw,26px);font-weight:700;letter-spacing:-.02em;color:var(--ink)}
-.tg-dots{display:inline-flex;gap:5px}
-.tg-dots i{width:10px;height:10px;border:1.5px solid var(--line-2);border-radius:50%}
-.tg-dots i.on{background:var(--p);border-color:var(--p)}
-.tg-practice{margin:16px 0 0;font-size:13px;line-height:1.7;color:var(--ink-3)}
-.tg-legend{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;margin:44px 0 0;padding-top:18px;border-top:1px solid var(--line);font-size:13.5px;font-weight:700;color:var(--ink-3)}
-.tg-legend a{display:inline-flex;align-items:center;gap:7px;color:var(--ink);text-decoration:none}
-.tg-legend a:hover{color:var(--p)}
-.tg-legend i{width:10px;height:10px;border-radius:50%;background:var(--p)}
+/* The tools as one map: projects across the top in their colours, tools
+   down the side grouped by the kind of work, a dot where a project really
+   uses a tool. Pointing at a project lights its column, pointing at a tool
+   lights its row (ToolMap). */
+.tm-wrap{margin-top:clamp(32px,4vw,52px);overflow-x:auto}
+.tm{width:100%;border-collapse:separate;border-spacing:0}
+.tm th,.tm td{padding:0;font-weight:inherit;text-align:center;transition:opacity .35s ease,background-color .35s ease,color .35s ease}
+.tm thead th{vertical-align:bottom;width:clamp(64px,9vw,128px);padding:0 4px 14px;border-radius:14px 14px 0 0}
+.tm thead th a{display:inline-flex;flex-direction:column;align-items:center;gap:10px;padding:8px 4px;font-size:clamp(13px,1.05vw,15.5px);font-weight:800;color:var(--ink);text-decoration:none}
+.tm thead th i{width:12px;height:12px;border-radius:50%;background:var(--p);box-shadow:0 0 0 5px color-mix(in srgb,var(--p) 16%,transparent)}
+.tm thead th a:hover,.tm thead th.is-col a{color:var(--p)}
+.tm thead th a:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:8px}
+.tm-g th{padding:30px 0 12px;text-align:start;border-bottom:2px solid var(--c)}
+.tm tbody:first-of-type .tm-g th{padding-top:8px}
+.tm-gh{display:block;font-size:15px;font-weight:800;color:var(--c)}
+.tm-gb{display:block;margin-top:4px;max-width:70ch;font-size:13.5px;line-height:1.65;color:var(--ink-3)}
+.tm-r th{padding:14px 16px 14px 0;text-align:start;white-space:nowrap;font-size:clamp(18px,1.7vw,26px);font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+[dir="rtl"] .tm-r th{padding:14px 0 14px 16px}
+.tm-r th,.tm-r td{border-bottom:1px solid var(--line)}
+.tm-r td i{display:inline-block;width:14px;height:14px;border-radius:50%;border:1.5px solid var(--line-2);vertical-align:middle;transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.tm-r td.on i{border-color:var(--p);background:var(--p)}
+.tm-n{width:64px;font-family:'GeistMono',ui-monospace,monospace;font-size:13px;color:var(--ink-3);text-align:end!important}
+.tm-n b{font-weight:500;color:var(--ink)}
+/* a project's column lit */
+.tm.has-col thead th:not(.is-col),.tm.has-col .tm-r td:not(.is-col):not(.tm-n){opacity:.28}
+.tm td.is-col{background:color-mix(in srgb,var(--p) 9%,transparent)}
+.tm thead th.is-col{background:color-mix(in srgb,var(--p) 9%,transparent)}
+.tm td.is-col.on i{transform:scale(1.25)}
+/* a tool's row lit */
+.tm.has-row .tm-r:not(.is-row) > *{opacity:.3}
+.tm-r.is-row td.on i{transform:scale(1.25)}
+.tm-r.is-row th{color:var(--c)}
+@media (max-width:639px){
+  .tm thead th{width:auto;padding-bottom:10px}
+  .tm thead th a{writing-mode:vertical-rl;transform:rotate(180deg);gap:8px;padding:4px 0;font-size:12.5px}
+  [dir="rtl"] .tm thead th a{transform:none}
+  .tm-r th{font-size:17px;padding-inline-end:10px}
+  .tm-r td i{width:12px;height:12px}
+  .tm-n,.tm-corner:last-child{display:none}
+  .tm-r th{white-space:normal}
+}
+@media (prefers-reduced-motion:reduce){.tm th,.tm td,.tm-r td i{transition:none}}
 
 /* ------------------------------------------------------------ behind the camera */
 .ab2{display:grid;gap:36px;margin-top:30px}

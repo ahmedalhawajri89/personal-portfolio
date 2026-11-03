@@ -11,6 +11,7 @@ import BehindScreen from '../../components/BehindScreen';
 import RuleStack from '../../components/RuleStack';
 import Problems from '../../components/Problems';
 import AlsoSentence from '../../components/AlsoSentence';
+import ToolMap from '../../components/ToolMap';
 import Scenes from '../../components/Scenes';
 import Pointer from '../../components/Pointer';
 import Curtain from '../../components/Curtain';
@@ -265,45 +266,19 @@ export default async function Home({ params }) {
             package sit under their group's name. */}
         <section id="skills" className="wrap scroll-mt-24 pt-28 sm:pt-36">
           <SectionHead eyebrow={t.skills.eyebrow} h={t.skills.h} lede={t.skills.lede} hue="var(--h-db)" />
-          <div className="tg">
-            {CAPABILITIES.map((cap) => {
-              const tools = [], practices = [];
-              cap.items.forEach((label) => {
+          <ToolMap
+            label={t.skills.h} notUsed={t.skills.notUsed}
+            projects={PROJECTS.map((pr) => ({ slug: pr.slug, name: pr[lang].name, hue: HUE[pr.slug], href: `/${lang}/work/${pr.slug}/` }))}
+            groups={CAPABILITIES.map((cap) => ({
+              key: cap.key, h: cap[lang].h, b: cap[lang].b, hue: CAP_HUE[cap.key],
+              // Laravel is PHP: a project listing only `Laravel 12` still uses PHP.
+              tools: cap.items.map((label) => {
                 const key = head(label);
-                // Laravel is PHP: a project listing only `Laravel 12` still uses PHP.
                 const implied = { php: ['laravel'] }[key] || [];
-                const used = PROJECTS.map((pr) => pr.stack.some((st) => head(st) === key || implied.includes(head(st))));
-                (used.some(Boolean) ? tools : practices).push({ label, used });
-              });
-              return (
-                <section key={cap.key} className="tg-col" style={{ '--c': CAP_HUE[cap.key] }}>
-                  <h3 className="tg-h">{cap[lang].h}</h3>
-                  <p className="tg-b">{cap[lang].b}</p>
-                  <ul className="tg-list" data-m="pop">
-                    {tools.map((tl) => (
-                      <li key={tl.label}>
-                        <span className="tg-name lat">{tl.label}</span>
-                        <span className="tg-count lat" aria-hidden="true">{tl.used.filter(Boolean).length}/{PROJECTS.length}</span>
-                        <span className="tg-dots">
-                          {tl.used.map((u, n) => (
-                            <i key={PROJECTS[n].slug} className={u ? 'on' : ''} style={{ '--p': HUE[PROJECTS[n].slug] }}
-                               title={PROJECTS[n][lang].name} aria-label={u ? `${tl.label}: ${PROJECTS[n][lang].name}` : undefined} role={u ? 'img' : undefined} />
-                          ))}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                  {practices.length > 0 && <p className="tg-practice">{practices.map((x) => x.label).join(' · ')}</p>}
-                </section>
-              );
-            })}
-          </div>
-          <p className="tg-legend">
-            <span>{t.skills.legend}</span>
-            {PROJECTS.map((pr) => (
-              <a key={pr.slug} href={`/${lang}/work/${pr.slug}/`} style={{ '--p': HUE[pr.slug] }}><i aria-hidden="true" />{pr[lang].name}</a>
-            ))}
-          </p>
+                return { label, used: PROJECTS.map((pr) => pr.stack.some((st) => head(st) === key || implied.includes(head(st)))) };
+              }).filter((x) => x.used.some(Boolean)),
+            }))}
+          />
         </section>
 
         {/* ------------------------------------------------------- process */}
