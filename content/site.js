@@ -171,6 +171,15 @@ export const HERO_TESTS = [
     decAr: 'الطريق يُمشى خطوةً خطوة بهامش ٢ سم من كل جانب، وأسوأ خطوة تقرّر، وما لم يُقَس يبقى «لم يُفحص».',
     decEn: 'The way in is walked step by step with a 2 cm margin a side; the worst step decides, and an unmeasured one stays unchecked.',
   },
+  {
+    file: 'OrphanGridSortTest.php', project: 'lamma',
+    ar: 'شبكة الأيتام تُفرز على الفهرس، لا بـ filesort',
+    en: 'The orphan grid sorts on the index, never with a filesort',
+    probAr: 'الصفحة التي تُظهر الأقلّ كفالةً كانت تبطؤ كلّما زاد عدد الأيتام.',
+    probEn: 'The page that finds the least-funded children slowed down as more were added.',
+    decAr: 'اتجاها الفرز وُحِّدا ليقرأ المحرّك الفهرس عكسياً، ويخدمه فهرس على (status, funded_percent, id).',
+    decEn: 'Both sort directions were made the same so the engine reads the index backwards, served by an index on (status, funded_percent, id).',
+  },
 ];
 
 // Working rules shown on the home page timeline. Every one of them is
