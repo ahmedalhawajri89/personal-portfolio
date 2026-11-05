@@ -137,7 +137,7 @@ export default function Intro({ name, role, words, rtl }) {
 
       <div>
         <div className="ip-row">
-          <p className="ip-mask"><span className="ip-line ip-role lat">{role}</span></p>
+          <p className="ip-mask"><span className={`ip-line ip-role${rtl ? '' : ' lat'}`}>{role}</span></p>
           <p className="ip-mask"><span className="ip-line ip-step lat"><b>01</b> / {String(words.length).padStart(2, '0')}</span></p>
           <p className="ip-mask"><span className="ip-line ip-count lat"><b ref={num}>000</b>%</span></p>
         </div>

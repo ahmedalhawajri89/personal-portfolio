@@ -44,7 +44,7 @@ export async function generateMetadata({ params }) {
       canonical: here,
       languages: Object.fromEntries(LANGS.map((l) => [l, `${SITE}/${l}/work/${slug}/`])),
     },
-    openGraph: { type: 'article', url: here, title, description: c.tagline, images: [{ url: '/og.png' }] },
+    openGraph: { type: 'article', url: here, title, description: c.tagline, images: [{ url: lang === 'ar' ? '/og-ar.png' : '/og.png', width: 1200, height: 630 }] },
   };
 }
 

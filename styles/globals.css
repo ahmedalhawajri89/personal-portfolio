@@ -900,7 +900,7 @@ html[lang="ar"] .fm-u{--w:900}
 
 .tb-brand{display:inline-flex;align-items:center;gap:12px;min-width:0;justify-self:start;text-decoration:none;color:var(--ink)}
 .tb-brand:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:12px}
-.tb-id{display:grid;gap:3px;max-width:260px;overflow:hidden;white-space:nowrap;transition:max-width .6s var(--tb-ease),opacity .35s ease}
+.tb-id{display:grid;gap:3px;max-width:300px;overflow:hidden;white-space:nowrap;transition:max-width .6s var(--tb-ease),opacity .35s ease}
 .tb.is-scrolled .tb-id{max-width:0;opacity:0}
 .tb-name{font-size:16px;font-weight:800;line-height:1.1;letter-spacing:-.015em}
 [dir="rtl"] .tb-name{letter-spacing:0;font-size:16.5px}
@@ -1068,6 +1068,7 @@ html.intro .intro-panel{position:fixed;inset:0;z-index:95;display:flex;flex-dire
 .intro-a{stroke:var(--bg)}
 .intro-check{stroke:var(--accent);opacity:0}
 .ip-role{font-family:'GeistMono',ui-monospace,monospace;font-size:12.5px;font-weight:500;color:var(--ink-3)}
+[dir="rtl"] .ip-role{font-family:inherit;font-size:13.5px;font-weight:600}
 .ip-count{font-family:'GeistMono',ui-monospace,monospace;font-size:clamp(28px,3.4vw,46px);font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
 .ip-count b{font-weight:500}
 /* the words: stacked in one place, each piece rising out of its own mask,

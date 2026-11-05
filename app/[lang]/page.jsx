@@ -26,8 +26,8 @@ export function generateStaticParams() {
 }
 
 // Services and tool groups take the project hues (lib/hues.js) by meaning.
-const SV_HUE = { shop: 'var(--h-sec)', book: 'var(--h-ui)', dash: 'var(--h-api)', api: 'var(--h-db)', figma: 'var(--accent)', tests: 'var(--h-test)', diff: 'var(--ink-2)' };
-const CAP_HUE = { backend: 'var(--h-db)', frontend: 'var(--h-ui)', ui: 'var(--h-sec)', testing: 'var(--h-test)' };
+const SV_HUE = { shop: 'var(--h-sec)', book: 'var(--h-ui)', dash: 'var(--h-api)', api: 'var(--h-db)', figma: 'var(--accent)', tests: 'var(--h-test)', diff: 'var(--ink-2)', ai: 'var(--h-api)' };
+const CAP_HUE = { backend: 'var(--h-db)', frontend: 'var(--h-ui)', ui: 'var(--h-sec)', testing: 'var(--h-test)', ai: 'var(--h-api)' };
 
 /* A small moving mark for each service, drawn in its colour: what the
    service makes, in a gesture. They loop only while on screen
@@ -93,7 +93,7 @@ export default async function Home({ params }) {
       <TimelineScroll />
       <Motion />
       <Nav lang={lang} path="/" home />
-      <Intro name={PROFILE.name[lang]} role={t.hero.roleLine} words={t.intro.words} rtl={ar} />
+      <Intro name={PROFILE.name[lang]} role={t.about.role} words={t.intro.words} rtl={ar} />
       <Curtain routes={curtainRoutes(lang)} here={`/${lang}/`} />
       <Pointer label={t.work.view} />
       <Scenes chapters={[

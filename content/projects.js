@@ -10,7 +10,7 @@ export const PROJECTS = [
     cover: 'product',
     year: '2026',
     status: 'independent',
-    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Tailwind 4', 'Alpine.js', 'Pest', 'Vercel'],
+    stack: ['Laravel 12', 'PHP 8.2', 'MySQL', 'Blade', 'Tailwind 4', 'Alpine.js', 'Pest', 'Claude API', 'Vercel'],
     repo: 'https://github.com/ahmedalhawajri89/diwan-e-commerce',
     demo: 'https://diwan-xi.vercel.app/',
     ar: {
@@ -36,6 +36,10 @@ export const PROJECTS = [
           h: 'المخزون يُحسم في قاعدة البيانات لا في PHP',
           b: 'الشراء يقفل صف المنتج بـ lockForUpdate داخل المعاملة نفسها التي تكتب الطلب، فلا يفوز اثنان بآخر قطعة. وسلّة فيها سطر غير متوفّر تفشل كاملةً: لا يُخصم شيء ولا يبقى طلب ناقص. وإلغاء الطلب يعيد المخزون مرّة واحدة مهما حُفظ الطلب بعدها.',
         },
+        {
+          h: 'مساعد يجيب من الكتالوج الحقيقي، لا من خياله',
+          b: '«اسأل ديوان» مبنيّ على Claude: يبحث في الكتالوج بأداتين للقراءة فقط، ويقترح حتى أربع قطع، ولا يَعرض منها إلا ما أعادته الأدوات فعلاً، فلا يخترع قطعة ولا سعراً، ويعرف هل تتّسع القطعة لغرفة الزائر وهل تصل إليها. وفي لوحة التحكم يكتب Claude مسودّة وصف المنتج بالعربية والإنجليزية من بياناته وصورته، مقيّداً بما سُجّل فقط. والميزتان تحرسهما اختبارات.',
+        },
       ],
     },
     en: {
@@ -60,6 +64,10 @@ export const PROJECTS = [
         {
           h: 'Stock is decided in the database, not in PHP',
           b: 'Checkout locks the product row with lockForUpdate inside the transaction that writes the order, so two customers reaching for the last piece cannot both succeed. A cart with one unavailable line fails whole. Cancelling returns the stock exactly once.',
+        },
+        {
+          h: 'An assistant that answers from the real catalogue',
+          b: '“Ask Diwan” is built on Claude: it searches the catalogue through two read-only tools, suggests up to four pieces and shows only pieces those tools actually returned, so it cannot invent a product or a price; it knows whether a piece fits the visitor’s room and whether it gets there. In the admin, Claude drafts a product’s description in Arabic and English from its facts and photograph, held to what was recorded. Both are covered by tests.',
         },
       ],
     },
@@ -324,8 +332,8 @@ export const PROJECTS = [
 export const PROFILE = {
   name: { ar: 'أحمد الحواجري', en: 'Ahmed Al-Hawajiri' },
   role: {
-    ar: 'مطوّر Laravel وPHP',
-    en: 'Laravel & PHP Developer',
+    ar: 'مطوّر Laravel وPHP · ربط الذكاء الاصطناعي',
+    en: 'Laravel & PHP Developer · AI Integration',
   },
   location: { ar: 'غزة، فلسطين', en: 'Gaza, Palestine' },
   lede: {

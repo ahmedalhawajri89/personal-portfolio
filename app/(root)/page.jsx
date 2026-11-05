@@ -21,7 +21,7 @@ export default function RootRedirect() {
   return (
     <>
       <meta httpEquiv="refresh" content="0; url=/en/" />
-      <title>Ahmed Al-Hawajiri · Laravel & PHP Developer</title>
+      <title>Ahmed Al-Hawajiri · Laravel & PHP Developer · AI Integration</title>
       {/* Not indexable: the real pages are /en/ and /ar/, each canonical to
           itself, and this one holds no content worth ranking. */}
       <meta name="robots" content="noindex" />

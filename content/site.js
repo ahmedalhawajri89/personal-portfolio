@@ -52,6 +52,13 @@ export const SERVICES = [
     en: { h: 'Testing & QA', phrase: 'testing & QA', b: 'Automated tests for an existing Laravel app, so a bug we fixed stays fixed after the next change.' },
   },
   {
+    // Shown in Diwan's assistant and description drafts; listed without a
+    // proof label by choice.
+    icon: 'spark', proof: null, visual: 'ai',
+    ar: { h: 'ربط الذكاء الاصطناعي بتطبيقك', phrase: 'ربط الذكاء الاصطناعي بتطبيقك', b: 'أربط نموذجاً مثل Claude ببيانات تطبيقك وقواعده: مساعد يجيب من بياناتك الحقيقية، ونصوص تُكتب من سجلّاتك، مقيّدة بما هو موجود فعلاً ومحروسة باختبارات.' },
+    en: { h: 'AI integration', phrase: 'AI integration', b: 'I connect a model like Claude to your app’s own data and rules: an assistant that answers from your real data, text drafted from your records, held to what actually exists and covered by tests.' },
+  },
+  {
     icon: 'code', proof: null, visual: 'diff', note: 'Laravel · PHP',
     ar: { h: 'تطوير مشروع قائم', b: 'أكمل تطبيقاً موجوداً أو أصلحه: أقرأ الكود أولاً، ثم أصغر تغيير يحلّ المشكلة.' },
     en: { h: 'Work on an existing project', b: 'I finish or fix an app that already exists: I read the code first, then make the smallest change that solves it.' },
@@ -89,6 +96,12 @@ export const CAPABILITIES = [
     ar: { h: 'الهندسة والاختبار', b: 'اختبارات PHP للقواعد، وVitest لمنطق الواجهة، وPlaywright في المتصفح.' },
     en: { h: 'Engineering & testing', b: 'PHP tests for the rules, Vitest for the interface logic, Playwright in the browser.' },
     items: ['Pest', 'PHPUnit', 'Vitest', 'Playwright'],
+  },
+  {
+    key: 'ai',
+    ar: { h: 'ربط الذكاء الاصطناعي', b: 'نماذج مثل Claude مربوطة ببيانات التطبيق وقواعده، بإجابات مقيّدة بشكل محدّد وأدوات للقراءة فقط.' },
+    en: { h: 'AI integration', b: 'Models like Claude wired to the app’s own data and rules, with answers held to a fixed shape and read-only tools.' },
+    items: ['Claude API'],
   },
 ];
 

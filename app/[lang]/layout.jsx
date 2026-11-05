@@ -15,8 +15,8 @@ export async function generateMetadata({ params }) {
   const { lang } = await params;
   const ar = lang === 'ar';
   const title = ar
-    ? 'أحمد الحواجري · مطوّر Laravel وPHP'
-    : 'Ahmed Al-Hawajiri · Laravel & PHP Developer';
+    ? 'أحمد الحواجري · مطوّر Laravel وPHP · ربط الذكاء الاصطناعي'
+    : 'Ahmed Al-Hawajiri · Laravel & PHP Developer · AI Integration';
   const description = ar
     ? 'مطوّر Laravel وPHP من غزة. أبني أنظمة حجز ومتاجر إلكترونية ولوحات تحكم بالعربية والإنجليزية، بـ Laravel وMySQL وVue 3، مع اختبارات آلية للقواعد المهمة.'
     : 'Laravel & PHP developer from Gaza. I build booking systems, online stores and admin dashboards in Arabic and English, with Laravel, MySQL and Vue 3, and automated tests for the rules that matter.';
@@ -38,9 +38,10 @@ export async function generateMetadata({ params }) {
       title,
       description,
       url: `${SITE}/${lang}/`,
-      images: [{ url: '/og.png', width: 1200, height: 630, alt: title }],
+      // The card a shared link shows, one per language.
+      images: [{ url: ar ? '/og-ar.png' : '/og.png', width: 1200, height: 630, alt: title }],
     },
-    twitter: { card: 'summary_large_image', title, description, images: ['/og.png'] },
+    twitter: { card: 'summary_large_image', title, description, images: [ar ? '/og-ar.png' : '/og.png'] },
     icons: { icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }, { url: '/favicon.ico', sizes: '32x32' }] },
   };
 }
@@ -93,7 +94,7 @@ export default async function RootLayout({ children, params }) {
               '@type': 'Person',
               name: 'Ahmed Al-Hawajiri',
               alternateName: 'أحمد الحواجري',
-              jobTitle: 'Laravel & PHP Developer',
+              jobTitle: 'Laravel & PHP Developer · AI Integration',
               url: SITE,
               address: { '@type': 'PostalAddress', addressLocality: 'Gaza', addressCountry: 'PS' },
               knowsLanguage: ['ar', 'en'],
