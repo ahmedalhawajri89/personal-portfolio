@@ -330,10 +330,10 @@ export const PROJECTS = [
 ];
 
 export const PROFILE = {
-  name: { ar: 'أحمد الحواجري', en: 'Ahmed Al-Hawajiri' },
+  name: { ar: 'أحمد الحواجري', en: 'Ahmed Al-Hawajri' },
   role: {
-    ar: 'مطوّر Laravel وPHP · ربط الذكاء الاصطناعي',
-    en: 'Laravel & PHP Developer · AI Integration',
+    ar: 'مطوّر Laravel وPHP',
+    en: 'Laravel & PHP Developer',
   },
   location: { ar: 'غزة، فلسطين', en: 'Gaza, Palestine' },
   lede: {

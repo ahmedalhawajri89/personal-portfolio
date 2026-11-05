@@ -1051,7 +1051,7 @@ export function Footer({ lang, links, home = false }) {
 
       <div className="wrap">
         <div className="foot-base-row">
-          <p className="lat">© {new Date().getFullYear()} Ahmed Al-Hawajiri</p>
+          <p className="lat">© {new Date().getFullYear()} Ahmed Al-Hawajri</p>
           <p>{t.footer}</p>
         </div>
       </div>

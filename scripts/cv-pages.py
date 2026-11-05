@@ -2,7 +2,7 @@
 
 The viewer (components/CvPanel.jsx) shows the PDF as paper rather than in
 the browser's own PDF viewer, which a phone does not show at all. Run this
-whenever public/cv/Ahmed-Al-Hawajiri-CV.pdf changes:
+whenever public/cv/Ahmed-Al-Hawajri-CV.pdf changes:
 
     python -I scripts/cv-pages.py
 
@@ -17,7 +17,7 @@ import sys
 import pymupdf
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PDF = os.path.join(ROOT, 'public', 'cv', 'Ahmed-Al-Hawajiri-CV.pdf')
+PDF = os.path.join(ROOT, 'public', 'cv', 'Ahmed-Al-Hawajri-CV.pdf')
 OUT = os.path.join(ROOT, 'public', 'cv')
 WIDTH = 1240  # px: crisp on a retina screen at the width the viewer shows a page
 

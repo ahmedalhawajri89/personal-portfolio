@@ -15,8 +15,8 @@ export async function generateMetadata({ params }) {
   const { lang } = await params;
   const ar = lang === 'ar';
   const title = ar
-    ? 'أحمد الحواجري · مطوّر Laravel وPHP · ربط الذكاء الاصطناعي'
-    : 'Ahmed Al-Hawajiri · Laravel & PHP Developer · AI Integration';
+    ? 'أحمد الحواجري · مطوّر Laravel وPHP'
+    : 'Ahmed Al-Hawajri · Laravel & PHP Developer';
   const description = ar
     ? 'مطوّر Laravel وPHP من غزة. أبني أنظمة حجز ومتاجر إلكترونية ولوحات تحكم بالعربية والإنجليزية، بـ Laravel وMySQL وVue 3، مع اختبارات آلية للقواعد المهمة.'
     : 'Laravel & PHP developer from Gaza. I build booking systems, online stores and admin dashboards in Arabic and English, with Laravel, MySQL and Vue 3, and automated tests for the rules that matter.';
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }) {
     metadataBase: new URL(SITE),
     title,
     description,
-    authors: [{ name: 'Ahmed Al-Hawajiri' }],
+    authors: [{ name: 'Ahmed Al-Hawajri' }],
     alternates: {
       canonical: `${SITE}/${lang}/`,
       // x-default names the language the bare origin serves, so a crawler that
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }) {
     },
     openGraph: {
       type: 'website',
-      siteName: 'Ahmed Al-Hawajiri',
+      siteName: 'Ahmed Al-Hawajri',
       locale: ar ? 'ar_PS' : 'en_US',
       title,
       description,
@@ -92,9 +92,9 @@ export default async function RootLayout({ children, params }) {
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'Person',
-              name: 'Ahmed Al-Hawajiri',
+              name: 'Ahmed Al-Hawajri',
               alternateName: 'أحمد الحواجري',
-              jobTitle: 'Laravel & PHP Developer · AI Integration',
+              jobTitle: 'Laravel & PHP Developer',
               url: SITE,
               address: { '@type': 'PostalAddress', addressLocality: 'Gaza', addressCountry: 'PS' },
               knowsLanguage: ['ar', 'en'],

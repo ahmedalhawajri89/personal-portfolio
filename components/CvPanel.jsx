@@ -6,7 +6,7 @@ import { T } from '../lib/i18n';
 import { loadMotion, MOTION_OK, motionWanted } from '../lib/motion';
 import Icon from './Icons';
 
-export const CV_FILE = '/cv/Ahmed-Al-Hawajiri-CV.pdf';
+export const CV_FILE = '/cv/Ahmed-Al-Hawajri-CV.pdf';
 // The PDF's pages drawn as pictures, so the résumé reads as paper in every
 // browser (a phone shows an embedded PDF as one grey page, or not at all).
 // Made from the PDF by scripts/cv-pages.py; run it again whenever the PDF
@@ -187,7 +187,7 @@ function CvViewer({ lang, onClose }) {
 
         <div className="cvx-desk">
           <div className="cvx-bar">
-            <span className="lat">Ahmed-Al-Hawajiri-CV.pdf</span>
+            <span className="lat">Ahmed-Al-Hawajri-CV.pdf</span>
             <span className="cvx-count lat" aria-live="polite">{t.page} {page} / {PAGES.length}</span>
           </div>
           <div className="cvx-paper" ref={desk} tabIndex={0} aria-label={t.title}>

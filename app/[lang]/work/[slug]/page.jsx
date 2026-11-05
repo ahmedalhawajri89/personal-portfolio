@@ -32,7 +32,7 @@ export async function generateMetadata({ params }) {
   const p = LIVE.find((x) => x.slug === slug);
   if (!p) return {};
   const c = p[lang];
-  const title = `${c.name} — ${c.kind} · ${lang === 'ar' ? 'أحمد الحواجري' : 'Ahmed Al-Hawajiri'}`;
+  const title = `${c.name} — ${c.kind} · ${lang === 'ar' ? 'أحمد الحواجري' : 'Ahmed Al-Hawajri'}`;
   const here = `${SITE}/${lang}/work/${slug}/`;
   return {
     title,
