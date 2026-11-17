@@ -14,6 +14,16 @@
       "source": "/:lang(ar|en)/work/kafala/",
       "destination": "/:lang/work/lamma/",
       "permanent": true
+    },
+    {
+      "source": "/:lang(ar|en)/work/opsight",
+      "destination": "/:lang/work/baydar/",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(ar|en)/work/opsight/",
+      "destination": "/:lang/work/baydar/",
+      "permanent": true
     }
   ]
 }

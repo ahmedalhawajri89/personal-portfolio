@@ -330,30 +330,30 @@ export const BRIEFS = {
     },
   },
 
-  opsight: {
-    // it()/test() definitions: backend/tests 573 (Pest), frontend/tests 188
-    // (Vitest), frontend/e2e 70 (Playwright). Data sets and it.each run more.
-    tests: 831,
+  baydar: {
+    // it()/test() definitions: backend/tests 1,008 (Pest), frontend/tests 346
+    // (Vitest), frontend/e2e 73 (Playwright). Data sets and it.each run more.
+    tests: 1427,
     journey: [
       {
-        shot: 'login',
-        ar: { h: 'جرّبه بأي دور', b: 'في صفحة الدخول زرّ لكل دور: مالك ومدير ومحلّل وموظف، ومالك منشأة ثانية. البيانات مخترعة، وتعود كما كانت كل ليلة.' },
-        en: { h: 'Try it as any role', b: 'The sign-in page has a button per role: owner, manager, analyst and staff, and the owner of a second business. The data is invented, and it is put back every night.' },
+        shot: 'landing',
+        ar: { h: 'الحجّة في صفحة واحدة', b: 'الصفحة العامة تأخذ طلباً حقيقياً بمئتي ريال وتفكّكه مع النزول: البضاعة ورسوم تمارا وعمولة سلة والشحن والإيجار تطير كالقش، ويبقى منه ٣٠٫٩٠ ريالاً ربحاً.' },
+        en: { h: 'The argument on one page', b: 'The public page takes a real 200-riyal order and threshes it as you scroll: the goods, Tamara’s fee, Salla’s commission, shipping and rent blow off like chaff, and 30.90 riyals of profit is left.' },
       },
       {
         shot: 'dashboard',
-        ar: { h: 'الشهر في شاشة', b: 'الإيراد والطلبات والربح والهامش والمصاريف، كل رقم بجانب الفترة السابقة وفرقه عنها، والفترة التي لم تنتهِ تُعلَّم غير مكتملة.' },
-        en: { h: 'The month on one screen', b: 'Revenue, orders, profit, margin and expenses, each beside the previous period and the change from it, and a period not yet over is marked incomplete.' },
-      },
-      {
-        shot: 'analytics',
-        ar: { h: 'لماذا تغيّر الرقم', b: 'الاتجاهات والتوزيع حسب التصنيف والمنتج، ومقارنة بالفترة السابقة أو بالعام الماضي أو بالتواريخ الهجرية نفسها، ثم تنبيهات بقواعد واضحة.' },
-        en: { h: 'Why the figure moved', b: 'Trends and breakdowns by category and product, compared with the previous period, last year, or the same Hijri dates, then insights from plain rules.' },
+        ar: { h: 'صافي الربح أولاً', b: 'اللوحة تبدأ بالربح بعد كل المصاريف لا بالمبيعات، بجانب الفترة السابقة، وتحتها ما يستحق الانتباه هذا الأسبوع.' },
+        en: { h: 'Net profit first', b: 'The dashboard opens on profit after every expense, not on sales, beside the previous period, and below it what needs attention this week.' },
       },
       {
         shot: 'order',
-        ar: { h: 'طلب واحد بكل تاريخه', b: 'بنود الطلب بأسعارها يوم البيع، والدفعات والاستردادات، ومتى طُلب وأُكّد وسُلّم.' },
-        en: { h: 'One order, its whole history', b: 'The lines at the prices they sold for, the payments and refunds, and when it was placed, confirmed and fulfilled.' },
+        ar: { h: 'طلب واحد بكل تكاليفه', b: 'بنوده بأسعار يوم البيع، ورسوم الدفع والعمولة والشحن، وربحه بعد تكاليف البيع، وفاتورة شركة الشحن الحقيقية تُصحَّح في مكانها.' },
+        en: { h: 'One order, every cost of it', b: 'Its lines at the prices they sold for, the payment fee, commission and shipping, its profit after selling costs, and the carrier’s real bill corrected in place.' },
+      },
+      {
+        shot: 'cash',
+        ar: { h: 'النقد ثلاثة عشر أسبوعاً', b: 'الداخل والخارج أسبوعاً بأسبوع من الطلبات والمصاريف، وأدنى نقطة يصلها الرصيد، والأسبوع الذي ينزل فيه تحت حد الأمان.' },
+        en: { h: 'Cash, thirteen weeks out', b: 'Money in and out week by week from orders and expenses, the lowest point the balance reaches, and the week it drops below the safety line.' },
       },
       {
         shot: 'staff-dash',
@@ -362,54 +362,54 @@ export const BRIEFS = {
       },
       {
         shot: 'alnoor',
-        ar: { h: 'منشأة ثانية على النسخة نفسها', b: 'منشأة كويتية بالدينار الكويتي وتوقيتها، لا ترى شيئاً من الأولى ولا تراها الأولى.' },
-        en: { h: 'A second business, same installation', b: 'A Kuwaiti business in Kuwaiti dinars and its own time zone, which sees nothing of the first, and the first nothing of it.' },
+        ar: { h: 'شركة ثانية على النسخة نفسها', b: 'شركة كويتية بالدينار الكويتي وتوقيتها، لا ترى شيئاً من الأولى ولا تراها الأولى.' },
+        en: { h: 'A second company, same installation', b: 'A Kuwaiti company in Kuwaiti dinars and its own time zone, which sees nothing of the first, and the first nothing of it.' },
       },
     ],
     ar: {
-      hook: 'طلباتك ومخزونك ومصاريفك في مكان واحد، وأرقامها مقارنةً بما قبلها.',
+      hook: 'متجرك يخبرك كم بعت. بيدر يخبرك هل ربحت، وكم سيكون معك نقداً، ومتى ينفد منتجك.',
       who: [
-        'المالك: يرى كل شيء، ويضبط المنشأة ومستخدميها.',
+        'المالك: يرى كل شيء، ويضبط الشركة ومتاجرها ومستخدميها.',
         'المدير: يدير الطلبات والمخزون والمصاريف ويقرأ التحليل.',
         'المحلّل: يقرأ الأرقام والتكلفة والهامش ويصدّرها، ولا يغيّر شيئاً.',
         'الموظف: يسجّل الطلبات والزبائن ويستلم الدفعات، بلا تكلفة ولا ربح.',
       ],
-      problem: 'الطلبات في مكان والمخزون في آخر والمصاريف في جدول، فلا أحد يعرف كم كان الربح الشهر الماضي ولماذا تغيّر.',
-      does: 'يجمع الطلبات والزبائن والمنتجات والمخزون والمصاريف، ويحسب منها المؤشرات، ويقارن كل فترة بما قبلها، وينبّه لما يستحق الانتباه.',
+      problem: 'لوحة المتجر تعرض المبيعات، والربح يضيع في رسوم الدفع والعمولة والشحن والإيجار، فيظن التاجر أنه رابح وقد لا يكون.',
+      does: 'يجمع الطلبات من كل قنوات المتجر، ويطرح منها كل تكلفة، ويتوقّع النقد والمخزون، ويشرح الأرقام بالعربية.',
       delivered: [
-        'نسخة حيّة بحسابات تجريبية لأربعة أدوار ومنشأة ثانية، تعود كما كانت كل ليلة.',
-        'العربية والإنجليزية، وعملات تسع دول بضرائبها.',
-        '٥٧٣ اختبار Pest و١٨٨ اختبار Vitest و٧٠ اختبار متصفّح Playwright، وPHPStan بالمستوى السادس في كل دفعة.',
-        'عشر قواعد للتنبيهات، وسجلّ نشاط يحفظ من غيّر ماذا.',
+        'نسخة حيّة بحسابات تجريبية لأربعة أدوار وشركة ثانية تعود كما كانت كل ليلة، وصفحة عامة وأسعار.',
+        'ربط مع سلة وزد وشوبيفاي وووكومرس، واستيراد Excel، وAPI عام.',
+        '١٬٠٠٨ اختبارات Pest و٣٤٦ اختبار Vitest و٧٣ اختبار متصفّح Playwright، وPHPStan بالمستوى السادس في كل دفعة.',
+        '٤٥ قراراً معمارياً مكتوباً بأسبابه، وعشر قواعد للتنبيهات، وسجلّ نشاط يحفظ من غيّر ماذا.',
       ],
-      context: 'المنشأة الصغيرة والمتوسطة لا تفتقد البيانات، بل تفتقد مكاناً واحداً لها. الطلبات في نظام، والمخزون في دفتر، والمصاريف في جدول إكسل، فسؤال «كم ربحنا مقارنةً بالشهر الماضي، ولماذا؟» يأخذ يوماً ويخرج برقم لا يتّفق عليه اثنان.',
+      context: 'منصّات التجارة الإلكترونية في الخليج تعرض للتاجر ما باع لا ما ربح. رسوم تابي وتمارا أعلى بكثير من البطاقة، والشحن المجاني يدفعه التاجر، والعمولة تُقتطع قبل التحويل، والإيجار والرواتب خارج المتجر أصلاً. فطلب بمئتي ريال قد لا يبقى منه إلا ثلاثون، والتاجر لا يعرف.',
       pains: [
-        { h: 'أرقام متفرّقة', b: 'كل قسم يحفظ سجلّه، ولا يجتمع منها رقم واحد يُعتمد عليه.' },
-        { h: 'هامش لا يُعرف', b: 'تكلفة المنتج تتغيّر، فيُحسب ربح الماضي بأسعار اليوم.' },
-        { h: 'مقارنات مضلِّلة', b: 'شهر لم ينتهِ يُقارَن بشهر كامل، ورمضان هذا العام بغير رمضان العام الماضي.' },
+        { h: 'ربح أكبر من الحقيقة', b: 'لوحة المتجر لا تطرح رسوم الدفع ولا الشحن ولا العمولة ولا مصاريف الشهر.' },
+        { h: 'نقد لا يُرى', b: 'لا أحد يعرف كم سيكون في الحساب بعد شهرين، ولا متى يضيق.' },
+        { h: 'قنوات متفرّقة', b: 'متجر هنا، والمحل في دفتر، والسوشيال في جدول، ولا رقم واحد يجمعها.' },
       ],
     },
     en: {
-      hook: 'Your orders, stock and expenses in one place, and their figures against the period before.',
+      hook: 'Your store tells you what you sold. Baydar tells you whether you made money, how much cash you will have, and when a product runs out.',
       who: [
-        'The owner: sees everything, and sets up the business and its users.',
+        'The owner: sees everything, and sets up the company, its stores and its users.',
         'The manager: runs orders, stock and expenses, and reads the analysis.',
         'The analyst: reads the figures, costs and margins and exports them, and changes nothing.',
         'Staff: record orders and customers and take payments, with no cost and no profit in sight.',
       ],
-      problem: 'Orders in one place, stock in another, expenses in a spreadsheet, so nobody knows what last month’s profit was or why it moved.',
-      does: 'It brings orders, customers, products, stock and expenses together, computes the metrics, compares each period with the one before, and flags what deserves attention.',
+      problem: 'The store’s dashboard shows sales, while profit leaks into payment fees, commission, shipping and rent, so a merchant believes they are making money when they may not be.',
+      does: 'It gathers orders from every channel the store sells through, takes every cost off them, forecasts cash and stock, and explains the figures in Arabic.',
       delivered: [
-        'A live copy with demo accounts for four roles and a second business, put back every night.',
-        'Arabic and English, in the currencies of nine countries with their VAT.',
-        '573 Pest tests, 188 Vitest tests and 70 Playwright browser tests, with PHPStan at level 6 on every push.',
-        'Ten insight rules, and an activity log of who changed what.',
+        'A live copy with demo accounts for four roles and a second company, put back every night, with a public page and prices.',
+        'Connections to Salla, Zid, Shopify and WooCommerce, an Excel import, and a public API.',
+        '1,008 Pest tests, 346 Vitest tests and 73 Playwright browser tests, with PHPStan at level 6 on every push.',
+        '45 architecture decisions written down with their reasons, ten insight rules, and an activity log of who changed what.',
       ],
-      context: 'A small or mid-sized business does not lack data; it lacks one place for it. Orders live in one system, stock in a ledger and expenses in a spreadsheet, so "what did we make compared with last month, and why?" takes a day and ends in a figure no two people agree on.',
+      context: 'Gulf e-commerce platforms show a merchant what they sold, not what they made. Tabby and Tamara cost far more than a card, free shipping is paid by the merchant, commission comes off before the payout, and rent and salaries are not in the store at all. A 200-riyal order can leave thirty, and the merchant never knows.',
       pains: [
-        { h: 'Scattered figures', b: 'Every part of the business keeps its own record, and no single number comes out of them that anyone can rely on.' },
-        { h: 'A margin nobody knows', b: 'Product costs change, so past profit gets computed at today’s prices.' },
-        { h: 'Misleading comparisons', b: 'A month not yet over is compared with a whole one, and this year’s Ramadan with last year’s non-Ramadan.' },
+        { h: 'Profit bigger than the truth', b: 'The store’s dashboard takes off no payment fees, no shipping, no commission and none of the month’s expenses.' },
+        { h: 'Cash nobody can see', b: 'Nobody knows what will be in the account in two months, or when it gets tight.' },
+        { h: 'Scattered channels', b: 'A store here, the shop in a ledger, social media in a spreadsheet, and no single figure joining them.' },
       ],
     },
   },

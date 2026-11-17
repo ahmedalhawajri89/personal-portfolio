@@ -23,7 +23,7 @@ export const SERVICES = [
     get: { ar: 'صفحة حجز لعملائك، ولوحة يدير منها فريقك اليوم، وأوقات تُحسب من دوامك الحقيقي.', en: 'A booking page for your customers, a console for your team, and times worked out from your real hours.' },
   },
   {
-    icon: 'layout', proof: 'opsight', visual: 'dash',
+    icon: 'layout', proof: 'baydar', visual: 'dash',
     ar: { h: 'أنظمة أعمال ولوحات تحكم', b: 'أدوار وصلاحيات وسير عمل، وجداول تبقى سريعة ولو صارت آلاف السجلات.' },
     en: { h: 'Business systems and dashboards', b: 'Roles, permissions and workflows, with tables that stay fast at thousands of rows.' },
     tier: 'core',
@@ -154,7 +154,7 @@ export const HERO_TESTS = [
     decEn: 'The policy checks that in code rather than in the interface, and an approved record is reversed with a counter-entry rather than edited.',
   },
   {
-    file: 'FieldRedactionTest.php', project: 'opsight',
+    file: 'FieldRedactionTest.php', project: 'baydar',
     ar: 'الموظف لا يتسلّم تكلفة المنتج، لا في القائمة ولا في صفحته',
     en: 'Staff never receive a product’s cost, on the list or on its own page',
     probAr: 'تكلفة مخفية في الشاشة تبقى ظاهرة لمن يفتح أدوات المتصفح.',

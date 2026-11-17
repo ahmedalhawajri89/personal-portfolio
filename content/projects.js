@@ -135,66 +135,66 @@ export const PROJECTS = [
   },
 
   {
-    slug: 'opsight',
-    shots: 'opsight',
-    // The owner's dashboard: every figure against the previous period, the
-    // product's whole idea on one screen. Captured in high definition.
+    slug: 'baydar',
+    shots: 'baydar',
+    // The owner's dashboard: net profit after every cost, first, against the
+    // previous period. The product's whole idea on one screen, in high definition.
     cover: 'dashboard',
     year: '2026',
     // Public repository under a proprietary licence (read and evaluate only),
-    // so not labelled open source.
+    // so not labelled open source. Started as "Opsight"; renamed in 2026-11.
     status: 'public',
-    stack: ['Next.js 16', 'React 19', 'Tailwind 4', 'TanStack Query', 'Recharts', 'Laravel 12', 'PHP 8.2', 'Sanctum', 'MySQL', 'Pest', 'Vitest', 'Playwright', 'REST API', 'Larastan'],
-    repo: 'https://github.com/ahmedalhawajri89/opsight',
+    stack: ['Next.js 16', 'React 19', 'Tailwind 4', 'GSAP', 'TanStack Query', 'Recharts', 'Laravel 12', 'PHP 8.2', 'Sanctum', 'MySQL / TiDB', 'Claude API', 'Pest', 'Vitest', 'Playwright', 'Larastan'],
+    repo: 'https://github.com/ahmedalhawajri89/Baydar',
     // Demo mode: one-click sign-in for each role, restored from a snapshot nightly.
-    demo: 'https://opsight-demo.vercel.app/',
+    demo: 'https://baydar-demo.vercel.app/',
     ar: {
-      name: 'Opsight',
-      kind: 'منصة تشغيل وذكاء أعمال للمنشآت الخليجية',
-      tagline: 'الطلبات والمخزون والمصاريف في مكان واحد، تصير أرقاماً تُقارَن ويُعرف سببها.',
+      name: 'بيدر',
+      kind: 'منصة ربحية للتجّار الإلكترونيين في الخليج',
+      tagline: 'متجرك يخبرك كم بعت. بيدر يخبرك هل ربحت.',
       summary:
-        'المنشأة الصغيرة والمتوسطة تحفظ طلباتها في مكان، ومخزونها في آخر، ومصاريفها في جدول إكسل، فلا يعرف أحد كم كان هامش الربح الشهر الماضي ولماذا تغيّر. Opsight يسجّل الطلبات والزبائن والمنتجات والمخزون والمصاريف، ويحوّلها إلى مؤشرات ومقارنات وتنبيهات للمالك والمدير. لكل دور من أدوار أربعة ما يخصّه فقط، فالموظف لا يرى تكلفة أبداً، وعدّة منشآت تعمل على نسخة واحدة دون أن ترى إحداها الأخرى، والواجهة بالعربية والإنجليزية وبعملة كل بلد وضريبته. والتنبيهات قواعد محدّدة لا نموذج ذكاء اصطناعي، فكل رقم يمكن تتبّعه إلى الطلبات التي خلفه.',
+        'تاجر سلة أو زد يرى مبيعاته في لوحة متجره، لكن ما يقرّر ربحه يقع خارجها: رسوم الدفع وعمولة المنصة والشحن، والإيجار والرواتب، والنقد الذي سيبقى معه، والمنتج الذي سينفد. بيدر يجمع الطلبات من سلة وزد وشوبيفاي وووكومرس وملفات Excel وربط API، ويطرح منها كل تكلفة حتى الربح الحقيقي لكل طلب، ويتوقّع النقد ثلاثة عشر أسبوعاً والمخزون حتى نفاده، ويرسل موجزاً كل صباح. ومساعد «اسأل بيدر» يشرح الأرقام بالعربية ولا يحسب المال بنفسه. لكل دور من أربعة ما يخصّه، وكل شركة معزولة عن غيرها، وللمنتج صفحة عامة وأسعار وباقات يفرضها الخادم.',
       points: [
         {
-          h: 'المال دقيق، والماضي لا يتحرّك',
-          b: 'المبالغ DECIMAL في قاعدة البيانات ونصوص bcmath في PHP، لا أعداد عشرية تقريبية، وبثلاث خانات للدينار. وكل سطر طلب يحفظ السعر والتكلفة اللذين بيع بهما، فتعديل تكلفة منتج اليوم لا يعيد كتابة هامش السنة الماضية.',
+          h: 'الربح الحقيقي، طلباً بطلب',
+          b: 'رسوم الدفع لكل طريقة، ومنها التقسيط بتابي وتمارا، وعمولة القناة وتكلفة الشحن، تُثبَّت على الطلب لحظة حدوثها، فيظهر هامش المساهمة بين مجمل الربح وصافيه، وتغيير النسبة غداً لا يعيد كتابة أرقام اليوم. والمبالغ DECIMAL في قاعدة البيانات ونصوص bcmath في PHP، لا أعداد عشرية تقريبية.',
         },
         {
-          h: 'أربعة أدوار يفرضها الـ API',
-          b: 'المالك والمدير والمحلّل والموظف قرابة خمسين صلاحية تفحصها السياسات على الخادم. والحقل الذي لا يحق لدور أن يراه، كالتكلفة والهامش وقيمة الزبون، يُحذف من الاستجابة نفسها، لا يُخفى في الواجهة.',
+          h: 'من كل مكان يبيع فيه التاجر',
+          b: 'سلة وزد بتفويض OAuth وأحداث موقَّعة، وشوبيفاي وووكومرس كما تُضبط المتاجر فعلاً، وAPI عام بمفاتيح، واستيراد Excel يقرأ أعمدته بالعربية والإنجليزية. والطلب الواحد لا يُسجَّل مرتين مهما وصل من طرق.',
         },
         {
-          h: 'منشآت كثيرة، قاعدة واحدة، بلا تسرّب',
-          b: 'كل جدول يحمل المنشأة، ونطاق عام يقيّد كل استعلام بها. وحين لا تكون هناك منشأة في السياق يفشل الاستعلام بدل أن يعيد صفوف الجميع، واختبارات تدخل باسم مالكَين وتتحقّق أن أحدهما لا يجد شيئاً للآخر.',
+          h: 'ذكاء اصطناعي لا يحسب المال',
+          b: '«اسأل بيدر» على Claude يقرأ الأرقام بأدوات ينفّذها الخادم بصلاحيات من سأل، فلا يرى الموظف تكلفة ولو سأل عنها، ويظهر مصدر كل رقم بجانب الجواب. ولكل باقة عدد أسئلتها في الشهر، وسقف للاستهلاك لا يُتجاوز.',
         },
         {
-          h: 'مقارنات صادقة مع التقويم',
-          b: 'الفترة التي لم تنتهِ بعد تُعلَّم «غير مكتملة» حين تقارَن بفترة كاملة، ويمكن مقارنة رمضان بالتواريخ الهجرية نفسها من العام الماضي بتقويم أم القرى بدل الميلادية. والفترات تُقطع بتوقيت المنشأة نفسها، وهذا ما أصلح خطأً كان يُسقط يوماً كاملاً بصمت عند تغيير الساعة.',
+          h: 'أدوار وشركات بلا تسرّب',
+          b: 'المالك والمدير والمحلّل والموظف قرابة خمسين صلاحية تفحصها السياسات على الخادم، والحقل الممنوع كالتكلفة والهامش يُحذف من الاستجابة نفسها. وكل استعلام مقيّد بالشركة، واختبار يمرّ على كل مسار في النظام ويتحقّق أن شركة لا تجد شيئاً لأخرى.',
         },
       ],
     },
     en: {
-      name: 'Opsight',
-      kind: 'Operations and business intelligence for Gulf businesses',
-      tagline: 'Orders, stock and expenses in one place, turned into figures that are compared and explained.',
+      name: 'Baydar',
+      kind: 'Profit platform for Gulf online merchants',
+      tagline: 'Your store tells you what you sold. Baydar tells you whether you made money.',
       summary:
-        'A small or mid-sized business keeps its orders in one place, its stock in another and its expenses in a spreadsheet, so nobody can say what last month’s margin was or why it moved. Opsight records orders, customers, products, inventory and expenses, and turns them into metrics, comparisons and insights for the owner and the manager. Each of four roles sees only its own part, so staff never see a cost; several businesses share one installation without ever seeing each other; and it runs in Arabic and English, in each country’s currency with its VAT. The insights are deterministic rules, not a model, so every figure can be traced back to the orders behind it.',
+        'A merchant on Salla or Zid sees their sales on the store’s dashboard, but what decides their profit lies outside it: payment fees, the platform’s commission and shipping; rent and salaries; the cash they will have; the product about to run out. Baydar gathers orders from Salla, Zid, Shopify, WooCommerce, Excel files and an API, takes every cost off them to reach the real profit on each order, forecasts cash thirteen weeks ahead and stock until it runs out, and sends a brief every morning. Its assistant, Ask Baydar, explains the figures in Arabic and never does the money arithmetic itself. Each of four roles sees only its own part, every company is walled off from the others, and the product has a public page, prices and plans the server enforces.',
       points: [
         {
-          h: 'Money is exact, and the past stays put',
-          b: 'Amounts are DECIMAL in the database and bcmath strings in PHP, never floats, to three places for dinars. Every order line keeps the price and cost it was sold at, so changing a product’s cost today cannot rewrite last year’s margin.',
+          h: 'The real profit, order by order',
+          b: 'Payment fees per method, instalments through Tabby and Tamara included, channel commission and the carrier’s charge are fixed on the order as they happen, so contribution margin sits between gross and net profit, and changing a rate tomorrow cannot rewrite today. Amounts are DECIMAL in the database and bcmath strings in PHP, never floats.',
         },
         {
-          h: 'Four roles, enforced by the API',
-          b: 'Owner, manager, analyst and staff are some fifty abilities checked by policies on the server. A field a role may not see — a cost, a margin, a customer’s lifetime value — is left out of the response itself, not hidden in the interface.',
+          h: 'From everywhere the merchant sells',
+          b: 'Salla and Zid through OAuth and signed webhooks, Shopify and WooCommerce as real stores are set up, a public API with keys, and an Excel import that reads its columns in Arabic or English. One order is recorded once, however many ways it arrives.',
         },
         {
-          h: 'Many businesses, one database, no leaks',
-          b: 'Every owned table carries its business, and a global scope filters every query by it. With no business in context a query fails instead of returning everyone’s rows, and tests sign in as two owners and check neither can find the other’s records.',
+          h: 'AI that never does the money arithmetic',
+          b: 'Ask Baydar runs on Claude and reads the figures through tools the server executes with the asker’s own permissions, so staff never see a cost even by asking, and every figure in an answer shows its source beside it. Each plan has its questions a month, under a spending ceiling that cannot be passed.',
         },
         {
-          h: 'Comparisons that are honest about the calendar',
-          b: 'A period still in progress is marked incomplete when it is compared with a finished one, and Ramadan can be compared with the same Hijri dates last year, by the Umm al-Qura calendar, instead of the same Gregorian ones. Periods are cut in the business’s own time zone, which fixed a bug where a clock change silently dropped a whole day.',
+          h: 'Roles and companies, no leaks',
+          b: 'Owner, manager, analyst and staff are some fifty abilities checked by policies on the server, and a field a role may not see, a cost or a margin, is left out of the response itself. Every query is bound to its company, and a test walks every route in the system to check one company can find nothing of another’s.',
         },
       ],
     },

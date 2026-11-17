@@ -12,7 +12,7 @@ import { loadMotion, MOTION_OK, motionWanted } from '../lib/motion';
      Waeda      a day of slots fills; the empty one is saved by the reply "1"
      Takharruj  a project walks its road from the idea to the cap
      Lamma      a coin follows its path to a home; the share that arrived fills
-     Opsight    the month's bars rise, its trend is drawn, the margin is counted
+     Baydar     the month's bars rise, its trend is drawn, the margin is counted
 
    The markup is each scene's finished frame, so without script or for
    reduced motion the cover is a complete still picture. The loop pauses
@@ -145,7 +145,7 @@ const SCENES = {
     },
   },
 
-  opsight: {
+  baydar: {
     art: (
       <>
         <rect className="cv-card" x="72" y="64" width="496" height="272" rx="20" />

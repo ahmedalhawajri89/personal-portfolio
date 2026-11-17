@@ -115,6 +115,7 @@ for (const name of names) {
             await page.goto(url, { waitUntil: 'networkidle' });
             if (pg.prep) await pg.prep(page);
             await settle(page, !!pg.full);
+            if (P.beforeShot) await page.evaluate(P.beforeShot).catch(() => {});
             const full = !!pg.full;
             const png = await page.screenshot({ fullPage: full, type: 'png', animations: pg.animations || 'disabled' });
             const meta = await writeImages(png, join(dir, stem), device, !!pg.hd);
@@ -176,6 +177,11 @@ async function login(page, P, role) {
 async function loginOnce(page, P, role) {
   const r = P.roles[role];
   await page.goto(P.base + r.path, { waitUntil: 'networkidle' });
+  // A demo that folds its email form behind a button (Baydar): open it first.
+  if (r.reveal) {
+    const open = page.getByRole('button', { name: r.reveal });
+    if (await open.count()) await open.first().click();
+  }
   await page.fill(r.email, r.user);
   await page.fill(r.password, r.pass);
   // The submit button of the form that holds the password field — pages
