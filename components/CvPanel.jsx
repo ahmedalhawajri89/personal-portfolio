@@ -148,8 +148,8 @@ function CvViewer({ lang, onClose }) {
           <div className="cvx-head">
             <svg className="cvx-mark" viewBox="0 0 64 64" aria-hidden="true">
               <rect width="64" height="64" rx="14" />
-              <path className="cvx-a" d="M17 50 L32 14 L47 50" />
-              <path className="cvx-check" d="M21 38 L28 44 L44 27" />
+              <path className="cvx-a" d="M12 50 L27 14 V50 M52 14 V50" />
+              <path className="cvx-check" d="M18 36 L25 42 L52 24" />
             </svg>
             <p className="cvx-k"><span className="cvx-mask"><span className="cvx-rise">{t.title}</span></span></p>
             <button type="button" onClick={close} className="cvx-x" aria-label={T[lang].detail.close}><Icon name="x" size={18} /></button>

@@ -123,8 +123,8 @@ export default function Intro({ name, role, words, rtl }) {
         <p className="ip-mask"><span className="ip-line ip-brand">
           <svg className="ip-mark" viewBox="0 0 64 64">
             <rect width="64" height="64" rx="14" className="intro-bg" />
-            <path className="intro-a" d="M17 50 L32 14 L47 50" />
-            <path className="intro-check" d="M21 38 L28 44 L44 27" />
+            <path className="intro-a" d="M12 50 L27 14 V50 M52 14 V50" />
+            <path className="intro-check" d="M18 36 L25 42 L52 24" />
           </svg>
           {name}
         </span></p>

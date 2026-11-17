@@ -506,10 +506,10 @@ export function Nav({ lang, path = '', home = false, title = '' }) {
   );
 }
 
-/* The mark. An A drawn as one stroke -- up from the left foot, over the apex,
-   down to the right -- with an orange check mark where its crossbar would
-   be: a letter for the name, and a passing test for the way the work is
-   held up. On load the A writes itself and the check is ticked after it; on
+/* The mark. A and H sharing a stem -- the A's right leg is the H's left --
+   and the bar that joins them is an orange check mark: the name, and a
+   passing test for the way the work is held up. On load the letters write
+   themselves and the check is ticked after them; on
    hover the check is ticked again. The same geometry as /favicon.svg, so the
    tab and the page carry one mark, and it inverts with the theme through the
    ink and paper tokens. Still for reduced motion. */
@@ -517,8 +517,8 @@ export function Logo({ size = 34 }) {
   return (
     <svg className="logo" width={size} height={size} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
       <rect width="64" height="64" rx="14" className="logo-bg" />
-      <path className="logo-a" d="M17 50 L32 14 L47 50" pathLength="1" />
-      <path className="logo-check" d="M21 38 L28 44 L44 27" pathLength="1" />
+      <path className="logo-a" d="M12 50 L27 14 V50 M52 14 V50" pathLength="1" />
+      <path className="logo-check" d="M18 36 L25 42 L52 24" pathLength="1" />
     </svg>
   );
 }

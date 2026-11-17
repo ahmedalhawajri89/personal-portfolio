@@ -6,6 +6,7 @@ import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, ContactForm, B
 import Motion from '../../components/Motion';
 import Intro from '../../components/Intro';
 import Hero from '../../components/Hero';
+import Crew from '../../components/Crew';
 import Cover from '../../components/Cover';
 import BehindScreen from '../../components/BehindScreen';
 import RuleStack from '../../components/RuleStack';
@@ -127,7 +128,7 @@ export default async function Home({ params }) {
             cta2={t.hero.cta2}
             parts={t.hero.steps}
           >
-            <CvButton lang={lang} variant="ghost" compact />
+            <CvButton lang={lang} variant="quiet" />
           </Hero>
         </section>
 
@@ -417,6 +418,7 @@ export default async function Home({ params }) {
 
       <Footer lang={lang} links={PROFILE.links} home />
       <BackToTop lang={lang} />
+      <Crew rtl={ar} />
       <Dock lang={lang} home />
     </>
   );

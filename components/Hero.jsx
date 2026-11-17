@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { loadMotion, MOTION_OK, POINTER_OK, motionWanted } from '../lib/motion';
 import Icon from './Icons';
+import HeroScene from './HeroScene';
 
 const HUES = ['var(--h-db)', 'var(--h-api)', 'var(--h-ui)', 'var(--h-test)', 'var(--h-sec)'];
 
@@ -29,6 +30,16 @@ const HUES = ['var(--h-db)', 'var(--h-api)', 'var(--h-ui)', 'var(--h-test)', 'va
 export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta2, parts, stats, children }) {
   const [lit, setLit] = useState(0);
   const root = useRef(null);
+  // The picture beside the headline lights the chip of the part it is
+  // acting out; a chip, picked, plays that part's act.
+  const scene = useRef(null);
+  const onAct = useCallback((k) => setLit(k), []);
+  const track = useRef(null);
+  const [live, setLive] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const onReady = useCallback(() => setLive(true), []);
+  const pick = (k) => { setLit(k); setPaused(false); scene.current?.go(k); };
+  const toggle = () => setPaused(scene.current?.toggle() ?? false);
 
   useEffect(() => {
     let mm, gone = false, splits = [];
@@ -66,10 +77,10 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
         // outgrows the width it was set at. --s is width in English; the
         // Arabic face has weight alone.
         const AXES = rtl ? {
-          heavy: { rest: { w: 900, s: 0 }, pull: { w: 520, s: 0 } },
+          heavy: { rest: { w: 900, s: 0 }, pull: { w: 700, s: 0 } },
           light: { rest: { w: 400, s: 0 }, pull: { w: 560, s: 0 } },
         } : {
-          heavy: { rest: { w: 800, s: 100 }, pull: { w: 380, s: 92 } },
+          heavy: { rest: { w: 800, s: 100 }, pull: { w: 620, s: 100 } },
           light: { rest: { w: 300, s: 80 }, pull: { w: 640, s: 75 } },
         };
         const shapes = units.map((u) => ({ u, ...AXES[u.closest('.is-soft') ? 'light' : 'heavy'] }));
@@ -80,7 +91,9 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
         const lockWords = () => splits.forEach((s) => s.words.forEach((w) => {
           w.style.width = '';
           const fs = parseFloat(getComputedStyle(w).fontSize) || 1;
-          w.style.width = `${(w.getBoundingClientRect().width / fs).toFixed(4)}em`;
+          // offsetWidth is the laid-out width: a letter still turned from the
+          // entrance would make the box, and the gap after the word, wider.
+          w.style.width = `${(w.offsetWidth / fs).toFixed(4)}em`;
           w.style.whiteSpace = 'nowrap';
         }));
         const wave = () => {
@@ -97,6 +110,9 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
           gsap.set(el.querySelectorAll('.kh-reveal'), { opacity: 0, y: 24 });
           uncovered().then(() => {
             if (gone) return;
+            // Measured again now the page is uncovered: under the intro the
+            // words are laid out before the face has settled, and come out wide.
+            lockWords();
             gsap.to(units, { yPercent: 0, rotation: 0, opacity: 1, duration: 1.2, ease: 'expo.out', stagger: { each: rtl ? 0.08 : 0.022, from: 'start' }, delay: 0.1, onComplete: wave });
             gsap.to(el.querySelectorAll('.kh-reveal'), { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.1, delay: rtl ? 0.7 : 0.9 });
           });
@@ -111,6 +127,11 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
         gsap.timeline({ scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: 0.8 } })
           .to(units, { y: () => rand(-160, 160), x: () => rand(-50, 50), rotation: () => rand(-45, 45), opacity: 0.12, ease: 'none', stagger: { each: 0.01, from: 'random' } }, 0)
           .to(el.querySelectorAll('.kh-reveal'), { y: -40, opacity: 0, ease: 'none' }, 0);
+
+        // And again whenever the window changes size.
+        let relock;
+        const onResize = () => { clearTimeout(relock); relock = setTimeout(lockWords, 150); };
+        window.addEventListener('resize', onResize);
 
         let off = () => {};
         if (pointer) {
@@ -139,8 +160,7 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
           off = () => { h.removeEventListener('pointerenter', read); h.removeEventListener('pointermove', move); h.removeEventListener('pointerleave', rest); };
         }
 
-        const timer = setInterval(() => setLit((k) => (k + 1) % HUES.length), 1800);
-        return () => { off(); clearInterval(timer); splits.forEach((s) => s.revert()); splits = []; };
+        return () => { off(); window.removeEventListener('resize', onResize); clearTimeout(relock); splits.forEach((s) => s.revert()); splits = []; };
       });
     })();
     return () => { gone = true; mm?.revert(); };
@@ -148,6 +168,7 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
 
   return (
     <div className="kh" ref={root} style={{ '--hue': HUES[lit] }}>
+      <div className="kh-main">
       <div className="kh-top kh-reveal">
         <p className="hx-status">
           <span className="hx-live" aria-hidden="true" />
@@ -165,18 +186,39 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
           then the five layers the headline's bar walks through. */}
       <div className="kh-foot">
         <div className="kh-copy kh-reveal">
-          <p className="kh-lede">{lede}</p>
+          {/* What he builds, said by him. */}
+          <div className="kh-say">
+            <img className="kh-face" src="/ahmed.webp" alt="" width="56" height="56" decoding="async" />
+            <p className="kh-lede">{lede}</p>
+          </div>
           <div className="hx-ctas">
             <a href="#work" className="btn btn-primary hx-cta" data-magnetic>{cta1} <Icon name={rtl ? 'arrowLeft' : 'arrowRight'} size={16} /></a>
             <a href="#contact" className="btn btn-ghost" data-magnetic>{cta2}</a>
             {children}
           </div>
         </div>
-        <ul className="kh-parts kh-reveal" aria-label={parts.join('، ')}>
-          {parts.map((p, k) => (
-            <li key={p} className={k === lit ? 'is-on' : ''} style={{ '--c': HUES[k] }}><i aria-hidden="true" />{p}</li>
-          ))}
-        </ul>
+
+        {/* The five parts as one control: the picture beside plays them in
+            turn, the lit one fills as its act runs, and any one can be
+            picked. The motion can be stopped -- anything that moves on its
+            own for more than five seconds must offer that. */}
+        <div className="kh-play kh-reveal">
+          <ul className="kh-parts" ref={track} aria-label={parts.join(rtl ? '، ' : ', ')}>
+            {parts.map((p, k) => (
+              <li key={p} className={k === lit ? 'is-on' : ''} style={{ '--c': HUES[k] }}>
+                <button type="button" aria-pressed={k === lit} onClick={() => pick(k)}><i aria-hidden="true" />{p}</button>
+              </li>
+            ))}
+          </ul>
+          {live && (
+            <button type="button" className="kh-pause" onClick={toggle}
+              aria-label={paused ? (rtl ? 'تشغيل الحركة' : 'Play the animation') : (rtl ? 'إيقاف الحركة' : 'Pause the animation')}>
+              {paused
+                ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor" /></svg>
+                : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="3" y="2.5" width="3.6" height="11" rx="1" fill="currentColor" /><rect x="9.4" y="2.5" width="3.6" height="11" rx="1" fill="currentColor" /></svg>}
+            </button>
+          )}
+        </div>
       </div>
 
       {stats?.length > 0 && <ul className="hx-stats kh-reveal">
@@ -187,6 +229,8 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
           </li>
         ))}
       </ul>}
+      </div>
+      <div className="kh-scene"><HeroScene onAct={onAct} onReady={onReady} api={scene} track={track} /></div>
     </div>
   );
 }
