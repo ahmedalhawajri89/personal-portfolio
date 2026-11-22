@@ -2104,18 +2104,17 @@ html.curtain-in .cs-in{animation-delay:calc(var(--d,0s) + .9s)}
 .kh-foot{grid-template-columns:minmax(0,1fr)}
 .kh-play{min-width:0}
 
-/* ---- the crew walking the page (components/Crew.jsx) ---- */
-.cw{position:fixed;left:16px;bottom:4px;z-index:30;pointer-events:none;display:none}
-[dir="rtl"] .cw{left:auto;right:16px}
-html.js .cw{display:block}
-@media (max-width:767px),(prefers-reduced-motion:reduce){html.js .cw{display:none}}
-.cw-svg{display:block;overflow:visible}
+/* ---- the small characters (components/Mini.jsx) ---- */
 .cw-limb{fill:none;stroke:color-mix(in srgb,var(--c) 62%,#000);stroke-width:4;stroke-linecap:round}
 .cw-thin{fill:none;stroke:color-mix(in srgb,var(--c) 62%,#000);stroke-width:2.5;stroke-linecap:round}
 .cw-band{fill:none;stroke:color-mix(in srgb,var(--c) 60%,#000);stroke-width:1.6;opacity:.4}
 .cw-board{fill:var(--card);stroke:color-mix(in srgb,var(--c) 62%,#000);stroke-width:1.8}
 .cw-shield{fill:color-mix(in srgb,var(--c) 50%,#fff);stroke:color-mix(in srgb,var(--c) 62%,#000);stroke-width:2;stroke-linejoin:round}
 .cw-mouth{fill:none;stroke:#141414;stroke-width:1.6;stroke-linecap:round}
-.cw-bub{fill:var(--card);stroke:var(--c);stroke-width:2;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
-.cw-ico{fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.cw-ico-t{font:700 9px 'GeistMono',ui-monospace,monospace;fill:var(--ink)}
+
+/* ---- handoff between sections (components/Seams.jsx) ---- */
+.sm{position:absolute;left:0;top:0;z-index:1;overflow:visible;pointer-events:none}
+.sm-wire{fill:none;stroke:var(--c);stroke-width:2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:.5}
+.sm-ring{fill:none;stroke:var(--c);stroke-width:2}
+.sec-label{transition:text-shadow .5s ease}
+.sec-label.is-landed{text-shadow:0 0 18px color-mix(in srgb,var(--c,var(--accent)) 55%,transparent)}

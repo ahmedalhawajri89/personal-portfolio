@@ -6,7 +6,7 @@ import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, ContactForm, B
 import Motion from '../../components/Motion';
 import Intro from '../../components/Intro';
 import Hero from '../../components/Hero';
-import Crew from '../../components/Crew';
+import Seams from '../../components/Seams';
 import Cover from '../../components/Cover';
 import BehindScreen from '../../components/BehindScreen';
 import RuleStack from '../../components/RuleStack';
@@ -418,7 +418,7 @@ export default async function Home({ params }) {
 
       <Footer lang={lang} links={PROFILE.links} home />
       <BackToTop lang={lang} />
-      <Crew rtl={ar} />
+      <Seams rtl={ar} />
       <Dock lang={lang} home />
     </>
   );
