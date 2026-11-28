@@ -6,7 +6,6 @@ import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, ContactForm, B
 import Motion from '../../components/Motion';
 import Intro from '../../components/Intro';
 import Hero from '../../components/Hero';
-import Seams from '../../components/Seams';
 import WorkMotion from '../../components/WorkMotion';
 import Together from '../../components/Together';
 import Cover from '../../components/Cover';
@@ -430,7 +429,6 @@ export default async function Home({ params }) {
 
       <Footer lang={lang} links={PROFILE.links} home />
       <BackToTop lang={lang} />
-      <Seams rtl={ar} />
       <WorkMotion rtl={ar} />
       <Dock lang={lang} home />
     </>
