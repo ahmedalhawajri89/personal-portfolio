@@ -550,14 +550,14 @@ export function Dock({ lang, home = false, path = '/' }) {
     ['contact', t.nav.contact, 'send'],
   ];
   // Every watched section is named by the item it belongs to.
-  const owner = { proof: 'problems', rules: 'process', skills: 'process' };
+  const owner = { proof: 'problems', rules: 'process', skills: 'process', together: 'contact' };
   const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
   const here = items.find(([id]) => id === active) || items[0];
   const num = String(items.indexOf(here) + 1).padStart(2, '0');
 
   useEffect(() => {
     if (!home) return;
-    const ids = ['home', 'work', 'services', 'problems', 'proof', 'rules', 'skills', 'process', 'about', 'contact'];
+    const ids = ['home', 'work', 'services', 'problems', 'proof', 'rules', 'skills', 'process', 'about', 'together', 'contact'];
     const secs = ids.map((id) => document.getElementById(id)).filter(Boolean);
     const io = new IntersectionObserver(
       (entries) => {

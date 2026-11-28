@@ -7,6 +7,8 @@ import Motion from '../../components/Motion';
 import Intro from '../../components/Intro';
 import Hero from '../../components/Hero';
 import Seams from '../../components/Seams';
+import WorkMotion from '../../components/WorkMotion';
+import Together from '../../components/Together';
 import Cover from '../../components/Cover';
 import BehindScreen from '../../components/BehindScreen';
 import RuleStack from '../../components/RuleStack';
@@ -106,6 +108,7 @@ export default async function Home({ params }) {
         { id: 'skills', name: t.skills.eyebrow, hue: LIGHT.db },
         { id: 'process', name: t.process.eyebrow, hue: LIGHT.accent },
         { id: 'about', name: t.about.eyebrow, hue: LIGHT.sec },
+        { id: 'together', name: t.together.eyebrow, hue: LIGHT.accent },
         { id: 'contact', name: t.contact.eyebrow, hue: LIGHT.accent },
       ]} />
 
@@ -160,6 +163,7 @@ export default async function Home({ params }) {
                     <span className="pc-n lat">{String(i + 1).padStart(2, '0')}</span>
                   </a>
                   <div className="pc-copy">
+                    <span className="pc-ghost lat" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                     <p className="pc-label">{c.name}<span className="pc-yr lat"><i aria-hidden="true">·</i>{p.year}</span></p>
                     <p className="pc-kind">{c.kind}<span className="pc-status">{t.work.status[p.status]}</span></p>
                     <h3 className="pc-say"><a href={href} data-m="lines">{b?.hook || c.tagline}</a></h3>
@@ -382,6 +386,14 @@ export default async function Home({ params }) {
           </section>
         )}
 
+        {/* ---------------------------------------------- working together */}
+        {/* The road from a first message to handover, with the payments on
+            it, then the questions a client asks before writing. */}
+        <section id="together" className="wrap scroll-mt-24 pt-28 sm:pt-36">
+          <SectionHead eyebrow={t.together.eyebrow} h={t.together.h} lede={t.together.lede} hue="var(--accent)" />
+          <Together t={t.together} whatsapp={PROFILE.links.whatsapp} rtl={ar} />
+        </section>
+
         {/* ------------------------------------------------------- contact */}
         {/* The cream band at the end, as the page's last colour change: the
             closing line read at reading speed, what happens after writing,
@@ -419,6 +431,7 @@ export default async function Home({ params }) {
       <Footer lang={lang} links={PROFILE.links} home />
       <BackToTop lang={lang} />
       <Seams rtl={ar} />
+      <WorkMotion rtl={ar} />
       <Dock lang={lang} home />
     </>
   );

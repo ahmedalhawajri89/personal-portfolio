@@ -2210,3 +2210,54 @@ html.isl-open,html.isl-open body{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.isl,.isl *,.isl-shade{transition:none!important;animation:none!important}}
 
 .kw-badge::before{content:'\2713'}
+
+/* ---- the work, switched on as it is reached (components/WorkMotion.jsx) ---- */
+.pc-copy{position:relative}
+.pc-ghost{display:none}
+@media (min-width:1024px){
+  .pc-ghost{display:block;position:absolute;top:-.86em;inset-inline-end:-.04em;z-index:-1;font-family:'Bricolage',system-ui,sans-serif;font-size:clamp(150px,15vw,250px);font-weight:800;line-height:1;letter-spacing:-.05em;
+    color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--c) 38%,transparent);pointer-events:none;user-select:none}
+  .pc-copy{isolation:isolate}
+}
+#work.wk-on{position:relative;isolation:isolate}
+#work.wk-on > :not(.wk-glow):not(.sm){position:relative;z-index:1}
+.wk-glow{position:sticky;top:0;height:100vh;margin-bottom:-100vh;z-index:0;pointer-events:none;--wk:#FF5A1F;
+  background:radial-gradient(55% 45% at 50% 55%,color-mix(in srgb,var(--wk) 13%,transparent),transparent 72%)}
+.wk-on .pc-cover{will-change:clip-path,transform}
+
+/* ---- how we work together (components/Together.jsx) ---- */
+.wt{display:grid;gap:clamp(56px,7vw,96px)}
+.wt-road{position:relative}
+.wt-ol{display:grid;gap:34px;margin:0;padding:0;list-style:none}
+.wt-rail{position:absolute;inset-block:22px;inset-inline-start:21px;width:2px;border-radius:2px;background:var(--line-2)}
+.wt-fill{position:absolute;inset:0;border-radius:2px;background:var(--accent);transform-origin:50% 0}
+.wt-step{--lit:1;position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:20px;align-items:start}
+.wt-dot{position:relative;z-index:1;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;
+  border:2px solid color-mix(in srgb,var(--accent) calc(var(--lit) * 100%),var(--line-2));
+  background:color-mix(in srgb,var(--accent) calc(var(--lit) * 14%),var(--bg));
+  font:600 12.5px 'GeistMono',ui-monospace,monospace;color:color-mix(in srgb,var(--accent-ink) calc(var(--lit) * 100%),var(--ink-3))}
+.wt-copy{grid-column:2}
+.wt-h{margin:8px 0 0;font-size:clamp(20px,1.8vw,26px);font-weight:800;letter-spacing:-.01em;color:var(--ink)}
+.wt-b{margin:10px 0 0;max-width:46ch;font-size:16px;line-height:1.75;color:var(--ink-2)}
+.wt-pay{grid-column:2;justify-self:start;display:inline-flex;align-items:center;gap:8px;margin:14px 0 0;padding:8px 14px;border-radius:999px;
+  background:color-mix(in srgb,var(--h-test) 14%,transparent);border:1px solid color-mix(in srgb,var(--h-test) 40%,transparent);color:var(--ink);font-size:14px;font-weight:700}
+.wt-pay svg{color:var(--h-test)}
+@media (min-width:1024px){
+  .wt-ol{grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+  .wt-rail{inset-block:auto;top:21px;inset-inline:22px;width:auto;height:2px}
+  .wt-fill{transform-origin:0 50%}
+  [dir="rtl"] .wt-fill{transform-origin:100% 50%}
+  .wt-step{grid-template-columns:1fr;row-gap:20px}
+  .wt-copy,.wt-pay{grid-column:1}
+}
+.wt-faq{max-width:860px}
+.wt-faq-h{margin:0 0 14px;font-size:clamp(22px,2vw,30px);font-weight:800;color:var(--ink)}
+.wt-q{border-bottom:1px solid var(--line-2)}
+.wt-q summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 0;cursor:pointer;list-style:none;font-size:17.5px;font-weight:700;color:var(--ink)}
+.wt-q summary::-webkit-details-marker{display:none}
+.wt-q summary svg{flex:none;color:var(--ink-3);transition:transform .35s cubic-bezier(.22,1,.36,1),color .2s}
+.wt-q[open] summary svg{transform:rotate(45deg);color:var(--accent)}
+.wt-q summary:hover{color:var(--accent-ink)}
+.wt-q p{margin:0 0 22px;max-width:62ch;font-size:16px;line-height:1.8;color:var(--ink-2)}
+.wt-acts{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+.wt-acts .btn{display:inline-flex;align-items:center;gap:8px}
