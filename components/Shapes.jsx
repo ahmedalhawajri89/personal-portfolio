@@ -158,6 +158,12 @@ export function WorkMark({ word }) {
           {at(610, 129, 'wm-ring', <g transform="rotate(9)"><rect x="-13" y="-23" width="26" height="46" rx="8" fill="#F4F0E8" /><rect x="-13" y="-23" width="8" height="46" rx="4" fill="#D9D1C2" /></g>)}
           {at(862, 460, 'wm-ring', <><rect x="-13" y="-22" width="26" height="44" rx="8" fill="#F4F0E8" /><rect x="-13" y="-22" width="8" height="44" rx="4" fill="#D9D1C2" /></>)}
         </g>
+        {/* The tip of the tube while it is being drawn: a bright head that
+            runs from where the tube starts to where it ends. */}
+        <g className="wm-head" style={{ opacity: 0 }}>
+          <circle r="26" fill="#FF8A45" opacity=".28" />
+          <circle r="15" fill="#FFE1CC" />
+        </g>
         {at(820, 80, 'wm-ast', <use href="#sx-ast" x="-60" y="-60" width="120" height="120" />)}
         {at(1110, 120, 'wm-sel', <use href="#sx-sel" x="-75" y="-75" width="150" height="150" />)}
         {at(1000, 450, 'wm-key', <use href="#sx-key" x="-70" y="-70" width="140" height="140" />)}

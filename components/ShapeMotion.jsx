@@ -43,13 +43,27 @@ export default function ShapeMotion() {
         if (wm) {
           const q = (x) => wm.querySelectorAll(x);
           gsap.set(q('.wm-t'), { strokeDasharray: 1 });
-          gsap.timeline({ scrollTrigger: { trigger: wm, start: 'top 92%', end: 'center 48%', scrub: 1.2 } })
-            .fromTo(wm.querySelector('.wm-word span'), { yPercent: 45, opacity: 0, scale: 0.92 }, { yPercent: 0, opacity: 1, scale: 1, ease: 'power3.out', duration: 1 }, 0)
-            .fromTo(q('.wm-t'), { strokeDashoffset: 1 }, { strokeDashoffset: 0, ease: 'power1.inOut', duration: 1.4 }, 0.15)
-            .fromTo(q('.wm-ring'), { opacity: 0 }, { opacity: 1, ease: 'none', duration: 0.12, stagger: 0.45 }, 0.98)
-            .fromTo(q('.wm-ast, .wm-sel, .wm-key'), { opacity: 0, y: 60 }, { opacity: 1, y: 0, ease: 'power3.out', duration: 0.7, stagger: 0.12 }, 0.45)
-            .fromTo(q('.wm-spk'), { opacity: 0, y: 24 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.4, stagger: 0.08 }, 0.85);
-          gsap.timeline({ scrollTrigger: { trigger: wm, start: 'center 45%', end: 'bottom top', scrub: 1 } })
+          // The head rides the tip: the same path, read at the drawn length.
+          const line = wm.querySelector('.wm-back .wm-t');
+          const head = wm.querySelector('.wm-head');
+          const len = line.getTotalLength();
+          const draw = { p: 0 };
+          const paint = () => {
+            q('.wm-t').forEach((t) => { t.style.strokeDashoffset = String(1 - draw.p); });
+            const pt = line.getPointAtLength(draw.p * len);
+            head.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
+            head.style.opacity = draw.p > 0.002 && draw.p < 0.995 ? '1' : '0';
+          };
+          paint();
+          // The word arrives as the section comes up; the tube is drawn,
+          // start to end, while the whole word is in view.
+          gsap.timeline({ scrollTrigger: { trigger: wm, start: 'top 90%', end: 'top 15%', scrub: 1 } })
+            .fromTo(wm.querySelector('.wm-word span'), { yPercent: 45, opacity: 0, scale: 0.92 }, { yPercent: 0, opacity: 1, scale: 1, ease: 'power3.out', duration: 0.8 }, 0)
+            .to(draw, { p: 1, ease: 'none', duration: 2, onUpdate: paint }, 0.45)
+            .fromTo(q('.wm-ring'), { opacity: 0 }, { opacity: 1, ease: 'none', duration: 0.1, stagger: 0.75 }, 1.32)
+            .fromTo(q('.wm-ast, .wm-sel, .wm-key'), { opacity: 0, y: 60 }, { opacity: 1, y: 0, ease: 'power3.out', duration: 0.7, stagger: 0.5 }, 0.9)
+            .fromTo(q('.wm-spk'), { opacity: 0, y: 24 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.4, stagger: 0.3 }, 1);
+          gsap.timeline({ scrollTrigger: { trigger: wm, start: 'top 15%', end: 'bottom top', scrub: 1 } })
             .to(wm.querySelector('.wm-word span'), { yPercent: -18, ease: 'none' }, 0)
             .to(q('.wm-ast'), { y: -90, ease: 'none' }, 0)
             .to(q('.wm-sel'), { y: -50, ease: 'none' }, 0)
