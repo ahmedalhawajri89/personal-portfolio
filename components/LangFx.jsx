@@ -48,7 +48,7 @@ const PATTERNS = Object.keys(shut);
 // Each name in the face its own page sets it in, at the weight it is drawn.
 // The English page has no Arabic face in its stack, so without this the
 // Arabic name was drawn in a system font there and changed face on arrival.
-const FACE = { ar: "800 100px PlexArFx", en: "800 100px InstrumentFx" };
+const FACE = { ar: "800 100px AlexArFx", en: "800 100px InstrumentFx" };
 const fontOf = (l) => (document.fonts ? document.fonts.load(FACE[l], NAME[l]).catch(() => {}) : Promise.resolve());
 // Never wait long for anything before moving: a slow font loses to the cut.
 const within = (p, ms) => Promise.race([p, new Promise((r) => setTimeout(r, ms))]);

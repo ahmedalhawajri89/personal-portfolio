@@ -995,7 +995,7 @@ export function Footer({ lang, links, home = false }) {
         });
         let again;
         const loop = () => { breathe(); again = gsap.delayedCall(6, loop); };
-        document.fonts.load(`${FULL} 1em '${ar ? 'Kufam' : 'Bricolage'}'`, name).then(() => { if (!gone) lock(); });
+        document.fonts.load(`${FULL} 1em '${ar ? 'AlexAr' : 'Bricolage'}'`, name).then(() => { if (!gone) lock(); });
         const seen = ScrollTrigger.create({
           trigger: mark, start: 'top 85%', end: 'bottom top',
           onToggle: (self) => { again?.kill(); if (self.isActive) loop(); },

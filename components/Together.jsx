@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { loadMotion, MOTION_OK, motionWanted } from '../lib/motion';
 import Icon from './Icons';
+import { Shape } from './Shapes';
 
 /* How we work together: the road from a first message to a handover, with
    the money on it. Four stages along one line; under the line, where each
@@ -14,7 +15,7 @@ import Icon from './Icons';
    the scope is agreed, and payment by stages. Everything else is "agreed in
    the proposal". As the section is read the line draws itself and each
    stage lights as it is reached; without motion it is all simply there. */
-export default function Together({ t, whatsapp, rtl }) {
+export default function Together({ t, whatsapp, rtl, shapes = [] }) {
   const root = useRef(null);
 
   useEffect(() => {
@@ -56,6 +57,7 @@ export default function Together({ t, whatsapp, rtl }) {
         <ol className="wt-ol">
         {t.steps.map((s, i) => (
           <li key={s.h} className="wt-step">
+            {shapes[i] && <span className="wt-shape"><Shape name={shapes[i]} /></span>}
             <span className="wt-dot" aria-hidden="true"><span className="lat">{String(i + 1).padStart(2, '0')}</span></span>
             <div className="wt-copy">
               <h3 className="wt-h">{s.h}</h3>

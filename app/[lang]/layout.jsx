@@ -78,11 +78,11 @@ export default async function RootLayout({ children, params }) {
       <head>
         <meta name="theme-color" content="#0E0E0C" />
         {/* The two cuts every page paints with, for the language it is in.
-            Arabic pages preload Plex Arabic, English pages preload Instrument Sans;
+            Arabic pages preload Alexandria, English pages preload Instrument Sans;
             preloading both would put the wrong script's 37KB ahead of the
             text actually on screen. Geist Mono is not preloaded: the only
             monospaced text above the fold is the runner, which starts later. */}
-        {(lang === 'ar' ? ['kufam-ar-var', 'plex-arabic-400', 'plex-arabic-700'] : ['bricolage-var', 'instrument-400', 'instrument-700']).map((f) => (
+        {(lang === 'ar' ? ['alexandria-ar-var', 'alexandria-lat-var'] : ['bricolage-var', 'instrument-400', 'instrument-700']).map((f) => (
           <link key={f} rel="preload" as="font" type="font/woff2" href={`/fonts/${f}.woff2`} crossOrigin="anonymous" />
         ))}
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />

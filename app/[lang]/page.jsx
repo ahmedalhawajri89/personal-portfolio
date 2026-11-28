@@ -8,6 +8,8 @@ import Intro from '../../components/Intro';
 import Hero from '../../components/Hero';
 import WorkMotion from '../../components/WorkMotion';
 import Together from '../../components/Together';
+import { ShapeDefs, Shape, WorkMark } from '../../components/Shapes';
+import ShapeMotion from '../../components/ShapeMotion';
 import Cover from '../../components/Cover';
 import BehindScreen from '../../components/BehindScreen';
 import RuleStack from '../../components/RuleStack';
@@ -60,6 +62,9 @@ function SectionHead({ eyebrow, h, lede, center, hue }) {
     </header>
   );
 }
+
+// Each service drawn as a piece of the shape family (components/Shapes.jsx).
+const SV_SHAPE = { shop: 'bag', book: 'cal', dash: 'chart', api: 'layers', figma: 'sel', tests: 'ok', ai: 'ast', diff: 'key' };
 
 export default async function Home({ params }) {
   const { lang } = await params;
@@ -114,6 +119,7 @@ export default async function Home({ params }) {
       {/* Every section a reader came for, under one landmark, so a
           screen reader can jump past the bar and the rail in one move. */}
       <main id="main">
+        <ShapeDefs />
         {/* ---------------------------------------------------------- hero */}
         {/* The offer, set as large as the screen allows and set moving
             (components/Hero.jsx): it arrives in pieces and scatters again on
@@ -149,6 +155,7 @@ export default async function Home({ params }) {
             answer. The screenshots are the case study's proof. Diwan opens
             the list because its idea is the one a client grasps in a line. */}
         <section id="work" className="wrap scroll-mt-24 pt-28 sm:pt-36">
+          <WorkMark word={t.work.mark} />
           <SectionHead eyebrow={t.work.eyebrow} h={t.work.h} lede={t.work.lede} hue="var(--accent)" />
           <ol className="pc-list">
             {live.map((p, i) => {
@@ -191,7 +198,7 @@ export default async function Home({ params }) {
               const pr = PROJECTS.find((x) => x.slug === sv.proof);
               return (
                 <li key={sv.en.h} className="sv" style={{ '--c': SV_HUE[sv.visual] || 'var(--accent)' }}>
-                  <div className="sv-mark" data-m="live"><Glyph kind={sv.visual} /></div>
+                  <div className="sv-mark">{SV_SHAPE[sv.visual] ? <Shape name={SV_SHAPE[sv.visual]} /> : <Glyph kind={sv.visual} />}</div>
                   <div className="sv-copy">
                     <h3 className="sv-label">{sv[lang].h}</h3>
                     <p className="sv-say" data-m="lines">{sv[lang].b}</p>
@@ -390,7 +397,7 @@ export default async function Home({ params }) {
             it, then the questions a client asks before writing. */}
         <section id="together" className="wrap scroll-mt-24 pt-28 sm:pt-36">
           <SectionHead eyebrow={t.together.eyebrow} h={t.together.h} lede={t.together.lede} hue="var(--accent)" />
-          <Together t={t.together} whatsapp={PROFILE.links.whatsapp} rtl={ar} />
+          <Together t={t.together} whatsapp={PROFILE.links.whatsapp} rtl={ar} shapes={['msg', 'doc', 'layers', 'ok']} />
         </section>
 
         {/* ------------------------------------------------------- contact */}
@@ -430,6 +437,7 @@ export default async function Home({ params }) {
       <Footer lang={lang} links={PROFILE.links} home />
       <BackToTop lang={lang} />
       <WorkMotion rtl={ar} />
+      <ShapeMotion />
       <Dock lang={lang} home />
     </>
   );
