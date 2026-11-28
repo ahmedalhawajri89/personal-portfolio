@@ -2018,7 +2018,7 @@ html.curtain-in .cs-in{animation-delay:calc(var(--d,0s) + .9s)}
   .kh-h{font-size:clamp(44px,min(5.4vw,11svh),96px)}
   [dir="rtl"] .kh-h{font-size:clamp(40px,min(5.2vw,10.5svh),100px)}
 }
-.hero{overflow-x:clip}
+/* The hero spills to the window edges; the page (body) clips sideways. */
 
 /* ---- hero foot: who says it, what to do, what plays ---- */
 .kh-say{display:flex;align-items:flex-start;gap:16px}
@@ -2294,3 +2294,51 @@ html[lang="ar"] .wm-word{font-family:'AlexAr','AlexLat',system-ui,sans-serif;fon
   .js .rp-intro{padding-inline-start:calc(clamp(18px,4vw,56px) + 290px)}
 }
 @media (max-width:1023.98px){.rp-dot-t{display:none}}
+
+/* ---- the hero in front of the work (components/Hero.jsx) ---- */
+.hero{position:relative;isolation:isolate}
+.hw{position:relative;display:grid;place-items:center;min-height:calc(100svh - 120px);text-align:center}
+.hw-back{position:absolute;top:calc(-1 * clamp(104px,14vh,160px));bottom:calc(-1 * clamp(28px,4vw,48px));left:50%;width:100vw;margin-left:-50vw;z-index:-1;overflow:hidden;pointer-events:none}
+.hw-wall{position:absolute;inset:-35% -18%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,1.8vw,28px);transform-origin:50% 50%}
+.hw-wall{rotate:-11deg}
+.hw-col{display:flex;flex-direction:column;gap:clamp(14px,1.8vw,28px)}
+.hw-col:nth-child(even){margin-top:-12%}
+.hw-card{border-radius:14px;overflow:hidden;border:1px solid var(--line-2);background:#000;box-shadow:0 30px 60px -30px rgba(0,0,0,.8);aspect-ratio:16/10}
+.hw-card img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.hw-veil{position:absolute;inset:0;background:
+  radial-gradient(58% 62% at 50% 50%,color-mix(in srgb,var(--bg) 94%,transparent),color-mix(in srgb,var(--bg) 70%,transparent) 62%,color-mix(in srgb,var(--bg) 35%,transparent)),
+  linear-gradient(to bottom,var(--bg),transparent 18%,transparent 82%,var(--bg))}
+.hw-in{position:relative;display:flex;flex-direction:column;align-items:center;max-width:1100px;padding:clamp(20px,4vh,40px) 0}
+.hw-h{margin:clamp(18px,3vh,28px) 0 0;font-size:clamp(46px,min(7.6vw,13svh),132px);font-weight:800;line-height:1.08;letter-spacing:-.035em;color:var(--ink);text-wrap:balance}
+html[lang="ar"] .hw-h{font-family:'AlexAr','AlexLat',system-ui,sans-serif;font-weight:900;letter-spacing:0;line-height:1.25}
+html[lang="en"] .hw-h{font-family:'Bricolage','Instrument',system-ui,sans-serif}
+.hw-line{display:block}
+.hw-acc{font-style:normal;color:var(--accent)}
+.hw-lede{max-width:52ch;margin:clamp(14px,2.4vh,22px) 0 0;font-size:clamp(16px,1.35vw,20px);line-height:1.75;color:var(--ink-2)}
+.hw-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:12px clamp(26px,3.6vw,52px);margin:clamp(18px,3vh,30px) 0 0;padding:0;list-style:none}
+.hw-stats li{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:90px}
+.hw-stats b{font-family:'Bricolage',system-ui,sans-serif;font-size:clamp(28px,2.6vw,40px);font-weight:700;line-height:1.1;color:var(--ink)}
+.hw-stats span{font-size:13.5px;color:var(--ink-3);max-width:16ch}
+.hw .hw-ctas{justify-content:center;margin-top:clamp(20px,3.4vh,32px)}
+@media (max-width:767px){
+  .hw{min-height:auto;padding-top:20px}
+  .hw-wall{inset:-20% -60%;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .hw-col:nth-child(4){display:none}
+  .hw-stats li{min-width:0}
+}
+
+/* The wall stays behind: quieter colour, and a deeper veil where the words sit. */
+.hw-card img{filter:saturate(.7) brightness(.82)}
+:root[data-theme="light"] .hw-card img,:root:not([data-theme]) .hw-card img{filter:saturate(.75)}
+.hw-veil{background:
+  radial-gradient(52% 58% at 50% 52%,var(--bg) 0%,color-mix(in srgb,var(--bg) 90%,transparent) 45%,color-mix(in srgb,var(--bg) 55%,transparent) 75%,color-mix(in srgb,var(--bg) 30%,transparent)),
+  linear-gradient(to bottom,var(--bg),transparent 16%,transparent 84%,var(--bg))}
+@media (max-width:767px){.hw-veil{background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 70%,transparent),color-mix(in srgb,var(--bg) 92%,transparent) 30%,color-mix(in srgb,var(--bg) 92%,transparent) 80%,var(--bg))}}
+html[lang="en"] .hw-h{font-size:clamp(42px,min(6vw,10.5svh),104px);max-width:13em}
+.hw-stats span{max-width:20ch}
+/* The wall spans the window, not the content column; 100% of the body, not
+   100vw, so a scrollbar never makes it wider than the page. */
+.hw-back{left:50%;width:100vw;margin-left:-50vw}
+html{overflow-x:clip}
+html[lang="en"] .hw-h{max-width:16em}
+.hw-in{max-width:min(1400px,100%)}

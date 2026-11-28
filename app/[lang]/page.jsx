@@ -1,7 +1,7 @@
 import { LANGS, T } from '../../lib/i18n';
 import { PROJECTS, PROFILE } from '../../content/projects';
 import { SERVICES, CAPABILITIES, PROCESS, TIMELINE, TESTIMONIALS, HERO_TESTS } from '../../content/site';
-import { shotsOf, pagesOf } from '../../lib/shots';
+import { shotsOf, pagesOf, coverOf, src as shotSrc } from '../../lib/shots';
 import { Nav, Dock, Footer, Reveal, ScrollProgress, SmoothScroll, ContactForm, BackToTop, TimelineScroll, Logo } from '../../components/Chrome';
 import Motion from '../../components/Motion';
 import Intro from '../../components/Intro';
@@ -73,6 +73,14 @@ export default async function Home({ params }) {
   const arrow = ar ? 'arrowLeft' : 'arrowRight';
   const live = PROJECTS.filter((p) => shotsOf(p.shots).shots.length > 0);
   const totalPages = live.reduce((n, p) => n + pagesOf(p.shots), 0);
+  // The hero's wall: two real desktop screens of each project, in the page's
+  // language -- its cover first, then another of its pages.
+  const wall = live.flatMap((p) => {
+    const desk = shotsOf(p.shots).shots.filter((s) => s.device === 'desktop' && s.locale === lang);
+    const first = coverOf(p, lang);
+    const second = desk.find((s) => s.key !== first?.key && !['login', 'register'].includes(s.key));
+    return [first, second].filter(Boolean).map((s) => shotSrc(p.shots, s.thumb || s.file));
+  });
   // A tool matches a project's stack on its leading word, so `Vue 3` finds
   // `Vue 3.5` and `Tailwind CSS` finds `Tailwind 4`. Used by the tools.
   const head = (x) => x.toLowerCase().split(/[\s.]/)[0];
@@ -121,9 +129,8 @@ export default async function Home({ params }) {
       <main id="main">
         <ShapeDefs />
         {/* ---------------------------------------------------------- hero */}
-        {/* The offer, set as large as the screen allows and set moving
-            (components/Hero.jsx): it arrives in pieces and scatters again on
-            the way down, into the page that explains it. */}
+        {/* The offer in front of the work itself: a wall of the projects'
+            real screens behind the headline (components/Hero.jsx). */}
         <section id="home" className="wrap hero relative scroll-mt-24">
           <Hero
             rtl={ar}
@@ -134,7 +141,12 @@ export default async function Home({ params }) {
             lede={PROFILE.lede[lang]}
             cta1={t.hero.cta1}
             cta2={t.hero.cta2}
-            parts={t.hero.steps}
+            wall={wall}
+            stats={[
+              { n: live.length, l: t.about.figs.projects },
+              { n: totalPages, l: t.about.figs.shots },
+              { n: 2, l: t.hero.langs },
+            ]}
           >
             <CvButton lang={lang} variant="quiet" />
           </Hero>
