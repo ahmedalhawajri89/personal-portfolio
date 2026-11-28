@@ -37,7 +37,10 @@ export default function WorkMotion({ rtl }) {
 
         cards.forEach((li) => {
           const cover = li.querySelector('.pc-cover');
-          const art = cover?.firstElementChild;
+          const win = cover?.querySelector('.ps-win');
+          const img = cover?.querySelector('.ps-img');
+          const view = cover?.querySelector('.ps-view');
+          const phone = cover?.querySelector('.ps-phone');
           const copy = li.querySelector('.pc-copy');
           const ghost = li.querySelector('.pc-ghost');
           if (!cover || !copy) return;
@@ -49,11 +52,31 @@ export default function WorkMotion({ rtl }) {
               scrollTrigger: { trigger: li, start: 'top 92%', end: 'top 38%', scrub: 0.8 } });
 
           // The picture inside drifts slower than the page.
-          if (art) {
-            gsap.fromTo(art, { yPercent: -6, scale: 1.12 }, {
-              yPercent: 6, scale: 1.12, ease: 'none',
-              scrollTrigger: { trigger: li, start: 'top bottom', end: 'bottom top', scrub: true },
+          // The page inside the window scrolls as the reader does: the
+          // product reads itself, top to a good way down. The phone stands
+          // nearer, so it moves more than the window behind it.
+          if (img && view) {
+            const travel = () => Math.max(0, Math.min(img.offsetHeight - view.offsetHeight, view.offsetHeight * 1.6));
+            gsap.fromTo(img, { y: 0 }, {
+              y: () => -travel(), ease: 'none',
+              scrollTrigger: { trigger: li, start: 'top 75%', end: 'bottom 20%', scrub: 1, invalidateOnRefresh: true },
             });
+          }
+          if (phone) {
+            gsap.fromTo(phone, { yPercent: 18 }, {
+              yPercent: -14, ease: 'none',
+              scrollTrigger: { trigger: li, start: 'top bottom', end: 'bottom top', scrub: 1 },
+            });
+          }
+          // A mouse over the picture tips the window towards it.
+          if (win && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            const rx = gsap.quickTo(win, 'rotationX', { duration: 0.6, ease: 'power3' });
+            const ry = gsap.quickTo(win, 'rotationY', { duration: 0.6, ease: 'power3' });
+            gsap.set(win, { transformPerspective: 1200 });
+            const tilt = (e) => { const r = cover.getBoundingClientRect(); ry(((e.clientX - r.left) / r.width - 0.5) * 6); rx(-((e.clientY - r.top) / r.height - 0.5) * 5); };
+            const flat = () => { rx(0); ry(0); };
+            cover.addEventListener('pointermove', tilt);
+            cover.addEventListener('pointerleave', flat);
           }
 
           // The words come from the screen's side, once.

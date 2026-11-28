@@ -10,7 +10,7 @@ import WorkMotion from '../../components/WorkMotion';
 import Together from '../../components/Together';
 import { ShapeDefs, Shape, WorkMark } from '../../components/Shapes';
 import ShapeMotion from '../../components/ShapeMotion';
-import Cover from '../../components/Cover';
+import ProjectShot from '../../components/ProjectShot';
 import BehindScreen from '../../components/BehindScreen';
 import RuleStack from '../../components/RuleStack';
 import Problems from '../../components/Problems';
@@ -165,7 +165,7 @@ export default async function Home({ params }) {
               return (
                 <li key={p.slug} className={`pc${i % 2 ? ' is-flip' : ''}`} style={{ '--c': HUE[p.slug] }}>
                   <a href={href} className="pc-cover" data-cursor="view" tabIndex={-1} aria-hidden="true">
-                    <Cover slug={p.slug} label={`${c.name}: ${c.kind}`} />
+                    <ProjectShot p={p} lang={lang} label={`${c.name}: ${c.kind}`} />
                     <span className="pc-n lat">{String(i + 1).padStart(2, '0')}</span>
                   </a>
                   <div className="pc-copy">
