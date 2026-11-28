@@ -3,14 +3,15 @@
 import { useEffect, useRef } from 'react';
 import { loadMotion, MOTION_OK, motionWanted } from '../lib/motion';
 
-// Bright in either theme: each rule floods the whole screen in its colour, so
-// these are plain colours with dark text on them, not the theme's hue tokens.
+// Each rule's own colour: the glow at its card's edge, its number, and its
+// mark in the index. Bright in either theme.
 const FLOOD = ['#4FB4FF', '#2FD3A1', '#B6F25A', '#A99CFF', '#FFB547', '#FF7A45'];
 const pad = (n) => String(n).padStart(2, '0');
 
-/* How he works, as a stage that holds the screen. The six rules are numbered
-   along the bottom; as the page scrolls, each one floods out of its own number
-   in its own colour and covers the rule before it. Its title rises line by line
+/* How he works, as a stage that holds the screen. The six rules are listed
+   down the side; as the page scrolls, each rule's card rises over the last,
+   which steps back and dims, so they pile up like a deck. Each card is dark,
+   lit at its edge in the rule's own colour. Its title rises line by line
    out of a mask, and the small scene that shows the rule happening starts as it
    lands. The numbers also jump straight to a rule.
 
@@ -271,26 +272,21 @@ export default function RuleStack({ eyebrow, h, lede, rules, origins, V, fromLab
         const timelines = plays.map((make) => make().pause(0));
         const splits = [];
 
-        const at = (i) => {
-          const d = dots[i].getBoundingClientRect();
-          const s0 = stage.getBoundingClientRect();
-          return `${(d.left + d.width / 2 - s0.left).toFixed(0)}px ${(d.top + d.height / 2 - s0.top).toFixed(0)}px`;
-        };
-        const far = Math.hypot(stage.offsetWidth, stage.offsetHeight) * 1.05;
-
+        // A deck: each rule's card rises from below over the last, which
+        // steps back and dims, so the rules pile up as they are read.
         const tl = gsap.timeline({ defaults: { ease: 'none' } });
         panels.forEach((panel, k) => {
           const title = new SplitText(panel.querySelector('.rp-h'), { type: 'lines', linesClass: 'rp-line', mask: 'lines' });
           splits.push(title);
           const start = k + 0.05;
-          const before = k ? panels[k - 1].querySelector('.rp-in') : intro.querySelector('.rp-intro-in');
+          const before = k ? panels[k - 1] : intro.querySelector('.rp-intro-in');
           gsap.set(title.lines, { yPercent: 118 });
-          tl.fromTo(panel, { clipPath: `circle(0px at ${at(k)})` }, { clipPath: `circle(${far}px at ${at(k)})`, duration: 0.66, ease: 'power2.inOut' }, start)
-            .to(before, { scale: 0.92, yPercent: -7, duration: 0.66, ease: 'power2.inOut' }, start)
-            .fromTo(panel.querySelector('.rp-num'), { xPercent: k % 2 ? 40 : -40, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, start + 0.2)
-            .to(title.lines, { yPercent: 0, duration: 0.42, stagger: 0.05, ease: 'power3.out' }, start + 0.26)
-            .fromTo([panel.querySelector('.rs-b'), panel.querySelector('.rs-from')], { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 0.34, stagger: 0.05, ease: 'power2.out' }, start + 0.42)
-            .fromTo(panel.querySelector('.rs-stage'), { scale: 0.8, rotation: k % 2 ? 4 : -4, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.5, ease: 'back.out(1.5)' }, start + 0.3);
+          tl.fromTo(panel, { yPercent: 115, rotation: k % 2 ? 2.5 : -2.5 }, { yPercent: 0, rotation: 0, duration: 0.66, ease: 'power3.inOut' }, start)
+            .to(before, { scale: 0.93, yPercent: -3, opacity: k ? 0.35 : 0, duration: 0.66, ease: 'power2.inOut' }, start)
+            .fromTo(panel.querySelector('.rp-num'), { yPercent: 40, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, start + 0.25)
+            .to(title.lines, { yPercent: 0, duration: 0.42, stagger: 0.05, ease: 'power3.out' }, start + 0.3)
+            .fromTo([panel.querySelector('.rs-b'), panel.querySelector('.rs-from')], { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 0.34, stagger: 0.05, ease: 'power2.out' }, start + 0.44)
+            .fromTo(panel.querySelector('.rs-stage'), { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, start + 0.34);
         });
         tl.to({}, { duration: 0.4 });
 
@@ -304,7 +300,6 @@ export default function RuleStack({ eyebrow, h, lede, rules, origins, V, fromLab
             if (k === i) d.setAttribute('aria-current', 'step');
             else d.removeAttribute('aria-current');
           });
-          dial.classList.toggle('is-flood', i >= 0);
           timelines.forEach((t, k) => { if (k === i) t.restart(); else t.pause(); });
         };
 
@@ -315,7 +310,7 @@ export default function RuleStack({ eyebrow, h, lede, rules, origins, V, fromLab
           animation: tl,
           scrub: true,
           onUpdate: () => {
-            dial.style.setProperty('--done', (tl.progress() * 1.04).toFixed(3));
+            dial.style.setProperty('--done', Math.min(1, tl.progress() * 1.06).toFixed(3));
             land(Math.min(n - 1, Math.floor(tl.time() - 0.5)));
           },
           onToggle: (self) => { if (!self.isActive) timelines.forEach((t) => t.pause()); },
@@ -399,7 +394,10 @@ export default function RuleStack({ eyebrow, h, lede, rules, origins, V, fromLab
         <nav className="rp-dial" aria-label={jumpLabel}>
           <i className="rp-track" aria-hidden="true" />
           {rules.map((r, k) => (
-            <button key={r.h} type="button" className="rp-dot lat" aria-label={`${pad(k + 1)} ${r.h}`}>{pad(k + 1)}</button>
+            <button key={r.h} type="button" className="rp-dot" style={{ '--c': FLOOD[k] }}>
+              <span className="rp-dot-n lat">{pad(k + 1)}</span>
+              <span className="rp-dot-t">{r.h}</span>
+            </button>
           ))}
         </nav>
       </div>

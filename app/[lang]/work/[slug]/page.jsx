@@ -14,7 +14,7 @@ import Gallery from '../../../../components/Gallery';
 import Journey from '../../../../components/Journey';
 import Brief from '../../../../components/Brief';
 import Motion from '../../../../components/Motion';
-import Cover from '../../../../components/Cover';
+import ProjectShot from '../../../../components/ProjectShot';
 import Scenes from '../../../../components/Scenes';
 import Curtain from '../../../../components/Curtain';
 import Pointer from '../../../../components/Pointer';
@@ -184,7 +184,7 @@ export default async function Project({ params }) {
             </div>
 
             <div className="cs-art cs-in" style={{ '--d': '.12s' }}>
-              <Cover slug={p.slug} label={`${c.name}: ${c.kind}`} />
+              <ProjectShot p={p} lang={lang} label={`${c.name}: ${c.kind}`} />
             </div>
           </div>
 
@@ -339,7 +339,7 @@ export default async function Project({ params }) {
               <span className="cs-next-go" aria-hidden="true"><Icon name={arrow} size={20} /></span>
             </span>
             <span className="cs-next-art" aria-hidden="true">
-              <Cover slug={next.slug} label="" />
+              <ProjectShot p={next} lang={lang} label={next[lang].name} />
             </span>
           </a>
         </nav>
