@@ -35,22 +35,29 @@ export default function ShapeMotion() {
           if (el.classList.contains('sx-spin')) gsap.to(svg.querySelector('use'), { rotation: 360, svgOrigin: '80 80', duration: 18, repeat: -1, ease: 'none' });
         });
 
-        // The work's opening.
+        // The work's opening, played by the scroll itself: as it comes up
+        // the word rises, the tube draws round it from end to end, the
+        // pieces open out; as it leaves, each drifts up at its own depth.
+        // Scrubbed with a little lag, so a flick of the wheel still glides.
         const wm = document.querySelector('.wm');
         if (wm) {
-          const tl = gsap.timeline({ scrollTrigger: { trigger: wm, start: 'top 75%', once: true } });
-          tl.from(wm.querySelector('.wm-word'), { yPercent: 30, opacity: 0, duration: 1, ease: 'expo.out' })
-            .fromTo(wm.querySelectorAll('.wm-tb'), { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.8, ease: 'power2.inOut' }, 0.3)
-            .fromTo(wm.querySelectorAll('.wm-tf'), { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.6, ease: 'power2.inOut' }, 1.05)
-            .from(wm.querySelector('.wm-ring'), { scale: 0, transformOrigin: '50% 50%', duration: 0.5, ease: 'back.out(3)' }, 1.2)
-            .from(wm.querySelectorAll('.wm-ast, .wm-sel, .wm-key'), { scale: 0, opacity: 0, transformOrigin: '50% 50%', duration: 0.8, ease: 'back.out(2)', stagger: 0.12 }, 0.6)
-            .from(wm.querySelectorAll('.wm-spk path'), { scale: 0, transformOrigin: '50% 50%', duration: 0.5, ease: 'back.out(3)', stagger: 0.08 }, 1.1);
-          // The pieces float on parts that carry no placing transform of
-          // their own, so their place on the picture is kept.
-          wm.querySelectorAll('.wm-ast use, .wm-sel use, .wm-key use, .wm-spk').forEach((n, i) => {
-            gsap.to(n, { y: -12, duration: 2.3 + i * 0.3, yoyo: true, repeat: -1, ease: 'sine.inOut', delay: i * 0.2 });
-          });
-          gsap.to(wm.querySelector('.wm-ast use'), { rotation: 360, svgOrigin: '0 0', duration: 20, repeat: -1, ease: 'none' });
+          const q = (x) => wm.querySelectorAll(x);
+          gsap.set(q('.wm-t'), { strokeDasharray: 1 });
+          gsap.timeline({ scrollTrigger: { trigger: wm, start: 'top 92%', end: 'center 48%', scrub: 1.2 } })
+            .fromTo(wm.querySelector('.wm-word span'), { yPercent: 45, opacity: 0, scale: 0.92 }, { yPercent: 0, opacity: 1, scale: 1, ease: 'power3.out', duration: 1 }, 0)
+            .fromTo(q('.wm-t'), { strokeDashoffset: 1 }, { strokeDashoffset: 0, ease: 'power1.inOut', duration: 1.4 }, 0.15)
+            .fromTo(q('.wm-ring'), { opacity: 0 }, { opacity: 1, ease: 'none', duration: 0.12, stagger: 0.45 }, 0.98)
+            .fromTo(q('.wm-ast, .wm-sel, .wm-key'), { opacity: 0, y: 60 }, { opacity: 1, y: 0, ease: 'power3.out', duration: 0.7, stagger: 0.12 }, 0.45)
+            .fromTo(q('.wm-spk'), { opacity: 0, y: 24 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.4, stagger: 0.08 }, 0.85);
+          gsap.timeline({ scrollTrigger: { trigger: wm, start: 'center 45%', end: 'bottom top', scrub: 1 } })
+            .to(wm.querySelector('.wm-word span'), { yPercent: -18, ease: 'none' }, 0)
+            .to(q('.wm-ast'), { y: -90, ease: 'none' }, 0)
+            .to(q('.wm-sel'), { y: -50, ease: 'none' }, 0)
+            .to(q('.wm-key'), { y: -130, ease: 'none' }, 0)
+            .to(q('.wm-spk'), { y: -60, ease: 'none' }, 0)
+            .to(q('.wm-back, .wm-front'), { yPercent: -6, ease: 'none' }, 0);
+          // A slow turn of the idea, on the inner drawing only.
+          gsap.to(wm.querySelector('.wm-ast use'), { rotation: 360, svgOrigin: '0 0', duration: 24, repeat: -1, ease: 'none' });
         }
 
         if (!pointer) return;

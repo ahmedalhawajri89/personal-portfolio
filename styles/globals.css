@@ -2221,7 +2221,7 @@ html[lang="ar"] .kh-h{line-height:1.3}
 .wm svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .wm-back{z-index:0}.wm-front{z-index:2}
 .wm-word{position:absolute;inset:0;z-index:1;display:grid;place-items:center;margin:0;color:var(--ink);font-size:clamp(84px,16vw,240px);line-height:1;white-space:nowrap;
-  font-family:'Bricolage',system-ui,sans-serif;font-weight:800;letter-spacing:-.045em;text-shadow:0 30px 60px rgba(0,0,0,.35)}
+  font-family:'Bricolage',system-ui,sans-serif;font-weight:800;letter-spacing:-.045em}
 html[lang="ar"] .wm-word{font-family:'AlexAr','AlexLat',system-ui,sans-serif;font-weight:900;letter-spacing:0}
 @media (min-width:1024px){
   .wt-step{display:flex;flex-direction:column;align-items:flex-start;gap:0}
@@ -2229,3 +2229,5 @@ html[lang="ar"] .wm-word{font-family:'AlexAr','AlexLat',system-ui,sans-serif;fon
   .wt-copy{margin-top:20px}
   .wt-rail{top:141px}
 }
+
+.wm-word span{display:block;text-shadow:0 24px 50px color-mix(in srgb,var(--ink) 16%,transparent);will-change:transform}

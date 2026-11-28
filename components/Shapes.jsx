@@ -121,34 +121,51 @@ export function Shape({ name, className = '', spin = false }) {
   );
 }
 
-/* The opening of the work: the word set huge, with the family around it --
-   the tube running behind the word and back over it, the idea, the cursor
-   in its selection, the key of code, sparks. */
+/* The opening of the work: the word set huge, with the family around it.
+   One tube, drawn as one path, wraps the word: it rises behind the first
+   letters, arcs over the top and comes down in front of the rest. The same
+   path is drawn twice -- once behind the word, once in front of it with
+   only its right part showing -- so it reads as a single piece passing
+   round. Around it: the idea, the cursor in its selection, the key of code,
+   sparks. Every piece sits in a placing group with a moving group inside,
+   so motion never moves a piece off its place. */
+const TUBE = 'M60 470 C 180 500, 260 380, 340 330 C 430 270, 450 150, 560 130 C 680 110, 730 220, 705 300 C 680 380, 760 470, 860 460 C 960 450, 1010 405, 1050 380';
+
+function Tube() {
+  return (
+    <>
+      <path className="wm-t" d={TUBE} fill="none" stroke="url(#sx-tube)" strokeWidth="30" strokeLinecap="round" pathLength="1" />
+      <path className="wm-t" d={TUBE} transform="translate(0 -6)" fill="none" stroke="rgba(255,230,205,.5)" strokeWidth="6" strokeLinecap="round" pathLength="1" />
+    </>
+  );
+}
+
 export function WorkMark({ word }) {
   const spark = 'M0-22 C3-6 6-3 22 0 C6 3 3 6 0 22 C-3 6 -6 3 -22 0 C-6-3 -3-6 0-22Z';
+  const at = (x, y, cls, children) => <g transform={`translate(${x} ${y})`}><g className={`wm-p ${cls}`}>{children}</g></g>;
   return (
     <div className="wm" aria-hidden="true">
       <svg className="wm-back" viewBox="0 0 1240 520" focusable="false">
-        <g filter="url(#sx-sh)">
-          <path className="wm-tb" d="M30 450 C 140 500, 220 380, 300 360 S 420 330, 470 250" fill="none" stroke="url(#sx-tube)" strokeWidth="30" strokeLinecap="round" pathLength="1" />
-          <path className="wm-tb" d="M30 444 C 140 494, 220 374, 300 354 S 420 324, 470 244" fill="none" stroke="rgba(255,230,205,.5)" strokeWidth="6" strokeLinecap="round" pathLength="1" />
-        </g>
+        <g filter="url(#sx-sh)"><Tube /></g>
       </svg>
-      <p className="wm-word">{word}</p>
+      <p className="wm-word"><span>{word}</span></p>
       <svg className="wm-front" viewBox="0 0 1240 520" focusable="false">
+        <defs><clipPath id="wm-front"><rect x="610" y="0" width="630" height="520" /></clipPath></defs>
         <g filter="url(#sx-sh)">
-          <path className="wm-tf" d="M470 250 C 500 200, 470 120, 420 110" fill="none" stroke="url(#sx-tube)" strokeWidth="30" strokeLinecap="round" pathLength="1" />
-          <path className="wm-tf" d="M470 244 C 500 194, 470 114, 420 104" fill="none" stroke="rgba(255,230,205,.5)" strokeWidth="6" strokeLinecap="round" pathLength="1" />
-          <g className="wm-ring" transform="translate(300 360) rotate(-20)"><rect x="-13" y="-22" width="26" height="44" rx="8" fill="#F4F0E8" /><rect x="-13" y="-22" width="8" height="44" rx="4" fill="#D9D1C2" /></g>
+          <g clipPath="url(#wm-front)"><Tube /></g>
+          {/* This ring sits where the tube passes from behind the word to in
+              front of it, so the join is never seen. */}
+          {at(610, 129, 'wm-ring', <g transform="rotate(9)"><rect x="-13" y="-23" width="26" height="46" rx="8" fill="#F4F0E8" /><rect x="-13" y="-23" width="8" height="46" rx="4" fill="#D9D1C2" /></g>)}
+          {at(862, 460, 'wm-ring', <><rect x="-13" y="-22" width="26" height="44" rx="8" fill="#F4F0E8" /><rect x="-13" y="-22" width="8" height="44" rx="4" fill="#D9D1C2" /></>)}
         </g>
-        <g className="wm-p wm-ast" transform="translate(800 70)"><use href="#sx-ast" x="-60" y="-60" width="120" height="120" /></g>
-        <g className="wm-p wm-sel" transform="translate(1090 110)"><use href="#sx-sel" x="-75" y="-75" width="150" height="150" /></g>
-        <g className="wm-p wm-key" transform="translate(960 440)"><use href="#sx-key" x="-70" y="-70" width="140" height="140" /></g>
-        <g className="wm-p wm-spk" fill="#FF6A1F">
-          <path transform="translate(140 110)" d={spark} />
-          <path transform="translate(1180 330) scale(.8)" d={spark} />
-          <path transform="translate(640 490) scale(.6)" d={spark} />
-          <path transform="translate(620 40) scale(.55)" d={spark} />
+        {at(820, 80, 'wm-ast', <use href="#sx-ast" x="-60" y="-60" width="120" height="120" />)}
+        {at(1110, 120, 'wm-sel', <use href="#sx-sel" x="-75" y="-75" width="150" height="150" />)}
+        {at(1000, 450, 'wm-key', <use href="#sx-key" x="-70" y="-70" width="140" height="140" />)}
+        <g fill="#FF6A1F">
+          {at(140, 110, 'wm-spk', <path d={spark} />)}
+          {at(1190, 320, 'wm-spk', <path d={spark} transform="scale(.8)" />)}
+          {at(620, 490, 'wm-spk', <path d={spark} transform="scale(.6)" />)}
+          {at(420, 50, 'wm-spk', <path d={spark} transform="scale(.55)" />)}
         </g>
       </svg>
     </div>
