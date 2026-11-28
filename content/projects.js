@@ -79,7 +79,7 @@ export const PROJECTS = [
     cover: 'board',
     year: '2026',
     status: 'independent',
-    stack: ['Laravel 12', 'MySQL', 'Vue 3.5', 'Vite 6', 'Tailwind 4', 'Pinia', 'PHPUnit', 'Vitest', 'Playwright', 'PHP 8.2', 'Sanctum', 'REST API', 'Chart.js'],
+    stack: ['Laravel 12', 'MySQL', 'Vue 3.5', 'Vite 6', 'Tailwind 4', 'Pinia', 'PHPUnit', 'Vitest', 'Playwright', 'PHP 8.2', 'Sanctum', 'REST API', 'Claude API', 'Chart.js'],
     repo: 'https://github.com/ahmedalhawajri89/waeda-booking',
     demo: 'https://waeda-booking.vercel.app/',
     ar: {
@@ -144,7 +144,7 @@ export const PROJECTS = [
     // Public repository under a proprietary licence (read and evaluate only),
     // so not labelled open source. Started as "Opsight"; renamed in 2026-11.
     status: 'public',
-    stack: ['Next.js 16', 'React 19', 'Tailwind 4', 'GSAP', 'TanStack Query', 'Recharts', 'Laravel 12', 'PHP 8.2', 'Sanctum', 'MySQL / TiDB', 'Claude API', 'Pest', 'Vitest', 'Playwright', 'Larastan'],
+    stack: ['Next.js 16', 'React 19', 'Tailwind 4', 'GSAP', 'TanStack Query', 'Recharts', 'Laravel 12', 'PHP 8.2', 'Sanctum', 'REST API', 'MySQL / TiDB', 'Claude API', 'Pest', 'Vitest', 'Playwright', 'Larastan'],
     repo: 'https://github.com/ahmedalhawajri89/Baydar',
     // Demo mode: one-click sign-in for each role, restored from a snapshot nightly.
     demo: 'https://baydar-demo.vercel.app/',

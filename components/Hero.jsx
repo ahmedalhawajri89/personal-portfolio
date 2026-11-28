@@ -41,7 +41,7 @@ function Word({ role, children }) {
             <path className="kw-sq" pathLength="1" d="M2 10 q6 -9 12 0 t12 0 t12 0 t12 0 t12 0 t12 0 t12 0 t12 0" />
             <path className="kw-ok" pathLength="1" d="M2 10 H98" />
           </svg>
-          <i className="kw-badge" aria-hidden="true">✓</i>
+          <i className="kw-badge" aria-hidden="true" />
         </span>
       );
     case 'see':
@@ -217,7 +217,7 @@ export default function Hero({ rtl, status, place, line1, line2, lede, cta1, cta
       </div>
 
       <h1 className="kh-h" aria-label={`${line1} ${line2}`}>
-        <span className="kh-line" aria-hidden="true"><Line text={line1} roles={roles} /></span>
+        <span className="kh-line" aria-hidden="true"><Line text={line1} roles={roles} /></span>{' '}
         <span className="kh-line is-soft" aria-hidden="true"><Line text={line2} roles={roles} /><i className="kh-caret" /></span>
       </h1>
 

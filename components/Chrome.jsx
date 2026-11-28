@@ -523,50 +523,120 @@ export function Logo({ size = 34 }) {
   );
 }
 
-export function Dock({ lang, home = false }) {
+/* The phone's one bar. On a phone the header at the top and the tab row at
+   the bottom were two bars doing one job; this is both, at the bottom where
+   the thumb is. Closed it is an island: the mark (back to the top), where
+   the reader is in the page, and the menu. Its lower edge fills as the page
+   is read. Open, the same island grows upward into a sheet: every section,
+   the language, the theme, and the one action -- start a project. It closes
+   on a link, on Escape, on the dimmed page behind it, or on its own button.
+   CSS alone moves it, so it costs a phone nothing. */
+export function Dock({ lang, home = false, path = '/' }) {
   const t = T[lang];
+  const ar = lang === 'ar';
+  const o = other(lang);
   const [active, setActive] = useState('home');
   const [hidden, setHidden] = useState(false);
+  const [open, setOpen] = useState(false);
+  const btn = useRef(null);
+  const sheet = useRef(null);
   const items = [
     ['home', t.nav.home, 'home'],
     ['work', t.nav.work, 'layout'],
     ['services', t.nav.services, 'layers'],
+    ['problems', t.nav.proof, 'check'],
+    ['process', t.nav.process, 'list'],
     ['about', t.nav.about, 'user'],
     ['contact', t.nav.contact, 'send'],
   ];
-  const link = (id) => (home ? (id === 'home' ? '#home' : `#${id}`) : `/${lang}/#${id}`);
+  // Every watched section is named by the item it belongs to.
+  const owner = { proof: 'problems', rules: 'process', skills: 'process' };
+  const link = (id) => (home ? `#${id}` : `/${lang}/#${id}`);
+  const here = items.find(([id]) => id === active) || items[0];
+  const num = String(items.indexOf(here) + 1).padStart(2, '0');
 
   useEffect(() => {
     if (!home) return;
-    const secs = items.map(([id]) => document.getElementById(id)).filter(Boolean);
+    const ids = ['home', 'work', 'services', 'problems', 'proof', 'rules', 'skills', 'process', 'about', 'contact'];
+    const secs = ids.map((id) => document.getElementById(id)).filter(Boolean);
     const io = new IntersectionObserver(
       (entries) => {
-        const v = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (v) setActive(v.target.id);
+        const v = entries.filter((e) => e.isIntersecting).sort((x, y) => y.intersectionRatio - x.intersectionRatio)[0];
+        if (v) setActive(owner[v.target.id] || v.target.id);
       },
       { rootMargin: '-35% 0px -55% 0px', threshold: [0, 0.2, 0.5] }
     );
-    secs.forEach((s) => io.observe(s));
-    // Slip away while the keyboard is up (a focused field) or the lightbox is open.
-    const onFocus = () => setHidden(!!document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName));
+    secs.forEach((x) => io.observe(x));
+    // Slip away while the keyboard is up (a focused field).
+    const onFocus = () => setHidden(!!document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName) && !sheet.current?.contains(document.activeElement));
+    const onOut = () => setTimeout(onFocus, 50);
     document.addEventListener('focusin', onFocus);
-    document.addEventListener('focusout', () => setTimeout(onFocus, 50));
-    return () => { io.disconnect(); document.removeEventListener('focusin', onFocus); };
+    document.addEventListener('focusout', onOut);
+    return () => { io.disconnect(); document.removeEventListener('focusin', onFocus); document.removeEventListener('focusout', onOut); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [home]);
 
+  // Open: Escape closes, focus goes into the sheet and comes back to the
+  // button after, and the page under it does not scroll.
+  useEffect(() => {
+    if (!open) return;
+    const key = (e) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('keydown', key);
+    document.documentElement.classList.add('isl-open');
+    sheet.current?.querySelector('a,button')?.focus({ preventScroll: true });
+    return () => {
+      document.removeEventListener('keydown', key);
+      document.documentElement.classList.remove('isl-open');
+      btn.current?.focus({ preventScroll: true });
+    };
+  }, [open]);
+
   return (
-    <nav className={`dock md:hidden${hidden ? ' is-hidden' : ''}`} aria-label={t.nav.menu}>
-      {items.map(([id, label, icon]) => {
-        const on = active === id;
-        return (
-          <a key={id} href={link(id)} className="dock-item" aria-current={on ? 'true' : undefined} aria-label={label}>
-            <Icon name={icon} size={18} />
-            <span className="dock-label">{label}</span>
+    <>
+      <button type="button" className={`isl-shade md:hidden${open ? ' is-on' : ''}`} aria-hidden="true" tabIndex={-1} onClick={() => setOpen(false)} />
+      <nav className={`isl md:hidden${open ? ' is-open' : ''}${hidden ? ' is-hidden' : ''}`} aria-label={t.nav.menu} data-progress>
+        <div className="isl-sheet" id="isl-sheet" ref={sheet} inert={!open ? '' : undefined}>
+          <div className="isl-sheet-in">
+            <ul className="isl-links">
+              {items.map(([id, label, icon], i) => (
+                <li key={id}>
+                  <a href={link(id)} onClick={() => setOpen(false)} aria-current={active === id ? 'location' : undefined} style={{ '--i': i }}>
+                    <span className="isl-n lat">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="isl-l">{label}</span>
+                    <Icon name={icon} size={18} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div className="isl-tools">
+              <div className="lang-seg">
+                <span className={`lang-on${lang === 'en' ? ' lat' : ''}`} aria-hidden="true">{lang === 'en' ? 'EN' : 'ع'}</span>
+                <a href={`/${o}${path}`} className={`lang-off${o === 'en' ? ' lat' : ''}`} hrefLang={o} lang={o}>
+                  <span aria-hidden="true">{o === 'en' ? 'EN' : 'ع'}</span><span className="sr-only">{o === 'en' ? 'English' : 'العربية'}</span>
+                </a>
+              </div>
+              <ThemeToggle lang={lang} />
+              <a href={link('contact')} className="isl-cta" onClick={() => setOpen(false)}>{t.nav.cta}<Icon name={ar ? 'arrowLeft' : 'arrowRight'} size={16} /></a>
+            </div>
+          </div>
+        </div>
+
+        <div className="isl-bar">
+          <a href={home ? '#home' : `/${lang}/`} className="isl-mark" aria-label={home ? t.nav.home : PROFILE.name[lang]} onClick={() => setOpen(false)}>
+            <Logo size={34} />
           </a>
-        );
-      })}
-    </nav>
+          <button type="button" className="isl-here" onClick={() => setOpen((v) => !v)} aria-hidden="true" tabIndex={-1}>
+            <span className="isl-here-n lat">{num}</span>
+            <span className="isl-here-l" key={here[0]}>{home ? here[1] : PROFILE.name[lang]}</span>
+          </button>
+          <button type="button" ref={btn} className="isl-menu" onClick={() => setOpen((v) => !v)}
+            aria-expanded={open} aria-controls="isl-sheet" aria-label={open ? (ar ? 'إغلاق القائمة' : 'Close menu') : t.nav.menu}>
+            <span className="isl-burger" aria-hidden="true"><i /><i /></span>
+          </button>
+        </div>
+        <span className="isl-prog" aria-hidden="true" />
+      </nav>
+    </>
   );
 }
 

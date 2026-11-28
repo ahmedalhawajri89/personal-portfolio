@@ -307,7 +307,7 @@ export const BRIEFS = {
       ],
     },
     en: {
-      hook: 'Sponsor a named child within their own family, and see where your money went.',
+      hook: 'Sponsor a named child who lives with their family, and see where your money went.',
       who: [
         'The sponsor: chooses a named child, pays regularly, and follows the reports and where the money went.',
         'The visitor: browses children and programmes and reads the transparency page before deciding.',

@@ -347,7 +347,7 @@ export default async function Project({ params }) {
 
       <Footer lang={lang} links={PROFILE.links} />
       <BackToTop lang={lang} />
-      <Dock lang={lang} />
+      <Dock lang={lang} path={`/work/${slug}/`} />
     </>
   );
 }
